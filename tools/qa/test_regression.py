@@ -23,8 +23,11 @@ EXPECTED_RUNNER_PATHS = [
     "res://godot/tests/unit/test_rng.gd",
     "res://godot/tests/unit/test_flight_math.gd",
     "res://godot/tests/unit/test_loader_metadata.gd",
+    "res://godot/tests/unit/test_mission_objectives_m1.gd",
     "res://godot/tests/integration/test_sim_loader_bridge.gd",
     "res://godot/tests/integration/test_replay.gd",
+    "res://godot/tests/integration/test_mission_scene_load.gd",
+    "res://godot/tests/integration/test_hud_mvp_scene.gd",
 ]
 
 EXPECTED_LOADER_TARGETS = [
@@ -38,6 +41,14 @@ EXPECTED_LOADER_TARGETS = [
 
 ALLOWED_REPLAY_KEYS = {"key_32", "key_61"}
 EXPECTED_REPLAY_FRAME_COUNT = 4
+EXPECTED_MISSION_OBJECTIVES = [
+    "stabilize_flight",
+    "turn_left",
+    "turn_right",
+    "climb",
+    "descend",
+    "checkpoint_pass",
+]
 
 
 def fail(msg: str) -> None:
@@ -182,11 +193,37 @@ def check_replay_fixture() -> None:
         fail("Legacy and migrated replay fixtures differ; update both or remove legacy fixture.")
 
 
+def check_mission_mvp_data() -> None:
+    mission_path = REPO_ROOT / "godot" / "data" / "mission_01" / "mission_01_training.json"
+    if not mission_path.exists():
+        fail(f"Missing mission data: {mission_path}")
+    mission = _load_json(mission_path)
+    if not isinstance(mission, dict):
+        fail("mission_01_training.json root must be an object")
+    if mission.get("start_mode") != "airborne":
+        fail("Mission 01 MVP must stay airborne-start for the current vertical slice")
+    sequence = mission.get("objective_sequence")
+    if not isinstance(sequence, list):
+        fail("mission_01_training.json objective_sequence must be a list")
+    ids = [entry.get("id") for entry in sequence if isinstance(entry, dict)]
+    if ids != EXPECTED_MISSION_OBJECTIVES:
+        fail(f"Mission objective order drifted: got={ids} want={EXPECTED_MISSION_OBJECTIVES}")
+    last_entry = sequence[-1]
+    if not isinstance(last_entry, dict) or not bool(last_entry.get("optional", False)):
+        fail("checkpoint_pass objective must remain optional in Mission 01 MVP data")
+    failure = mission.get("failure", {})
+    if float(failure.get("stall_seconds", -1.0)) != 4.0:
+        fail("Mission stall failure threshold drifted from 4.0s")
+    if float(failure.get("out_of_bounds_seconds", -1.0)) != 8.0:
+        fail("Mission out-of-bounds threshold drifted from 8.0s")
+
+
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
         ("loader-fixture", check_loader_fixture),
         ("replay-fixture", check_replay_fixture),
+        ("mission-mvp-data", check_mission_mvp_data),
     ]
     try:
         for name, fn in checks:

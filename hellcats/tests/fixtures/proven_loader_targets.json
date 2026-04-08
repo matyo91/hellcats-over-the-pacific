@@ -1,64 +1,64 @@
 {
   "notes": [
-    "[PROVEN] Entries in this file are supported by ID00 LoadSeg records plus direct byte inspection in the target segment.",
-    "[PROVEN] entrypoint_offset = stored_tail + 4 in the typical case where the tail points at UNLK/RTS before LINK.",
-    "[PROVEN] entrypoint_offset = stored_tail + 6 in the first-routine case where a 6-byte segment prologue precedes LINK.",
+	"[PROVEN] Entries in this file are supported by ID00 LoadSeg records plus direct byte inspection in the target segment.",
+	"[PROVEN] entrypoint_offset = stored_tail + 4 in the typical case where the tail points at UNLK/RTS before LINK.",
+	"[PROVEN] entrypoint_offset = stored_tail + 6 in the first-routine case where a 6-byte segment prologue precedes LINK.",
     "[UNKNOWN] This file does not yet describe the full jump-table patching process or runtime relocation."
   ],
   "targets": [
-    {
-      "status": "[PROVEN]",
-      "segment_id": 2,
-      "segment_label": "ID02",
-      "id00_entry_offset": 770,
-      "stored_tail": 6558,
-      "entrypoint_offset": 6562,
-      "delta": 4
-    },
-    {
-      "status": "[PROVEN]",
-      "segment_id": 5,
-      "segment_label": "ID05",
-      "id00_entry_offset": 1362,
-      "stored_tail": 0,
-      "entrypoint_offset": 6,
-      "delta": 6
-    },
-    {
-      "status": "[PROVEN]",
-      "segment_id": 6,
-      "segment_label": "ID06",
-      "id00_entry_offset": 386,
-      "stored_tail": 3596,
-      "entrypoint_offset": 3600,
-      "delta": 4
-    },
-    {
-      "status": "[PROVEN]",
-      "segment_id": 6,
-      "segment_label": "ID06",
-      "id00_entry_offset": 418,
-      "stored_tail": 2410,
-      "entrypoint_offset": 2414,
-      "delta": 4
-    },
-    {
-      "status": "[PROVEN]",
-      "segment_id": 6,
-      "segment_label": "ID06",
-      "id00_entry_offset": 426,
-      "stored_tail": 2516,
-      "entrypoint_offset": 2520,
-      "delta": 4
-    },
-    {
-      "status": "[PROVEN]",
-      "segment_id": 7,
-      "segment_label": "ID07",
-      "id00_entry_offset": 1402,
-      "stored_tail": 396,
-      "entrypoint_offset": 400,
-      "delta": 4
-    }
+	{
+	  "status": "[PROVEN]",
+	  "segment_id": 2,
+	  "segment_label": "ID02",
+	  "id00_entry_offset": 770,
+	  "stored_tail": 6558,
+	  "entrypoint_offset": 6562,
+	  "delta": 4
+	},
+	{
+	  "status": "[PROVEN]",
+	  "segment_id": 5,
+	  "segment_label": "ID05",
+	  "id00_entry_offset": 1362,
+	  "stored_tail": 0,
+	  "entrypoint_offset": 6,
+	  "delta": 6
+	},
+	{
+	  "status": "[PROVEN]",
+	  "segment_id": 6,
+	  "segment_label": "ID06",
+	  "id00_entry_offset": 386,
+	  "stored_tail": 3596,
+	  "entrypoint_offset": 3600,
+	  "delta": 4
+	},
+	{
+	  "status": "[PROVEN]",
+	  "segment_id": 6,
+	  "segment_label": "ID06",
+	  "id00_entry_offset": 418,
+	  "stored_tail": 2410,
+	  "entrypoint_offset": 2414,
+	  "delta": 4
+	},
+	{
+	  "status": "[PROVEN]",
+	  "segment_id": 6,
+	  "segment_label": "ID06",
+	  "id00_entry_offset": 426,
+	  "stored_tail": 2516,
+	  "entrypoint_offset": 2520,
+	  "delta": 4
+	},
+	{
+	  "status": "[PROVEN]",
+	  "segment_id": 7,
+	  "segment_label": "ID07",
+	  "id00_entry_offset": 1402,
+	  "stored_tail": 396,
+	  "entrypoint_offset": 400,
+	  "delta": 4
+	}
   ]
 }

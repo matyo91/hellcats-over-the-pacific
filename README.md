@@ -1,111 +1,76 @@
 # Hellcats Sim (Godot)
 
-Minimal Godot project: **deterministic sim tick loop, no rendering**. Sim and presentation are separate; math is fixed-point/integer (68k-style). RNG matches ID05 LCG.
+Current status: a deterministic reverse-engineering core plus a **playable Mission 01 MVP vertical slice**. The project now includes a simple 3D training mission with authored mission data, placeholder world rendering, keyboard flight controls, mission objectives, HUD feedback, and success/failure flow.
 
 ## Implemented / Proven / Blocked / Next
 
 - **Implemented [RECONSTRUCTED]:** Tick loop (FUN_000044e8 order), four entity arrays, RNG (ID05 LCG), EntityState with proven offsets, `loader_metadata.gd` (JSON parser), SimCore bridge ingesting `tools/proven_loader_targets.json` and resolving targets.
+- **Implemented [MVP AUTHORING DECISION]:** Mission 01 vertical slice scaffold under `godot/scenes/` with `Mission01Training.tscn`, `Main.tscn`, `PlayerAircraft.tscn`, `HUD_MVP.tscn`, `Mission01World.tscn`, authored mission JSON, simplified flight model, mission controller, checkpoint manager, and mission HUD.
 - **Proven [RECONSTRUCTED]:** ID00→LoadSeg→segment-local chain; trailing u16 = entrypoint−4 or −6. Six targets byte-proven in `godot/docs/LOADER_CHAIN.md` §10 (ID02×1, ID05×1, ID06×3, ID07×1). Artifact `proven_loader_targets.json` currently lists two (ID02, ID05).
-- **Blocked [UNKNOWN]:** Address mapping; runtime relocation; jump-table patching; segment load execution (see LOADER_CHAIN §9).
-- **Next milestone:** Extend `proven_loader_targets.json` to the four remaining proven targets; then trace capture for parity validation.
+- **Blocked [UNKNOWN]:** Address mapping; runtime relocation; jump-table patching; segment load execution (see LOADER_CHAIN §9); higher-fidelity mission scripting and full combat systems.
+- **Next milestone:** tighten the Mission 01 playable slice with better camera/collision tuning and then start replacing the authored flight/mission behavior with more exact RE-backed behavior incrementally.
 
-## Repo tree
+## Repo tree (high level)
 
 ```
+project.godot              # default main scene → godot/scenes/main/Main.tscn
 godot/
-├── project.godot
-├── README.md
-└── hellcats/
-    ├── core/
-    │   ├── fixed.gd       # Fixed-point / 32-bit integer helpers
-    │   ├── rng.gd         # LCG: seed = seed*0x41c64e6d + 0x3039; next_u16/next_u8
-    │   ├── entity_state.gd   # EntityState (proven offsets, Dictionary)
-    │   ├── loader_metadata.gd # Proven loader-target metadata parser
-    │   └── sim_core.gd    # Tick loop, four entity arrays, FUN_000044e8 order
-    └── tests/
-        ├── test_rng.gd    # Headless entry + RNG test vectors
-        └── test_sim_loader_bridge.gd # SimCore consumes proven loader-target metadata
+├── scenes/                # Main, Mission01Training, world, player, HUD, checkpoint
+├── data/mission_01/       # mission_01_training.json, aircraft_mvp.json, checkpoints
+└── tests/                 # headless runner: run_all.gd
+hellcats/
+├── core/                  # sim, RNG, loader metadata (deterministic RE core)
+├── flight/                # MVP flight model + input map
+├── mission/               # controller, objectives, checkpoints
+├── player/                # PlayerAircraft
+├── ui/                    # HUD_MVP
+└── world/                 # world_builder_mvp
+tools/qa/                  # test_regression.py + smoke notes
 ```
+
+## Run the Mission 01 MVP
+
+Open the project in Godot from the repo root (the folder containing `project.godot`) and run the default main scene:
+
+- `res://godot/scenes/main/Main.tscn`
+
+Direct mission scene for iteration:
+
+- `res://godot/scenes/missions/Mission01Training.tscn`
+
+Controls:
+
+- `Up / Down`: pitch up / down
+- `Left / Right` or `A / D`: roll left / right
+- `Q / E`: yaw left / right
+- `Page Up / Page Down` or `W / S`: throttle up / down
+- `R`: restart mission
+- `Esc`: quit
+
+Mission HUD shows:
+
+- current objective
+- speed
+- altitude
+- heading
+- throttle
+- mission status
 
 ## Run headless (no display)
 
 From the **project root** (the folder containing `project.godot`):
 
 ```bash
-godot --headless --script hellcats/tests/test_rng.gd
+HOME=/tmp/hellcats-godot-home /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script res://godot/tests/run_all.gd
 ```
 
-Or with a full path to the binary:
+Python-side regression checks:
 
 ```bash
-HOME="$PWD/.godot-home" /Applications/Godot.app/Contents/MacOS/Godot --headless --script hellcats/tests/test_rng.gd
+python3 tools/qa/test_regression.py
 ```
-
-Expected output:
-
-```
-PASS seed=0 next() (15-bit)
-PASS seed=1 state
-PASS next_u16 replay
-PASS next_u8 replay
-Result: ALL PASS
-```
-
-Exit code is 0 on success, 1 on failure.
-
-Loader metadata fixture check:
-
-```bash
-HOME="$PWD/.godot-home" /Applications/Godot.app/Contents/MacOS/Godot --headless --script hellcats/tests/test_loader_metadata.gd
-```
-
-SimCore loader-metadata bridge check:
-
-```bash
-HOME="$PWD/.godot-home" /Applications/Godot.app/Contents/MacOS/Godot --headless --script hellcats/tests/test_sim_loader_bridge.gd
-```
-
-## Workspace-safe macOS runner
-
-Under the current sandbox, the Godot app must write `user://` inside the workspace. Use:
-
-```bash
-sh ./tools/run_headless_rng_test.sh
-```
-
-## Adding per-frame trace logging
-
-1. **In `SimCore`:** Add a trace buffer and optional callback.
-   - In `sim_core.gd`, add e.g. `var _trace: Array[Dictionary] = []` and a flag `var trace_enabled: bool = false`.
-   - At the start of `tick()`, push a frame record: `{"tick": _tick_count, "input": input_packet.duplicate()}`.
-   - After each `_update_entity_array`, append to the frame record (e.g. `"array_1_len": entity_array_1.size()`).
-   - Optionally call a callback: `if trace_callback.is_valid(): trace_callback.call(tick_record)`.
-
-2. **From a test or runner script:** Enable tracing and consume it.
-   - Set `sim.trace_enabled = true` (and/or `sim.trace_callback = callable(self, "_on_tick")`).
-   - Run N ticks, then inspect `sim.get_trace()` (you’d add `get_trace()` returning a copy of `_trace`).
-   - Log to file: `FileAccess.open("trace.json", FileAccess.WRITE).store_string(JSON.stringify(trace))`.
-
-3. **Minimal in-place logging:** In `tick()`, add:
-   - `if trace_enabled: print("tick ", _tick_count, " phase=", mission_phase_a8, " ac=", mission_flag_ac)`.
-   - Or log only when a condition holds (e.g. `mission_phase_a8 == 2`).
-
-Example stub in `sim_core.gd`:
-
-```gdscript
-var trace_enabled: bool = false
-var _trace: Array = []
-
-func tick() -> void:
-	_tick_count += 1
-	if trace_enabled:
-		_trace.append({"tick": _tick_count, "phase": mission_phase_a8, "ac": mission_flag_ac})
-	# ... rest of tick
-```
-
-Then from a test: `sim.trace_enabled = true; for i in 10: sim.tick(); print(sim.get_trace())`.
 
 ## Mission 01 MVP implementation notes
 
-- **`docs/MISSION_01_MVP.md`** — scope, architecture, controls, objectives, data paths (`godot/data/mission_01/`), run/test commands, and deferred work.
-- **Manual smoke + CI commands:** `tools/qa/README.md` (Mission 1 smoke, `run_all.gd`, `test_regression.py`).
+- `docs/MISSION_01_MVP.md` — scope, architecture, controls, objectives, data paths, and deferred work.
+- `tools/qa/README.md` — manual smoke path and automated commands.

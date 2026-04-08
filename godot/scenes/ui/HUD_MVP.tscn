@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://hellcats/ui/hud_mvp.gd" id="1"]
+
+[node name="HUD_MVP" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="RootMargin" type="MarginContainer" parent="."]
+offset_right = 320.0
+offset_bottom = 180.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+
+[node name="VBox" type="VBoxContainer" parent="RootMargin"]
+offset_right = 320.0
+offset_bottom = 180.0
+
+[node name="TitleLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+text = "Flight School"
+
+[node name="ObjectiveLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+text = "Objective: stabilize_flight"
+
+[node name="TelemetryLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+text = "SPD 000 m/s\nALT 0000 m\nHDG 000\nTHR 00%"
+
+[node name="StatusLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+text = "Training in progress"
+

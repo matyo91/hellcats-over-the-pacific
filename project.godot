@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="Hellcats Sim"
+run/main_scene="res://godot/scenes/main/Main.tscn"
 config/features=PackedStringArray("4.5")
 
 [display]
 
-window/size/viewport_width=1
-window/size/viewport_height=1
+window/size/viewport_width=1280
+window/size/viewport_height=720
 window/size/mode=2
 window/handheld/orientation=1
 

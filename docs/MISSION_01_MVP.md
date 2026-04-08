@@ -37,16 +37,16 @@ Useful for future fidelity; MVP can approximate.
 
 ## 4. Architecture
 
-### 4.1 Scene layout (canonical target)
+### 4.1 Scene layout (current)
 
-Paths under `res://godot/scenes/` (adjust if the repo uses a different prefix; QA smoke test references `godot/scenes/missions/Mission01Training.tscn`).
+Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.godot`).
 
-- `main/Main.tscn` — `Main` (`Node`): `World` (`Node3D`) → instance `missions/Mission01World.tscn`; `Mission` (`Node`) + `mission_runtime.gd`; `UI` (`CanvasLayer`) → `ui/HUD_MVP.tscn`.
-- `missions/Mission01World.tscn` — `WorldEnvironment`, `DirectionalLight3D`, sea, terrain, `Checkpoints` (`Area3D` rings), `PlayerSpawn` (`Marker3D`), `Bounds` (`Area3D`).
-- `player/PlayerAircraft.tscn` — `CharacterBody3D` + `player_aircraft.gd`: visual, `CameraRig`/`FollowCam`, collision, optional `RayCast3D` for impact checks.
-- `ui/HUD_MVP.tscn` — labels for objective, speed, altitude, heading, throttle, banner; optional crosshair/overlay.
-
-Logical grouping (equivalent idea): world + player + mission controller + HUD; names may differ until scenes land.
+- `main/Main.tscn` — root `Node` that instances `missions/Mission01Training.tscn`.
+- `missions/Mission01Training.tscn` — `World` (instances `world/Mission01World.tscn`), `PlayerAircraft`, `Checkpoints` (`Node3D` + `checkpoint_manager.gd`), `HUD` (instances `ui/HUD_MVP.tscn`), `MissionController` (`mission_controller.gd`).
+- `world/Mission01World.tscn` — `Node3D` + `world_builder_mvp.gd` (builds sky, sun, sea, island placeholder at runtime).
+- `player/PlayerAircraft.tscn` — `Node3D` + `player_aircraft.gd`, simple meshes, follow `Camera3D`.
+- `mission/Checkpoint.tscn` — `Node3D` + `checkpoint.gd` (ring pass), spawned by checkpoint manager from JSON.
+- `ui/HUD_MVP.tscn` — `CanvasLayer` + labels for title, objective, telemetry, status (`hud_mvp.gd` uses paths under `RootMargin/VBox/`).
 
 ### 4.2 Scripts and roles
 
@@ -57,9 +57,9 @@ Logical grouping (equivalent idea): world + player + mission controller + HUD; n
 | Flight | `hellcats/flight/aircraft_state.gd` | Telemetry: speed, altitude, attitude, throttle, flags. |
 | Flight | `hellcats/flight/player_input_map.gd` | Actions → normalized control intent. |
 | Flight | `hellcats/flight/flight_model_mvp.gd` | MVP integrator (`AircraftState` + control intent + `flight_math`). |
-| Mission | `hellcats/mission/mission_runtime.gd` | State machine, wires player, checkpoints, HUD; emits start/success/fail. |
+| Mission | `hellcats/mission/mission_controller.gd` | Loads JSON, wires player, checkpoints, HUD; objectives, failure checks, restart. |
 | Mission | `hellcats/mission/mission_objectives_m1.gd` | Pure, testable objective evaluation from telemetry snapshots (data-driven). |
-| Mission | `hellcats/mission/checkpoint.gd` | `Area3D` helper; signal once per pass. |
+| Mission | `hellcats/mission/checkpoint.gd` | Ring pass / signal once per pass. |
 | Player | `hellcats/player/player_aircraft.gd` | Scene adapter: input → model → transform/collisions. |
 | UI | `hellcats/ui/hud_mvp.gd` | Presentation only; no direct mission logic queries. |
 | World | `hellcats/world/world_builder_mvp.gd` | Placeholder terrain/sea/sky (if used). |
@@ -117,7 +117,7 @@ If this doc’s numbers drift from JSON, **trust the JSON** and update the doc.
 
 - **State:** throttle 0–1, airspeed, altitude, VS, pitch/roll/yaw and rates, heading.
 - **Rough behavior:** throttle → target speed band; pitch affects climb and bleed; roll drives bank and turn rate with speed; yaw is weak trim; VS from pitch + speed, damped.
-- **Safety:** soft stall band (~55 m/s) with heavy damping/sink bias; **hard fail** if airspeed **< 48 m/s** for **4.0 s** continuous; optional auto-level when no pitch/roll input.
+- **Safety:** soft stall band (`aircraft_mvp.json` → `stall.speed_mps_below`, **55 m/s** at authoring) with heavy damping/sink bias; **hard fail** if **`stall_seconds`** in the snapshot reaches **`failure.stall_seconds`** (**4.0 s**); optional auto-level when no pitch/roll input.
 
 Exact coefficients may live in code or future `aircraft_mvp.json`.
 
@@ -146,7 +146,7 @@ The JSON is the contract. Snapshot at authoring (update when files change):
 | Left / right turn | `reach_bank` with `min_bank_deg` and direction. |
 | Climb | Reach at least `min_altitude_m` (e.g. +250 m from cruise). |
 | Descend | At or below `max_altitude_m`. |
-| Checkpoint | `checkpoint_pass` with `checkpoint_id`; **`optional: true`** means mission success may ignore this step if evaluator respects the flag—**confirm in `mission_runtime` / `mission_objectives_m1`**. |
+| Checkpoint | `checkpoint_pass` with `checkpoint_id`; **`optional: true`** means success triggers after required objectives; optional step can be skipped (`mission_objectives_m1` + `mission_controller`). |
 
 **[INFERRED]** Additional checks (e.g. minimum heading change on turns, min airspeed on climb) may exist in code even if not in JSON—keep evaluator and data in sync.
 
@@ -156,7 +156,7 @@ The JSON is the contract. Snapshot at authoring (update when files change):
 
 - Terrain/sea impact (altitude vs surface + margin).
 - Out of bounds horizontal radius from mission center for **> 8.0 s** (tune in scene).
-- Hard stall: **< 48 m/s** for **4.0 s** (matches `failure.stall_seconds` when wired).
+- Hard stall: **`stall_seconds`** ≥ **`failure.stall_seconds`** (4.0 s), driven by sub-threshold airspeed in `flight_model_mvp` vs `stall.speed_mps_below` in `aircraft_mvp.json` (55 m/s at authoring).
 
 Checkpoint ring size/position: `checkpoints_mission_01.json` (`radius_m`, etc.).
 

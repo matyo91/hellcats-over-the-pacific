@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://godot/scenes/world/Mission01World.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://godot/scenes/player/PlayerAircraft.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://godot/scenes/ui/HUD_MVP.tscn" id="3"]
+[ext_resource type="Script" path="res://hellcats/mission/mission_controller.gd" id="4"]
+[ext_resource type="Script" path="res://hellcats/mission/checkpoint_manager.gd" id="5"]
+
+[node name="Mission01Training" type="Node"]
+
+[node name="World" parent="." instance=ExtResource("1")]
+
+[node name="PlayerAircraft" parent="." instance=ExtResource("2")]
+
+[node name="Checkpoints" type="Node3D" parent="."]
+script = ExtResource("5")
+
+[node name="HUD" parent="." instance=ExtResource("3")]
+
+[node name="MissionController" type="Node" parent="."]
+script = ExtResource("4")
+
