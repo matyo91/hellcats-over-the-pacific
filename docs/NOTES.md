@@ -2,8 +2,6 @@
 
 Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFERRED]** (reasoning from evidence), **[UNKNOWN]** (unverified or missing).
 
----
-
 ## Template (copy for new days)
 
 ```markdown
@@ -12,8 +10,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - [INFERRED] ...
 - [UNKNOWN] ...
 ```
-
----
 
 ## Entries
 
@@ -62,8 +58,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **[RECONSTRUCTED]** After all four arrays, `FUN_00006fb8()` is called. [Pacific Conflict.c:5139]
 - **[INFERRED]** This order is the single source of truth for our SimCore tick; reordering would break parity with the original.
 
----
-
 ### FUN_0000740a — input handler variables
 
 - **[RECONSTRUCTED]** `FUN_0000740a(int param_1, int param_2)` (Pacific Conflict.c:7366) is an input/key handler. `param_1` and `param_2` are key code and action (e.g. 3 = press). [Pacific Conflict.c:7366, 7452-7466]
@@ -71,8 +65,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **[RECONSTRUCTED]** Mission block at `DAT_0001b5a0`: `*(short *)(DAT_0001b5a0 + 0x98)` and `*(short *)(DAT_0001b5a0 + 0x25e)`, `(DAT_0001b5a0 + 0x2b6)`, `(DAT_0001b5a0 + 0x2be)` (callbacks). [Pacific Conflict.c:7420-7425]
 - **[RECONSTRUCTED]** Player-relative reads: `*DAT_0001b738 + 7`, `*DAT_0001b738 + 4`, `*DAT_0001b738 + 0x18/0x1c/0x20`, `(int)DAT_0001b738 + 0x22`, `(int)DAT_0001b738 + 0x63e`; and `(int)piVar14 + 0x19a`, `(int)piVar14 + 0x19e`, `(int)piVar14 + 0x62a`, `(int)piVar14 + 0x32`. [Pacific Conflict.c:7398-7401, 7433-7436, 7473-7477]
 - **[INFERRED]** Replay/trace input packets should map to the same (param_1, param_2) semantics used here; exact key-to-param_1 mapping is [UNKNOWN] until we capture a key table.
-
----
 
 ### FUN_0000e792 — entity (param_1) offsets
 
@@ -87,8 +79,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **[RECONSTRUCTED]** Godot now exposes a reusable helper for the `+0x40` rule from `FUN_0000e792`: if `direction_char_679 == '-'`, use `external_template.field_40` directly; otherwise halve it toward zero. [Pacific Conflict.c:14067-14074; `godot/hellcats/core/sim_core.gd`]
 - **[RECONSTRUCTED]** The helper trio behind the next math block is now reconstructed in `godot/hellcats/core/flight_math.gd`: `FUN_0000e42a(uint)` uses the raw overlapping table at `DAT_0001b2c0`; `FUN_0000e468(int, short)` damps the second parameter only when the first is below `0x200`; `FUN_0000e570(short, int*)` scales `external_template.field_38` by a ratio derived from `param_1`. [Pacific Conflict.c:13796-13915]
 - **[INFERRED]** `compute_local_34()` is now modeled as a pure helper using the already-proven `external_template.field_3c`, `field_3e`, and the output of `FUN_0000e570`, but it is not yet wired into the live tick because the surrounding block still depends on more helper-driven state (`0x66e`, `0x672`, `0x66a`) and ownership semantics.
-
----
 
 ### FUN_0000e792 — ownership branch (DAT_0001b738 / DAT_0001b888) and 0x66e / 0x672 / 0x66a
 
@@ -110,15 +100,11 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **Safe to implement (evidence-backed):** (1) **Branch condition:** run the 0x66e/0x672/0x66a update block only when the entity pointer equals the “player” entity or the “target” entity (Godot must pass the same two designations from its sim state). (2) **Field writes:** the exact delta rules (add full delta when `|delta| < 8`, else add `delta>>3` with negative rounding) and the formulas for `local_46`, `local_42`, and the 0x672 source from `local_26` and the 0x669/0x1a1/0x685 gates. (3) **0x669 clear:** when in this branch and status_1a1 has bit 0x40 and 0x66e is zero, set 0x669 to 0.
 - **Unresolved (do not guess):** (1) Semantic names for 0x66e, 0x672, 0x66a (e.g. which axis or control surface). (2) Whether DAT_0001b888 is always “target” or sometimes a second player; Godot can mirror “two designated entities” without ascribing meaning. (3) Any other code paths that read/write these offsets outside FUN_0000e792 (see STRUCTS.md for read sites).
 
----
-
 ## Doc sync: helper trio, ownership, next live-port
 
 - **[RECONSTRUCTED]** The **helper trio** is reconstructed in `godot/hellcats/core/flight_math.gd`: FUN_0000e42a (raw table at DAT_0001b2c0), FUN_0000e468 (damp when first param &lt; 0x200), FUN_0000e570 (scale external_template.field_38 by ratio from param_1). [Pacific Conflict.c:13796–13915] **[INFERRED]** `compute_local_34()` is modeled from proven external_template fields but not yet wired into the tick.
 - **[RECONSTRUCTED]** **Ownership branch status:** Only the entity matching **DAT_0001b738** (player) or **DAT_0001b888** (second designated entity) receives writes to 0x66e, 0x672, 0x66a in the block at 14179–14244. DAT_0001b738 is set at entity creation (e.g. FUN_0000dff0); DAT_0001b888 is set to 0 at 6101 and from FUN_0000ff44 when DAT_0001d858 is 1, 8, or 7. [Pacific Conflict.c:14179, 13616–13617, 6101, 15117–15122]
 - **Exact next live-port boundary [RECONSTRUCTED]:** Godot Engineer may port the **movement-smoothing block** (14179–14244) into the per-entity tick: (1) run the 0x66e/0x672/0x66a update **only when** current entity pointer equals SimCore's designated player entity or designated target entity; (2) use the proven formulas and delta rules (add full delta when |delta|&lt;8, else add delta&gt;&gt;3 with negative rounding); (3) apply the 0x669 clear when in branch and (status_1a1 &amp; 0x40) and 0x66e==0. **[UNKNOWN] Blocked:** assigning semantic names to 0x66e/0x672/0x66a; defining DAT_0001b888 beyond "second designated entity"; porting any logic that depends on unverified code paths for these offsets.
-
----
 
 ## Changelog
 
@@ -127,8 +113,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 | (today)    | FUN_000044e8, FUN_0000740a, FUN_0000e792 | Initial log entries from Pacific Conflict.c. |
 | (today)    | FUN_0000e792 ownership branch | Documented DAT_0001b738/DAT_0001b888 branch, 0x66e/0x672/0x66a update conditions, safe vs unresolved for movement-smoothing port. |
 | (today)    | Doc sync | Helper trio reconstructed; ownership branch status; exact next live-port boundary (ROADMAP, STRUCTS). |
-
----
 
 ### ID00 / loader chain
 
@@ -143,8 +127,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **[RECONSTRUCTED]** The trailing u16 is the segment-local **stored routine offset** (first_instruction_offset − 4, or −6 when segment has 6-byte header). Bytes at tail in ID02: UNLK (4e 5e), RTS (4e 75), then LINK at tail+4; in ID05 first routine: header at 0, LINK at 6 ⇒ tail+6. See [LOADER_CHAIN.md](LOADER_CHAIN.md) §4.2.
 - **[RECONSTRUCTED]** Entrypoint handoff: JSR offset(A5) → jump table entry (MOVE.W #seg,-(SP); LoadSeg; .word tail) → LoadSeg → Segment Manager sets routine = base+(tail+4 or tail+6), JMP to routine (LINK). Ibid. §5.
 
----
-
 ## Loader-chain sync (docs vs artifact)
 
 - **[RECONSTRUCTED]** Per [LOADER_CHAIN.md](LOADER_CHAIN.md) §10, **six** loader targets are proven by byte-level evidence (UNLK/RTS/LINK at tail or 6-byte prologue + RTS/LINK): ID02×1, ID05×1, ID06×3, ID07×1.
@@ -152,8 +134,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **[INFERRED]** Godot consumes whatever targets are present in the JSON; the headless test proves SimCore with the two targets currently in the artifact.
 - **[UNKNOWN]** Still blocked by address mapping: runtime relocation, jump-table patching, and actual segment load execution are out of scope until the address model is proven further (LOADER_CHAIN §9).
 - **Next milestone:** Extend `proven_loader_targets.json` to include the four remaining proven targets (ID06×3, ID07×1), or document the decision to keep the artifact minimal; then proceed to trace capture for parity validation.
-
----
 
 ### Mission 01 MVP extraction brief (flight school / pilot training)
 

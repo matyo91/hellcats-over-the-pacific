@@ -4,8 +4,6 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 
 **[INFERRED]** Ongoing convergence backlog: `docs/CONVERGENCE_BACKLOG.md`; process template: `docs/CONVERGENCE_LOOP_TEMPLATE.md`.
 
----
-
 ## Phase A — Skeleton and determinism
 
 **Goal:** [INFERRED] Run a deterministic sim tick loop that matches the original update order and can be traced/replayed.
@@ -22,8 +20,6 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 | FUN_000044a4 / per-entity update | Partial | [RECONSTRUCTED] `FUN_000044a4` → `_update_single_entity`; **`param_2`** passed through (5035a path not fully ported). [RECONSTRUCTED] Minimal slices: `flags_685` RNG, gates, movement smoothing, etc. [RECONSTRUCTED] **Helper trio** in `flight_math.gd`. [RECONSTRUCTED] Designated player/target for 0x66e/0x672/0x66a. **MVP:** `flight_model_mvp.gd` for Mission-1 aircraft; **Next:** full **FUN_0000435a** branch parity by `param_2`. |
 
 **Acceptance (Phase A):** [INFERRED] Same seed + same inputs ⇒ identical trace (see docs/TRACE.md). **[UNKNOWN]** Until entity/mission logic is ported, traces will only reflect phase/flag/input/RNG.
-
----
 
 ## Phase B — Input and mission logic
 
@@ -42,8 +38,6 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 
 **Acceptance (Phase B):** [INFERRED] Replay of a captured input sequence produces a trace that matches the original (same seed). **[UNKNOWN]** Depends on Phase A entity/mission placeholders being implemented.
 
----
-
 ## Phase C — Full parity and validation
 
 **Goal:** [INFERRED] All critical entity and mission behavior ported; trace_diff on long sessions shows no divergence.
@@ -57,8 +51,6 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 
 **Acceptance (Phase C):** [INFERRED] Same seed + same inputs ⇒ identical trace over full mission; trace_diff.py is the arbiter.
 
----
-
 ## Next live-port boundary (Godot Engineer)
 
 **[RECONSTRUCTED]** The following is the **exact boundary** for the next movement-smoothing live port. A contributor can rely on this to know what the Godot Engineer is allowed to port.
@@ -67,8 +59,6 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 - **Blocked [UNKNOWN]:** (1) Assigning semantic names to 0x66e, 0x672, 0x66a (e.g. axis or control surface). (2) Defining DAT_0001b888 beyond “second designated entity.” (3) Porting logic that depends on code paths outside FUN_0000e792 for these offsets (unverified). (4) Address mapping, loader runtime, and segment execution (see LOADER_CHAIN.md).
 
 Reference: [NOTES.md](NOTES.md) “Doc sync: helper trio, ownership, next live-port”; [STRUCTS.md](STRUCTS.md) “Ownership branch status.”
-
----
 
 ## Current status summary
 

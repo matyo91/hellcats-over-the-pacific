@@ -2,13 +2,9 @@
 
 Tags: **[RECONSTRUCTED]** from `Pacific Conflict.c` / `docs/briefs/input_FUN_0000740a_brief.md`; **[INFERRED]**; **[MVP APPROXIMATION]** for what is not ported yet.
 
----
-
 ## Purpose
 
 Define the **stable interface** between reverse-engineered input semantics and the Godot MVP so `PlayerAircraft` + `FlightModelMvp` stay testable while fidelity increases.
-
----
 
 ## Contract
 
@@ -50,8 +46,6 @@ Each physics tick, **`PlayerInputMap.read_input_packet(player_active)`** returns
 - `gated`, `gate_reason`, `ignored`
 - `tick` — 1-based counter (set on `PlayerAircraft` after gather; **[INFERRED]** aligns with per-physics-tick logging)
 
----
-
 ## File ownership
 
 | Script | Role |
@@ -59,8 +53,6 @@ Each physics tick, **`PlayerInputMap.read_input_packet(player_active)`** returns
 | `hellcats/flight/player_input_map.gd` | Actions, gather, `compute_outputs` (pure), trace |
 | `hellcats/flight/flight_model_mvp.gd` | Consumes `controls`; applies `throttle_impulse` |
 | `hellcats/player/player_aircraft.gd` | Calls `read_input_packet(active)` once per frame |
-
----
 
 ## Related docs
 

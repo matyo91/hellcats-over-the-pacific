@@ -2,8 +2,6 @@
 
 Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (binary + cross-segment check), **[INFERRED]** (reasoning).
 
----
-
 ## 1) Runtime address model
 
 | Aspect | Conclusion | Citation |
@@ -13,8 +11,6 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 | **Relocation** | No reloc table. Only FUN_00000020 patches two cells: DAT_0001a7d2, DAT_0001a81c (base/handle from loader). | Ibid. §3. ResEdit/CODE/Pacific Conflict.c FUN_00000020. |
 | **CODE segments (ID01–ID09)** | Segment-local offsets; segment loaded by LoadSeg; A5 world for globals (unaff_A5 in ID02/ID05 .c). | ID02.c, ID05.c; Apple Segment Manager (Inside Mac: RTArch-118). |
 
----
-
 ## 2) Entrypoint and overlay loading
 
 | Item | Conclusion | Citation |
@@ -22,8 +18,6 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 | **Overlay init** | FUN_00000020(base) then FUN_00000054() set overlay globals; DAT_0001b5a0, DAT_0001b738 etc. used as mission/entity base. | [Pacific_Conflict_loader_analysis.md](../Hellcats-Over-the-Pacific_Mac_EN/ResEdit/CODE/Pacific_Conflict_loader_analysis.md) §7. ResEdit/CODE/Pacific Conflict.c 60, 73, 889, FUN_000044e8, FUN_0000740a. |
 | **Who loads overlay** | ID08 FUN_00000006 (resource traps 0x2a2, 0x2b2, 0x2aa) is the best candidate for loading the 255360-byte blob. | Ibid. §7. ID08.c. |
 | **ID00 role** | CODE 0 (ID00.bin): jump-table / segment-loader table for CODE 1–9, not overlay data. | [NOTES.md](NOTES.md) ID00 / loader chain. [decode_id00_loadseg.py](../tools/decode_id00_loadseg.py). |
-
----
 
 ## 3) Minimal EntityState offsets (confirmed)
 
@@ -36,8 +30,6 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 | 0x67c, 0x67d, 0x67e, 0x685, 0x19a, 0x1a0, 0x1a1, 0x1a3 | weapon_count, status | Ibid. |
 
 **[INFERRED]** Godot `entity_state.gd` OFFSETS match these; last proven offset in table is 0x1a3. Full entity size/padding **[UNKNOWN]**.
-
----
 
 ## 4) ID00.bin layout and trailing u16 (proven)
 
@@ -91,8 +83,6 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 
 References: Decoded `ResEdit/CODE/ID02`, `ID05`, `ID06`, `ID07` (xxd on .bin); [correlate_id00_to_functions.py](../tools/correlate_id00_to_functions.py) for deltas; [NOTES.md](NOTES.md) ID00 / loader chain.
 
----
-
 ## 5) First proven launcher handoff chain
 
 Classic Mac 68k Segment Manager uses a jump table in CODE 0; ID00.bin is that jump table (or equivalent). Handoff:
@@ -124,8 +114,6 @@ Classic Mac 68k Segment Manager uses a jump table in CODE 0; ID00.bin is that ju
 - Jump table / LoadSeg semantics: [Inside Mac: Mac OS Runtime Architectures — The Jump Table](https://dev.os9.ca/techpubs/mac/runtimehtml/RTArch-118.html).
 - Correlation deltas: [correlate_id00_to_functions.py](../tools/correlate_id00_to_functions.py) (ID02 65/68 at +4, ID05 11/11 at +4 or +6).
 
----
-
 ## 6) Recurring +4 / +6 delta (ID02, ID05, ID06, ID07)
 
 | Segment | Bytes immediately before correlated target | Explanation |
@@ -136,8 +124,6 @@ Classic Mac 68k Segment Manager uses a jump table in CODE 0; ID00.bin is that ju
 | **ID07** | At (target − 4): **4e 5e** (UNLK); at (target − 2): **4e 75** (RTS); at target: **4e 56** (LINK). | Same as ID02; single ID00 entry for segment 7, tail 0x018c → FUN_00000190. |
 
 So the recurring +4 is “tail = first_instruction − 4” (previous function’s UNLK); +6 is “tail = first_instruction − 6” (6-byte header before first routine). **ID06** does not use a +6 first-routine layout at offset 0 (ID06.bin at 0x0000 is `01 70 00 09 48 e7 ...`, not a 6-byte prologue + RTS + LINK); **[RECONSTRUCTED]** from xxd. **ID07** at 0x0000 is `05 68 00 02 4e 75 4e 56 ...` (4-byte header, RTS, LINK at 0x06), so first routine could be at 0x06 with delta +6, but the only ID00 entry for segment 7 has tail 0x018c (delta +4). **[UNKNOWN]** whether segment 7 has another call path for the routine at 0x06.
-
----
 
 ## 7) Unresolved segment-6 and segment-7 entries
 
@@ -154,8 +140,6 @@ So the recurring +4 is “tail = first_instruction − 4” (previous function�
 
 Segment 7 has only one ID00 entry (tail 0x018c), which **is** proven (see §4.2).
 
----
-
 ## 8) Implementation handoff artifact
 
 - **[PROVEN]** A minimal machine-readable artifact for the first proven loader targets exists at [`tools/proven_loader_targets.json`](../../tools/proven_loader_targets.json).
@@ -168,8 +152,6 @@ Segment 7 has only one ID00 entry (tail 0x018c), which **is** proven (see §4.2)
 - **[INFERRED]** [`sim_core.gd`](../hellcats/core/sim_core.gd) now accepts that metadata through `load_loader_metadata_from_file()` / `load_loader_metadata_from_json_text()` and resolves targets through `resolve_loader_target()`.
 - **[RECONSTRUCTED]** The headless integration test [`test_sim_loader_bridge.gd`](../hellcats/tests/test_sim_loader_bridge.gd) proves `SimCore` can ingest the proven ID02 and ID05 targets and still execute a deterministic tick.
 - **[UNKNOWN]** Runtime relocation, jump-table patching, and actual segment load execution are still out of scope for the Godot core until the address model is proven further.
-
----
 
 ## 10) Safe targets for Godot consumption now
 

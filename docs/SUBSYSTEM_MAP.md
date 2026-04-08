@@ -6,8 +6,6 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]** / **[DEFERRED]**.
 
 **Primary source file:** `Pacific Conflict.c` (Ghidra export). **Segment/runtime:** `ID01.c`–`ID09.c` (see `docs/LOADER_CHAIN.md`).
 
----
-
 ## 1) High-level flow (main sim tick)
 
 **[RECONSTRUCTED]** The main loop is anchored on **FUN_000044e8** (`docs/contracts/tick_FUN_000044e8_contract.md`):
@@ -36,8 +34,6 @@ flowchart TD
 
 **Godot:** **`hellcats/core/sim_core.gd`** mirrors pass order and **`param_2`**; **Mission-1** gameplay loop is **`PlayerAircraft` + `FlightModelMvp`** **[INFERRED]** unless you explicitly drive SimCore.
 
----
-
 ## 2) Per-entity update (conceptual)
 
 ```mermaid
@@ -63,8 +59,6 @@ flowchart LR
 
 **Godot:** **`flight_model_mvp.gd`**, **`flight_math.gd`**, **`sim_core.gd`** (partial).
 
----
-
 ## 3) Input path (conceptual)
 
 ```mermaid
@@ -83,15 +77,11 @@ flowchart TD
 
 **Godot:** **`player_input_map.gd`** — **`docs/contracts/input_godot_contract.md`**, **`docs/briefs/input_FUN_0000740a_brief.md`**.
 
----
-
 ## 4) Mission state bridge (MVP)
 
 **[RECONSTRUCTED]** Mission block **`DAT_0001b5a0`** fields **`+0xa8`** (phase) and **`+0xac`** (flag) gate **FUN_000044e8**’s middle section.
 
 **Godot:** **`MissionController`** exposes **`mission_phase_a8`** / **`mission_flag_ac`** and **`get_mission_sim_bridge_state()`** — **`docs/contracts/mission_state_DAT_contract.md`**.
-
----
 
 ## 5) RNG (two layers)
 
@@ -102,13 +92,9 @@ flowchart TD
 
 See **`IMPORT_STATUS.md`** §F and **`ROADMAP.md`** Phase A.
 
----
-
 ## 6) Camera
 
 **FUN_0000739a** sits on the tick/render boundary **[RECONSTRUCTED]** (multiple call sites). **Godot** uses an authored chase camera on **`PlayerAircraft`** **[INFERRED]** — not a direct port.
-
----
 
 ## 7) ID segments vs Pacific Conflict
 
@@ -123,8 +109,6 @@ flowchart LR
 
 **[INFERRED]** Most **game-identifiable** `FUN_*` for parity work live in **Pacific Conflict.c**; **ID*** files are **runtime, RNG, loader, helpers** unless proven otherwise (`docs/LOADER_CHAIN.md`).
 
----
-
 ## Related documents
 
 | Document | Role |
@@ -137,8 +121,6 @@ flowchart LR
 | `docs/contracts/mission_state_DAT_contract.md` | Mission bridge |
 | `docs/STRUCTS.md` | DAT_* / offset tables |
 | `docs/LOADER_CHAIN.md` | ID00–ID09 and loading |
-
----
 
 ## Update log
 

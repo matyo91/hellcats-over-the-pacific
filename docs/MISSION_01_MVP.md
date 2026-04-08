@@ -2,14 +2,10 @@
 
 Implementation-oriented notes for the first playable training mission. **[RECONSTRUCTED]** = from binary analysis; **[INFERRED]** = reasonable extrapolation; **[MVP AUTHORING DECISION]** = chosen for speed/scope; **[UNKNOWN]** = not blocking the slice.
 
----
-
 ## 1. Goal
 
 - **[INFERRED]** One playable training mission in Godot with deterministic stepping and seams for higher-fidelity RE later.
 - **[MVP AUTHORING DECISION]** Prefer playability and momentum over full historical parity (campaign, rendering, systems).
-
----
 
 ## 2. Scope
 
@@ -21,8 +17,6 @@ Implementation-oriented notes for the first playable training mission. **[RECONS
 
 **Unknown but not blocking:** **[UNKNOWN]** Original training script wording, exact historical scoring, full HUD/rendering parity.
 
----
-
 ## 3. RE context (constraints, not blocking code)
 
 Useful for future fidelity; MVP can approximate.
@@ -32,8 +26,6 @@ Useful for future fidelity; MVP can approximate.
 - **[RECONSTRUCTED]** `DAT_0001b738` player flight actor; mission gates `DAT_0001b5a0 + 0xa8/+0xac` (`0 < phase < 6`, `+0xac == 0` pre-step path).
 - **[INFERRED]** Mimic transitions around states `1/5/7/8/9` without a full FSM name map.
 - **[UNKNOWN]** Full names for control accumulators (`0x66e`/`0x672`/`0x66a`) and complete key-table parity—refine after the slice plays.
-
----
 
 ## 4. Architecture
 
@@ -72,8 +64,6 @@ Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.go
 - **[MVP APPROXIMATION]** **Mission-1** gameplay uses **`PlayerAircraft._physics_process`** → **`FlightModelMvp`** on the **Godot** clock; it does **not** call **`SimCore.tick()`** unless you explicitly bridge them later.
 - **[INFERRED]** Use **`SimCore`** + **`test_sim_tick_ordering.gd`** for **ordering** and **determinism**; use **`PlayerAircraft.get_flight_trace()`** for **flight** QA on the mission.
 
----
-
 ## 5. Data layer
 
 **Authoritative gameplay tunables** live in **`godot/data/mission_01/`** (committed JSON). **[MVP AUTHORING DECISION]** Do not mix loader/extraction fixtures (`hellcats/tests/fixtures/proven_loader_targets.json`, segment IDs, etc.) into mission gameplay JSON.
@@ -85,8 +75,6 @@ Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.go
 | `aircraft_mvp.json` | **[INFERRED]** Optional until flight tuning is fully externalized; schema in earlier drafts: limits, control rates, speed/climb model. |
 
 If this doc’s numbers drift from JSON, **trust the JSON** and update the doc.
-
----
 
 ## 6. Controls
 
@@ -109,14 +97,10 @@ If this doc’s numbers drift from JSON, **trust the JSON** and update the doc.
 
 **Behavior:** **[RECONSTRUCTED]** Hold inputs use `Input.get_axis` (`[-1,1]`); **[RECONSTRUCTED]** throttle **steps** use press edges → `throttle_impulse`. **[MVP APPROXIMATION]** Axis smoothing remains in `flight_model_mvp` (`input_lerp`); full `DAT_0001d858` input gating is not simulated—only **player active** gate (mission terminal / crash) zeros controls and lists ignored presses in `PlayerInputMap.last_input_trace`.
 
----
-
 ## 7. Start condition
 
 - **[MVP AUTHORING DECISION]** **Airborne** start (no carrier deck) to avoid deck collision, launch alignment, and low-speed edge cases before the flight model is mature.
 - **Spawn defaults:** see `mission_01_training.json` → `spawn` (position, `heading_deg`, `airspeed_mps`, `throttle_01`). Example values at authoring time: altitude ~1200 m, ~95 m/s, throttle ~0.72—**[INFERRED]** pitch/roll/yaw neutral with a short settle window in code if needed.
-
----
 
 ## 8. Flight model (MVP)
 
@@ -132,8 +116,6 @@ If this doc’s numbers drift from JSON, **trust the JSON** and update the doc.
 **Instrumentation:** **`FlightModelMvp.last_flight_trace`** / **`PlayerAircraft.get_flight_trace()`** — accumulators, norms, pitch/roll/heading, airspeed, throttle, VS.
 
 Exact coefficients may live in code or `aircraft_mvp.json`.
-
----
 
 ## 9. Mission flow and objectives
 
@@ -172,13 +154,9 @@ The JSON is the contract. Snapshot at authoring (update when files change):
 
 Checkpoint ring size/position: `checkpoints_mission_01.json` (`radius_m`, etc.).
 
----
-
 ## 10. HUD
 
 **[MVP AUTHORING DECISION]** Overlay: speed, altitude, heading, throttle %, current objective, success/failure banner. Optional later: horizon line, cockpit frame.
-
----
 
 ## 11. Deferred (explicit)
 
@@ -188,8 +166,6 @@ Checkpoint ring size/position: `checkpoints_mission_01.json` (`radius_m`, etc.).
 - Advanced aero (torque, compressibility, high-fidelity stall).
 - Full campaign scoring/debrief screens.
 
----
-
 ## 12. Build order (suggested)
 
 1. Scenes + `mission_runtime` + HUD shell.
@@ -197,8 +173,6 @@ Checkpoint ring size/position: `checkpoints_mission_01.json` (`radius_m`, etc.).
 3. `mission_objectives_m1` + checkpoints + data load from `godot/data/mission_01/`.
 4. HUD bindings + failure checks (impact, OOB timer, stall timer).
 5. Placeholder art + camera; polish pass.
-
----
 
 ## 13. Run and test
 
@@ -223,13 +197,9 @@ Extend `run_all.gd` when mission-rule unit tests are added; keep `tools/qa/test_
 
 Short session checklist: **`tools/qa/README.md`** → **Mission 1 smoke** (HUD live, complete objectives in order, success banner, one failure path, **R** restart).
 
----
-
 ## 14. QA principle
 
 Automate cheap, deterministic contracts (math, RNG, loader fixtures, objective evaluator inputs). Manual: camera, readability, feel. Details: **`tools/qa/README.md`**.
-
----
 
 ## 15. Reusable RE knowledge (short)
 

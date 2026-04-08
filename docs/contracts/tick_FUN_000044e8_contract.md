@@ -4,8 +4,6 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[MVP APPROXIMATION]**
 
 **Sources:** `Pacific Conflict.c` `FUN_000044e8` (≈5096–5145), `FUN_000044a4` (≈5079–5092), `FUN_0000435a` (≈5008–5075).
 
----
-
 ## FUN_000044e8 — main sim tick structure
 
 **[RECONSTRUCTED]** Order of operations:
@@ -22,8 +20,6 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[MVP APPROXIMATION]**
 
 **[INFERRED]** Player aircraft is commonly associated with **array 2** (`DAT_0001b5a4` / **`DAT_0001b738`**); full entity typing is **[UNKNOWN]** for every object.
 
----
-
 ## FUN_000044a4 — per-entity dispatch
 
 **[RECONSTRUCTED]** **`FUN_000044a4(char *param_1, int param_2)`** calls **`FUN_0000435a(param_1, param_2)`**, then optional flag updates on **`param_1 + 4`** depending on **`param_1 + 8`** and mission **`DAT_0001b5a0 + 0xb0`**.
@@ -31,8 +27,6 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[MVP APPROXIMATION]**
 **[RECONSTRUCTED]** Inside **`FUN_0000435a`**, **`param_2`** is used in at least one branch: for entity type **`*param_1 == 0x02`**, a loop updates data only when **`param_2 == 0`** (Pacific Conflict.c:5048–5071). So **second argument distinguishes code paths** inside the update chain.
 
 **[INFERRED]** Arrays **1–2** use **`param_2 == 0`**; arrays **3–4** use **`param_2 == 1`** — not “player vs non-player” by array index alone; it is **which dispatch path** **`FUN_0000435a`** applies.
-
----
 
 ## Godot `SimCore` mapping
 
@@ -47,8 +41,6 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[MVP APPROXIMATION]**
 **[MVP APPROXIMATION]** Mission-1 **playable** path uses **`PlayerAircraft` + `FlightModelMvp`** on **`_physics_process`**; **`SimCore`** is the **deterministic / parity** bridge and **does not** drive that scene’s frame loop unless explicitly wired later.
 
 **[MVP TUNING]** Ordering traces and snapshots are for **validation** and **future** wiring; default **`tick_order_trace_enabled`** is **false** to avoid overhead in batch tests.
-
----
 
 ## Related
 

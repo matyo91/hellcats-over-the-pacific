@@ -2,8 +2,6 @@
 
 Every row must cite **source file:line** or **binary offset**. All statements tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 
----
-
 ## Mission / sim globals (DAT_0001b5a0 block)
 
 **[RECONSTRUCTED]** Base: `DAT_0001b5a0` (Pacific Conflict.c:60, 73, 889). Mission data block; used in FUN_000044e8 and FUN_0000740a.
@@ -18,8 +16,6 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 | +0x2be | ptr | Callback (0) | Pacific Conflict.c:7425 |
 
 **[INFERRED]** Our SimCore `mission_phase_a8` = +0xa8, `mission_flag_ac` = +0xac. **[UNKNOWN]** Full layout of DAT_0001b5a0.
-
----
 
 ## FUN_000044e8 — array and count symbols
 
@@ -44,8 +40,6 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 **[RECONSTRUCTED]** `entity_array_1` … `entity_array_4`, **`pass_id`** 1–4, **`last_tick_order`** / **`get_last_tick_order()`** — see `docs/contracts/tick_FUN_000044e8_contract.md`.
 
----
-
 ## FUN_0000740a — input handler globals
 
 **[RECONSTRUCTED]** Variables read/written in FUN_0000740a (Pacific Conflict.c:7366+).
@@ -65,8 +59,6 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 **[UNKNOWN]** Exact semantics of each value (e.g. meaning of DAT_0001d858 values 1–9).
 
----
-
 ## Godot `PlayerInputMap` (FUN_0000740a convergence)
 
 **[RECONSTRUCTED]** Throttle **step** actions correspond to **`+` / `=`** and **`-`** / keypad plus/minus (Pacific Conflict.c cases `0x2b`/`0x3d` and `0x2d`/`0x5f` for `DAT_00024cf6` when `DAT_0001d858 < 6`). Implemented as `throttle_step_up` / `throttle_step_down` → `throttle_impulse` in `hellcats/flight/player_input_map.gd`.
@@ -79,8 +71,6 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 See `docs/contracts/input_godot_contract.md`.
 
----
-
 ## Godot `AircraftState` / `FlightModelMvp` (FUN_0000e792 convergence)
 
 **[RECONSTRUCTED]** `movement_66e`, `movement_672`, `movement_66a` mirror proven **byte offsets** `0x66e`, `0x672`, `0x66a` on the player entity; updated each tick with **`FlightMath.add_delta_smoothed_*`** toward **int** targets from normalized controls (see `docs/contracts/flight_FUN_0000e792_contract.md`).
@@ -88,8 +78,6 @@ See `docs/contracts/input_godot_contract.md`.
 **[MVP APPROXIMATION]** Targets are not **local_46** / **local_42** from **FUN_0000e42a** / template math; they are **[MVP TUNING]** scaled commands.
 
 **[INFERRED]** `snapshot()` includes these fields for HUD/objectives/traces.
-
----
 
 ## Entity (FUN_0000e792) — key offsets
 
@@ -138,8 +126,6 @@ See `docs/contracts/input_godot_contract.md`.
 
 **[INFERRED]** Names in our EntityState (field_00, pos_2e, weapon_count_67d, etc.) match these offsets. **[UNKNOWN]** Full entity size and any padding; 0x1a3 is last offset we use in the trace.
 
----
-
 ## FUN_0000e792 — ownership branch (0x66e, 0x672, 0x66a writes)
 
 **[RECONSTRUCTED]** The following writes occur **only when** `(param_1 == DAT_0001b738) || (param_1 == DAT_0001b888)` (Pacific Conflict.c:14179). **DAT_0001b738** = player entity pointer; **DAT_0001b888** = second entity pointer (e.g. target). See [NOTES.md](NOTES.md) “FUN_0000e792 — ownership branch” for setup/use sites. **[UNKNOWN]** Semantic meaning of the three accumulators (e.g. axis or control surface).
@@ -153,16 +139,12 @@ See `docs/contracts/input_godot_contract.md`.
 
 **Proven inputs to the branch:** `iVar1 = *param_1`, `DAT_00026004 = param_1[1]`, `iVar20 = *(int*)(param_1+0x62a)>>2`, `sVar15` from FUN_0000e42a/FUN_0000e468, `local_26` from FUN_0000e570, `sVar21` from earlier 0x669/0x1a1/0x685/0x19a logic (Pacific Conflict.c:14166–14177). **[RECONSTRUCTED]** Safe for port: branch condition and delta rules. **[UNKNOWN]** Unresolved: semantic names for 0x66e/0x672/0x66a; full meaning of DAT_0001b888 (Godot may treat as “second designated entity” only).
 
----
-
 ## Ownership branch status (DAT_0001b738 / DAT_0001b888)
 
 - **[RECONSTRUCTED]** **DAT_0001b738** = player entity pointer; assigned when the first qualifying entity is created (e.g. FUN_0000dff0 at 13616–13617); read/written as the single “player” plane. [Pacific Conflict.c:13616–13617, 7392, 7446, 14179]
 - **[RECONSTRUCTED]** **DAT_0001b888** = second entity pointer; cleared at 6101; set from `*(param_2+8)` in FUN_0000ff44 when DAT_0001d858 is 1, 8, or 7 and other conditions. [Pacific Conflict.c:6101, 7450, 7485–7486, 15117–15122]
 - **[RECONSTRUCTED]** The 0x66e / 0x672 / 0x66a (and 0x669 clear) writes happen **only** when `param_1 == DAT_0001b738` or `param_1 == DAT_0001b888`. No other entity receives these updates. [Pacific Conflict.c:14179]
 - **[INFERRED]** For the live port, Godot must maintain two designated entity references (player + second) and run the movement-smoothing block only for those two. **[UNKNOWN]** Semantic role of DAT_0001b888 (e.g. “target” vs “second player”); do not ascribe beyond “second designated entity.”
-
----
 
 ## External pointed-to record (param_1[1]) — proven offsets
 
@@ -183,8 +165,6 @@ See `docs/contracts/input_godot_contract.md`.
 **[RECONSTRUCTED]** `compute_template_field_40_adjustment()` in `SimCore` mirrors the proven `FUN_0000e792` rule at lines 14067-14074: `field_40` is used directly when `direction_char_679 == '-'`, otherwise it is halved toward zero.
 **[RECONSTRUCTED]** `field_38` is also now modeled in Godot helper math because `FUN_0000e570` reads `*(int *)(DAT_00026004 + 0x38)` directly. [Pacific Conflict.c:13910-13915]
 
----
-
 ## Cross-reference to Godot
 
 **[INFERRED]** The following names are used in the Godot sim and tests; offsets are from the sections above.
@@ -200,8 +180,6 @@ See `docs/contracts/input_godot_contract.md`.
 | EntityState.OFFSETS | See entity table above | Entity (FUN_0000e792) |
 
 **[INFERRED]** Player in trace = first entity in array 2 (DAT_0001b5a4 / DAT_0001b738 is player ptr in FUN_0000740a).
-
----
 
 ## Godot integration boundary / blocked
 

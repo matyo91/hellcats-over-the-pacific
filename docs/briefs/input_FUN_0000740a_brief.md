@@ -4,8 +4,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 
 **Source:** `Hellcats-Over-the-Pacific_Mac_EN/ResEdit/CODE/Pacific Conflict.c`, `FUN_0000740a`, lines 7368–8167.
 
----
-
 ## Overview
 
 **[RECONSTRUCTED]** `uint FUN_0000740a(int param_1, int param_2)` is the central **keyboard/mouse-style input dispatcher**. It receives a **virtual key code** `param_1` and an **action code** `param_2`, mutates **global UI/flight/mission state**, then runs **post-input hooks** (camera follow, HUD bits, mode-specific updates) and returns a **uint mask** `uVar6` consumed by downstream logic (bit tests against `FUN_00000354()` output, OR-ing flags such as `1`, `2`, `6`, `8`, `9`, `0x10a`, `0x201`, etc.).
@@ -13,8 +11,6 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 **[INFERRED]** This is **not** analog stick samples: it is **discrete key events** plus **accumulators** (`DAT_00024cf6`, mouse deltas, angular inputs) updated inside the same function and in helper paths.
 
 **[INFERRED]** `param_2 == 3` is the dominant **“key went down / active edge”** branch; `param_2 == 4` appears in a **guard** together with **Space (0x20)** and several letters—**[UNKNOWN]** exact Toolbox meaning of `3` vs `4` beyond “not the same class of event as 3”.
-
----
 
 ## Pseudocode (structure)
 
@@ -112,8 +108,6 @@ fun_0740a(key_code param_1, action param_2) -> uint uVar6
 
 **[RECONSTRUCTED]** The **key switch** is `switch(param_1)` at line 7470; the **mode switch** is `switch(DAT_0001d858)` at line 8022.
 
----
-
 ## Constants (key codes and magic numbers)
 
 | Value | ASCII / note | Role |
@@ -135,8 +129,6 @@ fun_0740a(key_code param_1, action param_2) -> uint uVar6
 
 **[UNKNOWN]** Full **semantic names** for `DAT_0001d858` values `1,2,3,5,6,7,8,9` (only **partial** behavior is visible from branches).
 
----
-
 ## Field / global usage (input-relevant)
 
 **[RECONSTRUCTED]**
@@ -153,16 +145,12 @@ fun_0740a(key_code param_1, action param_2) -> uint uVar6
 
 **[INFERRED]** Return value **`uVar6`** is a **bit flag packet** for “something requested camera/HUD/briefing update”; clearing **`(player+0x641)`** when non-zero suggests **“consume latch”** semantics.
 
----
-
 ## Unknowns
 
 - **[UNKNOWN]** Exact **table** of all **`param_2`** values emitted by the Mac event path (only `3` and `4` appear in this function’s explicit tests).
 - **[UNKNOWN]** Whether **`FUN_00002e08`** is exactly `abs` or includes **saturation** (name suggests helper).
 - **[UNKNOWN]** End-to-end meaning of **`uVar6`** bits returned to caller (needs cross-ref to callers of `FUN_0000740a`).
 - **[UNKNOWN]** Complete **player+0x32** values `0xe772` / `0xf7f0` (mode flags for numeric row behavior).
-
----
 
 ## Cross-references
 

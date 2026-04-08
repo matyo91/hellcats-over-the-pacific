@@ -2,8 +2,6 @@
 
 **Source:** `Pacific Conflict.c` **FUN_000044e8** (5102–5105), **FUN_000044a4** (5083–5088); `STRUCTS.md` **DAT_0001b5a0**.
 
----
-
 ## Fields
 
 | Offset | Role | **[RECONSTRUCTED]** use |
@@ -14,8 +12,6 @@
 
 **[UNKNOWN]** Full semantic names for all phase values.
 
----
-
 ## Godot MVP mapping
 
 **[MVP APPROXIMATION]** `MissionController` exposes **`mission_phase_a8`** and **`mission_flag_ac`** for convergence and future **SimCore** wiring:
@@ -24,8 +20,6 @@
 - **Terminal** (success/failure): **`mission_phase_a8 = 0`**, **`mission_flag_ac = 0`** — **arrays do not run** in a linked **SimCore** tick (same idea as “mission not in flying phase”).
 
 **[INFERRED]** `+0xb0` is **not** mirrored in **MissionController** until HUD/map integration; document only.
-
----
 
 ## Related
 

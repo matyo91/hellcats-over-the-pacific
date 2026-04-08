@@ -4,13 +4,9 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[MVP APPROXIMATION]** / **[MVP TU
 
 **Source:** `Pacific Conflict.c` `FUN_0000e792` (≈14018–14247+), `docs/NOTES.md` ownership branch.
 
----
-
 ## Purpose
 
 Bind the Godot **Mission-1** flight path to **evidence-backed** motion rules from **`FUN_0000e792`** without porting the full entity/sim stack. The MVP **player** is always the **designated player** (mirrors `param_1 == DAT_0001b738` for this slice).
-
----
 
 ## Update order (this pass)
 
@@ -32,8 +28,6 @@ Bind the Godot **Mission-1** flight path to **evidence-backed** motion rules fro
 
 **[UNKNOWN]** Semantic mapping of **which** axis is **pitch vs roll vs yaw** in **0x66e/0x672/0x66a**; we follow **NOTES.md** ordering and **integration** convention: **66e→pitch**, **672→roll**, **66a→yaw** (**[INFERRED]**).
 
----
-
 ## Skipped in this pass (explicit)
 
 - **0x669 clear** when `(status_1a1 & 0x40) && movement_66e == 0` (**[RECONSTRUCTED]** 14244–14246) — no `status_1a1` in MVP **AircraftState**.
@@ -41,15 +35,11 @@ Bind the Godot **Mission-1** flight path to **evidence-backed** motion rules fro
 - **Full** `local_46` / `local_42` from **FUN_0000e42a** chain and **template** fields.
 - **Combat**, mission scripting, map/replay.
 
----
-
 ## Constants
 
 **[RECONSTRUCTED]** Delta rule: if `|delta| < 8` add full `delta`; else add `(delta + (7 if delta < 0 else 0)) >> 3` — implemented as `FlightMath.add_delta_smoothed_int` / `add_delta_smoothed_s16`.
 
 **[MVP TUNING]** `pitch_max_int` / `roll_max_int` / `yaw_max_int` — scale **float** commands to **int** targets (default **8192**).
-
----
 
 ## Related files
 
