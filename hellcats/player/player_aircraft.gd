@@ -11,6 +11,7 @@ var aircraft_state
 var flight_model
 var aircraft_data: Dictionary = {}
 var active: bool = false
+var _input_tick: int = 0
 
 func _ready() -> void:
 	PlayerInputMapScript.ensure_actions()
@@ -38,7 +39,13 @@ func restart(mission_data: Dictionary) -> void:
 func _physics_process(delta: float) -> void:
 	if not active:
 		return
-	var controls := PlayerInputMapScript.read_input()
+	var packet: Dictionary = PlayerInputMapScript.read_input_packet(active)
+	var controls: Dictionary = packet.get("controls", {}) as Dictionary
+	var trace: Dictionary = packet.get("trace", {}) as Dictionary
+	if not trace.is_empty():
+		_input_tick += 1
+		trace["tick"] = _input_tick
+		PlayerInputMapScript.last_input_trace = trace
 	flight_model.step(aircraft_state, controls, delta)
 	_apply_state_to_transform()
 	if aircraft_state.position_m.y <= 0.5 and not aircraft_state.is_crashed:

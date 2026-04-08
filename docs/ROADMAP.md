@@ -30,7 +30,8 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 | Item | Status | Evidence / notes |
 |------|--------|-------------------|
 | Input handler (FUN_0000740a) variables | Documented | [RECONSTRUCTED] Pacific Conflict.c:7366+; STRUCTS.md “FUN_0000740a”. |
-| Key code → param_1 mapping | Not started | [UNKNOWN] Table of key codes (0x20, 0x22, 0x32, …) in FUN_0000740a. |
+| Godot gather + throttle step + trace | Done | [RECONSTRUCTED] Step keys → `throttle_impulse`; [MVP APPROXIMATION] gate + `THROTTLE_STEP_IMPULSE`. `docs/input_godot_contract.md`, `PlayerInputMap.last_input_trace`. |
+| Key code → param_1 mapping | Partial | [RECONSTRUCTED] Brief + Godot `ACTIONS`; [UNKNOWN] full Mac table vs all branches. |
 | DAT_0001d858 state machine | Not started | [RECONSTRUCTED] Values 1, 7, 8, 9 in code. [UNKNOWN] full FSM. |
 | FUN_00005df8 behavior | Not started | [RECONSTRUCTED] Called when flag_ac == 0. [UNKNOWN] logic. |
 | FUN_00006fb8 behavior | Not started | [RECONSTRUCTED] Post-entity tick. [UNKNOWN] logic. |

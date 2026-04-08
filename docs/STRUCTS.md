@@ -61,6 +61,20 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 ---
 
+## Godot `PlayerInputMap` (FUN_0000740a convergence)
+
+**[RECONSTRUCTED]** Throttle **step** actions correspond to **`+` / `=`** and **`-`** / keypad plus/minus (Pacific Conflict.c cases `0x2b`/`0x3d` and `0x2d`/`0x5f` for `DAT_00024cf6` when `DAT_0001d858 < 6`). Implemented as `throttle_step_up` / `throttle_step_down` → `throttle_impulse` in `hellcats/flight/player_input_map.gd`.
+
+**[RECONSTRUCTED]** Per-tick **trace** lists `pressed` / `held` / `released` action names and `normalized` floats passed to `FlightModelMvp`.
+
+**[MVP APPROXIMATION]** `THROTTLE_STEP_IMPULSE` (float in `0..1`) replaces the original signed char + shift/`FUN_00002e08` accumulator chain.
+
+**[MVP APPROXIMATION]** **Gating** is only `player_active` on `PlayerAircraft`, not the full `DAT_0001d858` / `DAT_0001b870` / mission `+0x98` tree.
+
+See `docs/input_godot_contract.md`.
+
+---
+
 ## Entity (FUN_0000e792) — key offsets
 
 **[RECONSTRUCTED]** `param_1` is `int *` (entity pointer). Byte offsets: `(int)param_1 + 0xNNN` or `param_1 + K` (K in ints → byte offset K*4). Only offsets explicitly read/written in FUN_0000e792 or its immediate callees are listed; size/role inferred from access.

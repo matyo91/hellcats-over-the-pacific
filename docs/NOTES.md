@@ -17,6 +17,16 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 
 ## Entries
 
+### 2026-04-08 — Input convergence pass (FUN_0000740a → Godot)
+
+- **[RECONSTRUCTED]** `PlayerInputMap` now mirrors **press/hold/release** traces and **throttle step** (`+`/`-` / keypad) as **edges** → `throttle_impulse`, with **hold** throttle still on `W`/`S` / Page Up/Down (`read_input_packet`, `compute_outputs`). See `docs/input_godot_contract.md`.
+- **[RECONSTRUCTED]** `FlightModelMvp` applies `controls.throttle_impulse` as an instant delta on top of axis rate (original `DAT_00024cf6` path is not fully ported).
+- **[MVP APPROXIMATION]** Single gate **`player_active`** instead of `DAT_0001d858` / overlay / mission `+0x98` branches; gated presses recorded in `trace.ignored`.
+- **[INFERRED]** Per-tick trace: `pressed` / `held` / `released` / `normalized` / `gated` — inspect `PlayerInputMap.last_input_trace` during play or tests.
+- **[UNKNOWN]** Full Mac `param_2` enum parity; only Godot action edges are logged.
+
+**Validation:** `godot/tests/unit/test_player_input_frame.gd` (deterministic scenarios: hold pitch, tap roll, throttle steps, gate). Run: `godot --headless --path . -s godot/tests/run_all.gd` (from project root; requires Godot 4 on `PATH`).
+
 ### FUN_000044e8 — main sim update order
 
 - **[RECONSTRUCTED]** `FUN_000044e8` (Pacific Conflict.c:5094) is the main sim tick: it checks `*(short *)(DAT_0001b5a0 + 0xac)`; if zero, calls `FUN_00005df8()`. [Pacific Conflict.c:5101-5102]

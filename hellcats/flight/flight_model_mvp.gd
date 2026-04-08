@@ -27,8 +27,14 @@ func step(state, controls: Dictionary, delta: float) -> void:
 	var assist: Dictionary = config.get("assist", {})
 	var stall: Dictionary = config.get("stall", {})
 
+	## [RECONSTRUCTED] FUN_0000740a DAT_00024cf6 step edges map to throttle_impulse; hold uses axis.
+	## [MVP APPROXIMATION] Impulse is direct 0..1 delta; original uses stepped char accumulation.
+	var throttle_axis: float = float(controls.get("throttle", 0.0))
+	var throttle_impulse: float = float(controls.get("throttle_impulse", 0.0))
 	state.throttle_01 = clampf(
-		state.throttle_01 + float(controls.get("throttle", 0.0)) * float(rates.get("throttle_change_per_s", 0.45)) * delta,
+		state.throttle_01
+		+ throttle_axis * float(rates.get("throttle_change_per_s", 0.45)) * delta
+		+ throttle_impulse,
 		0.0,
 		1.0
 	)

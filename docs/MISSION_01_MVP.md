@@ -55,7 +55,7 @@ Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.go
 | Core | `hellcats/core/sim_core.gd` | Fixed-step / deterministic sequencing (existing sim bridge). |
 | Core | `hellcats/core/flight_math.gd` | Shared math for flight/control. |
 | Flight | `hellcats/flight/aircraft_state.gd` | Telemetry: speed, altitude, attitude, throttle, flags. |
-| Flight | `hellcats/flight/player_input_map.gd` | Actions → normalized control intent. |
+| Flight | `hellcats/flight/player_input_map.gd` | Actions → normalized control intent + `read_input_packet` / trace; see `docs/input_godot_contract.md`. |
 | Flight | `hellcats/flight/flight_model_mvp.gd` | MVP integrator (`AircraftState` + control intent + `flight_math`). |
 | Mission | `hellcats/mission/mission_controller.gd` | Loads JSON, wires player, checkpoints, HUD; objectives, failure checks, restart. |
 | Mission | `hellcats/mission/mission_objectives_m1.gd` | Pure, testable objective evaluation from telemetry snapshots (data-driven). |
@@ -92,6 +92,7 @@ If this doc’s numbers drift from JSON, **trust the JSON** and update the doc.
 | Roll left / right | `Left` / `Right` or `A` / `D` |
 | Yaw left / right | `Q` / `E` |
 | Throttle down / up | `Page Down` / `Page Up` or `S` / `W` |
+| Throttle step down / up (discrete) | `-` / `=` or keypad `-` / `+` **[RECONSTRUCTED]** FUN_0000740a `DAT_00024cf6` step; **[MVP APPROXIMATION]** fixed impulse in `flight_model_mvp` |
 
 **Mission**
 
@@ -100,7 +101,7 @@ If this doc’s numbers drift from JSON, **trust the JSON** and update the doc.
 | Restart | `R` |
 | Quit / back | `Esc` (or stop scene in harness) **[MVP AUTHORING DECISION]** |
 
-**Behavior:** **[MVP AUTHORING DECISION]** Keyboard-only, digital axes with smoothing (`input_lerp`); opposite inputs on one axis net to zero.
+**Behavior:** **[RECONSTRUCTED]** Hold inputs use `Input.get_axis` (`[-1,1]`); **[RECONSTRUCTED]** throttle **steps** use press edges → `throttle_impulse`. **[MVP APPROXIMATION]** Axis smoothing remains in `flight_model_mvp` (`input_lerp`); full `DAT_0001d858` input gating is not simulated—only **player active** gate (mission terminal / crash) zeros controls and lists ignored presses in `PlayerInputMap.last_input_trace`.
 
 ---
 
