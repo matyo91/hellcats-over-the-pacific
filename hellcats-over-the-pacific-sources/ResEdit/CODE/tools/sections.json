@@ -1,0 +1,37 @@
+{
+  "sections": [
+    {
+      "name": "segment_1_after_header",
+      "offset": 32,
+      "size": 108348,
+      "entropy": 6.6684,
+      "code_score": 0.084,
+      "source": "u32[1]=length, start=0x20"
+    },
+    {
+      "name": "at_offset_u32[1]",
+      "offset": 108380,
+      "size": 146980,
+      "entropy": 4.4098,
+      "code_score": 0.0078,
+      "source": "header offset 0x1a75c"
+    },
+    {
+      "name": "at_offset_u32[2]",
+      "offset": 3528,
+      "size": 42204,
+      "entropy": 6.6023,
+      "code_score": 0.1328,
+      "source": "header offset 0xdc8"
+    },
+    {
+      "name": "at_offset_u32[3]",
+      "offset": 45732,
+      "size": 62648,
+      "entropy": 6.6569,
+      "code_score": 0.0586,
+      "source": "header offset 0xb2a4"
+    }
+  ],
+  "file_size": 255360
+}
