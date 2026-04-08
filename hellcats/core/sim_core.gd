@@ -50,6 +50,12 @@ var tick_order_trace_enabled: bool = false
 
 var _tick_count: int = 0
 
+## [RECONSTRUCTED] Count of rng.next() calls this tick (RNG timing / parity). Reset each tick().
+var _rng_draws_this_tick: int = 0
+
+## [RECONSTRUCTED] Entities updated per FUN_000044a4 param_2 (0 vs 1) this tick. See docs/FUN_0000435a_contract.md.
+var _param_2_entity_updates: Dictionary = {0: 0, 1: 0}
+
 ## Designated entity refs (DAT_0001b738 / DAT_0001b888). Only these receive 0x66e/0x672/0x66a updates (Pacific Conflict.c:14179).
 var designated_player_entity: RefCounted = null
 var designated_target_entity: RefCounted = null
@@ -62,6 +68,8 @@ func _init(initial_rng_seed: int = 0) -> void:
 ## One deterministic sim tick. No delta; fixed-step.
 func tick() -> void:
 	_tick_count += 1
+	_rng_draws_this_tick = 0
+	_param_2_entity_updates = {0: 0, 1: 0}
 	designated_player_entity = entity_array_2[0] if entity_array_2.size() > 0 else null
 	var input_used: Dictionary = input_packet.duplicate()
 	var player_before: Variant = null
@@ -89,6 +97,8 @@ func tick() -> void:
 			"arrays_ran": true,
 			"passes": passes,
 			"designated_player_is_array2_index0": entity_array_2.size() > 0,
+			"rng_draws_this_tick": _rng_draws_this_tick,
+			"param_2_entity_updates": _param_2_entity_updates.duplicate(),
 		}
 		if tick_order_trace_enabled:
 			last_tick_order["player_snapshot_before_tick"] = player_before
@@ -107,6 +117,8 @@ func tick() -> void:
 			"arrays_ran": false,
 			"passes": [],
 			"designated_player_is_array2_index0": entity_array_2.size() > 0,
+			"rng_draws_this_tick": _rng_draws_this_tick,
+			"param_2_entity_updates": _param_2_entity_updates.duplicate(),
 		}
 		if tick_order_trace_enabled:
 			last_tick_order["player_snapshot_before_tick"] = player_before
@@ -127,6 +139,10 @@ func tick() -> void:
 
 func get_last_tick_order() -> Dictionary:
 	return last_tick_order
+
+func _rng_consume() -> int:
+	_rng_draws_this_tick += 1
+	return rng.next()
 
 ## [INFERRED] Minimal fields for ordering QA; not full entity export.
 func _snapshot_entity_order(entity: RefCounted) -> Dictionary:
@@ -155,6 +171,7 @@ func _call_06fb8() -> void:
 ## Update one array; param_2 is 0 or 1 (FUN_000044a4 second arg).
 func _update_entity_array(arr: Array, param_2: int, pass_id: int) -> void:
 	for entity in arr:
+		_param_2_entity_updates[param_2] = int(_param_2_entity_updates.get(param_2, 0)) + 1
 		_update_single_entity(entity as RefCounted, param_2, pass_id)
 
 ## Placeholder: per-entity update (FUN_000044a4 → FUN_0000435a / FUN_0000e792).
@@ -169,10 +186,10 @@ func _update_single_entity(entity: RefCounted, param_2: int, _pass_id: int) -> v
 func _apply_randomized_control_offsets(entity: RefCounted) -> void:
 	var flags_685: int = entity.get_u8_field("flags_685")
 	if (flags_685 & 0x04) != 0:
-		var movement_662: int = entity.get_s16_field("movement_662") + (rng.next() & 0x7F) - 0x40
+		var movement_662: int = entity.get_s16_field("movement_662") + (_rng_consume() & 0x7F) - 0x40
 		entity.set_s16_field("movement_662", _clamp_s16(movement_662, -0x200, 0x200))
 	if (flags_685 & 0x08) != 0:
-		var movement_666: int = entity.get_s16_field("movement_666") + (rng.next() & 0x7F) - 0x40
+		var movement_666: int = entity.get_s16_field("movement_666") + (_rng_consume() & 0x7F) - 0x40
 		entity.set_s16_field("movement_666", _clamp_s16(movement_666, -0x140, 0x140))
 	if (entity.get_u16_field("status_1a1") & 0x0001) != 0:
 		entity.set_s16_field("movement_662", 0)
@@ -212,7 +229,7 @@ func _apply_control_threshold_decrement(entity: RefCounted) -> void:
 	entity.set_s16_field("status_1a0", accumulator - threshold)
 	var count_67d: int = entity.get_s8_field("weapon_count_67d")
 	var count_67e: int = entity.get_s8_field("weapon_count_67e")
-	if ((rng.next() & 1) == 0) or count_67d == 0:
+	if ((_rng_consume() & 1) == 0) or count_67d == 0:
 		if count_67e != 0:
 			entity.set_s8_field("weapon_count_67e", count_67e - 1)
 	else:

@@ -26,6 +26,7 @@ func setup_mission(aircraft_config: Dictionary, mission_data: Dictionary) -> voi
 	aircraft_state.apply_spawn(mission_data.get("spawn", {}))
 	active = true
 	_apply_state_to_transform()
+	_configure_camera_from_data()
 
 func set_active(enabled: bool) -> void:
 	active = enabled
@@ -48,6 +49,7 @@ func _physics_process(delta: float) -> void:
 		PlayerInputMapScript.last_input_trace = trace
 	flight_model.step(aircraft_state, controls, delta)
 	_apply_state_to_transform()
+	_smooth_camera(delta)
 	if aircraft_state.position_m.y <= 0.5 and not aircraft_state.is_crashed:
 		aircraft_state.is_crashed = true
 		active = false
@@ -60,6 +62,44 @@ func _apply_state_to_transform() -> void:
 		deg_to_rad(-aircraft_state.heading_deg),
 		deg_to_rad(aircraft_state.roll_deg)
 	)
+
+func _smooth_camera(delta: float) -> void:
+	var cam: Camera3D = get_node_or_null("FollowCamera")
+	if cam == null:
+		return
+	var cfg: Dictionary = aircraft_data.get("camera", {})
+	var roll_sway: float = float(cfg.get("roll_sway_deg", 12.0))
+	var pitch_sway: float = float(cfg.get("pitch_sway_deg", 4.0))
+	var smooth: float = float(cfg.get("response", 1.85))
+	var t: float = clampf(delta * smooth, 0.0, 1.0)
+	var base: Vector3 = Vector3(
+		float(cfg.get("pitch_deg", -11.0)),
+		float(cfg.get("yaw_deg", 180.0)),
+		float(cfg.get("roll_deg", 0.0))
+	)
+	var target_roll: float = base.z + clampf(-aircraft_state.roll_deg, -65.0, 65.0) * (roll_sway / 65.0)
+	var target_pitch: float = base.x + clampf(aircraft_state.pitch_deg, -35.0, 35.0) * (pitch_sway / 35.0)
+	cam.rotation_degrees.x = lerpf(cam.rotation_degrees.x, target_pitch, t)
+	cam.rotation_degrees.y = lerpf(cam.rotation_degrees.y, base.y, t)
+	cam.rotation_degrees.z = lerpf(cam.rotation_degrees.z, target_roll, t)
+
+func _configure_camera_from_data() -> void:
+	var cam: Camera3D = get_node_or_null("FollowCamera")
+	if cam == null:
+		return
+	var cfg: Dictionary = aircraft_data.get("camera", {})
+	var pos: Vector3 = Vector3(
+		float(cfg.get("offset_x", 0.0)),
+		float(cfg.get("offset_y", 3.5)),
+		float(cfg.get("offset_z", 17.0))
+	)
+	cam.position = pos
+	cam.rotation_degrees = Vector3(
+		float(cfg.get("pitch_deg", -11.0)),
+		float(cfg.get("yaw_deg", 180.0)),
+		float(cfg.get("roll_deg", 0.0))
+	)
+	cam.fov = float(cfg.get("fov_deg", 64.0))
 
 func get_snapshot() -> Dictionary:
 	return aircraft_state.snapshot()
@@ -96,6 +136,7 @@ func _ensure_visuals() -> void:
 		camera = Camera3D.new()
 		camera.name = "FollowCamera"
 		add_child(camera)
-	camera.position = Vector3(0.0, 3.0, 14.0)
-	camera.rotation_degrees = Vector3(-10.0, 180.0, 0.0)
+	camera.position = Vector3(0.0, 3.5, 17.0)
+	camera.rotation_degrees = Vector3(-11.0, 180.0, 0.0)
 	camera.current = true
+	camera.fov = 64.0

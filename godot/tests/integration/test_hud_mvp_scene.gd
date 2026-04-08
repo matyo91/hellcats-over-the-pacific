@@ -14,7 +14,10 @@ func run() -> bool:
 		return false
 	ok = Assertions.assert_true(root.get_node_or_null("RootMargin/VBox/TitleLabel") != null, "HUD has TitleLabel path") and ok
 	ok = Assertions.assert_true(root.get_node_or_null("RootMargin/VBox/ObjectiveLabel") != null, "HUD has ObjectiveLabel path") and ok
+	ok = Assertions.assert_true(root.get_node_or_null("RootMargin/VBox/WarningLabel") != null, "HUD has WarningLabel path") and ok
 	ok = Assertions.assert_true(root.get_node_or_null("RootMargin/VBox/TelemetryLabel") != null, "HUD has TelemetryLabel path") and ok
+	ok = Assertions.assert_true(root.get_node_or_null("RootMargin/VBox/NavLabel") != null, "HUD has NavLabel path") and ok
+	ok = Assertions.assert_true(root.get_node_or_null("RootMargin/VBox/AttitudeStrip") != null, "HUD has AttitudeStrip path") and ok
 	ok = Assertions.assert_true(root.get_node_or_null("RootMargin/VBox/StatusLabel") != null, "HUD has StatusLabel path") and ok
 	root.free()
 	return ok

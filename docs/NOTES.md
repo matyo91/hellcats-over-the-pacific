@@ -17,6 +17,14 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 
 ## Entries
 
+### 2026-04-08 — Convergence Loop Mode (batch: mission bridge + RNG draws + FUN_0000435a counts)
+
+- **[INFERRED]** Backlog + loop template: `docs/CONVERGENCE_BACKLOG.md`, `docs/CONVERGENCE_LOOP_TEMPLATE.md`.
+- **[RECONSTRUCTED]** **Iteration 1 — Mission gates:** `MissionController` sets **`mission_phase_a8` / `mission_flag_ac`** (running: 1/1; terminal: 0/0); **`get_mission_sim_bridge_state()`**. See `docs/mission_state_DAT_contract.md`.
+- **[RECONSTRUCTED]** **Iteration 2 — RNG timing:** `SimCore._rng_consume()` counts draws per tick; **`last_tick_order.rng_draws_this_tick`**.
+- **[RECONSTRUCTED]** **Iteration 3 — FUN_0000435a / param_2:** **`last_tick_order.param_2_entity_updates`** `{0: n, 1: m}`; contract `docs/FUN_0000435a_contract.md` (type 0x02 loop gated by `param_2==0` not yet branched in code).
+- **Validation:** `godot/tests/integration/test_sim_tick_ordering.gd` (includes RNG/param2 counts).
+
 ### 2026-04-08 — Entity tick ordering convergence (FUN_000044e8 / FUN_000044a4)
 
 - **[RECONSTRUCTED]** `SimCore.tick()` now records **`last_tick_order`**: four passes in order **DAT_0001d4a4** → **DAT_0001b5a4** → **DAT_0001d0e4** → **DAT_0001cbe4** with **`param_2`** **0, 0, 1, 1**, then **`_call_06fb8()`**, matching Pacific Conflict.c:5105–5142.

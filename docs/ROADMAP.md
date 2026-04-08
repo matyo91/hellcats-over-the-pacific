@@ -2,6 +2,8 @@
 
 Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 
+**[INFERRED]** Ongoing convergence backlog: `docs/CONVERGENCE_BACKLOG.md`; process template: `docs/CONVERGENCE_LOOP_TEMPLATE.md`.
+
 ---
 
 ## Phase A — Skeleton and determinism

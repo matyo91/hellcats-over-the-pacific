@@ -71,16 +71,20 @@ func step(state, controls: Dictionary, delta: float) -> void:
 		float(state.movement_66a) / float(maxi(yaw_max, 1)), -1.0, 1.0
 	)
 
+	var p_min: float = float(limits.get("min_pitch_deg", -35.0))
+	var p_max: float = float(limits.get("max_pitch_deg", 35.0))
+	var r_min: float = float(limits.get("min_roll_deg", -65.0))
+	var r_max: float = float(limits.get("max_roll_deg", 65.0))
 	state.pitch_deg = clampf(
 		state.pitch_deg + pitch_norm * float(rates.get("pitch_rate_deg_s", 38.0)) * delta,
-		-35.0,
-		35.0
+		p_min,
+		p_max
 	)
 
 	state.roll_deg = clampf(
 		state.roll_deg + roll_norm * float(rates.get("roll_rate_deg_s", 70.0)) * delta,
-		-65.0,
-		65.0
+		r_min,
+		r_max
 	)
 
 	## [MVP TUNING] Light roll centering when stick neutral (teachable level flight).
@@ -110,9 +114,11 @@ func step(state, controls: Dictionary, delta: float) -> void:
 	state.heading_deg = wrapf(state.heading_deg + yaw_rate * delta, 0.0, 360.0)
 	state.bank_deg = state.roll_deg
 
-	state.vertical_speed_mps = (state.pitch_deg * float(climb_model.get("pitch_to_vertical_speed_gain", 1.15))) - (float(climb_model.get("gravity_drop_mps2", 9.81)) * (1.0 - state.throttle_01) * 0.18)
+	var throttle_lift: float = float(climb_model.get("throttle_lift_factor", 0.18))
+	state.vertical_speed_mps = (state.pitch_deg * float(climb_model.get("pitch_to_vertical_speed_gain", 1.15))) - (float(climb_model.get("gravity_drop_mps2", 9.81)) * (1.0 - state.throttle_01) * throttle_lift)
+	var stall_vs_penalty: float = float(stall.get("vertical_speed_penalty_mps", 16.0))
 	if state.airspeed_mps < float(stall.get("speed_mps_below", 55.0)):
-		state.vertical_speed_mps -= 16.0
+		state.vertical_speed_mps -= stall_vs_penalty
 		state.stall_seconds += delta
 	else:
 		state.stall_seconds = maxf(0.0, state.stall_seconds - delta * 2.0)

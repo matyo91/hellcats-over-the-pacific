@@ -57,7 +57,7 @@ Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.go
 | Flight | `hellcats/flight/aircraft_state.gd` | Telemetry: speed, altitude, attitude, throttle, flags. |
 | Flight | `hellcats/flight/player_input_map.gd` | Actions → normalized control intent + `read_input_packet` / trace; see `docs/input_godot_contract.md`. |
 | Flight | `hellcats/flight/flight_model_mvp.gd` | MVP integrator: **`movement_66e`/`672`/`66a`** + `FlightMath` smoothing (**[RECONSTRUCTED]** FUN_0000e792 slice); see `docs/flight_FUN_0000e792_contract.md`. |
-| Mission | `hellcats/mission/mission_controller.gd` | Loads JSON, wires player, checkpoints, HUD; objectives, failure checks, restart. |
+| Mission | `hellcats/mission/mission_controller.gd` | Loads JSON, wires player, checkpoints, HUD; objectives, failure checks, restart. **`mission_phase_a8` / `mission_flag_ac`** (DAT gate bridge); **`get_mission_sim_bridge_state()`**. |
 | Mission | `hellcats/mission/mission_objectives_m1.gd` | Pure, testable objective evaluation from telemetry snapshots (data-driven). |
 | Mission | `hellcats/mission/checkpoint.gd` | Ring pass / signal once per pass. |
 | Player | `hellcats/player/player_aircraft.gd` | Scene adapter: input → model → transform/collisions. |

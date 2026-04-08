@@ -12,6 +12,7 @@ func run() -> bool:
 	ok = _test_phase_gate_skips_arrays() and ok
 	ok = _test_multi_tick_stable_order() and ok
 	ok = _test_trace_includes_tick_order() and ok
+	ok = _test_rng_draws_and_param2_entity_counts() and ok
 	return ok
 
 func _test_pass_order_and_param2() -> bool:
@@ -75,4 +76,28 @@ func _test_trace_includes_tick_order() -> bool:
 		return false
 	var nested: Variant = (rec as Dictionary).get("tick_order", {})
 	ok = Assertions.assert_true(nested is Dictionary and (nested as Dictionary).has("passes"), "trace has tick_order.passes") and ok
+	return ok
+
+func _test_rng_draws_and_param2_entity_counts() -> bool:
+	var sim := SimCoreScript.new(0x4444)
+	sim.mission_phase_a8 = 1
+	sim.mission_flag_ac = 1
+	var e := EntityStateScript.new()
+	e.set_u8_field("flags_685", 0x04)
+	sim.entity_array_1.append(e)
+	sim.tick()
+	var order: Dictionary = sim.get_last_tick_order()
+	var draws: int = int(order.get("rng_draws_this_tick", -1))
+	var ok := Assertions.assert_true(draws >= 1, "rng_draws_this_tick when flags_685&4")
+	var counts: Dictionary = order.get("param_2_entity_updates", {}) as Dictionary
+	var n0: int = int(counts.get(0, -1))
+	var n1: int = int(counts.get(1, -1))
+	ok = Assertions.assert_true(n0 >= 1, "param_2 count for passes 1-2") and ok
+	ok = Assertions.assert_true(n1 == 0, "param_2 count 1 only after arrays 3-4") and ok
+	sim.entity_array_4.append(EntityStateScript.new())
+	sim.tick()
+	order = sim.get_last_tick_order()
+	counts = order.get("param_2_entity_updates", {}) as Dictionary
+	n1 = int(counts.get(1, -1))
+	ok = Assertions.assert_true(n1 >= 1, "param_2 count for pass 4") and ok
 	return ok

@@ -53,6 +53,11 @@
     "out_of_bounds_seconds": 8.0,
     "stall_seconds": 4.0
   },
+  "bounds_radius_m": 4200.0,
+  "nav": {
+    "mode": "compass_range",
+    "world_north_heading_deg": 0.0
+  },
   "checkpoint_ref": "checkpoints_mission_01.json",
   "ui": {
     "brief_title": "Flight School",

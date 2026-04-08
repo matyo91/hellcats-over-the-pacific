@@ -1,29 +1,87 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://hellcats/ui/hud_mvp.gd" id="1"]
+[ext_resource type="Script" path="res://hellcats/ui/hud_attitude_strip.gd" id="2"]
 
 [node name="HUD_MVP" type="CanvasLayer"]
+layer = 80
 script = ExtResource("1")
 
 [node name="RootMargin" type="MarginContainer" parent="."]
-offset_right = 320.0
-offset_bottom = 180.0
-theme_override_constants/margin_left = 20
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
 
 [node name="VBox" type="VBoxContainer" parent="RootMargin"]
-offset_right = 320.0
-offset_bottom = 180.0
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="TitleLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.94, 0.98, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.65)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 22
 text = "Flight School"
 
 [node name="ObjectiveLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.65)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 18
 text = "Objective: stabilize_flight"
 
+[node name="WarningLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 16
+text = ""
+
 [node name="TelemetryLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
-text = "SPD 000 m/s\nALT 0000 m\nHDG 000\nTHR 00%"
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.97, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 16
+text = "SPD 000 m/s
+ALT 0000 m
+HDG 000
+THR 00%"
+
+[node name="AttitudeStrip" type="Control" parent="RootMargin/VBox" unique_name_in_owner="true"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2")
+
+[node name="NavLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.9, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.65)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 15
+text = ""
 
 [node name="StatusLabel" type="Label" parent="RootMargin/VBox" unique_name_in_owner="true"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.95, 0.88, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.65)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 15
 text = "Training in progress"
-

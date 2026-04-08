@@ -55,6 +55,7 @@ func snapshot() -> Dictionary:
 		"throttle_01": throttle_01,
 		"vertical_speed_mps": vertical_speed_mps,
 		"stall_seconds": stall_seconds,
+		"out_of_bounds_seconds": out_of_bounds_seconds,
 		"is_crashed": is_crashed,
 		"movement_66e": movement_66e,
 		"movement_672": movement_672,
