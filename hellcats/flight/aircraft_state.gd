@@ -13,6 +13,12 @@ var out_of_bounds_seconds: float = 0.0
 var stall_seconds: float = 0.0
 var is_crashed: bool = false
 
+## [RECONSTRUCTED] FUN_0000e792 ownership branch accumulators (Pacific Conflict.c:14179–14244).
+## [INFERRED] Mapped to pitch / roll / yaw command integration in flight_model_mvp.gd.
+var movement_66e: int = 0
+var movement_672: int = 0
+var movement_66a: int = 0
+
 func apply_spawn(spawn_data: Dictionary) -> void:
 	var position: Array = spawn_data.get("position_m", [0.0, 1200.0, 0.0])
 	position_m = Vector3(
@@ -30,6 +36,12 @@ func apply_spawn(spawn_data: Dictionary) -> void:
 	out_of_bounds_seconds = 0.0
 	stall_seconds = 0.0
 	is_crashed = false
+	_reset_movement_accumulators()
+
+func _reset_movement_accumulators() -> void:
+	movement_66e = 0
+	movement_672 = 0
+	movement_66a = 0
 
 func snapshot() -> Dictionary:
 	return {
@@ -44,4 +56,7 @@ func snapshot() -> Dictionary:
 		"vertical_speed_mps": vertical_speed_mps,
 		"stall_seconds": stall_seconds,
 		"is_crashed": is_crashed,
+		"movement_66e": movement_66e,
+		"movement_672": movement_672,
+		"movement_66a": movement_66a,
 	}

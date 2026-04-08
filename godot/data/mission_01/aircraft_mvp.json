@@ -26,6 +26,11 @@
     "yaw_assist_gain": 0.3,
     "roll_auto_level_gain": 0.2
   },
+  "movement_smoothing": {
+    "pitch_max_int": 8192,
+    "roll_max_int": 8192,
+    "yaw_max_int": 8192
+  },
   "stall": {
     "speed_mps_below": 55.0,
     "warn_after_seconds": 2.0,

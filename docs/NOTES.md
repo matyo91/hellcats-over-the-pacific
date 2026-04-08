@@ -17,6 +17,16 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 
 ## Entries
 
+### 2026-04-08 — Flight model convergence pass (FUN_0000e792 motion slice)
+
+- **[RECONSTRUCTED]** `FlightModelMvp` now drives pitch/roll/yaw from **FUN_0000e792-style** smoothed accumulators **`movement_66e`**, **`movement_672`**, **`movement_66a`** using `FlightMath.add_delta_smoothed_int` / `add_delta_smoothed_s16` (Pacific Conflict.c:14182–14242; see `docs/flight_FUN_0000e792_contract.md`).
+- **[INFERRED]** Axis assignment **66e→pitch**, **672→roll**, **66a→yaw** for MVP integration; full `local_46`/`local_42` airspeed/template chain not ported.
+- **[MVP APPROXIMATION]** Command targets are **scaled** `[-1,1]` × `pitch_max_int` / `roll_max_int` / `yaw_max_int` (default **8192** in `aircraft_mvp.json` → `movement_smoothing`).
+- **[MVP TUNING]** `roll_auto_level_gain` still applied when roll stick neutral; rates/drag unchanged unless data changes.
+- **[INFERRED]** Per-tick **`FlightModelMvp.last_flight_trace`** (and `PlayerAircraft.get_flight_trace()`) exposes accumulators, norms, telemetry for QA.
+
+**Validation:** `godot/tests/unit/test_flight_model_mvp.gd` (straight, sustained turn, climb, descend, throttle sequence, smoothing). Run: `godot --headless --path . -s godot/tests/run_all.gd`.
+
 ### 2026-04-08 — Input convergence pass (FUN_0000740a → Godot)
 
 - **[RECONSTRUCTED]** `PlayerInputMap` now mirrors **press/hold/release** traces and **throttle step** (`+`/`-` / keypad) as **edges** → `throttle_impulse`, with **hold** throttle still on `W`/`S` / Page Up/Down (`read_input_packet`, `compute_outputs`). See `docs/input_godot_contract.md`.

@@ -1,20 +1,17 @@
 class_name FlightModelMvp
 extends RefCounted
 
-const AircraftStateScript := preload("res://hellcats/flight/aircraft_state.gd")
+const FlightMathScript := preload("res://hellcats/core/flight_math.gd")
 
 var config: Dictionary = {}
-var _pitch_input: float = 0.0
-var _roll_input: float = 0.0
-var _yaw_input: float = 0.0
+## After step(); for HUD / QA (see docs/flight_FUN_0000e792_contract.md).
+var last_flight_trace: Dictionary = {}
 
 func configure(data: Dictionary) -> void:
 	config = data.duplicate(true)
 
 func reset() -> void:
-	_pitch_input = 0.0
-	_roll_input = 0.0
-	_yaw_input = 0.0
+	last_flight_trace = {}
 
 func step(state, controls: Dictionary, delta: float) -> void:
 	if state == null:
@@ -26,6 +23,7 @@ func step(state, controls: Dictionary, delta: float) -> void:
 	var climb_model: Dictionary = config.get("climb_model", {})
 	var assist: Dictionary = config.get("assist", {})
 	var stall: Dictionary = config.get("stall", {})
+	var smooth: Dictionary = config.get("movement_smoothing", {})
 
 	## [RECONSTRUCTED] FUN_0000740a DAT_00024cf6 step edges map to throttle_impulse; hold uses axis.
 	## [MVP APPROXIMATION] Impulse is direct 0..1 delta; original uses stepped char accumulation.
@@ -39,24 +37,59 @@ func step(state, controls: Dictionary, delta: float) -> void:
 		1.0
 	)
 
-	var input_lerp := clampf(delta * 5.0, 0.0, 1.0)
-	_pitch_input = lerpf(_pitch_input, float(controls.get("pitch", 0.0)), input_lerp)
-	_roll_input = lerpf(_roll_input, float(controls.get("roll", 0.0)), input_lerp)
-	_yaw_input = lerpf(_yaw_input, float(controls.get("yaw", 0.0)), input_lerp)
+	## [RECONSTRUCTED] FUN_0000e792 ownership-branch delta smoothing on movement_66e / 672 / 66a.
+	## [MVP APPROXIMATION] Targets are scaled float commands, not full local_46/local_42 from airspeed.
+	## [MVP TUNING] max_int scales; optional extra roll centering when roll input ~ 0.
+	var pitch_max: int = int(smooth.get("pitch_max_int", 8192))
+	var roll_max: int = int(smooth.get("roll_max_int", 8192))
+	var yaw_max: int = int(smooth.get("yaw_max_int", 8192))
+	var pitch_cmd: float = float(controls.get("pitch", 0.0))
+	var roll_cmd: float = float(controls.get("roll", 0.0))
+	var yaw_cmd: float = float(controls.get("yaw", 0.0))
+
+	var pitch_target: int = _scaled_cmd_to_int(pitch_cmd, pitch_max)
+	var roll_target: int = _scaled_cmd_to_int(roll_cmd, roll_max)
+	var yaw_target: int = _scaled_cmd_to_int(yaw_cmd, yaw_max)
+
+	state.movement_66e = FlightMathScript.add_delta_smoothed_int(
+		state.movement_66e, pitch_target - state.movement_66e
+	)
+	state.movement_672 = FlightMathScript.add_delta_smoothed_s16(
+		state.movement_672, roll_target - state.movement_672
+	)
+	state.movement_66a = FlightMathScript.add_delta_smoothed_int(
+		state.movement_66a, yaw_target - state.movement_66a
+	)
+
+	var pitch_norm: float = clampf(
+		float(state.movement_66e) / float(maxi(pitch_max, 1)), -1.0, 1.0
+	)
+	var roll_norm: float = clampf(
+		float(state.movement_672) / float(maxi(roll_max, 1)), -1.0, 1.0
+	)
+	var yaw_norm: float = clampf(
+		float(state.movement_66a) / float(maxi(yaw_max, 1)), -1.0, 1.0
+	)
 
 	state.pitch_deg = clampf(
-		state.pitch_deg + _pitch_input * float(rates.get("pitch_rate_deg_s", 38.0)) * delta,
+		state.pitch_deg + pitch_norm * float(rates.get("pitch_rate_deg_s", 38.0)) * delta,
 		-35.0,
 		35.0
 	)
 
 	state.roll_deg = clampf(
-		state.roll_deg + _roll_input * float(rates.get("roll_rate_deg_s", 70.0)) * delta,
+		state.roll_deg + roll_norm * float(rates.get("roll_rate_deg_s", 70.0)) * delta,
 		-65.0,
 		65.0
 	)
-	if is_zero_approx(float(controls.get("roll", 0.0))):
-		state.roll_deg = lerpf(state.roll_deg, 0.0, clampf(float(assist.get("roll_auto_level_gain", 0.2)) * delta, 0.0, 1.0))
+
+	## [MVP TUNING] Light roll centering when stick neutral (teachable level flight).
+	if is_zero_approx(roll_cmd):
+		state.roll_deg = lerpf(
+			state.roll_deg,
+			0.0,
+			clampf(float(assist.get("roll_auto_level_gain", 0.2)) * delta, 0.0, 1.0)
+		)
 
 	var speed_min: float = _first_float(speed_model.get("throttle_to_target_speed_mps", [45.0, 190.0]), 45.0)
 	var speed_max: float = _second_float(speed_model.get("throttle_to_target_speed_mps", [45.0, 190.0]), 190.0)
@@ -71,7 +104,9 @@ func step(state, controls: Dictionary, delta: float) -> void:
 	)
 
 	var bank_factor: float = clampf(state.roll_deg / 45.0, -1.5, 1.5)
-	var yaw_rate: float = (_yaw_input * float(rates.get("yaw_rate_deg_s", 24.0))) + (bank_factor * state.airspeed_mps * float(assist.get("yaw_assist_gain", 0.3)))
+	var yaw_rate: float = (yaw_norm * float(rates.get("yaw_rate_deg_s", 24.0))) + (
+		bank_factor * state.airspeed_mps * float(assist.get("yaw_assist_gain", 0.3))
+	)
 	state.heading_deg = wrapf(state.heading_deg + yaw_rate * delta, 0.0, 360.0)
 	state.bank_deg = state.roll_deg
 
@@ -92,6 +127,25 @@ func step(state, controls: Dictionary, delta: float) -> void:
 		float(limits.get("min_altitude_m", 0.0)),
 		float(limits.get("max_altitude_m", 5000.0))
 	)
+
+	last_flight_trace = {
+		"movement_66e": state.movement_66e,
+		"movement_672": state.movement_672,
+		"movement_66a": state.movement_66a,
+		"pitch_norm": pitch_norm,
+		"roll_norm": roll_norm,
+		"yaw_norm": yaw_norm,
+		"pitch_deg": state.pitch_deg,
+		"roll_deg": state.roll_deg,
+		"heading_deg": state.heading_deg,
+		"airspeed_mps": state.airspeed_mps,
+		"throttle_01": state.throttle_01,
+		"vertical_speed_mps": state.vertical_speed_mps,
+	}
+
+func _scaled_cmd_to_int(cmd: float, max_int: int) -> int:
+	var m: int = maxi(max_int, 1)
+	return clampi(int(round(cmd * float(m))), -m, m)
 
 func _first_float(value: Variant, default_value: float) -> float:
 	if value is Array and value.size() > 0:

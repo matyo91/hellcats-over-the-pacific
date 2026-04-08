@@ -64,6 +64,9 @@ func _apply_state_to_transform() -> void:
 func get_snapshot() -> Dictionary:
 	return aircraft_state.snapshot()
 
+func get_flight_trace() -> Dictionary:
+	return flight_model.last_flight_trace
+
 func _ensure_visuals() -> void:
 	var mesh_instance: MeshInstance3D = get_node_or_null("AircraftMesh")
 	if mesh_instance == null:

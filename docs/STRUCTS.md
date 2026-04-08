@@ -75,6 +75,16 @@ See `docs/input_godot_contract.md`.
 
 ---
 
+## Godot `AircraftState` / `FlightModelMvp` (FUN_0000e792 convergence)
+
+**[RECONSTRUCTED]** `movement_66e`, `movement_672`, `movement_66a` mirror proven **byte offsets** `0x66e`, `0x672`, `0x66a` on the player entity; updated each tick with **`FlightMath.add_delta_smoothed_*`** toward **int** targets from normalized controls (see `docs/flight_FUN_0000e792_contract.md`).
+
+**[MVP APPROXIMATION]** Targets are not **local_46** / **local_42** from **FUN_0000e42a** / template math; they are **[MVP TUNING]** scaled commands.
+
+**[INFERRED]** `snapshot()` includes these fields for HUD/objectives/traces.
+
+---
+
 ## Entity (FUN_0000e792) — key offsets
 
 **[RECONSTRUCTED]** `param_1` is `int *` (entity pointer). Byte offsets: `(int)param_1 + 0xNNN` or `param_1 + K` (K in ints → byte offset K*4). Only offsets explicitly read/written in FUN_0000e792 or its immediate callees are listed; size/role inferred from access.
