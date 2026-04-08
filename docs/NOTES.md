@@ -17,6 +17,15 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 
 ## Entries
 
+### 2026-04-08 — Entity tick ordering convergence (FUN_000044e8 / FUN_000044a4)
+
+- **[RECONSTRUCTED]** `SimCore.tick()` now records **`last_tick_order`**: four passes in order **DAT_0001d4a4** → **DAT_0001b5a4** → **DAT_0001d0e4** → **DAT_0001cbe4** with **`param_2`** **0, 0, 1, 1**, then **`_call_06fb8()`**, matching Pacific Conflict.c:5105–5142.
+- **[RECONSTRUCTED]** **`FUN_000044a4`** second argument surfaced as **`last_pass_param_2`** / **`last_pass_id`** during **`_run_pass`** (Pacific Conflict.c:5109–5139).
+- **[INFERRED]** Optional **`tick_order_trace_enabled`**: player **`movement_66e`/`672`/`66a`** snapshots before tick, after pass 2 (array 2), and after full gated section; **`rng_state_after_tick`**.
+- **[MVP APPROXIMATION]** Mission-1 **playable** loop remains **`PlayerAircraft` + `FlightModelMvp`**; **`SimCore`** is the **deterministic** bridge for parity tests and future wiring (see `docs/tick_FUN_000044e8_contract.md`).
+
+**Validation:** `godot/tests/integration/test_sim_tick_ordering.gd`. Run: `godot --headless --path . -s godot/tests/run_all.gd`.
+
 ### 2026-04-08 — Flight model convergence pass (FUN_0000e792 motion slice)
 
 - **[RECONSTRUCTED]** `FlightModelMvp` now drives pitch/roll/yaw from **FUN_0000e792-style** smoothed accumulators **`movement_66e`**, **`movement_672`**, **`movement_66a`** using `FlightMath.add_delta_smoothed_int` / `add_delta_smoothed_s16` (Pacific Conflict.c:14182–14242; see `docs/flight_FUN_0000e792_contract.md`).

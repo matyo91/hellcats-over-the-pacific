@@ -1,12 +1,18 @@
 class_name SimCore
 extends RefCounted
 ## Deterministic sim tick loop; no rendering.
-## Update order matches FUN_000044e8 (Pacific Conflict): four entity arrays + final call.
+## [RECONSTRUCTED] Update order matches FUN_000044e8 (Pacific Conflict.c:5096–5144): four entity passes + FUN_00006fb8.
 
 const Rng68kScript := preload("res://hellcats/core/rng.gd")
 const EntityStateScript := preload("res://hellcats/core/entity_state.gd")
 const LoaderMetadataScript := preload("res://hellcats/core/loader_metadata.gd")
 const FlightMathScript := preload("res://hellcats/core/flight_math.gd")
+
+## [RECONSTRUCTED] Pass ids align with iteration order in FUN_000044e8 (array symbols).
+const PASS_DAT_0001D4A4 := 1
+const PASS_DAT_0001B5A4 := 2
+const PASS_DAT_0001D0E4 := 3
+const PASS_DAT_0001CBE4 := 4
 
 ## Mission state (proven offsets from DAT_0001b5a0)
 var mission_phase_a8: int = 0
@@ -14,9 +20,9 @@ var mission_flag_ac: int = 0
 
 ## Entity arrays: order and counts match FUN_000044e8 (elements are EntityState).
 var entity_array_1: Array = []  # DAT_0001d4a4, count DAT_0001c1e0
-var entity_array_2: Array = []   # DAT_0001b5a4, count DAT_0001b734
-var entity_array_3: Array = []   # DAT_0001d0e4, count DAT_0001c1dc
-var entity_array_4: Array = []   # DAT_0001cbe4, count DAT_0001c1d8
+var entity_array_2: Array = []  # DAT_0001b5a4, count DAT_0001b734
+var entity_array_3: Array = []  # DAT_0001d0e4, count DAT_0001c1dc
+var entity_array_4: Array = []  # DAT_0001cbe4, count DAT_0001c1d8
 
 ## Loader-derived metadata table (ID00/loader chain). Proven targets only; no runtime relocation implied.
 var loader_metadata: RefCounted
@@ -30,6 +36,17 @@ var input_packet: Dictionary = {}
 ## Per-frame trace (optional): each element is a Dictionary for that tick.
 var trace_enabled: bool = false
 var _trace: Array = []
+
+## [RECONSTRUCTED] FUN_000044a4 second argument: 0 for arrays 1–2, 1 for arrays 3–4 (Pacific Conflict.c:5109–5139).
+## Exposed for ordering tests and future FUN_0000435a path splits.
+var last_pass_param_2: int = -1
+var last_pass_id: int = -1
+
+## Last tick ordering summary (always updated in tick()). See docs/tick_FUN_000044e8_contract.md
+var last_tick_order: Dictionary = {}
+
+## When true, last_tick_order includes player snapshots and rng_state (QA cost).
+var tick_order_trace_enabled: bool = false
 
 var _tick_count: int = 0
 
@@ -47,23 +64,85 @@ func tick() -> void:
 	_tick_count += 1
 	designated_player_entity = entity_array_2[0] if entity_array_2.size() > 0 else null
 	var input_used: Dictionary = input_packet.duplicate()
+	var player_before: Variant = null
+	if tick_order_trace_enabled and designated_player_entity != null:
+		player_before = _snapshot_entity_order(designated_player_entity)
+
 	if mission_flag_ac == 0:
 		_call_05df8()
-	if mission_phase_a8 > 0 and mission_phase_a8 < 6:
-		_update_entity_array(entity_array_1, 0)
-		_update_entity_array(entity_array_2, 0)
-		_update_entity_array(entity_array_3, 1)
-		_update_entity_array(entity_array_4, 1)
+
+	var passes: Array = []
+	var arrays_ran: bool = mission_phase_a8 > 0 and mission_phase_a8 < 6
+	if arrays_ran:
+		passes.append(_run_pass(PASS_DAT_0001D4A4, "DAT_0001d4a4", entity_array_1, 0))
+		passes.append(_run_pass(PASS_DAT_0001B5A4, "DAT_0001b5a4", entity_array_2, 0))
+		var player_after_pass_2: Variant = null
+		if tick_order_trace_enabled and designated_player_entity != null:
+			player_after_pass_2 = _snapshot_entity_order(designated_player_entity)
+		passes.append(_run_pass(PASS_DAT_0001D0E4, "DAT_0001d0e4", entity_array_3, 1))
+		passes.append(_run_pass(PASS_DAT_0001CBE4, "DAT_0001cbe4", entity_array_4, 1))
 		_call_06fb8()
-	if trace_enabled:
-		_trace.append({
+		last_tick_order = {
 			"frame": _tick_count,
-			"input": input_used,
-			"rng_state": rng.get_state(),
-			"mission_phase_a8": mission_phase_a8,
 			"mission_flag_ac": mission_flag_ac,
-			"player": _snapshot_player(),
-		})
+			"mission_phase_a8": mission_phase_a8,
+			"arrays_ran": true,
+			"passes": passes,
+			"designated_player_is_array2_index0": entity_array_2.size() > 0,
+		}
+		if tick_order_trace_enabled:
+			last_tick_order["player_snapshot_before_tick"] = player_before
+			last_tick_order["player_snapshot_after_pass_2"] = player_after_pass_2
+			last_tick_order["player_snapshot_after_tick"] = (
+				_snapshot_entity_order(designated_player_entity)
+				if designated_player_entity != null
+				else null
+			)
+			last_tick_order["rng_state_after_tick"] = rng.get_state()
+	else:
+		last_tick_order = {
+			"frame": _tick_count,
+			"mission_flag_ac": mission_flag_ac,
+			"mission_phase_a8": mission_phase_a8,
+			"arrays_ran": false,
+			"passes": [],
+			"designated_player_is_array2_index0": entity_array_2.size() > 0,
+		}
+		if tick_order_trace_enabled:
+			last_tick_order["player_snapshot_before_tick"] = player_before
+			last_tick_order["rng_state_after_tick"] = rng.get_state()
+
+	if trace_enabled:
+		_trace.append(
+			{
+				"frame": _tick_count,
+				"input": input_used,
+				"rng_state": rng.get_state(),
+				"mission_phase_a8": mission_phase_a8,
+				"mission_flag_ac": mission_flag_ac,
+				"player": _snapshot_player(),
+				"tick_order": last_tick_order.duplicate(true),
+			}
+		)
+
+func get_last_tick_order() -> Dictionary:
+	return last_tick_order
+
+## [INFERRED] Minimal fields for ordering QA; not full entity export.
+func _snapshot_entity_order(entity: RefCounted) -> Dictionary:
+	if entity == null:
+		return {}
+	return {
+		"movement_66e": entity.get_field("movement_66e"),
+		"movement_672": entity.get_s16_field("movement_672"),
+		"movement_66a": entity.get_field("movement_66a"),
+	}
+
+func _run_pass(pass_id: int, dat_symbol: String, arr: Array, param_2: int) -> Dictionary:
+	last_pass_id = pass_id
+	last_pass_param_2 = param_2
+	_update_entity_array(arr, param_2, pass_id)
+	return {"pass_id": pass_id, "dat": dat_symbol, "param_2": param_2, "count": arr.size()}
 
 ## Placeholder: FUN_00005df8 (mission flag_ac path).
 func _call_05df8() -> void:
@@ -74,12 +153,12 @@ func _call_06fb8() -> void:
 	pass
 
 ## Update one array; param_2 is 0 or 1 (FUN_000044a4 second arg).
-func _update_entity_array(arr: Array, param_2: int) -> void:
+func _update_entity_array(arr: Array, param_2: int, pass_id: int) -> void:
 	for entity in arr:
-		_update_single_entity(entity as RefCounted, param_2)
+		_update_single_entity(entity as RefCounted, param_2, pass_id)
 
-## Placeholder: per-entity update (FUN_000044a4 / FUN_0000e792).
-func _update_single_entity(entity: RefCounted, _param_2: int) -> void:
+## Placeholder: per-entity update (FUN_000044a4 → FUN_0000435a / FUN_0000e792).
+func _update_single_entity(entity: RefCounted, param_2: int, _pass_id: int) -> void:
 	if entity == null:
 		return
 	_apply_randomized_control_offsets(entity)

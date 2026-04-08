@@ -36,7 +36,13 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 | DAT_0001c1d8 | Count for array 4 | Pacific Conflict.c:5131, 5138 |
 | DAT_0001cbe4 | Ptr to first entity ptr (array 4) | Pacific Conflict.c:5132-5133 |
 
+**[RECONSTRUCTED]** **`FUN_000044a4(..., param_2)`**: second argument **0** for arrays **1–2**, **1** for arrays **3–4** (Pacific Conflict.c:5109–5139). **`FUN_0000435a`** uses **`param_2`** in at least one branch (`*param_1 == 0x02` loop when **`param_2 == 0`**, Pacific Conflict.c:5048–5071).
+
 **[UNKNOWN]** Runtime-memory to file-offset mapping for these symbols. Symbol suffixes must not be treated as file offsets.
+
+### Godot `SimCore` mapping
+
+**[RECONSTRUCTED]** `entity_array_1` … `entity_array_4`, **`pass_id`** 1–4, **`last_tick_order`** / **`get_last_tick_order()`** — see `docs/tick_FUN_000044e8_contract.md`.
 
 ---
 

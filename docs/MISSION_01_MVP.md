@@ -52,7 +52,7 @@ Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.go
 
 | Area | Script (expected path) | Role |
 | ---- | ---------------------- | ---- |
-| Core | `hellcats/core/sim_core.gd` | Fixed-step / deterministic sequencing (existing sim bridge). |
+| Core | `hellcats/core/sim_core.gd` | Fixed-step / deterministic sequencing; **FUN_000044e8**-aligned **`last_tick_order`** (not used by Mission-1 scene loop; parity / future). See `docs/tick_FUN_000044e8_contract.md`. |
 | Core | `hellcats/core/flight_math.gd` | Shared math for flight/control. |
 | Flight | `hellcats/flight/aircraft_state.gd` | Telemetry: speed, altitude, attitude, throttle, flags. |
 | Flight | `hellcats/flight/player_input_map.gd` | Actions → normalized control intent + `read_input_packet` / trace; see `docs/input_godot_contract.md`. |
@@ -65,6 +65,12 @@ Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.go
 | World | `hellcats/world/world_builder_mvp.gd` | Placeholder terrain/sea/sky (if used). |
 
 **Seams (later fidelity):** keep tuning in one place (e.g. `flight_tuning_mvp` / resources); objectives driven from `godot/data/`; RNG via `hellcats/core/rng.gd` for anything stochastic.
+
+### 4.3 Simulation tick vs Mission-1 scene loop
+
+- **[RECONSTRUCTED]** **`SimCore`** implements the **`FUN_000044e8`** structure: four entity arrays **in order**, **`FUN_000044a4`**-style **`param_2`** 0/1, then **`_call_06fb8`**, **`last_tick_order`** for QA.
+- **[MVP APPROXIMATION]** **Mission-1** gameplay uses **`PlayerAircraft._physics_process`** → **`FlightModelMvp`** on the **Godot** clock; it does **not** call **`SimCore.tick()`** unless you explicitly bridge them later.
+- **[INFERRED]** Use **`SimCore`** + **`test_sim_tick_ordering.gd`** for **ordering** and **determinism**; use **`PlayerAircraft.get_flight_trace()`** for **flight** QA on the mission.
 
 ---
 

@@ -10,14 +10,14 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 
 | Item | Status | Evidence / notes |
 |------|--------|-------------------|
-| Sim tick order (four arrays + FUN_00006fb8) | Done | [RECONSTRUCTED] FUN_000044e8 (Pacific Conflict.c:5094-5143). SimCore matches. |
+| Sim tick order (four arrays + FUN_00006fb8) | Done | [RECONSTRUCTED] FUN_000044e8 (Pacific Conflict.c:5096-5144). SimCore: explicit `PASS_DAT_*`, `last_tick_order`, `param_2` 0/1 per pass; `docs/tick_FUN_000044e8_contract.md`. |
 | Mission phase/flag (0xa8, 0xac) | Done | [RECONSTRUCTED] Pacific Conflict.c:5101, 5104. SimCore.mission_phase_a8 / mission_flag_ac. |
 | RNG (LCG, 0x41c64e6d, 0x3039) | Done | [RECONSTRUCTED] ID05; Rng68k in godot. |
 | Entity state layout (proven offsets) | Skeleton | [RECONSTRUCTED] FUN_0000e792 (Pacific Conflict.c:14016+). EntityState has keys; from_bytes TODO. |
 | Trace format + TraceWriter + ReplayRunner | Done | [INFERRED] docs/TRACE.md, trace_diff.py, TraceWriter, ReplayRunner. |
 | FUN_00005df8 | Placeholder | [RECONSTRUCTED] Called when mission_flag_ac == 0 (Pacific Conflict.c:5102). [UNKNOWN] behavior. |
 | FUN_00006fb8 | Placeholder | [RECONSTRUCTED] Called after four arrays (Pacific Conflict.c:5139). [UNKNOWN] behavior. |
-| FUN_000044a4 / per-entity update | Partial | [RECONSTRUCTED] Calls into FUN_0000e792 logic (Pacific Conflict.c). [RECONSTRUCTED] Minimal ported slices: `flags_685` 0x04/0x08 RNG perturbation, `status_1a1 & 1` override, movement_669/status_1a0 gate, threshold/decrement branch, field_40 adjustment. [RECONSTRUCTED] **Helper trio** FUN_0000e42a, FUN_0000e468, FUN_0000e570 and compute_local_34() are **reconstructed** in `flight_math.gd`. [RECONSTRUCTED] Ownership: only **DAT_0001b738** (player) and **DAT_0001b888** (second entity) receive 0x66e/0x672/0x66a writes (Pacific Conflict.c:14179). **MVP:** `hellcats/flight/flight_model_mvp.gd` applies the **delta smoothing** toward scaled commands for the playable aircraft. **Next (SimCore):** wire full `local_46` chain + 0x669 clear when `status_1a1` exists. |
+| FUN_000044a4 / per-entity update | Partial | [RECONSTRUCTED] `FUN_000044a4` → `_update_single_entity`; **`param_2`** passed through (5035a path not fully ported). [RECONSTRUCTED] Minimal slices: `flags_685` RNG, gates, movement smoothing, etc. [RECONSTRUCTED] **Helper trio** in `flight_math.gd`. [RECONSTRUCTED] Designated player/target for 0x66e/0x672/0x66a. **MVP:** `flight_model_mvp.gd` for Mission-1 aircraft; **Next:** full **FUN_0000435a** branch parity by `param_2`. |
 
 **Acceptance (Phase A):** [INFERRED] Same seed + same inputs ⇒ identical trace (see docs/TRACE.md). **[UNKNOWN]** Until entity/mission logic is ported, traces will only reflect phase/flag/input/RNG.
 
@@ -32,6 +32,7 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 | Input handler (FUN_0000740a) variables | Documented | [RECONSTRUCTED] Pacific Conflict.c:7366+; STRUCTS.md “FUN_0000740a”. |
 | Godot gather + throttle step + trace | Done | [RECONSTRUCTED] Step keys → `throttle_impulse`; [MVP APPROXIMATION] gate + `THROTTLE_STEP_IMPULSE`. `docs/input_godot_contract.md`, `PlayerInputMap.last_input_trace`. |
 | FUN_0000e792 movement smoothing → MVP flight | Partial | [RECONSTRUCTED] `movement_66e`/`672`/`66a` + `FlightMath` delta rule in `flight_model_mvp.gd`; [MVP APPROXIMATION] scaled cmd targets; [UNKNOWN] full `local_46`/`local_42` chain. `docs/flight_FUN_0000e792_contract.md`. |
+| FUN_000044e8 pass ordering + `last_tick_order` | Done | [RECONSTRUCTED] Four passes + `param_2` pattern; `docs/tick_FUN_000044e8_contract.md`; `test_sim_tick_ordering.gd`. |
 | Key code → param_1 mapping | Partial | [RECONSTRUCTED] Brief + Godot `ACTIONS`; [UNKNOWN] full Mac table vs all branches. |
 | DAT_0001d858 state machine | Not started | [RECONSTRUCTED] Values 1, 7, 8, 9 in code. [UNKNOWN] full FSM. |
 | FUN_00005df8 behavior | Not started | [RECONSTRUCTED] Called when flag_ac == 0. [UNKNOWN] logic. |
