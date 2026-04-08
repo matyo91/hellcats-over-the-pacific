@@ -104,3 +104,8 @@ func tick() -> void:
 ```
 
 Then from a test: `sim.trace_enabled = true; for i in 10: sim.tick(); print(sim.get_trace())`.
+
+## Mission 01 MVP implementation notes
+
+- **`docs/MISSION_01_MVP.md`** — scope, architecture, controls, objectives, data paths (`godot/data/mission_01/`), run/test commands, and deferred work.
+- **Manual smoke + CI commands:** `tools/qa/README.md` (Mission 1 smoke, `run_all.gd`, `test_regression.py`).

@@ -115,3 +115,30 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **[INFERRED]** Godot consumes whatever targets are present in the JSON; the headless test proves SimCore with the two targets currently in the artifact.
 - **[UNKNOWN]** Still blocked by address mapping: runtime relocation, jump-table patching, and actual segment load execution are out of scope until the address model is proven further (LOADER_CHAIN §9).
 - **Next milestone:** Extend `proven_loader_targets.json` to include the four remaining proven targets (ID06×3, ID07×1), or document the decision to keep the artifact minimal; then proceed to trace capture for parity validation.
+
+---
+
+### Mission 01 MVP extraction brief (flight school / pilot training)
+
+#### Useful now
+
+- **[RECONSTRUCTED]** `DAT_0001b738` is the player entity pointer and is used as the primary flight actor in the input path (`FUN_0000740a`) and camera/world-anchor updates (`DAT_0001d838/d834/d830` copied from player `+0x18/+0x1c/+0x20`). [Pacific Conflict.c:7392, 7437-7439, 7702-7704]
+- **[RECONSTRUCTED]** Mission runtime gating needed for a deterministic training loop is already proven: mission tick uses `*(short *)(DAT_0001b5a0 + 0xac)` and `*(short *)(DAT_0001b5a0 + 0xa8)`; only when `0 < +0xa8 < 6` are all four entity arrays updated. [Pacific Conflict.c:5102-5138]
+- **[RECONSTRUCTED]** Input events are key/action pairs (`FUN_0000740a(int param_1, int param_2)`), with explicit press checks (`param_2 == 3`) and release/other-action handling paths. [Pacific Conflict.c:7368, 7455, 7462-7469]
+- **[RECONSTRUCTED]** Training-relevant mode/state transitions are keyed through `DAT_0001d858` and values including 1, 5, 7, 8, 9; examples: key `'c'`/`'C'` sets state 5, key `'e'`/`'E'` can enter state 7 when secondary pointer exists, key `'v'`/`'V'` returns to state 1 and recenters anchor vars. [Pacific Conflict.c:7675-7704]
+- **[RECONSTRUCTED]** Proven per-frame player-control accumulators exist (`0x66e`, `0x672`, `0x66a`) and are updated only for designated player/secondary entities (`DAT_0001b738` / `DAT_0001b888`) with deterministic smoothing deltas. This is sufficient for an MVP-stable "aircraft feel" seam without full semantic naming. [Pacific Conflict.c:14179-14244]
+- **[INFERRED]** HUD-minimum telemetry for MVP can safely use already-proven player fields (`+0x18/+0x1c/+0x20` world position and heading/attitude-related shorts used across input/update paths) even before exact cockpit/HUD parity is solved.
+
+#### Ignore for MVP
+
+- **[INFERRED]** Loader-chain deep work (`ID00` dispatch/tail-offset proof, segment entry correlation) does not unblock a playable single training slice.
+- **[INFERRED]** Full DAT block reconstruction for `DAT_0001b5a0` beyond `+0xa8/+0xac/+0x98/+0x25e/+0x2b6/+0x2be` is unnecessary for Mission 01 MVP.
+- **[INFERRED]** Full semantic labeling of advanced entity offsets (all `0x61a..0x685` behaviors, full weapon/system modes) is not required for initial flight school progression.
+- **[INFERRED]** Exact original non-training states/campaign transitions implied by the broader `DAT_0001d858` FSM can be deferred.
+
+#### Unknown but not blocking
+
+- **[UNKNOWN]** Exact canonical meaning of each `DAT_0001d858` value (1..9) as player-facing named modes.
+- **[UNKNOWN]** Exact original keycode-to-keyboard-layout mapping for all `param_1` values; we have direct codepoint evidence for many keys, but not a full authoritative table per platform layout.
+- **[UNKNOWN]** Exact historical training mission script/scoring thresholds/objective timing text.
+- **[UNKNOWN]** Exact semantic names for movement accumulators `0x66e`, `0x672`, `0x66a` (axis/control-surface identity).

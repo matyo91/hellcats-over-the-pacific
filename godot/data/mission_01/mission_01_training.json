@@ -1,0 +1,64 @@
+{
+  "mission_id": "mission_01_training",
+  "version": 1,
+  "start_mode": "airborne",
+  "spawn": {
+    "position_m": [0.0, 1200.0, 0.0],
+    "heading_deg": 90.0,
+    "airspeed_mps": 95.0,
+    "throttle_01": 0.72
+  },
+  "objective_sequence": [
+    {
+      "id": "stabilize_flight",
+      "type": "hold_altitude",
+      "target_altitude_m": 1200.0,
+      "tolerance_m": 120.0,
+      "hold_seconds": 6.0
+    },
+    {
+      "id": "turn_left",
+      "type": "reach_bank",
+      "min_bank_deg": 20.0,
+      "direction": "left"
+    },
+    {
+      "id": "turn_right",
+      "type": "reach_bank",
+      "min_bank_deg": 20.0,
+      "direction": "right"
+    },
+    {
+      "id": "climb",
+      "type": "reach_altitude",
+      "min_altitude_m": 1450.0
+    },
+    {
+      "id": "descend",
+      "type": "reach_altitude",
+      "max_altitude_m": 1100.0
+    },
+    {
+      "id": "checkpoint_pass",
+      "type": "checkpoint_pass",
+      "checkpoint_id": "cp_01",
+      "optional": true
+    }
+  ],
+  "success": {
+    "complete_all_required_objectives": true
+  },
+  "failure": {
+    "terrain_or_sea_impact": true,
+    "out_of_bounds_seconds": 8.0,
+    "stall_seconds": 4.0
+  },
+  "checkpoint_ref": "checkpoints_mission_01.json",
+  "ui": {
+    "brief_title": "Flight School",
+    "objective_prefix": "Objective"
+  },
+  "notes": [
+    "Authored MVP data, not extracted from binary."
+  ]
+}
