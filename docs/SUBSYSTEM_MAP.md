@@ -10,7 +10,7 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]** / **[DEFERRED]**.
 
 ## 1) High-level flow (main sim tick)
 
-**[RECONSTRUCTED]** The main loop is anchored on **FUN_000044e8** (`docs/tick_FUN_000044e8_contract.md`):
+**[RECONSTRUCTED]** The main loop is anchored on **FUN_000044e8** (`docs/contracts/tick_FUN_000044e8_contract.md`):
 
 ```mermaid
 flowchart TD
@@ -30,9 +30,9 @@ flowchart TD
   A4 --> FB
 ```
 
-**[RECONSTRUCTED]** **FUN_000044a4** calls **FUN_0000435a** then optional flag updates (`tick_FUN_000044e8_contract.md`).
+**[RECONSTRUCTED]** **FUN_000044a4** calls **FUN_0000435a** then optional flag updates (`docs/contracts/tick_FUN_000044e8_contract.md`).
 
-**[RECONSTRUCTED]** Per-entity simulation includes **FUN_0000e792** (large; `docs/flight_FUN_0000e792_contract.md`).
+**[RECONSTRUCTED]** Per-entity simulation includes **FUN_0000e792** (large; `docs/contracts/flight_FUN_0000e792_contract.md`).
 
 **Godot:** **`hellcats/core/sim_core.gd`** mirrors pass order and **`param_2`**; **Mission-1** gameplay loop is **`PlayerAircraft` + `FlightModelMvp`** **[INFERRED]** unless you explicitly drive SimCore.
 
@@ -81,7 +81,7 @@ flowchart TD
   H740 --> ENT["Entity / throttle / UI effects"]
 ```
 
-**Godot:** **`player_input_map.gd`** — **`docs/input_godot_contract.md`**, **`docs/input_FUN_0000740a_brief.md`**.
+**Godot:** **`player_input_map.gd`** — **`docs/contracts/input_godot_contract.md`**, **`docs/briefs/input_FUN_0000740a_brief.md`**.
 
 ---
 
@@ -89,7 +89,7 @@ flowchart TD
 
 **[RECONSTRUCTED]** Mission block **`DAT_0001b5a0`** fields **`+0xa8`** (phase) and **`+0xac`** (flag) gate **FUN_000044e8**’s middle section.
 
-**Godot:** **`MissionController`** exposes **`mission_phase_a8`** / **`mission_flag_ac`** and **`get_mission_sim_bridge_state()`** — **`docs/mission_state_DAT_contract.md`**.
+**Godot:** **`MissionController`** exposes **`mission_phase_a8`** / **`mission_flag_ac`** and **`get_mission_sim_bridge_state()`** — **`docs/contracts/mission_state_DAT_contract.md`**.
 
 ---
 
@@ -130,11 +130,11 @@ flowchart LR
 | Document | Role |
 |----------|------|
 | `docs/IMPORT_STATUS.md` | Row-level import status |
-| `docs/tick_FUN_000044e8_contract.md` | Tick order |
-| `docs/FUN_0000435a_contract.md` | **param_2** / **0x02** branch |
-| `docs/flight_FUN_0000e792_contract.md` | Entity update slice |
-| `docs/input_godot_contract.md` | Godot input mapping |
-| `docs/mission_state_DAT_contract.md` | Mission bridge |
+| `docs/contracts/tick_FUN_000044e8_contract.md` | Tick order |
+| `docs/contracts/FUN_0000435a_contract.md` | **param_2** / **0x02** branch |
+| `docs/contracts/flight_FUN_0000e792_contract.md` | Entity update slice |
+| `docs/contracts/input_godot_contract.md` | Godot input mapping |
+| `docs/contracts/mission_state_DAT_contract.md` | Mission bridge |
 | `docs/STRUCTS.md` | DAT_* / offset tables |
 | `docs/LOADER_CHAIN.md` | ID00–ID09 and loading |
 

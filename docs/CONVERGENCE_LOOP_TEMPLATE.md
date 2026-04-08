@@ -10,14 +10,14 @@
 
 ## Inputs
 
-- Backlog item + existing contracts (`docs/*_contract.md`).
+- Backlog item + existing contracts (`docs/contracts/*_contract.md`).
 - Current Godot modules touched by the item.
 
 ## Outputs
 
 | Output | Requirement |
 |--------|-------------|
-| RE contract | Short `docs/<topic>_contract.md` or NOTES section |
+| RE contract | Short `docs/contracts/<topic>_contract.md` or NOTES section |
 | Code | Focused diff; no unrelated refactors |
 | Traces | New or extended fields on existing trace hooks |
 | Tests | At least one automated check where feasible |

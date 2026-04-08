@@ -42,7 +42,7 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 ### Godot `SimCore` mapping
 
-**[RECONSTRUCTED]** `entity_array_1` … `entity_array_4`, **`pass_id`** 1–4, **`last_tick_order`** / **`get_last_tick_order()`** — see `docs/tick_FUN_000044e8_contract.md`.
+**[RECONSTRUCTED]** `entity_array_1` … `entity_array_4`, **`pass_id`** 1–4, **`last_tick_order`** / **`get_last_tick_order()`** — see `docs/contracts/tick_FUN_000044e8_contract.md`.
 
 ---
 
@@ -77,13 +77,13 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 **[MVP APPROXIMATION]** **Gating** is only `player_active` on `PlayerAircraft`, not the full `DAT_0001d858` / `DAT_0001b870` / mission `+0x98` tree.
 
-See `docs/input_godot_contract.md`.
+See `docs/contracts/input_godot_contract.md`.
 
 ---
 
 ## Godot `AircraftState` / `FlightModelMvp` (FUN_0000e792 convergence)
 
-**[RECONSTRUCTED]** `movement_66e`, `movement_672`, `movement_66a` mirror proven **byte offsets** `0x66e`, `0x672`, `0x66a` on the player entity; updated each tick with **`FlightMath.add_delta_smoothed_*`** toward **int** targets from normalized controls (see `docs/flight_FUN_0000e792_contract.md`).
+**[RECONSTRUCTED]** `movement_66e`, `movement_672`, `movement_66a` mirror proven **byte offsets** `0x66e`, `0x672`, `0x66a` on the player entity; updated each tick with **`FlightMath.add_delta_smoothed_*`** toward **int** targets from normalized controls (see `docs/contracts/flight_FUN_0000e792_contract.md`).
 
 **[MVP APPROXIMATION]** Targets are not **local_46** / **local_42** from **FUN_0000e42a** / template math; they are **[MVP TUNING]** scaled commands.
 

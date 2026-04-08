@@ -15,7 +15,7 @@ const PlayerInputMapScript := preload("res://hellcats/flight/player_input_map.gd
 var mission_bundle: Dictionary = {}
 var mission_state: String = "boot"
 
-## [RECONSTRUCTED] Mission block gates aligned with DAT_0001b5a0 +0xa8 / +0xac (FUN_000044e8). See docs/mission_state_DAT_contract.md.
+## [RECONSTRUCTED] Mission block gates aligned with DAT_0001b5a0 +0xa8 / +0xac (FUN_000044e8). See docs/contracts/mission_state_DAT_contract.md.
 ## [MVP APPROXIMATION] Exposed for SimCore bridge / convergence; Mission-1 scene loop does not call SimCore.tick() yet.
 var mission_phase_a8: int = 0
 var mission_flag_ac: int = 0

@@ -42,7 +42,7 @@ var _trace: Array = []
 var last_pass_param_2: int = -1
 var last_pass_id: int = -1
 
-## Last tick ordering summary (always updated in tick()). See docs/tick_FUN_000044e8_contract.md
+## Last tick ordering summary (always updated in tick()). See docs/contracts/tick_FUN_000044e8_contract.md
 var last_tick_order: Dictionary = {}
 
 ## When true, last_tick_order includes player snapshots and rng_state (QA cost).
@@ -53,7 +53,7 @@ var _tick_count: int = 0
 ## [RECONSTRUCTED] Count of rng.next() calls this tick (RNG timing / parity). Reset each tick().
 var _rng_draws_this_tick: int = 0
 
-## [RECONSTRUCTED] Entities updated per FUN_000044a4 param_2 (0 vs 1) this tick. See docs/FUN_0000435a_contract.md.
+## [RECONSTRUCTED] Entities updated per FUN_000044a4 param_2 (0 vs 1) this tick. See docs/contracts/FUN_0000435a_contract.md.
 var _param_2_entity_updates: Dictionary = {0: 0, 1: 0}
 
 ## Designated entity refs (DAT_0001b738 / DAT_0001b888). Only these receive 0x66e/0x672/0x66a updates (Pacific Conflict.c:14179).

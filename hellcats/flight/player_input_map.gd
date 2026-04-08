@@ -1,6 +1,6 @@
 class_name PlayerInputMap
 extends RefCounted
-## Godot input layer aligned with FUN_0000740a semantics (see docs/input_godot_contract.md).
+## Godot input layer aligned with FUN_0000740a semantics (see docs/contracts/input_godot_contract.md).
 ## [RECONSTRUCTED] Discrete key events, press vs release, throttle step (+/-) vs hold.
 ## [MVP APPROXIMATION] No DAT_0001d858 FSM; gating = player aircraft active only.
 

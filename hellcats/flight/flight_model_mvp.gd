@@ -4,7 +4,7 @@ extends RefCounted
 const FlightMathScript := preload("res://hellcats/core/flight_math.gd")
 
 var config: Dictionary = {}
-## After step(); for HUD / QA (see docs/flight_FUN_0000e792_contract.md).
+## After step(); for HUD / QA (see docs/contracts/flight_FUN_0000e792_contract.md).
 var last_flight_trace: Dictionary = {}
 
 func configure(data: Dictionary) -> void:

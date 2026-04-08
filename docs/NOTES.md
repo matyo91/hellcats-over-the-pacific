@@ -20,9 +20,9 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 ### 2026-04-08 — Convergence Loop Mode (batch: mission bridge + RNG draws + FUN_0000435a counts)
 
 - **[INFERRED]** Backlog + loop template: `docs/CONVERGENCE_BACKLOG.md`, `docs/CONVERGENCE_LOOP_TEMPLATE.md`.
-- **[RECONSTRUCTED]** **Iteration 1 — Mission gates:** `MissionController` sets **`mission_phase_a8` / `mission_flag_ac`** (running: 1/1; terminal: 0/0); **`get_mission_sim_bridge_state()`**. See `docs/mission_state_DAT_contract.md`.
+- **[RECONSTRUCTED]** **Iteration 1 — Mission gates:** `MissionController` sets **`mission_phase_a8` / `mission_flag_ac`** (running: 1/1; terminal: 0/0); **`get_mission_sim_bridge_state()`**. See `docs/contracts/mission_state_DAT_contract.md`.
 - **[RECONSTRUCTED]** **Iteration 2 — RNG timing:** `SimCore._rng_consume()` counts draws per tick; **`last_tick_order.rng_draws_this_tick`**.
-- **[RECONSTRUCTED]** **Iteration 3 — FUN_0000435a / param_2:** **`last_tick_order.param_2_entity_updates`** `{0: n, 1: m}`; contract `docs/FUN_0000435a_contract.md` (type 0x02 loop gated by `param_2==0` not yet branched in code).
+- **[RECONSTRUCTED]** **Iteration 3 — FUN_0000435a / param_2:** **`last_tick_order.param_2_entity_updates`** `{0: n, 1: m}`; contract `docs/contracts/FUN_0000435a_contract.md` (type 0x02 loop gated by `param_2==0` not yet branched in code).
 - **Validation:** `godot/tests/integration/test_sim_tick_ordering.gd` (includes RNG/param2 counts).
 
 ### 2026-04-08 — Entity tick ordering convergence (FUN_000044e8 / FUN_000044a4)
@@ -30,13 +30,13 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 - **[RECONSTRUCTED]** `SimCore.tick()` now records **`last_tick_order`**: four passes in order **DAT_0001d4a4** → **DAT_0001b5a4** → **DAT_0001d0e4** → **DAT_0001cbe4** with **`param_2`** **0, 0, 1, 1**, then **`_call_06fb8()`**, matching Pacific Conflict.c:5105–5142.
 - **[RECONSTRUCTED]** **`FUN_000044a4`** second argument surfaced as **`last_pass_param_2`** / **`last_pass_id`** during **`_run_pass`** (Pacific Conflict.c:5109–5139).
 - **[INFERRED]** Optional **`tick_order_trace_enabled`**: player **`movement_66e`/`672`/`66a`** snapshots before tick, after pass 2 (array 2), and after full gated section; **`rng_state_after_tick`**.
-- **[MVP APPROXIMATION]** Mission-1 **playable** loop remains **`PlayerAircraft` + `FlightModelMvp`**; **`SimCore`** is the **deterministic** bridge for parity tests and future wiring (see `docs/tick_FUN_000044e8_contract.md`).
+- **[MVP APPROXIMATION]** Mission-1 **playable** loop remains **`PlayerAircraft` + `FlightModelMvp`**; **`SimCore`** is the **deterministic** bridge for parity tests and future wiring (see `docs/contracts/tick_FUN_000044e8_contract.md`).
 
 **Validation:** `godot/tests/integration/test_sim_tick_ordering.gd`. Run: `godot --headless --path . -s godot/tests/run_all.gd`.
 
 ### 2026-04-08 — Flight model convergence pass (FUN_0000e792 motion slice)
 
-- **[RECONSTRUCTED]** `FlightModelMvp` now drives pitch/roll/yaw from **FUN_0000e792-style** smoothed accumulators **`movement_66e`**, **`movement_672`**, **`movement_66a`** using `FlightMath.add_delta_smoothed_int` / `add_delta_smoothed_s16` (Pacific Conflict.c:14182–14242; see `docs/flight_FUN_0000e792_contract.md`).
+- **[RECONSTRUCTED]** `FlightModelMvp` now drives pitch/roll/yaw from **FUN_0000e792-style** smoothed accumulators **`movement_66e`**, **`movement_672`**, **`movement_66a`** using `FlightMath.add_delta_smoothed_int` / `add_delta_smoothed_s16` (Pacific Conflict.c:14182–14242; see `docs/contracts/flight_FUN_0000e792_contract.md`).
 - **[INFERRED]** Axis assignment **66e→pitch**, **672→roll**, **66a→yaw** for MVP integration; full `local_46`/`local_42` airspeed/template chain not ported.
 - **[MVP APPROXIMATION]** Command targets are **scaled** `[-1,1]` × `pitch_max_int` / `roll_max_int` / `yaw_max_int` (default **8192** in `aircraft_mvp.json` → `movement_smoothing`).
 - **[MVP TUNING]** `roll_auto_level_gain` still applied when roll stick neutral; rates/drag unchanged unless data changes.
@@ -46,7 +46,7 @@ Every statement is tagged: **[RECONSTRUCTED]** (from decompiler/binary), **[INFE
 
 ### 2026-04-08 — Input convergence pass (FUN_0000740a → Godot)
 
-- **[RECONSTRUCTED]** `PlayerInputMap` now mirrors **press/hold/release** traces and **throttle step** (`+`/`-` / keypad) as **edges** → `throttle_impulse`, with **hold** throttle still on `W`/`S` / Page Up/Down (`read_input_packet`, `compute_outputs`). See `docs/input_godot_contract.md`.
+- **[RECONSTRUCTED]** `PlayerInputMap` now mirrors **press/hold/release** traces and **throttle step** (`+`/`-` / keypad) as **edges** → `throttle_impulse`, with **hold** throttle still on `W`/`S` / Page Up/Down (`read_input_packet`, `compute_outputs`). See `docs/contracts/input_godot_contract.md`.
 - **[RECONSTRUCTED]** `FlightModelMvp` applies `controls.throttle_impulse` as an instant delta on top of axis rate (original `DAT_00024cf6` path is not fully ported).
 - **[MVP APPROXIMATION]** Single gate **`player_active`** instead of `DAT_0001d858` / overlay / mission `+0x98` branches; gated presses recorded in `trace.ignored`.
 - **[INFERRED]** Per-tick trace: `pressed` / `held` / `released` / `normalized` / `gated` — inspect `PlayerInputMap.last_input_trace` during play or tests.

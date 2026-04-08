@@ -12,7 +12,7 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 
 | Item | Status | Evidence / notes |
 |------|--------|-------------------|
-| Sim tick order (four arrays + FUN_00006fb8) | Done | [RECONSTRUCTED] FUN_000044e8 (Pacific Conflict.c:5096-5144). SimCore: explicit `PASS_DAT_*`, `last_tick_order`, `param_2` 0/1 per pass; `docs/tick_FUN_000044e8_contract.md`. |
+| Sim tick order (four arrays + FUN_00006fb8) | Done | [RECONSTRUCTED] FUN_000044e8 (Pacific Conflict.c:5096-5144). SimCore: explicit `PASS_DAT_*`, `last_tick_order`, `param_2` 0/1 per pass; `docs/contracts/tick_FUN_000044e8_contract.md`. |
 | Mission phase/flag (0xa8, 0xac) | Done | [RECONSTRUCTED] Pacific Conflict.c:5101, 5104. SimCore.mission_phase_a8 / mission_flag_ac. |
 | RNG (LCG, 0x41c64e6d, 0x3039) | Done | [RECONSTRUCTED] ID05; Rng68k in godot. |
 | Entity state layout (proven offsets) | Skeleton | [RECONSTRUCTED] FUN_0000e792 (Pacific Conflict.c:14016+). EntityState has keys; from_bytes TODO. |
@@ -32,9 +32,9 @@ Every statement is tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
 | Item | Status | Evidence / notes |
 |------|--------|-------------------|
 | Input handler (FUN_0000740a) variables | Documented | [RECONSTRUCTED] Pacific Conflict.c:7366+; STRUCTS.md “FUN_0000740a”. |
-| Godot gather + throttle step + trace | Done | [RECONSTRUCTED] Step keys → `throttle_impulse`; [MVP APPROXIMATION] gate + `THROTTLE_STEP_IMPULSE`. `docs/input_godot_contract.md`, `PlayerInputMap.last_input_trace`. |
-| FUN_0000e792 movement smoothing → MVP flight | Partial | [RECONSTRUCTED] `movement_66e`/`672`/`66a` + `FlightMath` delta rule in `flight_model_mvp.gd`; [MVP APPROXIMATION] scaled cmd targets; [UNKNOWN] full `local_46`/`local_42` chain. `docs/flight_FUN_0000e792_contract.md`. |
-| FUN_000044e8 pass ordering + `last_tick_order` | Done | [RECONSTRUCTED] Four passes + `param_2` pattern; `docs/tick_FUN_000044e8_contract.md`; `test_sim_tick_ordering.gd`. |
+| Godot gather + throttle step + trace | Done | [RECONSTRUCTED] Step keys → `throttle_impulse`; [MVP APPROXIMATION] gate + `THROTTLE_STEP_IMPULSE`. `docs/contracts/input_godot_contract.md`, `PlayerInputMap.last_input_trace`. |
+| FUN_0000e792 movement smoothing → MVP flight | Partial | [RECONSTRUCTED] `movement_66e`/`672`/`66a` + `FlightMath` delta rule in `flight_model_mvp.gd`; [MVP APPROXIMATION] scaled cmd targets; [UNKNOWN] full `local_46`/`local_42` chain. `docs/contracts/flight_FUN_0000e792_contract.md`. |
+| FUN_000044e8 pass ordering + `last_tick_order` | Done | [RECONSTRUCTED] Four passes + `param_2` pattern; `docs/contracts/tick_FUN_000044e8_contract.md`; `test_sim_tick_ordering.gd`. |
 | Key code → param_1 mapping | Partial | [RECONSTRUCTED] Brief + Godot `ACTIONS`; [UNKNOWN] full Mac table vs all branches. |
 | DAT_0001d858 state machine | Not started | [RECONSTRUCTED] Values 1, 7, 8, 9 in code. [UNKNOWN] full FSM. |
 | FUN_00005df8 behavior | Not started | [RECONSTRUCTED] Called when flag_ac == 0. [UNKNOWN] logic. |

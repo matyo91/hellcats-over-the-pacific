@@ -169,4 +169,4 @@ fun_0740a(key_code param_1, action param_2) -> uint uVar6
 - `docs/NOTES.md` — FUN_0000740a variable log
 - `docs/STRUCTS.md` — FUN_0000740a globals
 - `docs/ROADMAP.md` — key code → `param_1` mapping status
-- `docs/input_godot_contract.md` — **[INFERRED]** Godot MVP implementation contract (gather outputs, gating, trace)
+- `docs/contracts/input_godot_contract.md` — **[INFERRED]** Godot MVP implementation contract (gather outputs, gating, trace)

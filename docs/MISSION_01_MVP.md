@@ -52,11 +52,11 @@ Paths under `res://godot/scenes/` (see also `Main.tscn` run scene in `project.go
 
 | Area | Script (expected path) | Role |
 | ---- | ---------------------- | ---- |
-| Core | `hellcats/core/sim_core.gd` | Fixed-step / deterministic sequencing; **FUN_000044e8**-aligned **`last_tick_order`** (not used by Mission-1 scene loop; parity / future). See `docs/tick_FUN_000044e8_contract.md`. |
+| Core | `hellcats/core/sim_core.gd` | Fixed-step / deterministic sequencing; **FUN_000044e8**-aligned **`last_tick_order`** (not used by Mission-1 scene loop; parity / future). See `docs/contracts/tick_FUN_000044e8_contract.md`. |
 | Core | `hellcats/core/flight_math.gd` | Shared math for flight/control. |
 | Flight | `hellcats/flight/aircraft_state.gd` | Telemetry: speed, altitude, attitude, throttle, flags. |
-| Flight | `hellcats/flight/player_input_map.gd` | Actions → normalized control intent + `read_input_packet` / trace; see `docs/input_godot_contract.md`. |
-| Flight | `hellcats/flight/flight_model_mvp.gd` | MVP integrator: **`movement_66e`/`672`/`66a`** + `FlightMath` smoothing (**[RECONSTRUCTED]** FUN_0000e792 slice); see `docs/flight_FUN_0000e792_contract.md`. |
+| Flight | `hellcats/flight/player_input_map.gd` | Actions → normalized control intent + `read_input_packet` / trace; see `docs/contracts/input_godot_contract.md`. |
+| Flight | `hellcats/flight/flight_model_mvp.gd` | MVP integrator: **`movement_66e`/`672`/`66a`** + `FlightMath` smoothing (**[RECONSTRUCTED]** FUN_0000e792 slice); see `docs/contracts/flight_FUN_0000e792_contract.md`. |
 | Mission | `hellcats/mission/mission_controller.gd` | Loads JSON, wires player, checkpoints, HUD; objectives, failure checks, restart. **`mission_phase_a8` / `mission_flag_ac`** (DAT gate bridge); **`get_mission_sim_bridge_state()`**. |
 | Mission | `hellcats/mission/mission_objectives_m1.gd` | Pure, testable objective evaluation from telemetry snapshots (data-driven). |
 | Mission | `hellcats/mission/checkpoint.gd` | Ring pass / signal once per pass. |
@@ -123,7 +123,7 @@ If this doc’s numbers drift from JSON, **trust the JSON** and update the doc.
 **[MVP AUTHORING DECISION]** Low-parameter arcade blend; deterministic.
 
 - **State:** throttle 0–1, airspeed, altitude, VS, pitch/roll/yaw and rates, heading.
-- **[RECONSTRUCTED]** **Control integration** uses **`movement_66e`**, **`movement_672`**, **`movement_66a`** updated with **`FlightMath.add_delta_smoothed_int` / `add_delta_smoothed_s16`** (FUN_0000e792 ownership-branch rule; see `docs/flight_FUN_0000e792_contract.md`). Normalized commands scale by **`movement_smoothing.pitch_max_int`** / **`roll_max_int`** / **`yaw_max_int`** in `aircraft_mvp.json` (default **8192**).
+- **[RECONSTRUCTED]** **Control integration** uses **`movement_66e`**, **`movement_672`**, **`movement_66a`** updated with **`FlightMath.add_delta_smoothed_int` / `add_delta_smoothed_s16`** (FUN_0000e792 ownership-branch rule; see `docs/contracts/flight_FUN_0000e792_contract.md`). Normalized commands scale by **`movement_smoothing.pitch_max_int`** / **`roll_max_int`** / **`yaw_max_int`** in `aircraft_mvp.json` (default **8192**).
 - **[MVP APPROXIMATION]** Targets are **not** full **local_46** / **local_42** from airspeed and external template; speed/VS/position paths unchanged from prior MVP.
 - **[MVP TUNING]** `roll_auto_level_gain` when roll stick neutral; `control_rates`, `speed_model`, `stall` as before.
 - **Rough behavior:** throttle → target speed band; pitch affects climb and bleed; roll drives bank and turn rate with speed; yaw is weak trim; VS from pitch + speed, damped.
