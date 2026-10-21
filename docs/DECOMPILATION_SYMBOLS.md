@@ -1525,3 +1525,80 @@ inventory yet.
 | Pacific Conflict | `live_controller_count` | `_DAT_0001c1c8` | controller count kept after advance_frame_and_tick_controllers compacts controller_list (dead entries dropped) |
 | Pacific Conflict | `live_controller_count_w` | `DAT_0001c1ca` | low word of live_controller_count (big-endian int at 0x1c1c8), dbra count in apply_controller_velocities |
 | Pacific Conflict | `engine_sound_choice` | `DAT_00024d14` | engine-sound slot last chosen by update_game_sounds (0 Engine / 10 Wind), -1 after stop_all_sound_channels |
+| Pacific Conflict | `channel1_sound` | `DAT_00024d10` | sound number playing on channel 1 (0 = none); play_game_sound refuses ids >= it, stop_game_sound clears it |
+| Pacific Conflict | `snd_wheel` | `_DAT_0001b856` | one-frame flag: update_game_sounds plays sound 6 Wheel, cleared each frame |
+| Pacific Conflict | `snd_ditch` | `_DAT_0001b850` | flag: sound 11 Ditch plays while set, stops when clear; cleared each frame |
+| Pacific Conflict | `snd_grass` | `_DAT_0001b854` | flag: sound 12 Grass plays while set, stops when clear; cleared each frame |
+| Pacific Conflict | `snd_explosion_timer` | `DAT_0001b84a` | countdown: sound 8 Explosion when non-zero (moved to snd_distant_explosion_timer outside view modes 7..9), decremented each frame |
+| Pacific Conflict | `snd_distant_explosion_timer` | `DAT_0001b848` | countdown: sound 9 Distant Explosion when non-zero, decremented each frame |
+| Pacific Conflict | `snd_gear_alt` | `_DAT_0001b846` | one-frame flag: sound 100 (Gear sample at offset 0x48c0), cleared each frame |
+| Pacific Conflict | `snd_ugh` | `_DAT_0001b844` | one-frame flag: sound 1 Ugh, cleared each frame |
+| Pacific Conflict | `snd_hit` | `_DAT_0001b842` | one-frame flag: sound 2 Hit (player hit), cleared each frame |
+| Pacific Conflict | `gear_moving` | `_DAT_0001b84e` | set when player +0x679 is between 0 and 0x2d (and +0x685 bit 0x20 clear) -> sound 7 [STRONG INFERENCE: gear in motion] |
+| Pacific Conflict | `flaps_moving` | `_DAT_0001b84c` | set when player +0x67b is between 0 and 0xf -> sound 7 [STRONG INFERENCE: flaps in motion] |
+| Pacific Conflict | `prepared_object` | `DAT_00025b24` | 3-D model being drawn; project_prepared_object reads vertices +0x44, faces +0x48, shift +0x32 |
+| Pacific Conflict | `face_normals` | `_DAT_00024d4a` | object +0x44 + 12 * vertex count (+0x36): the face normals stored after the vertices (project_prepared_object) |
+| Pacific Conflict | `vertex0_x` | `DAT_00024d4e` | model vertex 0 long x, copied by project_prepared_object |
+| Pacific Conflict | `vertex0_y` | `DAT_00024d52` | model vertex 0 long y |
+| Pacific Conflict | `vertex0_z` | `DAT_00024d56` | model vertex 0 long z |
+| Pacific Conflict | `vertex_shift` | `DAT_00024d5a` | object +0x32: asr count applied to model vertex longs |
+| Pacific Conflict | `eye_obj_x` | `DAT_00024d60` | camera x in object units, paired with vertex x in face_is_back_facing |
+| Pacific Conflict | `eye_obj_y` | `DAT_00024d5e` | camera y in object units |
+| Pacific Conflict | `eye_obj_z` | `DAT_00024d5c` | camera z in object units |
+| Pacific Conflict | `screen_poly_x` | `DAT_00024df2` | clipped screen polygon: x long of each (x, y) long pair (8-byte stride), filled by clip_polygon_y_max |
+| Pacific Conflict | `screen_poly_y` | `DAT_00024df6` | clipped screen polygon: y long of each pair (screen_poly_x + 4) |
+| Pacific Conflict | `screen_poly_count` | `DAT_00025b1a` | point count of the clipped screen polygon |
+| Pacific Conflict | `face_table` | `DAT_00025f30` | face records (0x20 bytes) of prepared_object, = object +0x48 (project_prepared_object) |
+| Pacific Conflict | `draw_order_next` | `DAT_0001c1be` | next draw-order number given to an emitted face (stored at face +2) |
+| Pacific Conflict | `face_queue_end` | `DAT_00025d2c` | append pointer of the emitted-face queue (faces are queued in draw order) |
+| Pacific Conflict | `near_mode` | `DAT_00025b16` | near mode: camera within the object range, 2 = first frame (docs/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `back_face_queue_end` | `DAT_00025b28` | append cursor of the back faces kept for the penetration test (docs/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `root_face_count` | `DAT_00025b18` | prepared_object +0x38: number of root faces whose +0x12 chains are walked (project_prepared_object, emit_faces_in_order) |
+| Pacific Conflict | `horizon_corners` | `DAT_0001bd90` | screen corners the ground plane reaches: 1 / 2 top-left / top-right, 4 / 8 bottom (0xf all ground, 0 all sky; docs/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `horizon_x0` | `DAT_0001bda0` | horizon edge x0: last ground-plane edge not on a screen border [STRONG INFERENCE] |
+| Pacific Conflict | `horizon_y0` | `DAT_0001bd9c` | horizon edge y0 |
+| Pacific Conflict | `horizon_x1` | `DAT_0001bd98` | horizon edge x1 |
+| Pacific Conflict | `horizon_y1` | `DAT_0001bd94` | horizon edge y1 |
+| Pacific Conflict | `screen_poly_m1` | `DAT_00024dea` | screen_poly_x - 8: indexed by n * 8 it addresses the last of n points |
+| Pacific Conflict | `clip_poly_buf` | `DAT_00025252` | second (x, y) point buffer the clip_polygon_* passes ping-pong with screen_poly_x |
+| Pacific Conflict | `projected_x` | `DAT_000256b2` | projected screen x per view vertex ((x, y) long pairs, 0x80000000 = behind the near plane; project_prepared_object) |
+| Pacific Conflict | `projected_y` | `DAT_000256b6` | projected screen y per view vertex (projected_x + 4) |
+| Pacific Conflict | `view_vertices` | `DAT_00025b20` | camera-space vertex buffer of prepared_object (+0x4c, project_prepared_object) |
+| Pacific Conflict | `back_face_queue` | `DAT_00025b2c` | start of the back faces kept for the penetration test (docs/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `face_queue` | `DAT_00025d30` | start of the emitted-face queue (face_queue_end is its append pointer) |
+| Pacific Conflict | `face_was_clipped` | `_DAT_00025b12` | set to 1 when clip_face_near_plane clipped a face; when 0 submit_object_faces clears object flag 8 |
+| Pacific Conflict | `force_near_clip` | `_DAT_00025b14` | non-zero: every face goes through clip_face_near_plane (object +6 & 8, per the submit_object_faces note) |
+| Pacific Conflict | `object_matrix` | `DAT_00024d62` | pointer to the nine-word object-to-camera matrix (4.12 words) used by transform_face_vertices |
+| Pacific Conflict | `vertex_done` | `DAT_00024d66` | byte per model vertex: 1 once transform_face_vertices has transformed it this frame |
+| Pacific Conflict | `object_attitude` | `DAT_0001d72c` | object attitude matrix built by build_attitude_matrix_3ang (target 0x1d72c) in transform_and_project_object |
+| Pacific Conflict | `object_camera_matrix` | `DAT_00024d38` | object-to-camera matrix = object_attitude x camera matrix (matmul3x3_s16 target 0x24d38); object_matrix points here for rotated objects |
+| Pacific Conflict | `background_rows` | `DAT_00020ad4` | row buffer of 8-byte background spans (0, 1, view_width, fill_colour) per host view row (+0x18c); allocated by draw_sky_and_ground |
+| Pacific Conflict | `heading_tape_pos` | `DAT_00025ffe` | heading-tape scroll position last drawn (update_heading_tape skips the copy when unchanged); reset_overlay_display_state sets 1 to invalidate it |
+| Pacific Conflict | `readouts_drawn` | `_DAT_00025ffc` | 0 forces a full redraw of the readouts / needles (cleared by reset_overlay_display_state) |
+| Pacific Conflict | `background_rows_next` | `DAT_00020ad8` | row span buffer built this frame by draw_sky_and_ground, swapped with background_rows after the blit |
+| Pacific Conflict | `bg_cache_origin` | `DAT_00025f34` | cached host +0x186 / +0x188 (high word: top row, low word: left x of the view) |
+| Pacific Conflict | `bg_cache_size` | `DAT_00025f38` | cached host +0x18a / +0x18c (low word: view row count) |
+| Pacific Conflict | `bg_cache_colours` | `DAT_00025f3c` | cached host +0x18e / +0x190 (sky / ground colours) |
+| Pacific Conflict | `bg_cache_192` | `DAT_00025f40` | cached host +0x192 long (meaning not established) |
+| Pacific Conflict | `bg_row_extents` | `DAT_00025f44` | cached host +0x196: per-row (x0, x1) word pairs of the view |
+| Pacific Conflict | `bg_frame_parity` | `DAT_00025f48` | frame counter; depth 1 redraws the background only on even frames |
+| Pacific Conflict | `panel_back_offset` | `DAT_0001bd7c` | host +0xe2 * +0xe0: subtracted from host +0xdc to address the saved panel image that erasers restore from |
+| Pacific Conflict | `needle_end_x` | `DAT_00025f4a` | needle end x cached per instrument type (long [type]), draw_gauge_needle |
+| Pacific Conflict | `needle_end_y` | `DAT_00025f92` | needle end y cached per instrument type (long [type]), draw_gauge_needle |
+| Pacific Conflict | `alt_short_end_x` | `DAT_00025fda` | altimeter second (2/3 length) hand end x, update_altimeter_needles |
+| Pacific Conflict | `alt_short_end_y` | `DAT_00025fde` | altimeter second (2/3 length) hand end y |
+| Pacific Conflict | `climb_rate` | `DAT_0001bc80` | rate of climb, climb needle angle (/ 0x78) and readout 3 (docs/COCKPIT_HUD_DATA_LOCATIONS.md) |
+| Pacific Conflict | `bomb_count_shown` | `DAT_00025fe2` | player bomb count (+0x67c) last drawn by update_bomb_indicator |
+| Pacific Conflict | `high_flag_shown` | `DAT_00025fe4` | height-above-ground > 0x43 flag last drawn by update_bomb_indicator |
+| Pacific Conflict | `throttle_shown` | `DAT_00025fe6` | player throttle setting (+0x668, 0..9) last drawn by update_throttle_gauge |
+| Pacific Conflict | `flaps_shown` | `DAT_00025fe8` | player flaps byte (+0x67b) last drawn by update_flaps_needle |
+| Pacific Conflict | `gear_shown` | `DAT_00025fea` | player gear byte (+0x679, 0..0x2d) last drawn by update_gear_needles |
+| Pacific Conflict | `ammo_shown` | `DAT_00025fec` | player word +0x682 last drawn by update_ammo_needle |
+| Pacific Conflict | `fuel_left_shown` | `DAT_00025fee` | player fuel tank byte +0x67d last drawn by update_fuel_needles |
+| Pacific Conflict | `fuel_right_shown` | `DAT_00025ff0` | player fuel tank byte +0x67e last drawn by update_fuel_needles |
+| Pacific Conflict | `readout_index` | `DAT_00025ff2` | next numeric readout to update, cycling 0..3 (altitude, speed, heading, climb) |
+| Pacific Conflict | `readout_cache` | `DAT_00025ff4` | last drawn |value| of each of the four readouts (word [4], 0x7fff = invalid) |
+| Pacific Conflict | `enemy_fighter_template` | `DAT_00026000` | first type-4 object, kept by create_enemy_fighter as the template spawn_enemy_fighter copies |
+| Pacific Conflict | `aircraft_type_rec` | `DAT_00026004` | aircraft type record = controller +4, set each tick by update_aircraft_entity (field table in DECOMPILATION_SYMBOLS.md) |
+| Pacific Conflict | `climb_ring` | `DAT_0001bc8c` | 120-word ring of player speed * sin(+0x20) samples; climb_rate is their moving sum (update_aircraft_entity blk 6c) |
+| Pacific Conflict | `climb_ring_index` | `DAT_0001bc84` | next slot of climb_ring, wraps at 0x78 |
