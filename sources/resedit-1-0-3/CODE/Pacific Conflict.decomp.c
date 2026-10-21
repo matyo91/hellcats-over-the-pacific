@@ -20225,31 +20225,31 @@ undefined4 animate_landing_gear /* Original: FUN_0000fb2a */ (int *ctl /* param_
  * found identical to the C: when word DAT_0001b870 == 0: word (a +8) +0x684 |= 0x400; b's
  * controller type (sext word) <= 4 -> its word +0x684 |= 0x400; 0x15..0x19 -> bsr.l 0x12b66
  * apply_blast_damage with the seven arguments reconstructed below. */
-void aircraft_collision /* Original: FUN_0000fe0a */ (int param_1,int param_2)
+void aircraft_collision /* Original: FUN_0000fe0a */ (int self_obj /* param_1: this aircraft's object (+8 controller) */,int other_obj /* param_2: the object collided with */)
 
 {
-  int iVar1;
-  short sVar2;
-  ushort *puVar3;
+  int other_ctl; /* iVar1; other object's controller (+8) */
+  short other_type; /* sVar2; other's template type (*definition) */
+  ushort *self_damage; /* puVar3; &this aircraft's damage word +0x684 */
   
-  if (DAT_0001b870 == 0) {
-    puVar3 = (ushort *)(*(int *)(param_1 + 8) + 0x684);
-    *puVar3 = *puVar3 | 0x400;
-    iVar1 = *(int *)(param_2 + 8);
-    if (iVar1 != 0) {
-      sVar2 = **(short **)(iVar1 + 4);
-      if (sVar2 < 5) {
-        *(ushort *)(iVar1 + 0x684) = *(ushort *)(iVar1 + 0x684) | 0x400;
+  if (replay_state == 0) {
+    self_damage = (ushort *)(*(int *)(self_obj + 8) + 0x684);
+    *self_damage = *self_damage | 0x400;
+    other_ctl = *(int *)(other_obj + 8);
+    if (other_ctl != 0) {
+      other_type = **(short **)(other_ctl + 4);
+      if (other_type < 5) {
+        *(ushort *)(other_ctl + 0x684) = *(ushort *)(other_ctl + 0x684) | 0x400;
       }
-      else if ((0x14 < sVar2) && (sVar2 < 0x1a)) {
+      else if ((0x14 < other_type) && (other_type < 0x1a)) {
         /* Arguments reconstructed [PROVEN, 0xfe50..0xfe86]: obj x, max(obj y, own ctl (a +8, a2)
          * ground +0x2e), obj z, size limit 10, credit = (own ctl == DAT_0001b738) (seq / and #1),
          * 0, 1. */
-        apply_blast_damage(*(int *)(param_1 + 0x18),
-                           (*(int *)(*(int *)(param_1 + 8) + 0x2e) < *(int *)(param_1 + 0x1c)) ?
-                           *(int *)(param_1 + 0x1c) : *(int *)(*(int *)(param_1 + 8) + 0x2e),
-                           *(int *)(param_1 + 0x20),10,
-                           *(int *)(param_1 + 8) == DAT_0001b738,0,1);
+        apply_blast_damage(*(int *)(self_obj + 0x18),
+                           (*(int *)(*(int *)(self_obj + 8) + 0x2e) < *(int *)(self_obj + 0x1c)) ?
+                           *(int *)(self_obj + 0x1c) : *(int *)(*(int *)(self_obj + 8) + 0x2e),
+                           *(int *)(self_obj + 0x20),10,
+                           *(int *)(self_obj + 8) == player_object,0,1);
       }
     }
   }
@@ -20272,22 +20272,22 @@ void aircraft_collision /* Original: FUN_0000fe0a */ (int param_1,int param_2)
  * Ghidra C reviewed (function at overlay offset 0xfe96).
  * Definition +0x16 "notice" handler of the aircraft type (definition key 1 at file 0x1a7b0: +2 0xe5aa, +6 0xe0ce, +0xa 0xe0a4, +0xe 0xfb2a, +0x12 0xfe0a, +0x16 this function) [PROVEN bytes]; dispatch_overlap_collisions calls +0x16 (self, other) for each pair whose ranges overlap. For the player aircraft (in mission states 1, 7, 8): other aircraft (template type <= 4) more than 1999 above their ground height become radar tracks (add_radar_track), and the nearest one of types 2..4 is kept in DAT_0001b888. For AI aircraft, against template types 3, 4, 0x15..0x19: with probability 1/64, when not busy (+0x63e) and in the patrol / attack states (+0x32 = 0x110d4 / 0x11162), estimates the chance from the target size / distance (range * 0x6720 / 500 << 6 / distance, halved if it already has a target); aircraft targets need ammo (+0x682 >= 2), ships need probe_nearest_facility_kind == 0x100 and bombs (+0x67c); a hit stores the target in +0x692 / its distance in +0x696 (replacing a farther one, with reference counts at +3) and switches the AI state (+0x32 = 0x110d4, invert_ai_bias_67b_if_positive...). [STRONG INFERENCE: AI target acquisition and the player radar] Ghidra C (tail not shown here).
  */
-void aircraft_notice_object /* Original: FUN_0000fe96 */ (int param_1,int param_2)
+void aircraft_notice_object /* Original: FUN_0000fe96 */ (int self_obj /* param_1: this aircraft's object (+8 controller) */,int other_obj /* param_2: the object noticed */)
 
 {
-  int iVar1;
-  short sVar2;
-  bool bVar3;
-  uint uVar4;
-  int iVar5;
-  int iVar6;
-  int iVar7;
-  char *pcVar8;
+  int self_ctl; /* iVar1; this aircraft's controller */
+  short other_type; /* sVar2; other's template type */
+  bool took_target; /* bVar3; the other object became this aircraft's AI target */
+  uint rnd; /* uVar4; overlay_rng_next result */
+  int dist; /* iVar5; approx_dist3_xyz distance to the other object */
+  int facility; /* iVar6; probe_nearest_facility_kind result */
+  int chance; /* iVar7; engagement chance from the other's range / distance (halved with a target) */
+  char *ref_count; /* pcVar8; old AI target's +3 reference count */
   
-  iVar1 = *(int *)(param_1 + 8);
-  sVar2 = **(short **)(*(int *)(param_2 + 8) + 4);
-  if (*(int *)(param_1 + 8) != DAT_0001b738) {
-    switch(sVar2) {
+  self_ctl = *(int *)(self_obj + 8);
+  other_type = **(short **)(*(int *)(other_obj + 8) + 4);
+  if (*(int *)(self_obj + 8) != player_object) {
+    switch(other_type) {
     case 3:
     case 4:
     case 0x15:
@@ -20300,94 +20300,94 @@ void aircraft_notice_object /* Original: FUN_0000fe96 */ (int param_1,int param_
       return;
     }
   }
-  if (((DAT_0001d858 != 1) && (DAT_0001d858 != 8)) && (DAT_0001d858 != 7)) {
+  if (((view_mode != 1) && (view_mode != 8)) && (view_mode != 7)) {
     return;
   }
-  if (4 < sVar2) {
+  if (4 < other_type) {
     return;
   }
-  if (1999 < *(int *)(param_2 + 0x1c) - *(int *)(*(int *)(param_2 + 8) + 0x2e)) {
-    add_radar_track(param_2);
+  if (1999 < *(int *)(other_obj + 0x1c) - *(int *)(*(int *)(other_obj + 8) + 0x2e)) {
+    add_radar_track(other_obj);
   }
-  if (sVar2 == 1) {
+  if (other_type == 1) {
     return;
   }
-  if ((DAT_0001b888 != (int *)0x0) && (*(int *)(*DAT_0001b888 + 0x10) <= *(int *)(param_2 + 0x10)))
+  if ((designated_entity_2 != (int *)0x0) && (*(int *)(*designated_entity_2 + 0x10) <= *(int *)(other_obj + 0x10)))
   {
     return;
   }
-  DAT_0001b888 = (int *)*(undefined4 *)(param_2 + 8);
+  designated_entity_2 = (int *)*(undefined4 *)(other_obj + 8);
   return;
 switchD_0000ff44_caseD_3:
-  uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-  if ((uVar4 & 0x3f) != 0) {
+  rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+  if ((rnd & 0x3f) != 0) {
     return;
   }
-  if (*(char *)(iVar1 + 0x63e) != '\0') {
+  if (*(char *)(self_ctl + 0x63e) != '\0') {
     return;
   }
-  if ((*(int *)(iVar1 + 0x32) != 0x110d4) && (*(int *)(iVar1 + 0x32) != 0x11162)) {
+  if ((*(int *)(self_ctl + 0x32) != 0x110d4) && (*(int *)(self_ctl + 0x32) != 0x11162)) {
     return;
   }
-  iVar5 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0xffa2..0xffb6): observer x, y, z (param_1), other x, y, z (param_2) */);
-  if (iVar5 == 0) {
-    iVar7 = 0x7fffffff;
+  dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0xffa2..0xffb6): observer x, y, z (param_1), other x, y, z (param_2) */);
+  if (dist == 0) {
+    chance = 0x7fffffff;
   }
   else {
-    iVar7 = ((*(int *)(param_2 + 0x14) * 0x6720) / 500 << 6) / iVar5;
+    chance = ((*(int *)(other_obj + 0x14) * 0x6720) / 500 << 6) / dist;
   }
-  if ((sVar2 < 0x15) || (0x19 < sVar2)) {
-    if (sVar2 < 5) {
-      if (*(int *)(iVar1 + 0x32) == 0x11162) {
+  if ((other_type < 0x15) || (0x19 < other_type)) {
+    if (other_type < 5) {
+      if (*(int *)(self_ctl + 0x32) == 0x11162) {
         return;
       }
-      if (*(short *)(iVar1 + 0x682) < 2) {
+      if (*(short *)(self_ctl + 0x682) < 2) {
         return;
       }
     }
   }
   else {
-    iVar6 = probe_nearest_facility_kind( /* Original: FUN_00000354 */param_2 /* [PROVEN, move.l a3 at 0xfff6] */);
-    if (iVar6 != 0x100) {
+    facility = probe_nearest_facility_kind( /* Original: FUN_00000354 */other_obj /* [PROVEN, move.l a3 at 0xfff6] */);
+    if (facility != 0x100) {
       return;
     }
-    if (*(char *)(iVar1 + 0x67c) == '\0') {
+    if (*(char *)(self_ctl + 0x67c) == '\0') {
       return;
     }
   }
-  if (*(int *)(iVar1 + 0x692) != 0) {
-    iVar7 = iVar7 >> 1;
+  if (*(int *)(self_ctl + 0x692) != 0) {
+    chance = chance >> 1;
   }
-  uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-  if (iVar7 <= (int)(uint)((ushort)uVar4 & 0x7f)) {
+  rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+  if (chance <= (int)(uint)((ushort)rnd & 0x7f)) {
     return;
   }
-  bVar3 = false;
-  if (*(int *)(iVar1 + 0x692) == 0) {
-    *(int *)(iVar1 + 0x692) = param_2;
-    *(int *)(iVar1 + 0x696) = iVar5;
+  took_target = false;
+  if (*(int *)(self_ctl + 0x692) == 0) {
+    *(int *)(self_ctl + 0x692) = other_obj;
+    *(int *)(self_ctl + 0x696) = dist;
   }
   else {
-    if (*(int *)(iVar1 + 0x696) <= iVar5 * 2) goto LAB_0001007c;
-    *(int *)(iVar1 + 0x696) = iVar5;
-    pcVar8 = (char *)(*(int *)(iVar1 + 0x692) + 3);
-    *pcVar8 = *pcVar8 + -1;
-    *(int *)(iVar1 + 0x692) = param_2;
+    if (*(int *)(self_ctl + 0x696) <= dist * 2) goto LAB_0001007c;
+    *(int *)(self_ctl + 0x696) = dist;
+    ref_count = (char *)(*(int *)(self_ctl + 0x692) + 3);
+    *ref_count = *ref_count + -1;
+    *(int *)(self_ctl + 0x692) = other_obj;
   }
-  *(char *)(param_2 + 3) = *(char *)(param_2 + 3) + '\x01';
-  bVar3 = true;
+  *(char *)(other_obj + 3) = *(char *)(other_obj + 3) + '\x01';
+  took_target = true;
 LAB_0001007c:
-  if (bVar3) {
-    if ((sVar2 < 0x15) || (0x19 < sVar2)) {
-      if (sVar2 < 5) {
-        *(undefined4 *)(iVar1 + 0x32) = 0x110d4;
-        invert_ai_bias_67b_if_positive( /* Original: FUN_00010cd8 */iVar1);
+  if (took_target) {
+    if ((other_type < 0x15) || (0x19 < other_type)) {
+      if (other_type < 5) {
+        *(undefined4 *)(self_ctl + 0x32) = 0x110d4;
+        invert_ai_bias_67b_if_positive( /* Original: FUN_00010cd8 */self_ctl);
       }
     }
     else {
-      invert_ai_bias_67b_if_positive( /* Original: FUN_00010cd8 */iVar1);
-      *(undefined4 *)(iVar1 + 0x32) = 0x112c0;
-      *(undefined1 *)(iVar1 + 0x675) = 0;
+      invert_ai_bias_67b_if_positive( /* Original: FUN_00010cd8 */self_ctl);
+      *(undefined4 *)(self_ctl + 0x32) = 0x112c0;
+      *(undefined1 *)(self_ctl + 0x675) = 0;
     }
   }
   return;

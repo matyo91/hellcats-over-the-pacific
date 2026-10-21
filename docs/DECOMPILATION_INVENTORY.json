@@ -18524,7 +18524,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 20228,
         "line_end": 20257,
-        "function_sha256": "989df07d62de04e4e7efe26a0ead209685e41f710b602369e4c5188827a2382a"
+        "function_sha256": "d1e5600c2a4e91c33b09ba26d8308cd0a8209b5e5f000e2d980810231e7de25e"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -18540,7 +18540,7 @@
         "dependencies": "damage bit 0x400 on both; ships FUN_00012b66",
         "validation": "Ghidra C + definition bytes; token diff vs HEAD = renames"
       },
-      "source_revision": "989df07d62de04e4e7efe26a0ead209685e41f710b602369e4c5188827a2382a",
+      "source_revision": "d1e5600c2a4e91c33b09ba26d8308cd0a8209b5e5f000e2d980810231e7de25e",
       "strict_port": null
     },
     {
@@ -18558,7 +18558,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 20275,
         "line_end": 20394,
-        "function_sha256": "e2ac7084b629cde7a2a9ee017c7893a3050bf2667f7ac71d47e3cdb1de1e9f9b"
+        "function_sha256": "875504bb36c374f3486a15b0a4a06c8ea79751c8a297bca79b7c51c5d985e18f"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -18576,7 +18576,7 @@
         "dependencies": "definition +0x16 of aircraft: radar tracks, AI target acquisition",
         "validation": "Ghidra C + definition bytes; token diff vs HEAD = renames"
       },
-      "source_revision": "e2ac7084b629cde7a2a9ee017c7893a3050bf2667f7ac71d47e3cdb1de1e9f9b",
+      "source_revision": "875504bb36c374f3486a15b0a4a06c8ea79751c8a297bca79b7c51c5d985e18f",
       "strict_port": null
     },
     {
