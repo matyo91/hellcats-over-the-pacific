@@ -1602,3 +1602,19 @@ inventory yet.
 | Pacific Conflict | `aircraft_type_rec` | `DAT_00026004` | aircraft type record = controller +4, set each tick by update_aircraft_entity (field table in DECOMPILATION_SYMBOLS.md) |
 | Pacific Conflict | `climb_ring` | `DAT_0001bc8c` | 120-word ring of player speed * sin(+0x20) samples; climb_rate is their moving sum (update_aircraft_entity blk 6c) |
 | Pacific Conflict | `climb_ring_index` | `DAT_0001bc84` | next slot of climb_ring, wraps at 0x78 |
+| Pacific Conflict | `route_1b2e0` | `DAT_0001b2e0` | AI waypoint route table given to the route block by ensure_ai_script_1b2e0_tick (target speed 0x9d8) |
+| Pacific Conflict | `route_1b310` | `DAT_0001b310` | AI waypoint route table given to the route block by ensure_ai_script_1b310_tick (target speed 0xd5c) |
+| Pacific Conflict | `route_1b340` | `DAT_0001b340` | AI waypoint route table given to the route block by ensure_ai_script_1b340_tick (target speed 0x9d8) |
+| Pacific Conflict | `route_1b370` | `DAT_0001b370` | AI mission route table copied into the route block by tick_ai_1b370_mission |
+| Pacific Conflict | `route_1b370_speeds` | `DAT_0001b3d0` | 8 longs: target speed per route_1b370 waypoint (0xe10, 0xe10, 0xca8, 0xca8, 0xb40, 0xd5c x3) |
+| Pacific Conflict | `ai_fly_table` | `DAT_0001b3f4` | AI fly handlers indexed by the aircraft kind word +0x614 (init_aircraft_controller); 0 = plain update_aircraft_entity |
+| Pacific Conflict | `mission_target_list` | `DAT_00020adc` | mission 7 (Divine Wind) target list: word +0 live count, word +2 slots, longs from +6 (remove_mission_target) |
+| Pacific Conflict | `rng_cursor` | `DAT_00026008` | overlay RNG cursor into rng_state (wraps at 0x260e7; set to 0x260e4 by overlay_rng_init) |
+| Pacific Conflict | `rng_state` | `DAT_0002600c` | overlay RNG state: 55 longs from 0x2600c, the first one = the seed (overlay_rng_init) |
+| Pacific Conflict | `rng_state_1` | `DAT_00026010` | rng_state + 4: second state long, first one filled by the seeding loop |
+| Pacific Conflict | `smoke_template` | `DAT_000260e8` | smoke plume template object stored by register_smoke_template, spawned by spawn_smoke_plume |
+| Pacific Conflict | `effect_templates` | `DAT_0002626e` | 4 effect template objects stored by register_effect_template (the 4th = effect_template_3) |
+| Pacific Conflict | `effect_template_3` | `DAT_0002627a` | effect_templates[3]: its controllers get object flag 0x2000 (create_effect_controller) |
+| Pacific Conflict | `effect_log_index` | `DAT_000260ec` | next entry of effect_log (wraps at 16) |
+| Pacific Conflict | `effect_log` | `DAT_000260ee` | 16-entry log (0x18 bytes) of spawn_effect arguments replayed by replay_logged_effects; byte +0 = kind, +0x14 frame |
+| Pacific Conflict | `effect_init_table` | `DAT_0001b40c` | per-kind effect initialiser called by spawn_effect on the new effect object |
