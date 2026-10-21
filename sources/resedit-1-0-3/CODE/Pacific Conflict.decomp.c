@@ -404,6 +404,9 @@ typedef unsigned short    ushort;
 #define camera_goal_y DAT_00024d24 /* camera destination y */
 #define camera_goal_z DAT_00024d20 /* camera destination z */
 #define target_hold_frames DAT_00024d1c /* frames the view keeps following view_follow_target (0x14 when taken) */
+#define live_controller_count _DAT_0001c1c8 /* controller count kept after advance_frame_and_tick_controllers compacts controller_list (dead entries dropped) */
+#define live_controller_count_w DAT_0001c1ca /* low word of live_controller_count (big-endian int at 0x1c1c8), dbra count in apply_controller_velocities */
+#define engine_sound_choice DAT_00024d14 /* engine-sound slot last chosen by update_game_sounds (0 Engine / 10 Wind), -1 after stop_all_sound_channels */
 
 /*
  * Original: DAT_0001a7d2
@@ -12246,71 +12249,71 @@ LAB_00008f6c:
 void begin_replay_view /* Original: FUN_00008ff4 */ (void)
 
 {
-  uint *puVar1;
-  int iVar2;
-  ushort uVar3;
-  int *piVar4;
-  short asStack_22 [9];
-  undefined1 auStack_10 [2];
-  short local_e;
-  short local_a;
-  short local_6;
-  
-  piVar4 = DAT_0001b738;
-  DAT_0001d858 = 8;
-  if ((*(byte *)(*DAT_0001b738 + 7) & 0x40) != 0) {
-    puVar1 = (uint *)(*DAT_0001b738 + 4);
-    *puVar1 = *puVar1 & 0xffffffbf;
-    drop_contact_records_for_object(*piVar4);
+  uint *obj_flags; /* puVar1; player object flag word at +4 */
+  int min_height; /* iVar2; player +0x2e + 0x280 floor for the camera goal */
+  ushort prev_slot; /* uVar3; pose ring index - 1, wraps to 0x4a */
+  int *pose; /* piVar4; player, then pose ring entry (+0x36, 0x14 stride) */
+  short matrix [9]; /* asStack_22; attitude matrix */
+  undefined1 vec [2]; /* auStack_10; offset vector transformed in place */
+  short vec_x; /* local_e, -0xe(A6) */
+  short vec_y; /* local_a, -0xa(A6) */
+  short vec_z; /* local_6, -6(A6) */
+
+  pose = player_object;
+  view_mode = 8;
+  if ((*(byte *)(*player_object + 7) & 0x40) != 0) {
+    obj_flags = (uint *)(*player_object + 4);
+    *obj_flags = *obj_flags & 0xffffffbf;
+    drop_contact_records_for_object(*pose);
   }
   update_view_clip_bounds();
-  piVar4 = (int *)((int)DAT_0001b738 + *(short *)((int)DAT_0001b738 + 0x612) * 0x14 + 0x36);
-  local_a = 0;
-  local_e = 0;
-  local_6 = -1000;
-  build_attitude_matrix_3ang( /* Original: FUN_0000253e */0,(int)*(short *)((int)piVar4 + 0xe),0,(int)asStack_22);
-  transform_vecs12_by_matrix3(1,(int)auStack_10,(int)auStack_10,asStack_22);
-  DAT_0001d838 = *piVar4 + (int)local_e;
-  DAT_0001d834 = piVar4[1] + (int)local_a;
-  DAT_0001d830 = piVar4[2] + (int)local_6;
-  uVar3 = *(short *)((int)DAT_0001b738 + 0x612) - 1;
-  if ((int)((uint)uVar3 << 0x10) < 0) {
-    uVar3 = 0x4a;
+  pose = (int *)((int)player_object + *(short *)((int)player_object + 0x612) * 0x14 + 0x36);
+  vec_y = 0;
+  vec_x = 0;
+  vec_z = -1000;
+  build_attitude_matrix_3ang( /* Original: FUN_0000253e */0,(int)*(short *)((int)pose + 0xe),0,(int)matrix);
+  transform_vecs12_by_matrix3(1,(int)vec,(int)vec,matrix);
+  camera_x = *pose + (int)vec_x;
+  camera_y = pose[1] + (int)vec_y;
+  camera_z = pose[2] + (int)vec_z;
+  prev_slot = *(short *)((int)player_object + 0x612) - 1;
+  if ((int)((uint)prev_slot << 0x10) < 0) {
+    prev_slot = 0x4a;
   }
-  piVar4 = (int *)((int)DAT_0001b738 + (short)uVar3 * 0x14 + 0x36);
-  if (DAT_0001b86c == 1) {
-    local_6 = -0x513;
+  pose = (int *)((int)player_object + (short)prev_slot * 0x14 + 0x36);
+  if (replay_request == 1) {
+    vec_z = -0x513;
   }
   else {
-    local_6 = 0x513;
+    vec_z = 0x513;
   }
-  local_a = 0x183;
-  local_e = -0x2ee;
-  build_attitude_matrix_3ang( /* Original: FUN_0000253e */0,(int)*(short *)((int)piVar4 + 0xe),0,(int)asStack_22);
-  transform_vecs12_by_matrix3(1,(int)auStack_10,(int)auStack_10,asStack_22);
-  DAT_00024d28 = *piVar4 + (int)local_e;
-  DAT_00024d20 = piVar4[2] + (int)local_6;
-  iVar2 = *(int *)((int)DAT_0001b738 + 0x2e) + 0x280;
-  DAT_00024d24 = piVar4[1] + (int)local_a;
-  if (piVar4[1] + (int)local_a < iVar2) {
-    DAT_00024d24 = iVar2;
+  vec_y = 0x183;
+  vec_x = -0x2ee;
+  build_attitude_matrix_3ang( /* Original: FUN_0000253e */0,(int)*(short *)((int)pose + 0xe),0,(int)matrix);
+  transform_vecs12_by_matrix3(1,(int)vec,(int)vec,matrix);
+  camera_goal_x = *pose + (int)vec_x;
+  camera_goal_z = pose[2] + (int)vec_z;
+  min_height = *(int *)((int)player_object + 0x2e) + 0x280;
+  camera_goal_y = pose[1] + (int)vec_y;
+  if (pose[1] + (int)vec_y < min_height) {
+    camera_goal_y = min_height;
   }
-  DAT_0001d81c = (DAT_00024d28 - DAT_0001d838) / 0x4b;
-  DAT_0001d818 = (DAT_00024d24 - DAT_0001d834) / 0x4b;
-  DAT_0001d814 = (DAT_00024d20 - DAT_0001d830) / 0x4b;
-  *(undefined2 *)(DAT_0001b738 + 0x1a2) = 0;
-  DAT_0001d858 = 8;
-  DAT_00024d18 = 0xc001;
-  DAT_00024d1a = 0xc001;
-  DAT_0001b86c = 0;
-  DAT_0001b86e = 0x69;
-  DAT_0001b870 = 1;
-  *(undefined2 *)(DAT_0001b5a0 + 0x98) = 1;
-  if ((DAT_0001b884 != (int *)0x0) && (*DAT_0001b884 != 0)) {
-    DAT_0001b888 = DAT_0001b884;
+  camera_step_x = (camera_goal_x - camera_x) / 0x4b;
+  camera_step_y = (camera_goal_y - camera_y) / 0x4b;
+  camera_step_z = (camera_goal_z - camera_z) / 0x4b;
+  *(undefined2 *)(player_object + 0x1a2) = 0;
+  view_mode = 8;
+  camera_heading = 0xc001;
+  camera_pitch = 0xc001;
+  replay_request = 0;
+  replay_frames_left = 0x69;
+  replay_state = 1;
+  *(undefined2 *)(host_world + 0x98) = 1;
+  if ((view_follow_target != (int *)0x0) && (*view_follow_target != 0)) {
+    designated_entity_2 = view_follow_target;
   }
-  DAT_0001b884 = (int *)0x0;
-  DAT_00024d1c = 0;
+  view_follow_target = (int *)0x0;
+  target_hold_frames = 0;
   stop_all_sound_channels();
   return;
 }
@@ -12337,22 +12340,22 @@ void begin_replay_view /* Original: FUN_00008ff4 */ (void)
 void apply_player_mouse_controls /* Original: FUN_0000923e */ (void)
 
 {
-  int iVar1;
+  int work; /* iVar1; scaled x offset, then designated target object */
   
-  if ((*(byte *)((int)DAT_0001b738 + 0x685) & 1) == 0) {
-    if ((_DAT_0001b872 == 0) || (DAT_0001b888 == (int *)0x0)) {
-      DAT_00024d32 = *(undefined2 *)(DAT_0001b5a0 + 0x33e);
-      DAT_00024d30 = *(undefined2 *)(DAT_0001b5a0 + 0x340);
-      iVar1 = ((int)DAT_00020b2a - (int)*(short *)(DAT_0001b5a0 + 0x33e)) * 3;
-      if (iVar1 < 0) {
-        iVar1 = iVar1 + 1;
+  if ((*(byte *)((int)player_object + 0x685) & 1) == 0) {
+    if ((state_flag_b872 == 0) || (designated_entity_2 == (int *)0x0)) {
+      host_word_33e = *(undefined2 *)(host_world + 0x33e);
+      host_word_340 = *(undefined2 *)(host_world + 0x340);
+      work = ((int)view_half_width - (int)*(short *)(host_world + 0x33e)) * 3;
+      if (work < 0) {
+        work = work + 1;
       }
-      enqueue_control_inputs_avg4( /* Original: FUN_00010558 */(int)DAT_0001b738,DAT_0001b858,
-                   (*(short *)(DAT_0001b5a0 + 0x340) - DAT_00020b2c) * 3,(short)(iVar1 >> 1));
+      enqueue_control_inputs_avg4( /* Original: FUN_00010558 */(int)player_object,rudder_key,
+                   (*(short *)(host_world + 0x340) - view_half_rows) * 3,(short)(work >> 1));
     }
     else {
-      iVar1 = *DAT_0001b888;
-      steer_entity_toward_point( /* Original: FUN_00010b2e */DAT_0001b738,*(int *)(iVar1 + 0x18),*(int *)(iVar1 + 0x1c),*(int *)(iVar1 + 0x20)
+      work = *designated_entity_2;
+      steer_entity_toward_point( /* Original: FUN_00010b2e */player_object,*(int *)(work + 0x18),*(int *)(work + 0x1c),*(int *)(work + 0x20)
                   );
     }
   }
@@ -12378,109 +12381,109 @@ void apply_player_mouse_controls /* Original: FUN_0000923e */ (void)
 void advance_frame_and_tick_controllers /* Original: FUN_000092e4 */ (void)
 
 {
-  char *pcVar1;
-  int iVar2;
-  short sVar3;
-  short sVar4;
-  uint uVar5;
-  int *piVar6;
-  int *piVar7;
-  undefined4 *puVar8;
-  undefined4 *puVar9;
-  undefined4 *puVar10;
-  
-  iVar2 = DAT_0001b838 + 1;
-  if (DAT_0001b870 == 1) {
-    DAT_0001b838 = DAT_0001b838 + -0x4a;
+  char *entity; /* pcVar1; entity_array_1 entry (type byte 2 handled) */
+  int obj; /* iVar2; next frame number, then object_pool entry */
+  short left; /* sVar3; loop countdown, then compacted controller count */
+  short old_count; /* sVar4; controller_count at entry (low word) */
+  uint vis_flags; /* uVar5; 0x40 hidden or 0x42 hidden+expired */
+  int *next_slot; /* piVar6; next pointer slot */
+  int *slot; /* piVar7; list slot, then controller */
+  undefined4 *dst; /* puVar8; compaction write slot in controller_list */
+  undefined4 *next_ptr; /* puVar9; next slot */
+  undefined4 *src; /* puVar10; compaction read slot in controller_list */
+
+  obj = frame_counter + 1;
+  if (replay_state == 1) {
+    frame_counter = frame_counter + -0x4a;
     mark_effect_log_end();
-    iVar2 = DAT_0001b838;
+    obj = frame_counter;
   }
-  DAT_0001b838 = iVar2;
-  sVar4 = DAT_0001c1cc._2_2_;
-  if (DAT_0001b870 != 0) {
-    piVar7 = &DAT_0001d4a4;
-    sVar3 = DAT_0001c1e0._2_2_;
-    while (sVar3 = sVar3 + -1, sVar3 != -1) {
-      piVar6 = piVar7 + 1;
-      pcVar1 = (char *)*piVar7;
-      piVar7 = piVar6;
-      if (*pcVar1 == '\x02') {
-        if ((DAT_0001b838 < *(int *)(pcVar1 + 0x40)) ||
-           ((*(int *)(pcVar1 + 0x3c) != 0 && (*(int *)(pcVar1 + 0x3c) < DAT_0001b838)))) {
-          if ((*(int *)(pcVar1 + 0x3c) == 0) || (DAT_0001b838 <= *(int *)(pcVar1 + 0x3c))) {
-            uVar5 = 0x40;
+  frame_counter = obj;
+  old_count = controller_count._2_2_;
+  if (replay_state != 0) {
+    slot = &entity_array_1;
+    left = entity_array_1_count._2_2_;
+    while (left = left + -1, left != -1) {
+      next_slot = slot + 1;
+      entity = (char *)*slot;
+      slot = next_slot;
+      if (*entity == '\x02') {
+        if ((frame_counter < *(int *)(entity + 0x40)) ||
+           ((*(int *)(entity + 0x3c) != 0 && (*(int *)(entity + 0x3c) < frame_counter)))) {
+          if ((*(int *)(entity + 0x3c) == 0) || (frame_counter <= *(int *)(entity + 0x3c))) {
+            vis_flags = 0x40;
           }
           else {
-            uVar5 = 0x42;
+            vis_flags = 0x42;
           }
-          *(uint *)(pcVar1 + 4) = uVar5 | *(uint *)(pcVar1 + 4);
+          *(uint *)(entity + 4) = vis_flags | *(uint *)(entity + 4);
         }
-        else if ((pcVar1[7] & 2U) == 0) {
-          if (*(int *)(pcVar1 + 0x40) == DAT_0001b838) {
-            *(uint *)(pcVar1 + 4) = *(uint *)(pcVar1 + 4) & 0xffffffbf;
+        else if ((entity[7] & 2U) == 0) {
+          if (*(int *)(entity + 0x40) == frame_counter) {
+            *(uint *)(entity + 4) = *(uint *)(entity + 4) & 0xffffffbf;
           }
         }
         else {
-          *(uint *)(pcVar1 + 4) = *(uint *)(pcVar1 + 4) & 0xffffffbd;
+          *(uint *)(entity + 4) = *(uint *)(entity + 4) & 0xffffffbd;
         }
       }
     }
-    piVar7 = &DAT_0001b5a4;
-    sVar3 = DAT_0001b734._2_2_;
-    while (sVar3 = sVar3 + -1, sVar3 != -1) {
-      piVar6 = piVar7 + 1;
-      iVar2 = *piVar7;
-      piVar7 = piVar6;
-      if ((DAT_0001b838 < *(int *)(iVar2 + 0x40)) ||
-         ((*(int *)(iVar2 + 0x3c) != 0 && (*(int *)(iVar2 + 0x3c) < DAT_0001b838)))) {
-        if ((*(int *)(iVar2 + 0x3c) == 0) || (DAT_0001b838 <= *(int *)(iVar2 + 0x3c))) {
-          uVar5 = 0x40;
+    slot = &object_pool;
+    left = object_count._2_2_;
+    while (left = left + -1, left != -1) {
+      next_slot = slot + 1;
+      obj = *slot;
+      slot = next_slot;
+      if ((frame_counter < *(int *)(obj + 0x40)) ||
+         ((*(int *)(obj + 0x3c) != 0 && (*(int *)(obj + 0x3c) < frame_counter)))) {
+        if ((*(int *)(obj + 0x3c) == 0) || (frame_counter <= *(int *)(obj + 0x3c))) {
+          vis_flags = 0x40;
         }
         else {
-          uVar5 = 0x42;
+          vis_flags = 0x42;
         }
-        *(uint *)(iVar2 + 4) = uVar5 | *(uint *)(iVar2 + 4);
+        *(uint *)(obj + 4) = vis_flags | *(uint *)(obj + 4);
       }
-      else if ((*(byte *)(iVar2 + 7) & 2) == 0) {
-        if (*(int *)(iVar2 + 0x40) == DAT_0001b838) {
-          *(uint *)(iVar2 + 4) = *(uint *)(iVar2 + 4) & 0xffffffbf;
+      else if ((*(byte *)(obj + 7) & 2) == 0) {
+        if (*(int *)(obj + 0x40) == frame_counter) {
+          *(uint *)(obj + 4) = *(uint *)(obj + 4) & 0xffffffbf;
         }
       }
       else {
-        *(uint *)(iVar2 + 4) = *(uint *)(iVar2 + 4) & 0xffffffbd;
+        *(uint *)(obj + 4) = *(uint *)(obj + 4) & 0xffffffbd;
       }
     }
     replay_logged_effects();
   }
-  puVar8 = &DAT_0001c25c;
-  puVar10 = &DAT_0001c25c;
-  sVar3 = sVar4;
-  while (sVar3 = sVar3 + -1, sVar3 != -1) {
-    puVar9 = puVar10 + 1;
-    piVar7 = (int *)*puVar10;
-    puVar10 = puVar9;
-    if (*piVar7 != 0) {
-      puVar9 = puVar8 + 1;
-      *puVar8 = piVar7;
-      puVar8 = puVar9;
-      if (*(int *)(piVar7[1] + 2) != 0) {
-        (**(code **)(piVar7[1] + 2))(piVar7);
+  dst = &controller_list;
+  src = &controller_list;
+  left = old_count;
+  while (left = left + -1, left != -1) {
+    next_ptr = src + 1;
+    slot = (int *)*src;
+    src = next_ptr;
+    if (*slot != 0) {
+      next_ptr = dst + 1;
+      *dst = slot;
+      dst = next_ptr;
+      if (*(int *)(slot[1] + 2) != 0) {
+        (**(code **)(slot[1] + 2))(slot);
       }
     }
   }
-  sVar3 = (short)((int)(puVar8 + -0x7097) >> 2);
-  if (sVar3 < sVar4) {
-    if (sVar4 < DAT_0001c1cc) {
-      sVar4 = DAT_0001c1cc._2_2_ - sVar4;
-      while (sVar4 = sVar4 + -1, sVar4 != -1) {
-        *puVar8 = *puVar10;
-        puVar8 = puVar8 + 1;
-        puVar10 = puVar10 + 1;
+  left = (short)((int)(dst + -0x7097) >> 2);
+  if (left < old_count) {
+    if (old_count < controller_count) {
+      old_count = controller_count._2_2_ - old_count;
+      while (old_count = old_count + -1, old_count != -1) {
+        *dst = *src;
+        dst = dst + 1;
+        src = src + 1;
       }
     }
-    DAT_0001c1cc = (int)(puVar8 + -0x7097) >> 2;
+    controller_count = (int)(dst + -0x7097) >> 2;
   }
-  _DAT_0001c1c8 = (int)sVar3;
+  live_controller_count = (int)left;
   apply_controller_velocities();
   return;
 }
@@ -12498,27 +12501,27 @@ void advance_frame_and_tick_controllers /* Original: FUN_000092e4 */ (void)
 void apply_controller_velocities /* Original: FUN_0000947c */ (void)
 
 {
-  int iVar1;
-  int *piVar2;
-  short sVar3;
-  undefined4 *puVar4;
-  undefined4 *puVar5;
+  int obj; /* iVar1; controlled object (*controller) */
+  int *ctl; /* piVar2; controller */
+  short left; /* sVar3; dbra countdown */
+  undefined4 *next_ptr; /* puVar4; next slot */
+  undefined4 *slot; /* puVar5; controller_list slot */
   
-  sVar3 = DAT_0001c1ca;
-  puVar5 = &DAT_0001c25c;
-  while (sVar3 = sVar3 + -1, sVar3 != -1) {
-    puVar4 = puVar5 + 1;
-    piVar2 = (int *)*puVar5;
-    iVar1 = *piVar2;
-    puVar5 = puVar4;
-    if ((iVar1 != 0) && ((*(byte *)(iVar1 + 6) & 0x20) != 0)) {
-      piVar2[5] = *(int *)(iVar1 + 0x18);
-      piVar2[6] = *(int *)(iVar1 + 0x1c);
-      piVar2[7] = *(int *)(iVar1 + 0x20);
-      *(undefined4 *)((int)piVar2 + 0x2e) = 0;
-      *(int *)(iVar1 + 0x18) = piVar2[2] + *(int *)(iVar1 + 0x18);
-      *(int *)(iVar1 + 0x1c) = piVar2[3] + *(int *)(iVar1 + 0x1c);
-      *(int *)(iVar1 + 0x20) = piVar2[4] + *(int *)(iVar1 + 0x20);
+  left = live_controller_count_w;
+  slot = &controller_list;
+  while (left = left + -1, left != -1) {
+    next_ptr = slot + 1;
+    ctl = (int *)*slot;
+    obj = *ctl;
+    slot = next_ptr;
+    if ((obj != 0) && ((*(byte *)(obj + 6) & 0x20) != 0)) {
+      ctl[5] = *(int *)(obj + 0x18);
+      ctl[6] = *(int *)(obj + 0x1c);
+      ctl[7] = *(int *)(obj + 0x20);
+      *(undefined4 *)((int)ctl + 0x2e) = 0;
+      *(int *)(obj + 0x18) = ctl[2] + *(int *)(obj + 0x18);
+      *(int *)(obj + 0x1c) = ctl[3] + *(int *)(obj + 0x1c);
+      *(int *)(obj + 0x20) = ctl[4] + *(int *)(obj + 0x20);
     }
   }
   return;
@@ -12539,42 +12542,42 @@ void apply_controller_velocities /* Original: FUN_0000947c */ (void)
 void tick_flagged_object_controllers /* Original: FUN_000094d2 */ (void)
 
 {
-  int iVar1;
-  int *piVar2;
-  short sVar3;
-  short sVar4;
-  undefined4 *puVar5;
-  undefined4 *puVar6;
-  undefined4 *puVar7;
+  int obj; /* iVar1; controlled object (*controller) */
+  int *ctl; /* piVar2; controller */
+  short left; /* sVar3; dbra countdown */
+  short old_count; /* sVar4; controller_count at entry (low word), then tail count */
+  undefined4 *dst; /* puVar5; compaction write slot in controller_list */
+  undefined4 *next_ptr; /* puVar6; next slot */
+  undefined4 *src; /* puVar7; compaction read slot in controller_list */
   
-  sVar4 = DAT_0001c1cc._2_2_;
-  puVar5 = &DAT_0001c25c;
-  puVar7 = &DAT_0001c25c;
-  sVar3 = DAT_0001c1cc._2_2_;
-  while (sVar3 = sVar3 + -1, sVar3 != -1) {
-    puVar6 = puVar7 + 1;
-    piVar2 = (int *)*puVar7;
-    iVar1 = *piVar2;
-    puVar7 = puVar6;
-    if (iVar1 != 0) {
-      puVar6 = puVar5 + 1;
-      *puVar5 = piVar2;
-      puVar5 = puVar6;
-      if (((*(byte *)(iVar1 + 5) & 4) != 0) && (*(int *)(piVar2[1] + 2) != 0)) {
-        (**(code **)(piVar2[1] + 2))(piVar2);
+  old_count = controller_count._2_2_;
+  dst = &controller_list;
+  src = &controller_list;
+  left = controller_count._2_2_;
+  while (left = left + -1, left != -1) {
+    next_ptr = src + 1;
+    ctl = (int *)*src;
+    obj = *ctl;
+    src = next_ptr;
+    if (obj != 0) {
+      next_ptr = dst + 1;
+      *dst = ctl;
+      dst = next_ptr;
+      if (((*(byte *)(obj + 5) & 4) != 0) && (*(int *)(ctl[1] + 2) != 0)) {
+        (**(code **)(ctl[1] + 2))(ctl);
       }
     }
   }
-  if ((short)((int)(puVar5 + -0x7097) >> 2) < sVar4) {
-    if (sVar4 < DAT_0001c1cc) {
-      sVar4 = DAT_0001c1cc._2_2_ - sVar4;
-      while (sVar4 = sVar4 + -1, sVar4 != -1) {
-        *puVar5 = *puVar7;
-        puVar5 = puVar5 + 1;
-        puVar7 = puVar7 + 1;
+  if ((short)((int)(dst + -0x7097) >> 2) < old_count) {
+    if (old_count < controller_count) {
+      old_count = controller_count._2_2_ - old_count;
+      while (old_count = old_count + -1, old_count != -1) {
+        *dst = *src;
+        dst = dst + 1;
+        src = src + 1;
       }
     }
-    DAT_0001c1cc = (int)(puVar5 + -0x7097) >> 2;
+    controller_count = (int)(dst + -0x7097) >> 2;
   }
   return;
 }
@@ -12589,19 +12592,19 @@ void tick_flagged_object_controllers /* Original: FUN_000094d2 */ (void)
 void stop_all_sound_channels /* Original: FUN_00009550 */ (void)
 
 {
-  int iVar1;
+  int playing; /* iVar1; is_channel_playing result (host +0x2b6) */
   
-  if (*(int *)(DAT_0001b5a0 + 0x25e) != 0) {
-    iVar1 = (**(code **)(DAT_0001b5a0 + 0x2b6))(0);
-    if (iVar1 != 0) {
-      (**(code **)(DAT_0001b5a0 + 0x2be))(0);
+  if (*(int *)(host_world + 0x25e) != 0) {
+    playing = (**(code **)(host_world + 0x2b6))(0);
+    if (playing != 0) {
+      (**(code **)(host_world + 0x2be))(0);
     }
-    iVar1 = (**(code **)(DAT_0001b5a0 + 0x2b6))(1);
-    if (iVar1 != 0) {
-      (**(code **)(DAT_0001b5a0 + 0x2be))(1);
+    playing = (**(code **)(host_world + 0x2b6))(1);
+    if (playing != 0) {
+      (**(code **)(host_world + 0x2be))(1);
     }
   }
-  DAT_00024d14 = 0xffffffff;
+  engine_sound_choice = 0xffffffff;
   return;
 }
 

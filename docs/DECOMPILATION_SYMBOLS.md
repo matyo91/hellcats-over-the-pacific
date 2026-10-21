@@ -1522,3 +1522,6 @@ inventory yet.
 | Pacific Conflict | `camera_goal_y` | `DAT_00024d24` | camera destination y |
 | Pacific Conflict | `camera_goal_z` | `DAT_00024d20` | camera destination z |
 | Pacific Conflict | `target_hold_frames` | `DAT_00024d1c` | frames the view keeps following view_follow_target (0x14 when taken) |
+| Pacific Conflict | `live_controller_count` | `_DAT_0001c1c8` | controller count kept after advance_frame_and_tick_controllers compacts controller_list (dead entries dropped) |
+| Pacific Conflict | `live_controller_count_w` | `DAT_0001c1ca` | low word of live_controller_count (big-endian int at 0x1c1c8), dbra count in apply_controller_velocities |
+| Pacific Conflict | `engine_sound_choice` | `DAT_00024d14` | engine-sound slot last chosen by update_game_sounds (0 Engine / 10 Wind), -1 after stop_all_sound_channels |
