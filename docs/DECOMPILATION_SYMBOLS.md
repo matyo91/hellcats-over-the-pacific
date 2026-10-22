@@ -1644,3 +1644,34 @@ inventory yet.
 | Pacific Conflict | `dot_corner_dy` | `DAT_0001b4cc` | long[4 corners][4 sizes] y offsets of the depth-1 dot square (plot_dot_bw 0x16230). |
 | Pacific Conflict | `trail_templates` | `DAT_00026650` | Trail scene templates by kind [2]; filled by register_trail_templates (0x16a78), spawned by spawn_trail (0x16ae8). |
 | Pacific Conflict | `trail_init_table` | `DAT_0001b50c` | Trail init handlers by kind (0 -> 0x16ac4, 1 -> 0x16ad6) [PROVEN bytes]; called by spawn_trail. |
+| Pacific Conflict | `trail_animate_table` | `DAT_0001b514` | Trail animate handlers by kind (0 -> 0x16c6a, 1 -> 0x16e06) [PROVEN bytes]; called by tick_trail (0x1702a). |
+| Pacific Conflict | `ground_fire_template` | `DAT_00026658` | Ground fire scene template; stored by register_ground_fire_template (0x17098), spawned by spawn_ground_fire_object (0x170ba). |
+| Pacific Conflict | `debris_template` | `DAT_0002665c` | Debris fragment scene template; stored by register_debris_template (0x173dc), spawned by spawn_debris_fragment (0x173fe). |
+| Pacific Conflict | `ground_mark_template` | `DAT_00026660` | Ground mark scene template; stored by register_ground_mark_template (0x1759e). |
+| Pacific Conflict | `radar_tracks` | `DAT_0001b51c` | Up to 6 radar tracks of 0x14 bytes (x, z, two controller words, visible flag); add_radar_track (0x176b2) [STRONG INFERENCE]. |
+| Pacific Conflict | `radar_track_count` | `DAT_00026676` | Number of radar tracks in use; add_radar_track / reset_radar_tracks. |
+| Pacific Conflict | `radar_limit` | `DAT_00026666` | 2 * radar_range (set_view_distance); distance limit in add_radar_track. |
+| Pacific Conflict | `radar_range` | `DAT_0002666a` | Range set by set_view_distance (0x1771a), cycled 0xc15c0 / 0x26ac0 / 0xce40 by cycle_view_distance. |
+| Pacific Conflict | `radar_changed` | `_DAT_0002666e` | Changed flag set by set_view_distance and reset_radar_tracks. |
+| Pacific Conflict | `range_0x26ac0` | `DAT_00026ac0` | Not a variable: the immediate 0x26ac0 pushed by cycle_view_distance (0x17736), rendered by Ghidra as an address. |
+| Pacific Conflict | `radar_scale` | `DAT_00026664` | Radar scale = radar_range / (scope width * 8); set by update_radar_range_buttons (0x17a8c). |
+| Pacific Conflict | `radar_drawn_tracks` | `DAT_0001b520` | Last frame radar track buffer (blips to erase); swapped with radar_tracks by update_radar_scope (0x17b68). |
+| Pacific Conflict | `radar_drawn_count` | `DAT_00026672` | Entries in radar_drawn_tracks; set by update_radar_scope, cleared by reset_radar_tracks. |
+| Pacific Conflict | `shadow_templates` | `DAT_00026768` | Shadow scene templates by kind; spawn_object_shadow (0x18956) reads [kind]. |
+| Pacific Conflict | `shadow_template_slots` | `DAT_0002676c` | The four template slots (shadow_templates + 4) filled by register_shadow_templates (0x188f4). |
+| Pacific Conflict | `turret_template` | `DAT_0002677c` | Ship turret scene template; stored by register_turret_template (0x1910e), spawned by spawn_turret_on_object (0x19130). |
+| Pacific Conflict | `parachute_template` | `DAT_00026780` | Bailed-out pilot / parachute template; stored by register_parachute_template (0x1940e), spawned by spawn_bailout_parachute (0x19430). |
+| Pacific Conflict | `cloud_templates` | `DAT_00026784` | Five cloud / camera-relative templates by class; filled by register_cloud_templates (0x19a54), spawned by spawn_camera_relative_object (0x19aa2). |
+| Pacific Conflict | `glide_saved_state` | `DAT_00026798` | AI state +0x32 saved by try_begin_landing_approach before installing tick_landing_approach_glide; set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_start_z` | `DAT_0002679c` | Own z at approach start (try_begin_landing_approach), then the smoothed steer target z (tick_landing_approach_glide). |
+| Pacific Conflict | `glide_start_x` | `DAT_000267a0` | Own x at approach start (try_begin_landing_approach), then the smoothed steer target x (tick_landing_approach_glide). |
+| Pacific Conflict | `glide_long_267a4` | `DAT_000267a4` | Landing glide height controller remainder (v mod 16) in tick_landing_approach_glide (0x1a1a6); cleared by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_long_267a8` | `DAT_000267a8` | Landing glide height correction, accumulated and clamped to +-0x4b0 in tick_landing_approach_glide (0x1a1a6); cleared by try_begin_landing_approach. |
+| Pacific Conflict | `glide_blend` | `DAT_000267ac` | 2-frame blend factor toward the predicted position (tick_landing_approach_glide); 0 at start; set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_height_floor` | `DAT_000267ae` | Height above aim y used as the glide floor: 0x11b or 0x181; set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_dir_x` | `DAT_000267b2` | Glide direction x (unit << 12); set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_dir_y` | `DAT_000267b6` | Glide direction y: fixed descent 0xfdc0; set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_dir_z` | `DAT_000267ba` | Glide direction z (unit << 12); set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_aim_x` | `DAT_000267bc` | Landing aim point x; set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_aim_y` | `DAT_000267c0` | Landing aim point y; set by try_begin_landing_approach (0x19fba). |
+| Pacific Conflict | `glide_aim_z` | `DAT_000267c4` | Landing aim point z; set by try_begin_landing_approach (0x19fba). |

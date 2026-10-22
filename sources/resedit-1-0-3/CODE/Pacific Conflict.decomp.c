@@ -448,6 +448,9 @@ typedef unsigned short    ushort;
 #define face_table DAT_00025f30 /* face records (0x20 bytes) of prepared_object, = object +0x48 (project_prepared_object) */
 #define draw_order_next DAT_0001c1be /* next draw-order number given to an emitted face (stored at face +2) */
 #define face_queue_end DAT_00025d2c /* append pointer of the emitted-face queue (faces are queued in draw order) */
+#define debris_template DAT_0002665c /* debris fragment scene template; stored by register_debris_template, spawned by spawn_debris_fragment */
+#define trail_animate_table DAT_0001b514 /* trail animate handlers by kind: 0 -> 0x16c6a, 1 -> 0x16e06 [PROVEN bytes] */
+#define ground_fire_template DAT_00026658 /* ground fire scene template; stored by register_ground_fire_template, spawned by spawn_ground_fire_object */
 #define near_mode DAT_00025b16 /* near mode: camera within the object range, 2 = first frame (docs/OVERLAY_RENDERER.md) */
 #define back_face_queue_end DAT_00025b28 /* append cursor of the back faces kept for the penetration test (docs/OVERLAY_RENDERER.md) */
 #define root_face_count DAT_00025b18 /* prepared_object +0x38: number of root faces whose +0x12 chains are walked (project_prepared_object, emit_faces_in_order) */
@@ -455,9 +458,19 @@ typedef unsigned short    ushort;
 #define horizon_x0 DAT_0001bda0 /* horizon edge x0: last ground-plane edge not on a screen border [STRONG INFERENCE] */
 #define horizon_y0 DAT_0001bd9c /* horizon edge y0 */
 #define horizon_x1 DAT_0001bd98 /* horizon edge x1 */
+#define radar_tracks DAT_0001b51c /* up to 6 radar tracks of 0x14 bytes (x, z, two controller words, visible flag) [STRONG INFERENCE] */
+#define radar_track_count DAT_00026676 /* number of radar_tracks in use (add_radar_track, reset_radar_tracks) */
+#define radar_limit DAT_00026666 /* 2 * radar_range: distance limit of add_radar_track */
+#define radar_range DAT_0002666a /* range set by set_view_distance (0xc15c0 / 0x26ac0 / 0xce40) */
+#define radar_changed _DAT_0002666e /* set to 1 when the radar range or lists change */
+#define range_0x26ac0 DAT_00026ac0 /* the immediate 0x26ac0 (cycle_view_distance push #$26ac0), shown by Ghidra as an address */
+#define ground_mark_template DAT_00026660 /* ground mark scene template; stored by register_ground_mark_template */
 #define horizon_y1 DAT_0001bd94 /* horizon edge y1 */
 #define screen_poly_m1 DAT_00024dea /* screen_poly_x - 8: indexed by n * 8 it addresses the last of n points */
 #define clip_poly_buf DAT_00025252 /* second (x, y) point buffer the clip_polygon_* passes ping-pong with screen_poly_x */
+#define radar_drawn_tracks DAT_0001b520 /* last frame track buffer (blips to erase); swapped with radar_tracks by update_radar_scope */
+#define radar_drawn_count DAT_00026672 /* entries in radar_drawn_tracks; cleared by reset_radar_tracks */
+#define radar_scale DAT_00026664 /* radar_range / (scope width * 8), set by update_radar_range_buttons */
 #define projected_x DAT_000256b2 /* projected screen x per view vertex ((x, y) long pairs, 0x80000000 = behind the near plane; project_prepared_object) */
 #define projected_y DAT_000256b6 /* projected screen y per view vertex (projected_x + 4) */
 #define view_vertices DAT_00025b20 /* camera-space vertex buffer of prepared_object (+0x4c, project_prepared_object) */
@@ -465,6 +478,8 @@ typedef unsigned short    ushort;
 #define face_queue DAT_00025d30 /* start of the emitted-face queue (face_queue_end is its append pointer) */
 #define face_was_clipped _DAT_00025b12 /* set to 1 when clip_face_near_plane clipped a face; when 0 submit_object_faces clears object flag 8 */
 #define force_near_clip _DAT_00025b14 /* non-zero: every face goes through clip_face_near_plane (object +6 & 8, per the submit_object_faces note) */
+#define shadow_templates DAT_00026768 /* shadow scene templates by kind (spawn_object_shadow reads [kind]) */
+#define shadow_template_slots DAT_0002676c /* the four slots filled by register_shadow_templates (= shadow_templates + 4) */
 #define object_matrix DAT_00024d62 /* pointer to the nine-word object-to-camera matrix (4.12 words) used by transform_face_vertices */
 #define vertex_done DAT_00024d66 /* byte per model vertex: 1 once transform_face_vertices has transformed it this frame */
 #define object_attitude DAT_0001d72c /* object attitude matrix built by build_attitude_matrix_3ang (target 0x1d72c) in transform_and_project_object */
@@ -473,6 +488,8 @@ typedef unsigned short    ushort;
 #define heading_tape_pos DAT_00025ffe /* heading-tape scroll position last drawn (update_heading_tape skips the copy when unchanged); reset_overlay_display_state sets 1 to invalidate it */
 #define readouts_drawn _DAT_00025ffc /* 0 forces a full redraw of the readouts / needles (cleared by reset_overlay_display_state) */
 #define background_rows_next DAT_00020ad8 /* row span buffer built this frame by draw_sky_and_ground, swapped with background_rows after the blit */
+#define parachute_template DAT_00026780 /* bailed-out pilot / parachute template; stored by register_parachute_template, spawned by spawn_bailout_parachute */
+#define turret_template DAT_0002677c /* ship turret scene template; stored by register_turret_template, spawned by spawn_turret_on_object */
 #define bg_cache_origin DAT_00025f34 /* cached host +0x186 / +0x188 (high word: top row, low word: left x of the view) */
 #define bg_cache_size DAT_00025f38 /* cached host +0x18a / +0x18c (low word: view row count) */
 #define bg_cache_colours DAT_00025f3c /* cached host +0x18e / +0x190 (sky / ground colours) */
@@ -481,6 +498,7 @@ typedef unsigned short    ushort;
 #define bg_frame_parity DAT_00025f48 /* frame counter; depth 1 redraws the background only on even frames */
 #define panel_back_offset DAT_0001bd7c /* host +0xe2 * +0xe0: subtracted from host +0xdc to address the saved panel image that erasers restore from */
 #define needle_end_x DAT_00025f4a /* needle end x cached per instrument type (long [type]), draw_gauge_needle */
+#define cloud_templates DAT_00026784 /* five cloud / camera-relative templates by class (register_cloud_templates, spawn_camera_relative_object) */
 #define needle_end_y DAT_00025f92 /* needle end y cached per instrument type (long [type]), draw_gauge_needle */
 #define alt_short_end_x DAT_00025fda /* altimeter second (2/3 length) hand end x, update_altimeter_needles */
 #define alt_short_end_y DAT_00025fde /* altimeter second (2/3 length) hand end y */
@@ -500,6 +518,19 @@ typedef unsigned short    ushort;
 #define climb_ring DAT_0001bc8c /* 120-word ring of player speed * sin(+0x20) samples; climb_rate is their moving sum (update_aircraft_entity blk 6c) */
 #define climb_ring_index DAT_0001bc84 /* next slot of climb_ring, wraps at 0x78 */
 #define route_1b2e0 DAT_0001b2e0 /* AI waypoint route table given to the route block by ensure_ai_script_1b2e0_tick (target speed 0x9d8) */
+#define glide_saved_state DAT_00026798 /* AI state +0x32 saved by try_begin_landing_approach before installing tick_landing_approach_glide */
+#define glide_start_z DAT_0002679c /* own z when the landing approach starts; then the smoothed steer target z */
+#define glide_start_x DAT_000267a0 /* own x when the landing approach starts; then the smoothed steer target x */
+#define glide_long_267a4 DAT_000267a4 /* landing glide height controller remainder (v mod 16) in tick_landing_approach_glide; cleared at approach start */
+#define glide_long_267a8 DAT_000267a8 /* landing glide height correction (accumulated, clamped +-0x4b0) in tick_landing_approach_glide; cleared at approach start */
+#define glide_blend DAT_000267ac /* 2-frame blend factor toward the predicted position (tick_landing_approach_glide); 0 at start */
+#define glide_height_floor DAT_000267ae /* height above aim y used as the glide floor: 0x11b or 0x181 */
+#define glide_dir_x DAT_000267b2 /* glide direction x (unit << 12) */
+#define glide_dir_y DAT_000267b6 /* glide direction y: fixed descent 0xfdc0 */
+#define glide_dir_z DAT_000267ba /* glide direction z (unit << 12) */
+#define glide_aim_x DAT_000267bc /* landing aim point x */
+#define glide_aim_y DAT_000267c0 /* landing aim point y */
+#define glide_aim_z DAT_000267c4 /* landing aim point z */
 #define route_1b310 DAT_0001b310 /* AI waypoint route table given to the route block by ensure_ai_script_1b310_tick (target speed 0xd5c) */
 #define route_1b340 DAT_0001b340 /* AI waypoint route table given to the route block by ensure_ai_script_1b340_tick (target speed 0x9d8) */
 #define route_1b370 DAT_0001b370 /* AI mission route table copied into the route block by tick_ai_1b370_mission */
@@ -2046,7 +2077,7 @@ void plot_mission_map_symbols /* Original: FUN_00000954 */ (int scale /* param_1
   short site; /* sVar3: kind 0x12 / 0x13 site index */
   char symbol; /* cVar4: legend letter A / B / C, 0 = none */
   short i; /* sVar5: zone point index */
-  int unaff_D6;
+  int t_symbol_z; /* D6: z of the 'T' (0x54) map symbol in missions 3 / 4; work_x holds its x */
   int work_x; /* iVar6: point index, then the T marker x (1000000000 = none) */
   int aiStackY_60b5c [66161];
   int aiStackY_20198 [24551];
@@ -2099,15 +2130,15 @@ void plot_mission_map_symbols /* Original: FUN_00000954 */ (int scale /* param_1
   work_x = 1000000000;
   if (*(short *)(host_world + 0x90) == 3) {
     work_x = -0x3bcd3;
-    unaff_D6 = 0x2b246a;
+    t_symbol_z = 0x2b246a;
   }
   else if (*(short *)(host_world + 0x90) == 4) {
     work_x = -0xf2bf12;
-    unaff_D6 = 0xb242d8;
+    t_symbol_z = 0xb242d8;
   }
   if (work_x != 1000000000) {
     (*(code *)plot_symbol)(0x54,(work_x - *(int *)(player + 0x18)) / scale,
-                       (*(int *)(player + 0x20) - unaff_D6) / scale);
+                       (*(int *)(player + 0x20) - t_symbol_z) / scale);
   }
   return;
 }
@@ -26590,7 +26621,7 @@ undefined2 sink_object_shape_at_waterline /* Original: FUN_00015762 */ (char *ob
   int bucket_pts [1536]; /* 12-byte points per bucket */
 
   any_face = 0;
-  tmpl = *(int *)(DAT_0001b5a0 + 0x8c) +
+  tmpl = *(int *)(host_world + 0x8c) +
            *(int *)(*(int *)(*(int *)(obj + 0x24) + 0x28) + 0x2e + (uint)(byte)obj[1] * 0x18
                    );
   n = (uint)(short)(*(short *)(tmpl + 0x1e) + *(short *)(tmpl + 0x1a));
@@ -27844,24 +27875,24 @@ int spawn_trail /* Original: FUN_00016ae8 */ (int kind /* trail kind 0 / 1 */,ui
  * found identical to the C: bsr.b 0x16ae8 spawn_trail(0, x, y, z); null -> 0; else word +0x32 = 0,
  * +0x52 = *owner, word +0x56 = 1, word owner +0x68c += 1, byte (*owner) +3 += 1, bsr.w 0x1702a
  * tick_trail(ctl); returns ctl. */
-int * attach_smoke_trail /* Original: FUN_00016b4c */ (uint param_1,uint param_2,uint param_3,int *param_4)
+int * attach_smoke_trail /* Original: FUN_00016b4c */ (uint x,uint y,uint z,int *owner_ctl /* aircraft controller (+0 object, +0x68c trail count) */)
 
 {
-  int *piVar1;
+  int *trail_ctl;
   
-  piVar1 = (int *)spawn_trail(0,param_1,param_2,param_3);
-  if (piVar1 == (int *)0x0) {
-    piVar1 = (int *)0x0;
+  trail_ctl = (int *)spawn_trail(0,x,y,z);
+  if (trail_ctl == (int *)0x0) {
+    trail_ctl = (int *)0x0;
   }
   else {
-    *(undefined2 *)((int)piVar1 + 0x32) = 0;
-    *(int *)((int)piVar1 + 0x52) = *param_4;
-    *(undefined2 *)((int)piVar1 + 0x56) = 1;
-    *(short *)(param_4 + 0x1a3) = *(short *)(param_4 + 0x1a3) + 1;
-    *(char *)(*param_4 + 3) = *(char *)(*param_4 + 3) + '\x01';
-    tick_trail(piVar1);
+    *(undefined2 *)((int)trail_ctl + 0x32) = 0;
+    *(int *)((int)trail_ctl + 0x52) = *owner_ctl;
+    *(undefined2 *)((int)trail_ctl + 0x56) = 1;
+    *(short *)(owner_ctl + 0x1a3) = *(short *)(owner_ctl + 0x1a3) + 1;
+    *(char *)(*owner_ctl + 3) = *(char *)(*owner_ctl + 3) + '\x01';
+    tick_trail(trail_ctl);
   }
-  return piVar1;
+  return trail_ctl;
 }
 
 
@@ -27875,33 +27906,33 @@ int * attach_smoke_trail /* Original: FUN_00016b4c */ (uint param_1,uint param_2
  * 1, +0x56 = 1, +0x52 = *owner, byte (*owner) +3 += 1, bsr.w 0x1702a tick_trail; d =
  * compute_camera_abs_metric(x, y, z) (arguments reconstructed below): d <= 4999 -> word
  * DAT_0001b84a = 0x1e, else d <= 19999 -> word DAT_0001b848 = 0xf; returns ctl. */
-int * attach_burning_trail /* Original: FUN_00016b9e */ (uint param_1,uint param_2,uint param_3,int *param_4)
+int * attach_burning_trail /* Original: FUN_00016b9e */ (uint x,uint y,uint z,int *owner_ctl /* owner controller (+0 object) */)
 
 {
-  int *piVar1;
-  int iVar2;
+  int *trail_ctl;
+  int cam_dist; /* compute_camera_abs_metric(x, y, z) */
   
-  piVar1 = (int *)spawn_trail(1,param_1,param_2,param_3);
-  if (piVar1 == (int *)0x0) {
-    piVar1 = (int *)0x0;
+  trail_ctl = (int *)spawn_trail(1,x,y,z);
+  if (trail_ctl == (int *)0x0) {
+    trail_ctl = (int *)0x0;
   }
   else {
-    *(undefined2 *)((int)piVar1 + 0x32) = 1;
-    *(int *)((int)piVar1 + 0x52) = *param_4;
-    *(undefined2 *)((int)piVar1 + 0x56) = 1;
-    *(char *)(*param_4 + 3) = *(char *)(*param_4 + 3) + '\x01';
-    tick_trail(piVar1);
+    *(undefined2 *)((int)trail_ctl + 0x32) = 1;
+    *(int *)((int)trail_ctl + 0x52) = *owner_ctl;
+    *(undefined2 *)((int)trail_ctl + 0x56) = 1;
+    *(char *)(*owner_ctl + 3) = *(char *)(*owner_ctl + 3) + '\x01';
+    tick_trail(trail_ctl);
     /* Dropped call arguments [PROVEN, 0x16bea..0x16bf0]: compute_camera_abs_metric(param_1,
      * param_2, param_3) (the trail position). */
-    iVar2 = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
-    if (iVar2 < 5000) {
-      DAT_0001b84a = 0x1e;
+    cam_dist = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+    if (cam_dist < 5000) {
+      snd_explosion_timer = 0x1e;
     }
-    else if (iVar2 < 20000) {
-      DAT_0001b848 = 0xf;
+    else if (cam_dist < 20000) {
+      snd_distant_explosion_timer = 0xf;
     }
   }
-  return piVar1;
+  return trail_ctl;
 }
 
 
@@ -27914,23 +27945,23 @@ int * attach_burning_trail /* Original: FUN_00016b9e */ (uint param_1,uint param
  * found identical to the C: kind (word +0x32) 0: owner (+0x52) byte +3 -= 1 and, when word +0x56,
  * word (owner +8) +0x68c -= 1 (undoing attach_smoke_trail); kind 1: owner byte +3 -= 1; other
  * kinds nothing. */
-void destroy_trail_controller /* Original: FUN_00016c24 */ (int param_1)
+void destroy_trail_controller /* Original: FUN_00016c24 */ (int ctl /* trail controller */)
 
 {
-  short *psVar1;
-  char *pcVar2;
+  short *trail_count; /* owner controller +0x68c */
+  char *owner_refs; /* owner object +3 reference count */
   
-  if (*(short *)(param_1 + 0x32) == 0) {
-    if ((*(int *)(param_1 + 0x52) != 0) &&
-       (pcVar2 = (char *)(*(int *)(param_1 + 0x52) + 3), *pcVar2 = *pcVar2 + -1,
-       *(short *)(param_1 + 0x56) != 0)) {
-      psVar1 = (short *)(*(int *)(*(int *)(param_1 + 0x52) + 8) + 0x68c);
-      *psVar1 = *psVar1 + -1;
+  if (*(short *)(ctl + 0x32) == 0) {
+    if ((*(int *)(ctl + 0x52) != 0) &&
+       (owner_refs = (char *)(*(int *)(ctl + 0x52) + 3), *owner_refs = *owner_refs + -1,
+       *(short *)(ctl + 0x56) != 0)) {
+      trail_count = (short *)(*(int *)(*(int *)(ctl + 0x52) + 8) + 0x68c);
+      *trail_count = *trail_count + -1;
     }
   }
-  else if ((*(short *)(param_1 + 0x32) == 1) && (*(int *)(param_1 + 0x52) != 0)) {
-    pcVar2 = (char *)(*(int *)(param_1 + 0x52) + 3);
-    *pcVar2 = *pcVar2 + -1;
+  else if ((*(short *)(ctl + 0x32) == 1) && (*(int *)(ctl + 0x52) != 0)) {
+    owner_refs = (char *)(*(int *)(ctl + 0x52) + 3);
+    *owner_refs = *owner_refs + -1;
   }
   return;
 }
@@ -27949,109 +27980,109 @@ void destroy_trail_controller /* Original: FUN_00016c24 */ (int param_1)
  * Ghidra C reviewed (function at overlay offset 0x16c6a).
  * Kind 0 (attach_smoke_trail): while the owner aircraft still has a damage stage (+0x684 & 0x3c0) and exists, places the free head vertices of the four-vertex ribbon at the owner position +-0x22 in y, shifting the older ones back; otherwise fades out (state 4). Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Ghidra C (partly read).
  */
-undefined2 animate_smoke_trail /* Original: FUN_00016c6a */ (int *param_1)
+undefined2 animate_smoke_trail /* Original: FUN_00016c6a */ (int *ctl /* trail controller */)
 
 {
-  int iVar1;
-  int *piVar2;
-  int iVar3;
-  int iVar4;
-  bool bVar5;
-  uint uVar6;
-  short sVar7;
-  short sVar8;
-  ushort uVar9;
-  undefined2 uVar10;
-  
-  bVar5 = false;
-  uVar10 = 0;
-  iVar1 = *(int *)((int)param_1 + 0x52);
-  piVar2 = *(int **)(iVar1 + 8);
-  if (((*(byte *)(iVar1 + 7) & 2) != 0) || ((*(ushort *)(piVar2 + 0x1a1) & 0x3c0) == 0)) {
-    if (*(short *)((int)param_1 + 0x36) == 1) {
-      *(undefined2 *)(param_1 + 0xd) = 0;
+  int owner; /* owner object (ctl +0x52) */
+  int *owner_ctl; /* owner +8 aircraft controller */
+  int verts; /* trail object +0x44 vertex list */
+  int voff; /* vertex index * 12 */
+  bool release; /* decrement owner +0x68c and clear ctl +0x56 */
+  uint rnd;
+  short v; /* ribbon vertex 0..3 */
+  short dy; /* +-0x22 vertex y offset */
+  ushort detached; /* ctl +0x50 mask: bit set = vertex no longer follows the owner [INFERENCE] */
+  undefined2 finished;
+
+  release = false;
+  finished = 0;
+  owner = *(int *)((int)ctl + 0x52);
+  owner_ctl = *(int **)(owner + 8);
+  if (((*(byte *)(owner + 7) & 2) != 0) || ((*(ushort *)(owner_ctl + 0x1a1) & 0x3c0) == 0)) {
+    if (*(short *)((int)ctl + 0x36) == 1) {
+      *(undefined2 *)(ctl + 0xd) = 0;
     }
-    bVar5 = true;
-    *(undefined2 *)((int)param_1 + 0x36) = 4;
+    release = true;
+    *(undefined2 *)((int)ctl + 0x36) = 4;
   }
-  if ((DAT_0001b870 == 1) && (*(short *)((int)param_1 + 0x36) != 1)) {
-    bVar5 = true;
-    *(undefined2 *)((int)param_1 + 0x36) = 4;
+  if ((replay_state == 1) && (*(short *)((int)ctl + 0x36) != 1)) {
+    release = true;
+    *(undefined2 *)((int)ctl + 0x36) = 4;
   }
-  switch(*(undefined2 *)((int)param_1 + 0x36)) {
+  switch(*(undefined2 *)((int)ctl + 0x36)) {
   case 1:
-    *(undefined2 *)((int)param_1 + 0x36) = 2;
+    *(undefined2 *)((int)ctl + 0x36) = 2;
   case 2:
-    iVar3 = *(int *)(*param_1 + 0x44);
-    uVar9 = *(ushort *)(param_1 + 0x14);
-    sVar7 = 0;
+    verts = *(int *)(*ctl + 0x44);
+    detached = *(ushort *)(ctl + 0x14);
+    v = 0;
     do {
-      if ((uVar9 & 1) == 0) {
-        if ((sVar7 == 1) || (sVar7 == 2)) {
-          sVar8 = 0x22;
+      if ((detached & 1) == 0) {
+        if ((v == 1) || (v == 2)) {
+          dy = 0x22;
         }
         else {
-          sVar8 = -0x22;
+          dy = -0x22;
         }
-        iVar4 = sVar7 * 0xc;
-        *(undefined4 *)(iVar3 + iVar4) = *(undefined4 *)(iVar1 + 0x18);
-        *(int *)(iVar3 + 4 + iVar4) = *(int *)(iVar1 + 0x1c) + (int)sVar8;
-        *(undefined4 *)(iVar3 + 8 + iVar4) = *(undefined4 *)(iVar1 + 0x20);
+        voff = v * 0xc;
+        *(undefined4 *)(verts + voff) = *(undefined4 *)(owner + 0x18);
+        *(int *)(verts + 4 + voff) = *(int *)(owner + 0x1c) + (int)dy;
+        *(undefined4 *)(verts + 8 + voff) = *(undefined4 *)(owner + 0x20);
       }
-      sVar7 = sVar7 + 1;
-      uVar9 = (short)uVar9 >> 1;
-    } while (sVar7 < 4);
-    uVar9 = *(ushort *)(param_1 + 0x14);
-    if ((uVar9 == 0) || (uVar6 = overlay_rng_next( /* Original: FUN_00011564 */), (uVar6 & 3) == 0)) {
-      if ((uVar9 & 3) == 3) {
-        uVar6 = overlay_rng_next( /* Original: FUN_00011564 */);
-        if ((uVar6 & 1) == 0) {
-          uVar9 = uVar9 | 8;
+      v = v + 1;
+      detached = (short)detached >> 1;
+    } while (v < 4);
+    detached = *(ushort *)(ctl + 0x14);
+    if ((detached == 0) || (rnd = overlay_rng_next( /* Original: FUN_00011564 */), (rnd & 3) == 0)) {
+      if ((detached & 3) == 3) {
+        rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+        if ((rnd & 1) == 0) {
+          detached = detached | 8;
         }
         else {
-          uVar9 = uVar9 | 4;
+          detached = detached | 4;
         }
       }
       else {
-        uVar6 = overlay_rng_next( /* Original: FUN_00011564 */);
-        if ((uVar6 & 1) == 0) {
-          uVar9 = uVar9 | 2;
+        rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+        if ((rnd & 1) == 0) {
+          detached = detached | 2;
         }
         else {
-          uVar9 = uVar9 | 1;
+          detached = detached | 1;
         }
       }
     }
-    *(ushort *)(param_1 + 0x14) = uVar9;
-    if ((uVar9 == 0xf) || (*(short *)(param_1 + 0xd) == 0)) {
-      bVar5 = true;
-      *(undefined2 *)((int)param_1 + 0x36) = 3;
+    *(ushort *)(ctl + 0x14) = detached;
+    if ((detached == 0xf) || (*(short *)(ctl + 0xd) == 0)) {
+      release = true;
+      *(undefined2 *)((int)ctl + 0x36) = 3;
     }
     break;
   case 3:
-    if (*(char *)((int)piVar2 + 0x685) < '\0') {
-      uVar6 = overlay_rng_next( /* Original: FUN_00011564 */);
-      uVar9 = (ushort)uVar6 & 0x1f;
+    if (*(char *)((int)owner_ctl + 0x685) < '\0') {
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      detached = (ushort)rnd & 0x1f;
     }
     else {
-      uVar6 = overlay_rng_next( /* Original: FUN_00011564 */);
-      uVar9 = (ushort)uVar6 & 3;
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      detached = (ushort)rnd & 3;
     }
-    if (uVar9 == 0) {
-      attach_smoke_trail(*(uint *)(iVar1 + 0x18),*(uint *)(iVar1 + 0x1c),*(uint *)(iVar1 + 0x20),piVar2);
-      *(undefined2 *)((int)param_1 + 0x36) = 4;
+    if (detached == 0) {
+      attach_smoke_trail(*(uint *)(owner + 0x18),*(uint *)(owner + 0x1c),*(uint *)(owner + 0x20),owner_ctl);
+      *(undefined2 *)((int)ctl + 0x36) = 4;
     }
     break;
   case 4:
-    if ((*(short *)(param_1 + 0xd) == 0) || (DAT_0001b870 == 1)) {
-      uVar10 = 1;
+    if ((*(short *)(ctl + 0xd) == 0) || (replay_state == 1)) {
+      finished = 1;
     }
   }
-  if (bVar5) {
-    *(short *)(piVar2 + 0x1a3) = *(short *)(piVar2 + 0x1a3) + -1;
-    *(undefined2 *)((int)param_1 + 0x56) = 0;
+  if (release) {
+    *(short *)(owner_ctl + 0x1a3) = *(short *)(owner_ctl + 0x1a3) + -1;
+    *(undefined2 *)((int)ctl + 0x56) = 0;
   }
-  return uVar10;
+  return finished;
 }
 
 
@@ -28068,150 +28099,150 @@ undefined2 animate_smoke_trail /* Original: FUN_00016c6a */ (int *param_1)
  * Ghidra C reviewed (function at overlay offset 0x16e06).
  * Kind 1 (attach_burning_trail): the same ribbon with a half-height of 100 instead of 0x22 and no damage-stage condition (only the owner existence) [HYPOTHESIS: thicker fire / smoke column]. Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Ghidra C (partly read).
  */
-undefined2 animate_burning_trail /* Original: FUN_00016e06 */ (int *param_1)
+undefined2 animate_burning_trail /* Original: FUN_00016e06 */ (int *ctl /* trail controller */)
 
 {
-  int *piVar1;
-  int iVar2;
-  byte *pbVar3;
-  bool bVar4;
-  uint uVar5;
-  int iVar6;
-  short sVar7;
-  short sVar9;
-  int iVar8;
-  ushort uVar11;
-  int iVar10;
-  int iVar12;
-  undefined2 uVar13;
-  
-  iVar8 = *param_1;
-  bVar4 = false;
-  uVar13 = 0;
-  iVar10 = *(int *)((int)param_1 + 0x52);
-  iVar2 = *(int *)(iVar8 + 0x44);
-  uVar11 = *(ushort *)(param_1 + 0x14);
-  if ((*(byte *)(iVar10 + 7) & 2) != 0) {
-    if (*(short *)((int)param_1 + 0x36) == 1) {
-      *(undefined2 *)(param_1 + 0xd) = 0;
+  int *vy; /* vertex y word being drifted */
+  int verts; /* trail object +0x44 vertex list */
+  byte *face_flags; /* trail face record +0x33 */
+  bool release; /* clear ctl +0x56 */
+  uint rnd;
+  int dev; /* vertex minus centre */
+  short v; /* ribbon vertex 0..3; first the state word */
+  short dy; /* +-100 vertex y offset */
+  int trail_obj; /* ctl +0; reused as the x sum */
+  ushort detached; /* ctl +0x50 mask: bit set = vertex no longer follows the owner [INFERENCE] */
+  int owner; /* ctl +0x52; reused as the y sum */
+  int voff; /* vertex index * 12; reused as the z sum */
+  undefined2 finished;
+
+  trail_obj = *ctl;
+  release = false;
+  finished = 0;
+  owner = *(int *)((int)ctl + 0x52);
+  verts = *(int *)(trail_obj + 0x44);
+  detached = *(ushort *)(ctl + 0x14);
+  if ((*(byte *)(owner + 7) & 2) != 0) {
+    if (*(short *)((int)ctl + 0x36) == 1) {
+      *(undefined2 *)(ctl + 0xd) = 0;
     }
-    bVar4 = true;
-    *(undefined2 *)((int)param_1 + 0x36) = 4;
+    release = true;
+    *(undefined2 *)((int)ctl + 0x36) = 4;
   }
-  if ((DAT_0001b870 == 1) && (*(short *)((int)param_1 + 0x36) != 1)) {
-    bVar4 = true;
-    *(undefined2 *)((int)param_1 + 0x36) = 4;
+  if ((replay_state == 1) && (*(short *)((int)ctl + 0x36) != 1)) {
+    release = true;
+    *(undefined2 *)((int)ctl + 0x36) = 4;
   }
-  sVar7 = *(short *)((int)param_1 + 0x36);
-  if (sVar7 != 2) {
-    if (2 < sVar7) {
-      if ((sVar7 == 4) && ((*(short *)(param_1 + 0xd) == 0 || (DAT_0001b870 == 1)))) {
-        uVar13 = 1;
+  v = *(short *)((int)ctl + 0x36);
+  if (v != 2) {
+    if (2 < v) {
+      if ((v == 4) && ((*(short *)(ctl + 0xd) == 0 || (replay_state == 1)))) {
+        finished = 1;
       }
       goto LAB_00016f3a;
     }
-    if (sVar7 != 1) goto LAB_00016f3a;
-    *(undefined2 *)((int)param_1 + 0x36) = 2;
+    if (v != 1) goto LAB_00016f3a;
+    *(undefined2 *)((int)ctl + 0x36) = 2;
   }
-  sVar7 = 0;
+  v = 0;
   do {
-    if ((uVar11 & 1) == 0) {
-      if ((sVar7 == 1) || (sVar7 == 2)) {
-        sVar9 = 100;
+    if ((detached & 1) == 0) {
+      if ((v == 1) || (v == 2)) {
+        dy = 100;
       }
       else {
-        sVar9 = -100;
+        dy = -100;
       }
-      iVar12 = sVar7 * 0xc;
-      *(undefined4 *)(iVar2 + iVar12) = *(undefined4 *)(iVar10 + 0x18);
-      *(int *)(iVar2 + 4 + iVar12) = *(int *)(iVar10 + 0x1c) + (int)sVar9;
-      *(undefined4 *)(iVar2 + 8 + iVar12) = *(undefined4 *)(iVar10 + 0x20);
+      voff = v * 0xc;
+      *(undefined4 *)(verts + voff) = *(undefined4 *)(owner + 0x18);
+      *(int *)(verts + 4 + voff) = *(int *)(owner + 0x1c) + (int)dy;
+      *(undefined4 *)(verts + 8 + voff) = *(undefined4 *)(owner + 0x20);
     }
-    sVar7 = sVar7 + 1;
-    uVar11 = (short)uVar11 >> 1;
-  } while (sVar7 < 4);
-  uVar11 = *(ushort *)(param_1 + 0x14);
-  if ((uVar11 == 0) || (uVar5 = overlay_rng_next( /* Original: FUN_00011564 */), (uVar5 & 1) == 0)) {
-    if ((uVar11 & 3) == 3) {
-      uVar5 = overlay_rng_next( /* Original: FUN_00011564 */);
-      if ((uVar5 & 1) == 0) {
-        uVar11 = uVar11 | 8;
+    v = v + 1;
+    detached = (short)detached >> 1;
+  } while (v < 4);
+  detached = *(ushort *)(ctl + 0x14);
+  if ((detached == 0) || (rnd = overlay_rng_next( /* Original: FUN_00011564 */), (rnd & 1) == 0)) {
+    if ((detached & 3) == 3) {
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      if ((rnd & 1) == 0) {
+        detached = detached | 8;
       }
       else {
-        uVar11 = uVar11 | 4;
+        detached = detached | 4;
       }
     }
     else {
-      uVar5 = overlay_rng_next( /* Original: FUN_00011564 */);
-      if ((uVar5 & 1) == 0) {
-        uVar11 = uVar11 | 2;
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      if ((rnd & 1) == 0) {
+        detached = detached | 2;
       }
       else {
-        uVar11 = uVar11 | 1;
+        detached = detached | 1;
       }
     }
   }
-  *(ushort *)(param_1 + 0x14) = uVar11;
-  if ((uVar11 == 0xf) || (*(short *)(param_1 + 0xd) == 0)) {
-    bVar4 = true;
-    *(undefined2 *)((int)param_1 + 0x36) = 4;
+  *(ushort *)(ctl + 0x14) = detached;
+  if ((detached == 0xf) || (*(short *)(ctl + 0xd) == 0)) {
+    release = true;
+    *(undefined2 *)((int)ctl + 0x36) = 4;
   }
 LAB_00016f3a:
-  sVar7 = 0;
+  v = 0;
   do {
-    if ((uVar11 & 1) != 0) {
-      if ((sVar7 == 1) || (sVar7 == 2)) {
-        piVar1 = (int *)(iVar2 + 4 + sVar7 * 0xc);
-        *piVar1 = *piVar1 + 4;
+    if ((detached & 1) != 0) {
+      if ((v == 1) || (v == 2)) {
+        vy = (int *)(verts + 4 + v * 0xc);
+        *vy = *vy + 4;
       }
       else {
-        piVar1 = (int *)(iVar2 + 4 + sVar7 * 0xc);
-        *piVar1 = *piVar1 + -4;
+        vy = (int *)(verts + 4 + v * 0xc);
+        *vy = *vy + -4;
       }
     }
-    sVar7 = sVar7 + 1;
-    uVar11 = (short)uVar11 >> 1;
-  } while (sVar7 < 4);
-  if (*(short *)(param_1 + 0xd) < 0x3c) {
-    pbVar3 = (byte *)(*(int *)(iVar8 + 0x48) + 0x33);
-    *pbVar3 = *pbVar3 | 2;
+    v = v + 1;
+    detached = (short)detached >> 1;
+  } while (v < 4);
+  if (*(short *)(ctl + 0xd) < 0x3c) {
+    face_flags = (byte *)(*(int *)(trail_obj + 0x48) + 0x33);
+    *face_flags = *face_flags | 2;
   }
   else {
-    iVar12 = 0;
-    iVar10 = 0;
-    iVar8 = 0;
-    sVar7 = 0;
+    voff = 0;
+    owner = 0;
+    trail_obj = 0;
+    v = 0;
     do {
-      iVar6 = sVar7 * 0xc;
-      iVar8 = *(int *)(iVar2 + iVar6) + iVar8;
-      iVar10 = *(int *)(iVar2 + 4 + iVar6) + iVar10;
-      iVar12 = *(int *)(iVar2 + 8 + iVar6) + iVar12;
-      sVar7 = sVar7 + 1;
-    } while (sVar7 < 4);
-    sVar7 = 0;
+      dev = v * 0xc;
+      trail_obj = *(int *)(verts + dev) + trail_obj;
+      owner = *(int *)(verts + 4 + dev) + owner;
+      voff = *(int *)(verts + 8 + dev) + voff;
+      v = v + 1;
+    } while (v < 4);
+    v = 0;
     do {
-      iVar6 = *(int *)(iVar2 + sVar7 * 0xc) - (iVar8 >> 2);
-      if (iVar6 < 0) {
-        iVar6 = iVar6 + 1;
+      dev = *(int *)(verts + v * 0xc) - (trail_obj >> 2);
+      if (dev < 0) {
+        dev = dev + 1;
       }
-      *(int *)(iVar2 + 0x30 + sVar7 * 0xc) = (iVar8 >> 2) + (iVar6 >> 1);
-      iVar6 = *(int *)(iVar2 + 4 + sVar7 * 0xc) - (iVar10 >> 2);
-      if (iVar6 < 0) {
-        iVar6 = iVar6 + 1;
+      *(int *)(verts + 0x30 + v * 0xc) = (trail_obj >> 2) + (dev >> 1);
+      dev = *(int *)(verts + 4 + v * 0xc) - (owner >> 2);
+      if (dev < 0) {
+        dev = dev + 1;
       }
-      *(int *)(iVar2 + sVar7 * 0xc + 0x34) = (iVar10 >> 2) + (iVar6 >> 1);
-      iVar6 = *(int *)(iVar2 + 8 + sVar7 * 0xc) - (iVar12 >> 2);
-      if (iVar6 < 0) {
-        iVar6 = iVar6 + 1;
+      *(int *)(verts + v * 0xc + 0x34) = (owner >> 2) + (dev >> 1);
+      dev = *(int *)(verts + 8 + v * 0xc) - (voff >> 2);
+      if (dev < 0) {
+        dev = dev + 1;
       }
-      *(int *)(iVar2 + sVar7 * 0xc + 0x38) = (iVar12 >> 2) + (iVar6 >> 1);
-      sVar7 = sVar7 + 1;
-    } while (sVar7 < 4);
+      *(int *)(verts + v * 0xc + 0x38) = (voff >> 2) + (dev >> 1);
+      v = v + 1;
+    } while (v < 4);
   }
-  if (bVar4) {
-    *(undefined2 *)((int)param_1 + 0x56) = 0;
+  if (release) {
+    *(undefined2 *)((int)ctl + 0x56) = 0;
   }
-  return uVar13;
+  return finished;
 }
 
 
@@ -28221,20 +28252,20 @@ LAB_00016f3a:
  * Ghidra C reviewed (function at overlay offset 0x1702a).
  * Per-frame trail tick: runs the animator DAT_0001b514[kind], counts the lifetime word +0x34 down (hiding the object at 0, flag 0x40) and retires the object when the animator returns non-zero. Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Complete Ghidra C.
  */
-void tick_trail /* Original: FUN_0001702a */ (int *param_1)
+void tick_trail /* Original: FUN_0001702a */ (int *ctl /* trail controller */)
 
 {
-  short sVar1;
+  short finished; /* animate handler result */
   
-  sVar1 = (**(code **)(&DAT_0001b514 + *(short *)((int)param_1 + 0x32) * 4))(param_1);
-  if (*(short *)(param_1 + 0xd) == 0) {
-    *(uint *)(*param_1 + 4) = *(uint *)(*param_1 + 4) | 0x40;
+  finished = (**(code **)(&trail_animate_table + *(short *)((int)ctl + 0x32) * 4))(ctl);
+  if (*(short *)(ctl + 0xd) == 0) {
+    *(uint *)(*ctl + 4) = *(uint *)(*ctl + 4) | 0x40;
   }
   else {
-    *(short *)(param_1 + 0xd) = *(short *)(param_1 + 0xd) + -1;
+    *(short *)(ctl + 0xd) = *(short *)(ctl + 0xd) + -1;
   }
-  if (sVar1 != 0) {
-    retire_entity( /* Original: FUN_000051ec */*param_1);
+  if (finished != 0) {
+    retire_entity( /* Original: FUN_000051ec */*ctl);
   }
   return;
 }
@@ -28250,18 +28281,18 @@ void tick_trail /* Original: FUN_0001702a */ (int *param_1)
  * copied to a0 and never written again before rts; alloc 0x54; +0 = object, object long +4 |= 0x12040, object word +0x34 = 0,
  * +4 = DAT_0001b550 (fixed handler).
  */
-uint * create_ground_fire_controller /* Original: FUN_0001706a */ (uint param_1)
+uint * create_ground_fire_controller /* Original: FUN_0001706a */ (uint obj)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x54-byte ground fire controller */
   
-  puVar1 = heap_alloc_cleared(0x54);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x12040;
-  *(undefined2 *)(param_1 + 0x34) = 0;
-  puVar1[1] = DAT_0001b550;
+  ctl = heap_alloc_cleared(0x54);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x12040;
+  *(undefined2 *)(obj + 0x34) = 0;
+  ctl[1] = def_key11;
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -28271,11 +28302,11 @@ uint * create_ground_fire_controller /* Original: FUN_0001706a */ (uint param_1)
  * Ghidra C reviewed (function at overlay offset 0x17098).
  * DAT_00026658 = template (spawn_ground_fire_object); create handler -> 0x1704a (Ghidra 0x1706a). Template / create / tick pattern of the effect families [PROVEN by the + 0x20 create pointers]: each register_*_template is the first create handler (definition +6, via instantiate_object_from_desc) and redirects later creates to the matching create_*_controller. Ghidra C.
  */
-undefined4 register_ground_fire_template /* Original: FUN_00017098 */ (undefined4 param_1,int param_2)
+undefined4 register_ground_fire_template /* Original: FUN_00017098 */ (undefined4 tmpl /* ground fire template */,int def_key)
 
 {
-  DAT_00026658 = param_1;
-  *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x1704a;
+  ground_fire_template = tmpl;
+  *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x1704a;
   return 0;
 }
 
@@ -28286,21 +28317,21 @@ undefined4 register_ground_fire_template /* Original: FUN_00017098 */ (undefined
  * Ghidra C reviewed (function at overlay offset 0x170ba).
  * Spawns the template DAT_00026658 at (x, y, z) with controller words +0x34 = 1 and +0x32 = 0x2d (45); used by attach_ground_fire. Complete Ghidra C.
  */
-int spawn_ground_fire_object /* Original: FUN_000170ba */ (uint param_1,uint param_2,uint param_3)
+int spawn_ground_fire_object /* Original: FUN_000170ba */ (uint x,uint y,uint z)
 
 {
-  int iVar1;
+  int ctl; /* spawned object, then its controller (+8) */
   
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */DAT_00026658,param_1,param_2,param_3,0,0,0,0);
-  if (iVar1 == 0) {
-    iVar1 = 0;
+  ctl = spawn_mission_pool_object( /* Original: FUN_00005116 */ground_fire_template,x,y,z,0,0,0,0);
+  if (ctl == 0) {
+    ctl = 0;
   }
   else {
-    iVar1 = *(int *)(iVar1 + 8);
-    *(undefined2 *)(iVar1 + 0x34) = 1;
-    *(undefined2 *)(iVar1 + 0x32) = 0x2d;
+    ctl = *(int *)(ctl + 8);
+    *(undefined2 *)(ctl + 0x34) = 1;
+    *(undefined2 *)(ctl + 0x32) = 0x2d;
   }
-  return iVar1;
+  return ctl;
 }
 
 
@@ -28313,17 +28344,17 @@ int spawn_ground_fire_object /* Original: FUN_000170ba */ (uint param_1,uint par
  * found identical to the C: bsr.b 0x170ba spawn_ground_fire_object(p1, p2, p3); non-null -> long
  * +0x50 = *p4 and byte (*p4) +3 += 1; returns the object only when its long +0 is non-zero,
  * else 0. */
-int * attach_ground_fire /* Original: FUN_00017102 */ (uint param_1,uint param_2,uint param_3,int *param_4)
+int * attach_ground_fire /* Original: FUN_00017102 */ (uint x,uint y,uint z /* ground height under the aircraft */,int *owner_ctl /* owner controller (+0 object) */)
 
 {
-  int *piVar1;
+  int *fire_ctl;
   
-  piVar1 = (int *)spawn_ground_fire_object(param_1,param_2,param_3);
-  if (piVar1 != (int *)0x0) {
-    piVar1[0x14] = *param_4;
-    *(char *)(*param_4 + 3) = *(char *)(*param_4 + 3) + '\x01';
-    if (*piVar1 != 0) {
-      return piVar1;
+  fire_ctl = (int *)spawn_ground_fire_object(x,y,z);
+  if (fire_ctl != (int *)0x0) {
+    fire_ctl[0x14] = *owner_ctl;
+    *(char *)(*owner_ctl + 3) = *(char *)(*owner_ctl + 3) + '\x01';
+    if (*fire_ctl != 0) {
+      return fire_ctl;
     }
   }
   return (int *)0x0;
@@ -28336,14 +28367,14 @@ int * attach_ground_fire /* Original: FUN_00017102 */ (uint param_1,uint param_2
  * Ghidra C reviewed (function at overlay offset 0x1713c).
  * Drops the owner reference (+0x50 object +3). Complete Ghidra C.
  */
-void destroy_ground_fire_controller /* Original: FUN_0001713c */ (int param_1)
+void destroy_ground_fire_controller /* Original: FUN_0001713c */ (int ctl /* ground fire controller */)
 
 {
-  char *pcVar1;
+  char *owner_refs; /* owner object +3 reference count */
   
-  if (*(int *)(param_1 + 0x50) != 0) {
-    pcVar1 = (char *)(*(int *)(param_1 + 0x50) + 3);
-    *pcVar1 = *pcVar1 + -1;
+  if (*(int *)(ctl + 0x50) != 0) {
+    owner_refs = (char *)(*(int *)(ctl + 0x50) + 3);
+    *owner_refs = *owner_refs + -1;
   }
   return;
 }
@@ -28362,127 +28393,127 @@ void destroy_ground_fire_controller /* Original: FUN_0001713c */ (int param_1)
  * Ghidra C reviewed (function at overlay offset 0x17150).
  * State machine in +0x34 (1 start, 2 burning, 3 dying with countdown +0x32) following the owner (+0x50); goes to state 3 when the owner is gone or on replay rewind; returns 1 when finished. [HYPOTHESIS: the ground fire under a damaged aircraft] Ghidra C (partly read).
  */
-undefined2 animate_ground_fire /* Original: FUN_00017150 */ (int *param_1)
+undefined2 animate_ground_fire /* Original: FUN_00017150 */ (int *ctl /* ground fire controller */)
 
 {
-  int iVar1;
-  uint *puVar2;
-  int iVar3;
-  int iVar4;
-  int iVar5;
-  int iVar6;
-  short sVar9;
-  int iVar7;
-  short sVar10;
-  uint uVar8;
-  short sVar11;
-  ushort uVar12;
-  int iVar13;
-  int local_e;
-  
-  iVar1 = *param_1;
-  iVar3 = param_1[0x14];
-  iVar4 = *(int *)(iVar3 + 8);
-  iVar5 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)(iVar4 + 8) (host velocity x) */
-  iVar6 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)(iVar4 + 0x10) (host velocity z) */
-  iVar6 = iVar6 + iVar5;
-  if (((*(byte *)(iVar3 + 7) & 2) != 0) || (iVar6 == 0)) {
-    if (*(short *)(param_1 + 0xd) == 1) {
-      *(undefined2 *)((int)param_1 + 0x32) = 0;
+  int fire_obj; /* ctl +0; reused as its +0x44 vertex list */
+  uint *obj_flags; /* fire object +4 */
+  int owner; /* ctl +0x50 owner object */
+  int owner_ctl; /* owner +8 controller */
+  int abs_vx; /* |owner vx|; reused as the x sum */
+  int speed; /* |vx| + |vz| */
+  short off_x; /* x offset across the velocity */
+  int tmp; /* +-vx; then vertex index * 12 */
+  short off_z; /* z offset across the velocity */
+  uint rnd;
+  short v; /* vertex 0..3; first the state word */
+  ushort detached; /* ctl +0x4e mask: bit set = vertex drifting [INFERENCE] */
+  int vi;
+  int sum_z;
+
+  fire_obj = *ctl;
+  owner = ctl[0x14];
+  owner_ctl = *(int *)(owner + 8);
+  abs_vx = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)(iVar4 + 8) (host velocity x) */
+  speed = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)(iVar4 + 0x10) (host velocity z) */
+  speed = speed + abs_vx;
+  if (((*(byte *)(owner + 7) & 2) != 0) || (speed == 0)) {
+    if (*(short *)(ctl + 0xd) == 1) {
+      *(undefined2 *)((int)ctl + 0x32) = 0;
     }
-    *(undefined2 *)(param_1 + 0xd) = 3;
+    *(undefined2 *)(ctl + 0xd) = 3;
   }
-  if ((DAT_0001b870 == 1) && (*(short *)(param_1 + 0xd) != 1)) {
-    *(undefined2 *)(param_1 + 0xd) = 3;
+  if ((replay_state == 1) && (*(short *)(ctl + 0xd) != 1)) {
+    *(undefined2 *)(ctl + 0xd) = 3;
   }
-  sVar11 = *(short *)(param_1 + 0xd);
-  if (sVar11 != 2) {
-    if (2 < sVar11) {
-      if (sVar11 != 3) {
+  v = *(short *)(ctl + 0xd);
+  if (v != 2) {
+    if (2 < v) {
+      if (v != 3) {
         return 0;
       }
-      if (*(short *)((int)param_1 + 0x32) != 0) {
-        *(short *)((int)param_1 + 0x32) = *(short *)((int)param_1 + 0x32) + -1;
+      if (*(short *)((int)ctl + 0x32) != 0) {
+        *(short *)((int)ctl + 0x32) = *(short *)((int)ctl + 0x32) + -1;
       }
-      if ((*(short *)((int)param_1 + 0x32) != 0) && (DAT_0001b870 != 1)) {
+      if ((*(short *)((int)ctl + 0x32) != 0) && (replay_state != 1)) {
         return 0;
       }
       return 1;
     }
-    if (sVar11 != 1) {
+    if (v != 1) {
       return 0;
     }
-    *(undefined2 *)(param_1 + 0xd) = 2;
-    puVar2 = (uint *)(iVar1 + 4);
-    *puVar2 = *puVar2 & 0xffffffbf;
+    *(undefined2 *)(ctl + 0xd) = 2;
+    obj_flags = (uint *)(fire_obj + 4);
+    *obj_flags = *obj_flags & 0xffffffbf;
   }
-  iVar1 = *(int *)(iVar1 + 0x44);
-  uVar12 = *(ushort *)((int)param_1 + 0x4e);
-  local_e = 0;
-  iVar5 = 0;
-  sVar11 = 0;
+  fire_obj = *(int *)(fire_obj + 0x44);
+  detached = *(ushort *)((int)ctl + 0x4e);
+  sum_z = 0;
+  abs_vx = 0;
+  v = 0;
   do {
-    if ((uVar12 & 1) == 0) {
-      if ((sVar11 == 2) || (sVar11 == 3)) {
-        sVar9 = (short)((*(int *)(iVar4 + 0x10) << 5) / iVar6);
-        iVar7 = -*(int *)(iVar4 + 8);
+    if ((detached & 1) == 0) {
+      if ((v == 2) || (v == 3)) {
+        off_x = (short)((*(int *)(owner_ctl + 0x10) << 5) / speed);
+        tmp = -*(int *)(owner_ctl + 8);
       }
       else {
-        sVar9 = (short)((*(int *)(iVar4 + 0x10) * -0x20) / iVar6);
-        iVar7 = *(int *)(iVar4 + 8);
+        off_x = (short)((*(int *)(owner_ctl + 0x10) * -0x20) / speed);
+        tmp = *(int *)(owner_ctl + 8);
       }
-      sVar10 = (short)((iVar7 << 5) / iVar6);
-      iVar7 = sVar11 * 0xc;
-      *(int *)(iVar1 + iVar7) = *(int *)(iVar3 + 0x18) + (int)sVar9;
-      *(undefined4 *)(iVar1 + 4 + iVar7) = 0;
-      *(int *)(iVar1 + 8 + iVar7) = *(int *)(iVar3 + 0x20) + (int)sVar10;
-      if (sVar9 < 0) {
-        sVar9 = sVar9 + 7;
+      off_z = (short)((tmp << 5) / speed);
+      tmp = v * 0xc;
+      *(int *)(fire_obj + tmp) = *(int *)(owner + 0x18) + (int)off_x;
+      *(undefined4 *)(fire_obj + 4 + tmp) = 0;
+      *(int *)(fire_obj + 8 + tmp) = *(int *)(owner + 0x20) + (int)off_z;
+      if (off_x < 0) {
+        off_x = off_x + 7;
       }
-      *(short *)((int)param_1 + sVar11 * 2 + 0x36) = sVar9 >> 3;
-      if (sVar10 < 0) {
-        sVar10 = sVar10 + 7;
+      *(short *)((int)ctl + v * 2 + 0x36) = off_x >> 3;
+      if (off_z < 0) {
+        off_z = off_z + 7;
       }
-      *(short *)((int)param_1 + sVar11 * 2 + 0x46) = sVar10 >> 3;
+      *(short *)((int)ctl + v * 2 + 0x46) = off_z >> 3;
     }
     else {
-      iVar13 = (int)sVar11;
-      iVar7 = iVar13 * 0xc;
-      *(int *)(iVar1 + iVar7) =
-           (int)*(short *)((int)param_1 + iVar13 * 2 + 0x36) + *(int *)(iVar1 + iVar7);
-      *(int *)(iVar1 + 8 + iVar7) =
-           *(int *)(iVar1 + 8 + iVar7) + (int)*(short *)((int)param_1 + iVar13 * 2 + 0x46);
+      vi = (int)v;
+      tmp = vi * 0xc;
+      *(int *)(fire_obj + tmp) =
+           (int)*(short *)((int)ctl + vi * 2 + 0x36) + *(int *)(fire_obj + tmp);
+      *(int *)(fire_obj + 8 + tmp) =
+           *(int *)(fire_obj + 8 + tmp) + (int)*(short *)((int)ctl + vi * 2 + 0x46);
     }
-    iVar5 = *(int *)(iVar1 + sVar11 * 0xc) + iVar5;
-    local_e = *(int *)(iVar1 + 8 + sVar11 * 0xc) + local_e;
-    sVar11 = sVar11 + 1;
-    uVar12 = (short)uVar12 >> 1;
-  } while (sVar11 < 4);
-  if (iVar5 < 0) {
-    iVar5 = iVar5 + 3;
+    abs_vx = *(int *)(fire_obj + v * 0xc) + abs_vx;
+    sum_z = *(int *)(fire_obj + 8 + v * 0xc) + sum_z;
+    v = v + 1;
+    detached = (short)detached >> 1;
+  } while (v < 4);
+  if (abs_vx < 0) {
+    abs_vx = abs_vx + 3;
   }
-  *(int *)(iVar1 + 0x30) = iVar5 >> 2;
-  *(undefined4 *)(iVar1 + 0x34) = 0;
-  if (local_e < 0) {
-    local_e = local_e + 3;
+  *(int *)(fire_obj + 0x30) = abs_vx >> 2;
+  *(undefined4 *)(fire_obj + 0x34) = 0;
+  if (sum_z < 0) {
+    sum_z = sum_z + 3;
   }
-  *(int *)(iVar1 + 0x38) = local_e >> 2;
-  uVar12 = *(ushort *)((int)param_1 + 0x4e);
-  if ((*(ushort *)(iVar4 + 0x684) & 0x1800) == 0) {
-    uVar12 = uVar12 | 0xf;
+  *(int *)(fire_obj + 0x38) = sum_z >> 2;
+  detached = *(ushort *)((int)ctl + 0x4e);
+  if ((*(ushort *)(owner_ctl + 0x684) & 0x1800) == 0) {
+    detached = detached | 0xf;
   }
-  else if ((uVar12 & 9) != 9) {
-    uVar8 = overlay_rng_next( /* Original: FUN_00011564 */);
-    if ((uVar8 & 1) == 0) {
-      uVar12 = uVar12 | 8;
+  else if ((detached & 9) != 9) {
+    rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+    if ((rnd & 1) == 0) {
+      detached = detached | 8;
     }
     else {
-      uVar12 = uVar12 | 1;
+      detached = detached | 1;
     }
   }
-  *(ushort *)((int)param_1 + 0x4e) = uVar12;
-  if (uVar12 == 0xf) {
-    *(undefined2 *)(param_1 + 0xd) = 3;
+  *(ushort *)((int)ctl + 0x4e) = detached;
+  if (detached == 0xf) {
+    *(undefined2 *)(ctl + 0xd) = 3;
   }
   return 0;
 }
@@ -28494,14 +28525,14 @@ undefined2 animate_ground_fire /* Original: FUN_00017150 */ (int *param_1)
  * Ghidra C reviewed (function at overlay offset 0x17380).
  * Runs animate_ground_fire and retires the object when it is finished. Complete Ghidra C.
  */
-void tick_ground_fire /* Original: FUN_00017380 */ (int *param_1)
+void tick_ground_fire /* Original: FUN_00017380 */ (int *ctl /* ground fire controller */)
 
 {
-  short sVar1;
+  short finished; /* animate_ground_fire result */
   
-  sVar1 = animate_ground_fire(param_1);
-  if (sVar1 != 0) {
-    retire_entity( /* Original: FUN_000051ec */*param_1);
+  finished = animate_ground_fire(ctl);
+  if (finished != 0) {
+    retire_entity( /* Original: FUN_000051ec */*ctl);
   }
   return;
 }
@@ -28517,17 +28548,17 @@ void tick_ground_fire /* Original: FUN_00017380 */ (int *param_1)
  * copied to a0 and never written again before rts; alloc 0x38; +0 = object, object long +4 |= 0x152000, +4 =
  * DAT_0001b524[class].
  */
-uint * create_debris_controller /* Original: FUN_000173a2 */ (uint param_1,int param_2)
+uint * create_debris_controller /* Original: FUN_000173a2 */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x38-byte debris controller */
   
-  puVar1 = heap_alloc_cleared(0x38);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x152000;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
+  ctl = heap_alloc_cleared(0x38);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x152000;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -28537,11 +28568,11 @@ uint * create_debris_controller /* Original: FUN_000173a2 */ (uint param_1,int p
  * Ghidra C reviewed (function at overlay offset 0x173dc).
  * DAT_0002665c = template (spawn_debris_fragment); create handler -> 0x17382 (Ghidra 0x173a2). Template / create / tick pattern of the effect families [PROVEN by the + 0x20 create pointers]: each register_*_template is the first create handler (definition +6, via instantiate_object_from_desc) and redirects later creates to the matching create_*_controller. Ghidra C.
  */
-undefined4 register_debris_template /* Original: FUN_000173dc */ (undefined4 param_1,int param_2)
+undefined4 register_debris_template /* Original: FUN_000173dc */ (undefined4 tmpl /* debris template */,int def_key)
 
 {
-  DAT_0002665c = param_1;
-  *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x17382;
+  debris_template = tmpl;
+  *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x17382;
   return 0;
 }
 
@@ -28557,34 +28588,34 @@ undefined4 register_debris_template /* Original: FUN_000173dc */ (undefined4 par
  * (r & 0xff) - 0x7f each (moveq #$81 add); word +0x36 = word +0xe (low word of the y velocity)
  * << 4; angle words +0x20 / +0x22 / +0x24 = (r & 0xff) << 6; r = overlay_rng_next through the
  * runtime lea $11544; returns ctl. */
-int spawn_debris_fragment /* Original: FUN_000173fe */ (uint param_1,uint param_2,uint param_3)
+int spawn_debris_fragment /* Original: FUN_000173fe */ (uint x,uint y,uint z)
 
 {
-  int iVar1;
-  ushort uVar2;
+  int ctl; /* spawned object, then its controller (+8) */
+  ushort rnd;
   
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */DAT_0002665c,param_1,param_2,param_3,0,0,0,0);
-  if (iVar1 == 0) {
-    iVar1 = 0;
+  ctl = spawn_mission_pool_object( /* Original: FUN_00005116 */debris_template,x,y,z,0,0,0,0);
+  if (ctl == 0) {
+    ctl = 0;
   }
   else {
-    iVar1 = *(int *)(iVar1 + 8);
-    *(int *)(iVar1 + 0x32) = DAT_0001b838 + 0x2d;
-    uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    *(uint *)(iVar1 + 8) = (uVar2 & 0xff) - 0x7f;
-    uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    *(uint *)(iVar1 + 0xc) = (uVar2 & 0xff) - 0x7f;
-    uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    *(uint *)(iVar1 + 0x10) = (uVar2 & 0xff) - 0x7f;
-    *(short *)(iVar1 + 0x36) = *(short *)(iVar1 + 0xe) << 4;
-    uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    *(ushort *)(iVar1 + 0x20) = (uVar2 & 0xff) << 6;
-    uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    *(ushort *)(iVar1 + 0x22) = (uVar2 & 0xff) << 6;
-    uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    *(ushort *)(iVar1 + 0x24) = (uVar2 & 0xff) << 6;
+    ctl = *(int *)(ctl + 8);
+    *(int *)(ctl + 0x32) = frame_counter + 0x2d;
+    rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    *(uint *)(ctl + 8) = (rnd & 0xff) - 0x7f;
+    rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    *(uint *)(ctl + 0xc) = (rnd & 0xff) - 0x7f;
+    rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    *(uint *)(ctl + 0x10) = (rnd & 0xff) - 0x7f;
+    *(short *)(ctl + 0x36) = *(short *)(ctl + 0xe) << 4;
+    rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    *(ushort *)(ctl + 0x20) = (rnd & 0xff) << 6;
+    rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    *(ushort *)(ctl + 0x22) = (rnd & 0xff) << 6;
+    rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    *(ushort *)(ctl + 0x24) = (rnd & 0xff) << 6;
   }
-  return iVar1;
+  return ctl;
 }
 
 
@@ -28598,28 +28629,28 @@ int spawn_debris_fragment /* Original: FUN_000173fe */ (uint param_1,uint param_
  * +0x36 -= 0x5b, +0xc = sext (word +0x36 asr.w 4); when word DAT_0001b870 == 3 and the object
  * exists: old position saved to +0x14 / +0x18 / +0x1c and +8 / +0xc / +0x10 added; bsr.l 0x51ec
  * retire_entity(object) when +0x32 == DAT_0001b838 or object y <= +0x2e (signed). */
-void tick_debris_fragment /* Original: FUN_000174c4 */ (int *param_1)
+void tick_debris_fragment /* Original: FUN_000174c4 */ (int *ctl /* debris controller */)
 
 {
-  int iVar1;
+  int obj; /* ctl +0 fragment object */
   
-  iVar1 = *param_1;
-  *(ushort *)(param_1 + 8) = *(short *)(param_1 + 8) + 0x400U & 0x3fff;
-  *(ushort *)((int)param_1 + 0x22) = *(short *)((int)param_1 + 0x22) + 0x200U & 0x3fff;
-  *(ushort *)(param_1 + 9) = *(short *)(param_1 + 9) + 0x100U & 0x3fff;
-  *(short *)((int)param_1 + 0x36) = *(short *)((int)param_1 + 0x36) + -0x5b;
-  param_1[3] = (int)(*(short *)((int)param_1 + 0x36) >> 4);
-  if ((DAT_0001b870 == 3) && (iVar1 != 0)) {
-    param_1[5] = *(int *)(iVar1 + 0x18);
-    param_1[6] = *(int *)(iVar1 + 0x1c);
-    param_1[7] = *(int *)(iVar1 + 0x20);
-    *(int *)(iVar1 + 0x18) = param_1[2] + *(int *)(iVar1 + 0x18);
-    *(int *)(iVar1 + 0x1c) = param_1[3] + *(int *)(iVar1 + 0x1c);
-    *(int *)(iVar1 + 0x20) = param_1[4] + *(int *)(iVar1 + 0x20);
+  obj = *ctl;
+  *(ushort *)(ctl + 8) = *(short *)(ctl + 8) + 0x400U & 0x3fff;
+  *(ushort *)((int)ctl + 0x22) = *(short *)((int)ctl + 0x22) + 0x200U & 0x3fff;
+  *(ushort *)(ctl + 9) = *(short *)(ctl + 9) + 0x100U & 0x3fff;
+  *(short *)((int)ctl + 0x36) = *(short *)((int)ctl + 0x36) + -0x5b;
+  ctl[3] = (int)(*(short *)((int)ctl + 0x36) >> 4);
+  if ((replay_state == 3) && (obj != 0)) {
+    ctl[5] = *(int *)(obj + 0x18);
+    ctl[6] = *(int *)(obj + 0x1c);
+    ctl[7] = *(int *)(obj + 0x20);
+    *(int *)(obj + 0x18) = ctl[2] + *(int *)(obj + 0x18);
+    *(int *)(obj + 0x1c) = ctl[3] + *(int *)(obj + 0x1c);
+    *(int *)(obj + 0x20) = ctl[4] + *(int *)(obj + 0x20);
   }
-  if ((*(int *)((int)param_1 + 0x32) == DAT_0001b838) ||
-     (*(int *)(iVar1 + 0x1c) <= *(int *)((int)param_1 + 0x2e))) {
-    retire_entity( /* Original: FUN_000051ec */iVar1);
+  if ((*(int *)((int)ctl + 0x32) == frame_counter) ||
+     (*(int *)(obj + 0x1c) <= *(int *)((int)ctl + 0x2e))) {
+    retire_entity( /* Original: FUN_000051ec */obj);
   }
   return;
 }
@@ -28635,17 +28666,17 @@ void tick_debris_fragment /* Original: FUN_000174c4 */ (int *param_1)
  * copied to a0 and never written again before rts; alloc 0x32; +0 = object, object byte +5 bit 1 set (bset), +4 =
  * DAT_0001b524[class].
  */
-uint * create_ground_mark_controller /* Original: FUN_00017566 */ (uint param_1,int param_2)
+uint * create_ground_mark_controller /* Original: FUN_00017566 */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x32-byte ground mark controller */
   
-  puVar1 = heap_alloc_cleared(0x32);
-  *puVar1 = param_1;
-  *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) | 2;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
+  ctl = heap_alloc_cleared(0x32);
+  *ctl = obj;
+  *(byte *)(obj + 5) = *(byte *)(obj + 5) | 2;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -28655,11 +28686,11 @@ uint * create_ground_mark_controller /* Original: FUN_00017566 */ (uint param_1,
  * Ghidra C reviewed (function at overlay offset 0x1759e).
  * DAT_00026660 = template (spawn_ground_mark); create handler -> 0x17546 (Ghidra 0x17566). Template / create / tick pattern of the effect families [PROVEN by the + 0x20 create pointers]: each register_*_template is the first create handler (definition +6, via instantiate_object_from_desc) and redirects later creates to the matching create_*_controller. Ghidra C.
  */
-undefined4 register_ground_mark_template /* Original: FUN_0001759e */ (undefined4 param_1,int param_2)
+undefined4 register_ground_mark_template /* Original: FUN_0001759e */ (undefined4 tmpl /* ground mark template */,int def_key)
 
 {
-  DAT_00026660 = param_1;
-  *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x17546;
+  ground_mark_template = tmpl;
+  *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x17546;
   return 0;
 }
 
@@ -28670,11 +28701,11 @@ undefined4 register_ground_mark_template /* Original: FUN_0001759e */ (undefined
  * Ghidra C reviewed (function at overlay offset 0x175c0).
  * Retires the mark when the frame counter reaches its expiry frame (object +0x3c, set by spawn_ground_mark). Complete Ghidra C.
  */
-void tick_ground_mark /* Original: FUN_000175c0 */ (int *param_1)
+void tick_ground_mark /* Original: FUN_000175c0 */ (int *ctl /* ground mark controller */)
 
 {
-  if (*(int *)(*param_1 + 0x3c) <= DAT_0001b838) {
-    retire_entity( /* Original: FUN_000051ec */*param_1);
+  if (*(int *)(*ctl + 0x3c) <= frame_counter) {
+    retire_entity( /* Original: FUN_000051ec */*ctl);
   }
   return;
 }
@@ -28691,43 +28722,43 @@ void tick_ground_mark /* Original: FUN_000175c0 */ (int *param_1)
  * ((v >> word +0x34) - c)) >> 8) (asr.l by register, muls.l) around the spawn point c; word
  * +0x34 = 0, +0x14 = (+0x14 * scale) >> 8, +0x3c = DAT_0001b838 + 0xa8c (expiry); returns the
  * controller (+8). */
-undefined4 spawn_ground_mark /* Original: FUN_000175de */ (int param_1,uint param_2,uint param_3,uint param_4)
+undefined4 spawn_ground_mark /* Original: FUN_000175de */ (int size_pct /* size percent */,uint x,uint y,uint z)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  undefined4 uVar4;
-  short sVar5;
-  int iVar6;
+  int verts; /* object +0x44 vertex list */
+  int voff; /* vertex index * 12 */
+  int obj; /* spawned object */
+  undefined4 result; /* controller (obj +8) or 0 */
+  short v; /* vertex 0..5 */
+  int scale; /* size_pct * 256 / 100 */
   
-  iVar3 = spawn_mission_pool_object( /* Original: FUN_00005116 */DAT_00026660,param_2,param_3,param_4,0,0,0,0);
-  if (iVar3 == 0) {
-    uVar4 = 0;
+  obj = spawn_mission_pool_object( /* Original: FUN_00005116 */ground_mark_template,x,y,z,0,0,0,0);
+  if (obj == 0) {
+    result = 0;
   }
   else {
-    iVar6 = (param_1 << 8) / 100;
-    iVar1 = *(int *)(iVar3 + 0x44);
-    sVar5 = 0;
+    scale = (size_pct << 8) / 100;
+    verts = *(int *)(obj + 0x44);
+    v = 0;
     do {
-      iVar2 = sVar5 * 0xc;
-      *(uint *)(iVar1 + iVar2) =
-           param_2 + ((int)(iVar6 * ((*(int *)(iVar1 + iVar2) >> (*(ushort *)(iVar3 + 0x34) & 0x3f))
-                                    - param_2)) >> 8);
-      *(uint *)(iVar1 + 4 + iVar2) =
-           param_3 + ((int)(iVar6 * ((*(int *)(iVar1 + 4 + iVar2) >>
-                                     (*(ushort *)(iVar3 + 0x34) & 0x3f)) - param_3)) >> 8);
-      *(uint *)(iVar1 + 8 + iVar2) =
-           param_4 + ((int)(iVar6 * ((*(int *)(iVar1 + 8 + iVar2) >>
-                                     (*(ushort *)(iVar3 + 0x34) & 0x3f)) - param_4)) >> 8);
-      sVar5 = sVar5 + 1;
-    } while (sVar5 < 6);
-    *(undefined2 *)(iVar3 + 0x34) = 0;
-    *(int *)(iVar3 + 0x14) = *(int *)(iVar3 + 0x14) * iVar6 >> 8;
-    *(int *)(iVar3 + 0x3c) = DAT_0001b838 + 0xa8c;
-    uVar4 = *(undefined4 *)(iVar3 + 8);
+      voff = v * 0xc;
+      *(uint *)(verts + voff) =
+           x + ((int)(scale * ((*(int *)(verts + voff) >> (*(ushort *)(obj + 0x34) & 0x3f))
+                                    - x)) >> 8);
+      *(uint *)(verts + 4 + voff) =
+           y + ((int)(scale * ((*(int *)(verts + 4 + voff) >>
+                                     (*(ushort *)(obj + 0x34) & 0x3f)) - y)) >> 8);
+      *(uint *)(verts + 8 + voff) =
+           z + ((int)(scale * ((*(int *)(verts + 8 + voff) >>
+                                     (*(ushort *)(obj + 0x34) & 0x3f)) - z)) >> 8);
+      v = v + 1;
+    } while (v < 6);
+    *(undefined2 *)(obj + 0x34) = 0;
+    *(int *)(obj + 0x14) = *(int *)(obj + 0x14) * scale >> 8;
+    *(int *)(obj + 0x3c) = frame_counter + 0xa8c;
+    result = *(undefined4 *)(obj + 8);
   }
-  return uVar4;
+  return result;
 }
 
 
@@ -28737,24 +28768,24 @@ undefined4 spawn_ground_mark /* Original: FUN_000175de */ (int param_1,uint para
  * Ghidra C reviewed (function at overlay offset 0x176b2).
  * Adds an object to the radar list when fewer than 6 are tracked and its distance metric (+0x10) is within DAT_00026666: stores its x / z (+0x18 / +0x20) and the controller words +10 / +0x12, visible flag 0. Radar state [STRONG INFERENCE]: DAT_0001b51c up to 6 tracks of 0x14 bytes (x, z, two words from the object controller +10 / +0x12, visible flag) counted by DAT_00026676, drawn by update_radar_scope; DAT_0002666a range with DAT_00026666 = 2 * range (set_view_distance / cycle_view_distance, Tab key - so that "view distance" is the radar range). Complete Ghidra C.
  */
-void add_radar_track /* Original: FUN_000176b2 */ (int param_1)
+void add_radar_track /* Original: FUN_000176b2 */ (int obj)
 
 {
-  short sVar1;
-  short sVar2;
-  undefined4 *puVar3;
+  short word_a; /* controller word +0xa */
+  short word_12; /* controller word +0x12 */
+  undefined4 *track; /* radar_tracks entry */
   
-  if (DAT_00026676 < 6) {
-    sVar1 = *(short *)(*(int *)(param_1 + 8) + 10);
-    sVar2 = *(short *)(*(int *)(param_1 + 8) + 0x12);
-    if (*(int *)(param_1 + 0x10) <= DAT_00026666) {
-      puVar3 = (undefined4 *)(DAT_0001b51c + DAT_00026676 * 0x14);
-      DAT_00026676 = DAT_00026676 + 1;
-      *puVar3 = *(undefined4 *)(param_1 + 0x18);
-      puVar3[1] = *(undefined4 *)(param_1 + 0x20);
-      puVar3[2] = (int)sVar1;
-      puVar3[3] = (int)sVar2;
-      puVar3[4] = 0;
+  if (radar_track_count < 6) {
+    word_a = *(short *)(*(int *)(obj + 8) + 10);
+    word_12 = *(short *)(*(int *)(obj + 8) + 0x12);
+    if (*(int *)(obj + 0x10) <= radar_limit) {
+      track = (undefined4 *)(radar_tracks + radar_track_count * 0x14);
+      radar_track_count = radar_track_count + 1;
+      *track = *(undefined4 *)(obj + 0x18);
+      track[1] = *(undefined4 *)(obj + 0x20);
+      track[2] = (int)word_a;
+      track[3] = (int)word_12;
+      track[4] = 0;
     }
   }
   return;
@@ -28769,12 +28800,12 @@ void add_radar_track /* Original: FUN_000176b2 */ (int param_1)
  * Ghidra C reviewed (function at overlay offset 0x1771a).
  * Arg: range. _DAT_0002666e = 1 (changed), DAT_0002666a = range, DAT_00026666 = 2 * range. Set to 0xc15c0 by overlay_initialise; cycled by FUN_00017736 (0xc15c0 -> 0x26ac0 -> 0xce40 -> 0xc15c0), which the Tab key (character 9) calls in process_flight_input_and_outcome - a range toggle: DAT_00026666 is the radar track limit (add_radar_track), so this is the radar range [STRONG INFERENCE] - the name set_view_distance is kept but radar range is meant. Complete Ghidra C.
  */
-void set_view_distance /* Original: FUN_0001771a */ (int param_1)
+void set_view_distance /* Original: FUN_0001771a */ (int range)
 
 {
-  _DAT_0002666e = 1;
-  DAT_0002666a = param_1;
-  DAT_00026666 = param_1 << 1;
+  radar_changed = 1;
+  radar_range = range;
+  radar_limit = range << 1;
   return;
 }
 
@@ -28788,18 +28819,18 @@ void set_view_distance /* Original: FUN_0001771a */ (int param_1)
 void cycle_view_distance /* Original: FUN_00017736 */ (void)
 
 {
-  undefined *puVar1;
+  undefined *next_range;
   
-  if (DAT_0002666a == 0xc15c0) {
-    puVar1 = &DAT_00026ac0;
+  if (radar_range == 0xc15c0) {
+    next_range = &range_0x26ac0;
   }
-  else if (DAT_0002666a == 0xce40) {
-    puVar1 = (undefined *)0xc15c0;
+  else if (radar_range == 0xce40) {
+    next_range = (undefined *)0xc15c0;
   }
   else {
-    puVar1 = (undefined *)0xce40;
+    next_range = (undefined *)0xce40;
   }
-  set_view_distance((int)puVar1);
+  set_view_distance((int)next_range);
   return;
 }
 
@@ -28832,36 +28863,36 @@ void reset_radar_tracks /* Original: FUN_0001776a */ (void)
  * restored from the back buffer (long +0xdc - DAT_0001bd7c, stride sext word +0xe0): 2, 4, 4
  * and 2 bytes over four rows (columns x..x+1, x-1..x+2, x-1..x+2, x..x+1); the move.b
  * -(a0),-(a1) pre-decrement is the C's [-1] and the later -1 + stride. */
-void erase_radar_blip_depth8 /* Original: FUN_00017780 */ (short param_1,short param_2)
+void erase_radar_blip_depth8 /* Original: FUN_00017780 */ (short x /* blip screen x */,short y /* blip screen y */)
 
 {
-  int iVar1;
-  int iVar2;
-  undefined1 *puVar3;
-  undefined1 *puVar4;
-  undefined1 *puVar5;
-  
-  iVar1 = (int)*(short *)(DAT_0001b5a0 + 0x10);
-  puVar4 = (undefined1 *)((int)param_1 + *(int *)(DAT_0001b5a0 + 6) + iVar1 * (param_2 + -1));
-  iVar2 = (int)*(short *)(DAT_0001b5a0 + 0xe0);
-  puVar3 = (undefined1 *)
-           ((int)param_1 + iVar2 * (param_2 + -1) + (*(int *)(DAT_0001b5a0 + 0xdc) - DAT_0001bd7c));
-  *puVar4 = *puVar3;
-  puVar4[1] = puVar3[1];
-  puVar4 = puVar4 + iVar1;
-  puVar3 = puVar3 + iVar2;
-  puVar4[-1] = puVar3[-1];
-  *puVar4 = *puVar3;
-  puVar4[1] = puVar3[1];
-  puVar4[2] = puVar3[2];
-  puVar5 = puVar4 + -1 + iVar1;
-  puVar4 = puVar3 + -1 + iVar2;
-  *puVar5 = *puVar4;
-  puVar5[1] = puVar4[1];
-  puVar5[2] = puVar4[2];
-  puVar5[3] = puVar4[3];
-  puVar5[iVar1 + 1] = puVar4[iVar2 + 1];
-  (puVar5 + iVar1 + 1)[1] = (puVar4 + iVar2 + 1)[1];
+  int row_bytes; /* frame row bytes (host_world +0x10) */
+  int panel_row_bytes; /* saved panel row bytes (host_world +0xe0) */
+  undefined1 *src; /* saved panel pixel */
+  undefined1 *dst; /* frame pixel; reused as panel source for the last rows */
+  undefined1 *dst2; /* frame pixel of the lower rows */
+
+  row_bytes = (int)*(short *)(host_world + 0x10);
+  dst = (undefined1 *)((int)x + *(int *)(host_world + 6) + row_bytes * (y + -1));
+  panel_row_bytes = (int)*(short *)(host_world + 0xe0);
+  src = (undefined1 *)
+           ((int)x + panel_row_bytes * (y + -1) + (*(int *)(host_world + 0xdc) - panel_back_offset));
+  *dst = *src;
+  dst[1] = src[1];
+  dst = dst + row_bytes;
+  src = src + panel_row_bytes;
+  dst[-1] = src[-1];
+  *dst = *src;
+  dst[1] = src[1];
+  dst[2] = src[2];
+  dst2 = dst + -1 + row_bytes;
+  dst = src + -1 + panel_row_bytes;
+  *dst2 = *dst;
+  dst2[1] = dst[1];
+  dst2[2] = dst[2];
+  dst2[3] = dst[3];
+  dst2[row_bytes + 1] = dst[panel_row_bytes + 1];
+  (dst2 + row_bytes + 1)[1] = (dst + panel_row_bytes + 1)[1];
   return;
 }
 
@@ -28878,60 +28909,60 @@ void erase_radar_blip_depth8 /* Original: FUN_00017780 */ (short param_1,short p
  * (columns x / x-1..x+1 via the -(a2),-(a3) pre-decrement / x-1..x+1 / x); odd x 2 bytes on each
  * of four rows; the D0 the C returns is leftover (low word x % 2, high word of the back-buffer
  * base) and callers treat the function as void. */
-undefined4 erase_radar_blip_depth4 /* Original: FUN_00017868 */ (short param_1,short param_2)
+undefined4 erase_radar_blip_depth4 /* Original: FUN_00017868 */ (short x /* blip screen x (pixels) */,short y /* blip screen y */)
 
 {
-  short sVar1;
-  short sVar2;
-  int iVar3;
-  short sVar4;
-  undefined1 *puVar5;
-  undefined1 *puVar6;
-  undefined1 *puVar7;
-  
-  sVar1 = *(short *)(DAT_0001b5a0 + 0x10);
-  sVar2 = *(short *)(DAT_0001b5a0 + 0xe0);
-  sVar4 = param_1;
-  if (param_1 < 0) {
-    sVar4 = param_1 + 1;
+  short row_bytes; /* frame row bytes (host_world +0x10) */
+  short panel_row_bytes; /* saved panel row bytes (host_world +0xe0) */
+  int panel_base; /* host_world +0xdc - panel_back_offset */
+  short x_round; /* x rounded toward zero for >> 1 */
+  undefined1 *src; /* saved panel byte */
+  undefined1 *dst; /* frame byte; reused as panel source for the last rows */
+  undefined1 *dst2; /* frame byte of the lower rows */
+
+  row_bytes = *(short *)(host_world + 0x10);
+  panel_row_bytes = *(short *)(host_world + 0xe0);
+  x_round = x;
+  if (x < 0) {
+    x_round = x + 1;
   }
-  puVar6 = (undefined1 *)
-           ((int)(sVar4 >> 1) + *(int *)(DAT_0001b5a0 + 6) + (int)sVar1 * (param_2 + -1));
-  iVar3 = *(int *)(DAT_0001b5a0 + 0xdc) - DAT_0001bd7c;
-  sVar4 = param_1;
-  if (param_1 < 0) {
-    sVar4 = param_1 + 1;
+  dst = (undefined1 *)
+           ((int)(x_round >> 1) + *(int *)(host_world + 6) + (int)row_bytes * (y + -1));
+  panel_base = *(int *)(host_world + 0xdc) - panel_back_offset;
+  x_round = x;
+  if (x < 0) {
+    x_round = x + 1;
   }
-  puVar5 = (undefined1 *)((int)(sVar4 >> 1) + (int)sVar2 * (param_2 + -1) + iVar3);
-  if (param_1 % 2 == 0) {
-    *puVar6 = *puVar5;
-    puVar6 = puVar6 + sVar1;
-    puVar5 = puVar5 + sVar2;
-    puVar6[-1] = puVar5[-1];
-    *puVar6 = *puVar5;
-    puVar6[1] = puVar5[1];
-    puVar7 = puVar6 + -1 + sVar1;
-    puVar6 = puVar5 + -1 + sVar2;
-    *puVar7 = *puVar6;
-    puVar7[1] = puVar6[1];
-    puVar7[2] = puVar6[2];
-    puVar7[sVar1 + 1] = puVar6[sVar2 + 1];
+  src = (undefined1 *)((int)(x_round >> 1) + (int)panel_row_bytes * (y + -1) + panel_base);
+  if (x % 2 == 0) {
+    *dst = *src;
+    dst = dst + row_bytes;
+    src = src + panel_row_bytes;
+    dst[-1] = src[-1];
+    *dst = *src;
+    dst[1] = src[1];
+    dst2 = dst + -1 + row_bytes;
+    dst = src + -1 + panel_row_bytes;
+    *dst2 = *dst;
+    dst2[1] = dst[1];
+    dst2[2] = dst[2];
+    dst2[row_bytes + 1] = dst[panel_row_bytes + 1];
   }
   else {
-    *puVar6 = *puVar5;
-    puVar6[1] = puVar5[1];
-    puVar6 = puVar6 + sVar1;
-    puVar5 = puVar5 + sVar2;
-    *puVar6 = *puVar5;
-    puVar6[1] = puVar5[1];
-    puVar6 = puVar6 + sVar1;
-    puVar5 = puVar5 + sVar2;
-    *puVar6 = *puVar5;
-    puVar6[1] = puVar5[1];
-    puVar6[sVar1] = puVar5[sVar2];
-    (puVar6 + sVar1)[1] = (puVar5 + sVar2)[1];
+    *dst = *src;
+    dst[1] = src[1];
+    dst = dst + row_bytes;
+    src = src + panel_row_bytes;
+    *dst = *src;
+    dst[1] = src[1];
+    dst = dst + row_bytes;
+    src = src + panel_row_bytes;
+    *dst = *src;
+    dst[1] = src[1];
+    dst[row_bytes] = src[panel_row_bytes];
+    (dst + row_bytes)[1] = (src + panel_row_bytes)[1];
   }
-  return CONCAT22((short)((uint)iVar3 >> 0x10),param_1 % 2);
+  return CONCAT22((short)((uint)panel_base >> 0x10),x % 2);
 }
 
 
@@ -28946,52 +28977,52 @@ undefined4 erase_radar_blip_depth4 /* Original: FUN_00017868 */ (short param_1,s
  * ((c ^ old) & mask) keeping the other nibble; even x: rows of 2, 4, 4, 2 pixels starting at
  * x / x - 1 (the -(a1) pre-decrement); odd x: rows of 2, 4, 4, 2 pixels shifted half a byte -
  * the C's two branches, scale decoded by hand. */
-void draw_radar_blip_depth4 /* Original: FUN_00017948 */ (ushort param_1,short param_2)
+void draw_radar_blip_depth4 /* Original: FUN_00017948 */ (ushort x /* blip screen x (pixels) */,short y /* blip screen y */)
 
 {
-  short sVar1;
-  ushort uVar2;
-  byte bVar3;
-  byte *pbVar4;
-  byte *pbVar5;
-  
-  sVar1 = *(short *)(DAT_0001b5a0 + 0x10);
-  uVar2 = param_1;
-  if ((short)param_1 < 0) {
-    uVar2 = param_1 + 1;
+  short row_bytes; /* frame row bytes (host_world +0x10) */
+  ushort x_round; /* x rounded toward zero for >> 1 */
+  byte colour; /* blip colour (host_world word +0x1e6) */
+  byte *pix; /* frame byte */
+  byte *pix2; /* frame byte one pixel to the left */
+
+  row_bytes = *(short *)(host_world + 0x10);
+  x_round = x;
+  if ((short)x < 0) {
+    x_round = x + 1;
   }
-  pbVar4 = (byte *)((int)((short)uVar2 >> 1) +
-                   *(int *)(DAT_0001b5a0 + 6) + (int)sVar1 * (param_2 + -1));
-  uVar2 = param_1;
-  if ((short)param_1 < 0) {
-    uVar2 = param_1 + 1;
+  pix = (byte *)((int)((short)x_round >> 1) +
+                   *(int *)(host_world + 6) + (int)row_bytes * (y + -1));
+  x_round = x;
+  if ((short)x < 0) {
+    x_round = x + 1;
   }
-  bVar3 = (byte)*(undefined2 *)(DAT_0001b5a0 + 0x1e6);
-  if (param_1 == (uVar2 & 0xfffe)) {
-    *pbVar4 = bVar3;
-    pbVar4 = pbVar4 + sVar1;
-    pbVar5 = pbVar4 + -1;
-    *pbVar5 = bVar3 ^ (bVar3 ^ *pbVar5) & 0xf0;
-    *pbVar4 = bVar3;
-    pbVar4[1] = bVar3 ^ (bVar3 ^ pbVar4[1]) & 0xf;
-    pbVar5 = pbVar5 + sVar1;
-    *pbVar5 = bVar3 ^ (bVar3 ^ *pbVar5) & 0xf0;
-    pbVar5[1] = bVar3;
-    pbVar5[2] = bVar3 ^ (bVar3 ^ pbVar5[2]) & 0xf;
-    pbVar5[sVar1 + 1] = bVar3;
+  colour = (byte)*(undefined2 *)(host_world + 0x1e6);
+  if (x == (x_round & 0xfffe)) {
+    *pix = colour;
+    pix = pix + row_bytes;
+    pix2 = pix + -1;
+    *pix2 = colour ^ (colour ^ *pix2) & 0xf0;
+    *pix = colour;
+    pix[1] = colour ^ (colour ^ pix[1]) & 0xf;
+    pix2 = pix2 + row_bytes;
+    *pix2 = colour ^ (colour ^ *pix2) & 0xf0;
+    pix2[1] = colour;
+    pix2[2] = colour ^ (colour ^ pix2[2]) & 0xf;
+    pix2[row_bytes + 1] = colour;
   }
   else {
-    *pbVar4 = bVar3 ^ (bVar3 ^ *pbVar4) & 0xf0;
-    pbVar4[1] = bVar3 ^ (bVar3 ^ pbVar4[1]) & 0xf;
-    pbVar4 = pbVar4 + sVar1;
-    *pbVar4 = bVar3;
-    pbVar4[1] = bVar3;
-    pbVar4 = pbVar4 + sVar1;
-    *pbVar4 = bVar3;
-    pbVar4[1] = bVar3;
-    pbVar4 = pbVar4 + sVar1;
-    *pbVar4 = bVar3 ^ (bVar3 ^ *pbVar4) & 0xf0;
-    pbVar4[1] = bVar3 ^ (bVar3 ^ pbVar4[1]) & 0xf;
+    *pix = colour ^ (colour ^ *pix) & 0xf0;
+    pix[1] = colour ^ (colour ^ pix[1]) & 0xf;
+    pix = pix + row_bytes;
+    *pix = colour;
+    pix[1] = colour;
+    pix = pix + row_bytes;
+    *pix = colour;
+    pix[1] = colour;
+    pix = pix + row_bytes;
+    *pix = colour ^ (colour ^ *pix) & 0xf0;
+    pix[1] = colour ^ (colour ^ pix[1]) & 0xf;
   }
   return;
 }
@@ -29006,10 +29037,10 @@ void draw_radar_blip_depth4 /* Original: FUN_00017948 */ (ushort param_1,short p
  * Its bytes are identical to draw_radar_blip_bw (0x17a60), so the erase / draw names rest
  * on the callers, not on this code [STRONG INFERENCE: an XOR-style toggle].
  */
-void erase_radar_blip_bw /* Original: FUN_00017a34 */ (short param_1,short param_2)
+void erase_radar_blip_bw /* Original: FUN_00017a34 */ (short x /* blip screen x */,short y /* blip screen y */)
 
 {
-  (**(code **)(DAT_0001b5a0 + 0x276))((int)param_1,(int)param_2,param_1 + 1,param_2 + 1);
+  (**(code **)(host_world + 0x276))((int)x,(int)y,x + 1,y + 1);
   return;
 }
 
@@ -29022,10 +29053,10 @@ void erase_radar_blip_bw /* Original: FUN_00017a34 */ (short param_1,short param
  * identical to the C: host hook +0x276(sext x, sext y, x + 1, y + 1); byte-identical to
  * erase_radar_blip_bw (0x17a34).
  */
-void draw_radar_blip_bw /* Original: FUN_00017a60 */ (short param_1,short param_2)
+void draw_radar_blip_bw /* Original: FUN_00017a60 */ (short x /* blip screen x */,short y /* blip screen y */)
 
 {
-  (**(code **)(DAT_0001b5a0 + 0x276))((int)param_1,(int)param_2,param_1 + 1,param_2 + 1);
+  (**(code **)(host_world + 0x276))((int)x,(int)y,x + 1,y + 1);
   return;
 }
 
@@ -29046,34 +29077,34 @@ void draw_radar_blip_bw /* Original: FUN_00017a60 */ (short param_1,short param_
 void update_radar_range_buttons /* Original: FUN_00017a8c */ (void)
 
 {
-  short sVar1;
-  int iVar2;
-  short sVar3;
-  short sVar4;
+  short lit; /* lit button colour (host_world +0x1da) */
+  int scope_w16; /* scope width (+0x1e4 - +0x1e0) * 16 */
+  short colour;
+  short unlit; /* unlit button colour (host_world +0x1dc); last button colour */
   
-  if (_DAT_0002666e != 0) {
-    iVar2 = ((int)*(short *)(DAT_0001b5a0 + 0x1e4) - (int)*(short *)(DAT_0001b5a0 + 0x1e0)) * 0x10;
-    if (iVar2 < 0) {
-      iVar2 = iVar2 + 1;
+  if (radar_changed != 0) {
+    scope_w16 = ((int)*(short *)(host_world + 0x1e4) - (int)*(short *)(host_world + 0x1e0)) * 0x10;
+    if (scope_w16 < 0) {
+      scope_w16 = scope_w16 + 1;
     }
-    DAT_00026664 = (undefined2)((int)DAT_0002666a / (iVar2 >> 1));
-    _DAT_0002666e = 0;
-    sVar1 = *(short *)(DAT_0001b5a0 + 0x1da);
-    sVar4 = *(short *)(DAT_0001b5a0 + 0x1dc);
-    sVar3 = sVar4;
-    if (DAT_0002666a == (undefined *)0xce40) {
-      sVar3 = sVar1;
+    radar_scale = (undefined2)((int)radar_range / (scope_w16 >> 1));
+    radar_changed = 0;
+    lit = *(short *)(host_world + 0x1da);
+    unlit = *(short *)(host_world + 0x1dc);
+    colour = unlit;
+    if (radar_range == (undefined *)0xce40) {
+      colour = lit;
     }
-    (**(code **)(DAT_0001b5a0 + 0x28e))(DAT_0001b5a0 + 0x1c2,(int)sVar3);
-    sVar3 = sVar4;
-    if (DAT_0002666a == &DAT_00026ac0) {
-      sVar3 = sVar1;
+    (**(code **)(host_world + 0x28e))(host_world + 0x1c2,(int)colour);
+    colour = unlit;
+    if (radar_range == &range_0x26ac0) {
+      colour = lit;
     }
-    (**(code **)(DAT_0001b5a0 + 0x28e))(DAT_0001b5a0 + 0x1ca,(int)sVar3);
-    if (DAT_0002666a == (undefined *)0xc15c0) {
-      sVar4 = sVar1;
+    (**(code **)(host_world + 0x28e))(host_world + 0x1ca,(int)colour);
+    if (radar_range == (undefined *)0xc15c0) {
+      unlit = lit;
     }
-    (**(code **)(DAT_0001b5a0 + 0x28e))(DAT_0001b5a0 + 0x1d2,(int)sVar4);
+    (**(code **)(host_world + 0x28e))(host_world + 0x1d2,(int)unlit);
   }
   return;
 }
@@ -29094,73 +29125,73 @@ void update_radar_range_buttons /* Original: FUN_00017a8c */ (void)
 void update_radar_scope /* Original: FUN_00017b68 */ (void)
 
 {
-  int iVar1;
-  short sVar2;
-  short sVar3;
-  short sVar4;
-  short sVar5;
-  int *piVar6;
-  int iVar7;
-  int iVar8;
-  short sVar9;
-  short sVar10;
-  short sVar11;
-  int iVar12;
-  int iVar13;
-  undefined4 *puVar14;
-  int *piVar15;
-  
-  iVar1 = *DAT_0001b738;
-  sVar2 = *(short *)(DAT_0001b5a0 + 0x1e8);
-  sVar3 = *(short *)(DAT_0001b5a0 + 0x1ea);
-  iVar7 = sin_fixed14( /* Original: FUN_00001d76 */(int)DAT_0001d80e);
-  iVar8 = cos_fixed14( /* Original: FUN_00001dd8 */(int)DAT_0001d80e);
-  if (*(short *)(DAT_0001b5a0 + 0x9e) == 0) {
-    puVar14 = DAT_0001b520;
-    sVar11 = DAT_00026672._2_2_;
-    while (sVar11 = sVar11 + -1, sVar11 != -1) {
-      if (puVar14[4] != 0) {
-        (*DAT_0001da90)(*puVar14,puVar14[1]);
+  int player; /* player object (*player_object) */
+  short centre_x; /* scope centre x (host_world +0x1e8) */
+  short centre_y; /* scope centre y (host_world +0x1ea) */
+  short sx;
+  short sy;
+  int *old_tracks; /* radar_tracks before the swap */
+  int sin_h;
+  int cos_h;
+  short dx; /* x offset / radar_scale */
+  short dz; /* z offset / radar_scale */
+  short n;
+  int bz;
+  int bx;
+  undefined4 *blip; /* radar_drawn_tracks entry */
+  int *track; /* radar_tracks entry */
+
+  player = *player_object;
+  centre_x = *(short *)(host_world + 0x1e8);
+  centre_y = *(short *)(host_world + 0x1ea);
+  sin_h = sin_fixed14( /* Original: FUN_00001d76 */(int)neg_camera_heading);
+  cos_h = cos_fixed14( /* Original: FUN_00001dd8 */(int)neg_camera_heading);
+  if (*(short *)(host_world + 0x9e) == 0) {
+    blip = radar_drawn_tracks;
+    n = radar_drawn_count._2_2_;
+    while (n = n + -1, n != -1) {
+      if (blip[4] != 0) {
+        (*depth_routine_da90)(*blip,blip[1]);
       }
-      puVar14 = puVar14 + 5;
+      blip = blip + 5;
     }
   }
-  piVar15 = DAT_0001b51c;
-  sVar11 = DAT_00026676._2_2_;
-  while (piVar6 = DAT_0001b51c, sVar11 = sVar11 + -1, sVar11 != -1) {
-    sVar9 = (short)((*piVar15 - *(int *)(iVar1 + 0x18)) / (int)DAT_00026664);
-    sVar10 = (short)((piVar15[1] - *(int *)(iVar1 + 0x20)) / (int)DAT_00026664);
-    sVar4 = sVar2 + (short)((uint)((int)sVar9 * (int)(short)iVar8 - (int)sVar10 * (int)(short)iVar7)
+  track = radar_tracks;
+  n = radar_track_count._2_2_;
+  while (old_tracks = radar_tracks, n = n + -1, n != -1) {
+    dx = (short)((*track - *(int *)(player + 0x18)) / (int)radar_scale);
+    dz = (short)((track[1] - *(int *)(player + 0x20)) / (int)radar_scale);
+    sx = centre_x + (short)((uint)((int)dx * (int)(short)cos_h - (int)dz * (int)(short)sin_h)
                            >> 0x10);
-    *piVar15 = (int)sVar4;
-    sVar5 = sVar3 - (short)((uint)((int)sVar10 * (int)(short)iVar8 + (int)sVar9 * (int)(short)iVar7)
+    *track = (int)sx;
+    sy = centre_y - (short)((uint)((int)dz * (int)(short)cos_h + (int)dx * (int)(short)sin_h)
                            >> 0x10);
-    piVar15[1] = (int)sVar5;
-    if ((((sVar4 < *(short *)(DAT_0001b5a0 + 0x1e0)) || (*(short *)(DAT_0001b5a0 + 0x1e4) <= sVar4))
-        || (sVar5 < *(short *)(DAT_0001b5a0 + 0x1de))) ||
-       (*(short *)(DAT_0001b5a0 + 0x1e2) <= sVar5)) {
-      piVar15[4] = 0;
+    track[1] = (int)sy;
+    if ((((sx < *(short *)(host_world + 0x1e0)) || (*(short *)(host_world + 0x1e4) <= sx))
+        || (sy < *(short *)(host_world + 0x1de))) ||
+       (*(short *)(host_world + 0x1e2) <= sy)) {
+      track[4] = 0;
     }
     else {
-      if (*(short *)(DAT_0001b5a0 + 0x9e) == 0) {
-        (*DAT_0001da94)((int)sVar4,(int)sVar5);
+      if (*(short *)(host_world + 0x9e) == 0) {
+        (*depth_routine_da94)((int)sx,(int)sy);
       }
       else {
-        iVar12 = (int)sVar10;
-        iVar13 = (int)sVar9;
-        (**(code **)(DAT_0001b5a0 + 0x272))
-                  ((int)*(short *)(DAT_0001b5a0 + 0xe4),iVar13,iVar12 + -1,iVar13,iVar12 + 1);
-        (**(code **)(DAT_0001b5a0 + 0x272))
-                  ((int)*(short *)(DAT_0001b5a0 + 0xe4),iVar13 + -1,iVar12,iVar13 + 1,iVar12);
+        bz = (int)dz;
+        bx = (int)dx;
+        (**(code **)(host_world + 0x272))
+                  ((int)*(short *)(host_world + 0xe4),bx,bz + -1,bx,bz + 1);
+        (**(code **)(host_world + 0x272))
+                  ((int)*(short *)(host_world + 0xe4),bx + -1,bz,bx + 1,bz);
       }
-      piVar15[4] = 1;
+      track[4] = 1;
     }
-    piVar15 = piVar15 + 5;
+    track = track + 5;
   }
-  DAT_00026672 = (int)DAT_00026676._2_2_;
-  DAT_0001b51c = DAT_0001b520;
-  DAT_0001b520 = piVar6;
-  DAT_00026676 = 0;
+  radar_drawn_count = (int)radar_track_count._2_2_;
+  radar_tracks = radar_drawn_tracks;
+  radar_drawn_tracks = old_tracks;
+  radar_track_count = 0;
   return;
 }
 
@@ -29178,39 +29209,39 @@ void update_radar_scope /* Original: FUN_00017b68 */ (void)
  * == 0xc15c0 -> (v & 3) + 2 (andi.w #$fffc / sub.w = Ghidra's - (r & 0xc)), == 0x40740 -> v %
  * 3 (divs.w #3 / swap), else v; stored as word +0x32; returns a3.
  */
-uint * create_aircraft_spawner_controller /* Original: FUN_00017d16 */ (uint param_1,int param_2)
+uint * create_aircraft_spawner_controller /* Original: FUN_00017d16 */ (uint obj,int def_key /* definition key (0x12 = aircraft spawner) */)
 
 {
-  int iVar1;
-  ushort uVar2;
-  uint *puVar3;
-  uint uVar4;
-  ushort uVar5;
+  int obj_range; /* object +0xc range picking the variant */
+  ushort rnd;
+  uint *ctl; /* new 0x48-byte spawner controller */
+  uint rnd32;
+  ushort left; /* +0x32: aircraft left to launch [STRONG INFERENCE] */
   
-  puVar3 = heap_alloc_cleared(0x48);
-  *puVar3 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x30040;
-  if (param_2 == 0x12) {
-    *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) | 0x10;
+  ctl = heap_alloc_cleared(0x48);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x30040;
+  if (def_key == 0x12) {
+    *(byte *)(obj + 5) = *(byte *)(obj + 5) | 0x10;
   }
-  puVar3[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-  uVar2 = (ushort)uVar4;
-  uVar5 = uVar2 & 0xf;
-  iVar1 = *(int *)(param_1 + 0xc);
-  if (iVar1 == 0x80e80) {
-    uVar5 = (uVar5 - (uVar2 & 0xc)) + 1;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  rnd32 = overlay_rng_next( /* Original: FUN_00011564 */);
+  rnd = (ushort)rnd32;
+  left = rnd & 0xf;
+  obj_range = *(int *)(obj + 0xc);
+  if (obj_range == 0x80e80) {
+    left = (left - (rnd & 0xc)) + 1;
   }
-  else if (iVar1 < 0x80e81) {
-    if (iVar1 == 0x40740) {
-      uVar5 = (ushort)((uint)(int)(short)uVar5 % 3);
+  else if (obj_range < 0x80e81) {
+    if (obj_range == 0x40740) {
+      left = (ushort)((uint)(int)(short)left % 3);
     }
   }
-  else if (iVar1 == 0xc15c0) {
-    uVar5 = (uVar5 - (uVar2 & 0xc)) + 2;
+  else if (obj_range == 0xc15c0) {
+    left = (left - (rnd & 0xc)) + 2;
   }
-  *(ushort *)((int)puVar3 + 0x32) = uVar5;
-  return puVar3;
+  *(ushort *)((int)ctl + 0x32) = left;
+  return ctl;
 }
 
 
@@ -29222,22 +29253,22 @@ uint * create_aircraft_spawner_controller /* Original: FUN_00017d16 */ (uint par
 /* VERIFIED (FUN_00017db8): 0x17db8..0x17dd2 checked against an independent capstone disassembly and
  * found identical to the C: for k = 0..2: the long at ctl +0x34 + 4k ($34(a1,d0.w*4), scale
  * decoded by hand), when non-null, gets byte +3 -= 1. */
-void destroy_aircraft_spawner_controller /* Original: FUN_00017db8 */ (int param_1)
+void destroy_aircraft_spawner_controller /* Original: FUN_00017db8 */ (int ctl /* spawner controller */)
 
 {
-  int iVar1;
-  char *pcVar2;
-  short sVar3;
+  int ref; /* object referenced at +0x34 + 4 i */
+  char *ref_count; /* referenced object +3 */
+  short i;
   
-  sVar3 = 0;
+  i = 0;
   do {
-    iVar1 = *(int *)(param_1 + 0x34 + sVar3 * 4);
-    if (iVar1 != 0) {
-      pcVar2 = (char *)(iVar1 + 3);
-      *pcVar2 = *pcVar2 + -1;
+    ref = *(int *)(ctl + 0x34 + i * 4);
+    if (ref != 0) {
+      ref_count = (char *)(ref + 3);
+      *ref_count = *ref_count + -1;
     }
-    sVar3 = sVar3 + 1;
-  } while (sVar3 < 3);
+    i = i + 1;
+  } while (i < 3);
   return;
 }
 
@@ -29255,99 +29286,99 @@ void destroy_aircraft_spawner_controller /* Original: FUN_00017db8 */ (int param
  * Ghidra C reviewed (function at overlay offset 0x17dd4).
  * Definition +2 of key 0x12. While aircraft remain to launch (+0x32) in live play: checks its up to five launched aircraft (+0x34..+0x44; drops gone ones); when none is alive and undamaged (damage mask 0x3fe), with probability 1/512 launches a group of 1..min(3, left) aircraft at a point around the player (distance 2/3 of the spawner range, bearing from the spawner towards the player +- random) heading roughly at the player, through spawn calls further down. [STRONG INFERENCE: wave spawner for enemy aircraft] Ghidra C (partly read).
  */
-void tick_aircraft_spawner /* Original: FUN_00017dd4 */ (int *param_1)
+void tick_aircraft_spawner /* Original: FUN_00017dd4 */ (int *ctl /* spawner controller */)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  uint uVar5;
-  int iVar6;
-  int iVar7;
-  ushort uVar11;
-  int iVar8;
-  int iVar9;
-  ushort uVar12;
-  int *piVar10;
-  short sVar13;
-  short sVar14;
-  short sVar15;
-  uint local_e;
-  ushort local_6;
-  
-  if ((*(short *)((int)param_1 + 0x32) != 0) && (DAT_0001b870 == 0)) {
-    sVar15 = 0;
-    sVar13 = 0;
+  int player; /* player object (*player_object) */
+  int player_x;
+  int spawner_z;
+  int player_z;
+  uint spawn_z; /* rng / |dx| + |dz| first; then the spawn z */
+  int abs_dx;
+  int abs_dz;
+  ushort rnd_alt; /* random; low 12 bits pick the altitude */
+  int spawner_x; /* reused for the sine */
+  int obj; /* tracked aircraft; then the spawner object, its range +0xc and the cosine */
+  ushort rnd;
+  int *fighter_ctl; /* spawn_enemy_fighter result */
+  short slot; /* aircraft slot +0x34 + 4 i; also the shift and the distance */
+  short k;
+  short count; /* alive aircraft, then the group size 1..3 */
+  uint spawn_x;
+  ushort heading; /* bearing / launch heading (14-bit angle) */
+
+  if ((*(short *)((int)ctl + 0x32) != 0) && (replay_state == 0)) {
+    count = 0;
+    slot = 0;
     do {
-      iVar9 = param_1[sVar13 + 0xd];
-      if (iVar9 != 0) {
-        if (((*(byte *)(iVar9 + 7) & 2) == 0) && (**(int **)(iVar9 + 8) != 0)) {
-          if ((*(ushort *)(*(int *)(iVar9 + 8) + 0x684) & 0x3fe) == 0) {
-            sVar15 = sVar15 + 1;
+      obj = ctl[slot + 0xd];
+      if (obj != 0) {
+        if (((*(byte *)(obj + 7) & 2) == 0) && (**(int **)(obj + 8) != 0)) {
+          if ((*(ushort *)(*(int *)(obj + 8) + 0x684) & 0x3fe) == 0) {
+            count = count + 1;
           }
         }
         else {
-          *(char *)(iVar9 + 3) = *(char *)(iVar9 + 3) + -1;
-          param_1[sVar13 + 0xd] = 0;
+          *(char *)(obj + 3) = *(char *)(obj + 3) + -1;
+          ctl[slot + 0xd] = 0;
         }
       }
-      sVar13 = sVar13 + 1;
-    } while (sVar13 < 5);
-    if ((sVar15 == 0) && (uVar5 = overlay_rng_next( /* Original: FUN_00011564 */), (uVar5 & 0x1ff) == 0)) {
-      iVar9 = *param_1;
-      iVar1 = *DAT_0001b738;
-      if (*(short *)((int)param_1 + 0x32) < 3) {
-        sVar15 = *(short *)((int)param_1 + 0x32);
+      slot = slot + 1;
+    } while (slot < 5);
+    if ((count == 0) && (spawn_z = overlay_rng_next( /* Original: FUN_00011564 */), (spawn_z & 0x1ff) == 0)) {
+      obj = *ctl;
+      player = *player_object;
+      if (*(short *)((int)ctl + 0x32) < 3) {
+        count = *(short *)((int)ctl + 0x32);
       }
       else {
-        sVar15 = 3;
+        count = 3;
       }
-      uVar5 = overlay_rng_next( /* Original: FUN_00011564 */);
-      sVar15 = (short)((int)(uVar5 & 0xffff) % (int)sVar15) + 1;
-      iVar8 = *(int *)(iVar9 + 0x18);
-      iVar2 = *(int *)(iVar1 + 0x18);
-      iVar3 = *(int *)(iVar9 + 0x20);
-      iVar4 = *(int *)(iVar1 + 0x20);
-      iVar6 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: iVar8 - iVar2 (spawner x - player x) */
-      iVar7 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: iVar3 - iVar4 (spawner z - player z) */
-      sVar13 = 0;
-      for (uVar5 = iVar7 + iVar6; (uVar5 & 0xffff8000) != 0; uVar5 = (int)uVar5 >> 1) {
-        sVar13 = sVar13 + 1;
+      spawn_z = overlay_rng_next( /* Original: FUN_00011564 */);
+      count = (short)((int)(spawn_z & 0xffff) % (int)count) + 1;
+      spawner_x = *(int *)(obj + 0x18);
+      player_x = *(int *)(player + 0x18);
+      spawner_z = *(int *)(obj + 0x20);
+      player_z = *(int *)(player + 0x20);
+      abs_dx = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: iVar8 - iVar2 (spawner x - player x) */
+      abs_dz = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: iVar3 - iVar4 (spawner z - player z) */
+      slot = 0;
+      for (spawn_z = abs_dz + abs_dx; (spawn_z & 0xffff8000) != 0; spawn_z = (int)spawn_z >> 1) {
+        slot = slot + 1;
       }
-      attitude_from_velocity( /* Original: FUN_00001f22 */(short)(iVar8 - iVar2 >> ((int)sVar13 & 0x3fU)),0,
-                   (short)(iVar3 - iVar4 >> ((int)sVar13 & 0x3fU)),0,0,(ushort *)0x0,&local_6);
-      uVar11 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-      local_6 = local_6 + ((uVar11 & 0x1f) - 0x10) * 0x40 & 0x3fff;
-      iVar9 = *(int *)(iVar9 + 0xc);
-      iVar8 = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)local_6);
-      sVar13 = (short)((iVar9 << 1) / 3 >> 5);
-      local_e = *(int *)(iVar1 + 0x18) - ((int)(short)iVar8 * (int)sVar13 >> 7);
-      uVar11 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-      iVar9 = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)local_6);
-      uVar5 = *(int *)(iVar1 + 0x20) + ((int)sVar13 * (int)(short)iVar9 >> 7);
-      uVar12 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-      local_6 = local_6 + ((uVar12 & 0x1f) - 0x10) * 0x40 + 0x2000 & 0x3fff;
-      sVar13 = 0;
-      sVar14 = 0;
-      if (0 < sVar15) {
+      attitude_from_velocity( /* Original: FUN_00001f22 */(short)(spawner_x - player_x >> ((int)slot & 0x3fU)),0,
+                   (short)(spawner_z - player_z >> ((int)slot & 0x3fU)),0,0,(ushort *)0x0,&heading);
+      rnd_alt = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+      heading = heading + ((rnd_alt & 0x1f) - 0x10) * 0x40 & 0x3fff;
+      obj = *(int *)(obj + 0xc);
+      spawner_x = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)heading);
+      slot = (short)((obj << 1) / 3 >> 5);
+      spawn_x = *(int *)(player + 0x18) - ((int)(short)spawner_x * (int)slot >> 7);
+      rnd_alt = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+      obj = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)heading);
+      spawn_z = *(int *)(player + 0x20) + ((int)slot * (int)(short)obj >> 7);
+      rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+      heading = heading + ((rnd & 0x1f) - 0x10) * 0x40 + 0x2000 & 0x3fff;
+      slot = 0;
+      k = 0;
+      if (0 < count) {
         do {
-          while (param_1[sVar13 + 0xd] != 0) {
-            sVar13 = sVar13 + 1;
+          while (ctl[slot + 0xd] != 0) {
+            slot = slot + 1;
           }
-          uVar12 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-          local_e = (uVar12 & 0xffff0fff) + (local_e - 0x800);
-          uVar12 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-          uVar5 = (uVar12 & 0xffff0fff) + (uVar5 - 0x800);
-          piVar10 = (int *)spawn_enemy_fighter(local_e,(uint)(uVar11 & 0xfff) * 10 + 30000,uVar5,0,local_6,
+          rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+          spawn_x = (rnd & 0xffff0fff) + (spawn_x - 0x800);
+          rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+          spawn_z = (rnd & 0xffff0fff) + (spawn_z - 0x800);
+          fighter_ctl = (int *)spawn_enemy_fighter(spawn_x,(uint)(rnd_alt & 0xfff) * 10 + 30000,spawn_z,0,heading,
                                         0,1);
-          if (piVar10 != (int *)0x0) {
-            *(short *)((int)param_1 + 0x32) = *(short *)((int)param_1 + 0x32) + -1;
-            param_1[sVar13 + 0xd] = *piVar10;
-            *(char *)(*piVar10 + 3) = *(char *)(*piVar10 + 3) + '\x01';
+          if (fighter_ctl != (int *)0x0) {
+            *(short *)((int)ctl + 0x32) = *(short *)((int)ctl + 0x32) + -1;
+            ctl[slot + 0xd] = *fighter_ctl;
+            *(char *)(*fighter_ctl + 3) = *(char *)(*fighter_ctl + 3) + '\x01';
           }
-          sVar14 = sVar14 + 1;
-        } while (sVar14 < sVar15);
+          k = k + 1;
+        } while (k < count);
       }
     }
   }
@@ -29365,23 +29396,23 @@ void tick_aircraft_spawner /* Original: FUN_00017dd4 */ (int *param_1)
  * + 4i ($6(a0,a1.l*4), scale decoded by hand = the C's short index * 2 + 3); a slot equal to
  * the target is cleared (clr.l) and the live count decremented; when the live count reaches 0
  * and word DAT_0001b5a0 +0xce == 0 it becomes 1. */
-void remove_mission_target /* Original: FUN_00017ffe */ (int param_1)
+void remove_mission_target /* Original: FUN_00017ffe */ (int aircraft /* lost aircraft controller */)
 
 {
-  short *psVar1;
-  short *psVar2;
-  short sVar3;
+  short *entry; /* target list entry (two words) */
+  short *list;
+  short i;
   
-  for (sVar3 = 0; psVar2 = DAT_00020adc, sVar3 < DAT_00020adc[1]; sVar3 = sVar3 + 1) {
-    if (param_1 == *(int *)(DAT_00020adc + sVar3 * 2 + 3)) {
-      psVar1 = DAT_00020adc + sVar3 * 2 + 3;
-      psVar1[0] = 0;
-      psVar1[1] = 0;
-      *psVar2 = *psVar2 + -1;
+  for (i = 0; list = mission_target_list, i < mission_target_list[1]; i = i + 1) {
+    if (aircraft == *(int *)(mission_target_list + i * 2 + 3)) {
+      entry = mission_target_list + i * 2 + 3;
+      entry[0] = 0;
+      entry[1] = 0;
+      *list = *list + -1;
     }
   }
-  if ((*DAT_00020adc == 0) && (*(short *)(DAT_0001b5a0 + 0xce) == 0)) {
-    *(undefined2 *)(DAT_0001b5a0 + 0xce) = 1;
+  if ((*mission_target_list == 0) && (*(short *)(host_world + 0xce) == 0)) {
+    *(undefined2 *)(host_world + 0xce) = 1;
   }
   return;
 }
@@ -29397,31 +29428,31 @@ void remove_mission_target /* Original: FUN_00017ffe */ (int param_1)
  * +0x32 = 10, +0x34 = DAT_0001b838 + 0x546; when word DAT_0001b5a0 +0x90 == 7 the second
  * buffer goes to DAT_00020adc with words +2 and +0 = the count; returns a3.
  */
-int * create_wave_spawner_controller /* Original: FUN_00018040 */ (int param_1,int param_2)
+int * create_wave_spawner_controller /* Original: FUN_00018040 */ (int obj,int def_key /* definition key (0x14) */)
 
 {
-  undefined2 uVar1;
-  int *piVar2;
-  undefined2 *puVar3;
+  undefined2 count; /* aircraft to send (+0x32) */
+  int *ctl; /* new 0x38-byte wave spawner controller */
+  undefined2 *list; /* mission 7 target list */
   
   /* Size reconstructed [PROVEN, pea $38.w at 0x1804c]; lea.l $1b4c.l at 0x18050 = runtime
    * -> file 0x1b6c heap_alloc_cleared. */
-  piVar2 = (int *)heap_alloc_cleared(0x38);
-  *piVar2 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x130040;
-  piVar2[1] = *(int *)(&DAT_0001b524 + param_2 * 4);
-  *(undefined2 *)((int)piVar2 + 0x32) = 10;
-  piVar2[0xd] = DAT_0001b838 + 0x546;
-  if (*(short *)(DAT_0001b5a0 + 0x90) == 7) {
+  ctl = (int *)heap_alloc_cleared(0x38);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x130040;
+  ctl[1] = *(int *)(&template_ptr_table_base + def_key * 4);
+  *(undefined2 *)((int)ctl + 0x32) = 10;
+  ctl[0xd] = frame_counter + 0x546;
+  if (*(short *)(host_world + 0x90) == 7) {
     /* Size reconstructed [PROVEN, 0x18098..0x180a2]: sext word +0x32 << 2, pea $a(a1) =
      * count * 4 + 10 (50 bytes for the count 10 set above). */
-    puVar3 = (undefined2 *)heap_alloc_cleared((int)*(short *)((int)piVar2 + 0x32) * 4 + 10);
-    uVar1 = *(undefined2 *)((int)piVar2 + 0x32);
-    DAT_00020adc = puVar3;
-    puVar3[1] = uVar1;
-    *puVar3 = uVar1;
+    list = (undefined2 *)heap_alloc_cleared((int)*(short *)((int)ctl + 0x32) * 4 + 10);
+    count = *(undefined2 *)((int)ctl + 0x32);
+    mission_target_list = list;
+    list[1] = count;
+    *list = count;
   }
-  return piVar2;
+  return ctl;
 }
 
 
@@ -29440,47 +29471,47 @@ int * create_wave_spawner_controller /* Original: FUN_00018040 */ (int param_1,i
  * ai_dive_at_target) when word DAT_00020adc +4 == 0, the counter -1, and in mission type 7
  * DAT_00020adc + 6 + 4 * count = it; next time = DAT_0001b838 + (count == 5 ? 0x1356 : 0x546) +
  * (r4 & 0xffff) % 0x1c2 - 0xe1. */
-void tick_wave_spawner /* Original: FUN_000180c8 */ (int param_1)
+void tick_wave_spawner /* Original: FUN_000180c8 */ (int ctl /* wave spawner controller */)
 
 {
-  ushort uVar5;
-  short sVar6;
-  int iVar1;
-  int iVar2;
-  ushort uVar7;
-  int iVar3;
-  uint uVar4;
-  
-  if (((*(short *)(param_1 + 0x32) != 0) && (DAT_0001b870 == 0)) &&
-     (*(int *)(param_1 + 0x34) <= DAT_0001b838)) {
-    uVar5 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    uVar5 = uVar5 % 0x1540 - 0xa80 & 0x3fff;
-    sVar6 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    iVar3 = sVar6 + 0x5a3c0 >> 4;
-    iVar1 = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)uVar5);
-    iVar2 = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)uVar5);
-    uVar7 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    iVar3 = spawn_enemy_fighter(-(iVar3 * (short)iVar1 >> 8) - 0xb92670,40000,
-                         (iVar3 * (short)iVar2 >> 8) + 0x7f8e4c,0,
-                         (uVar7 & 0x1ff) + uVar5 + 0xdf00 & 0x3fff,0,1);
-    if (iVar3 != 0) {
-      *(ushort *)(iVar3 + 0x684) = *(ushort *)(iVar3 + 0x684) | 0x20;
-      if (*(short *)(DAT_00020adc + 4) == 0) {
-        *(undefined4 *)(iVar3 + 0x32) = 0x111ba;
+  ushort bearing; /* random bearing within +-0xa80 */
+  short rnd_dist;
+  int sin_b;
+  int cos_b;
+  ushort rnd_heading;
+  int fighter; /* distance; then the spawned aircraft; then the launch delay */
+  uint rnd;
+
+  if (((*(short *)(ctl + 0x32) != 0) && (replay_state == 0)) &&
+     (*(int *)(ctl + 0x34) <= frame_counter)) {
+    bearing = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    bearing = bearing % 0x1540 - 0xa80 & 0x3fff;
+    rnd_dist = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    fighter = rnd_dist + 0x5a3c0 >> 4;
+    sin_b = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)bearing);
+    cos_b = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)bearing);
+    rnd_heading = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    fighter = spawn_enemy_fighter(-(fighter * (short)sin_b >> 8) - 0xb92670,40000,
+                         (fighter * (short)cos_b >> 8) + 0x7f8e4c,0,
+                         (rnd_heading & 0x1ff) + bearing + 0xdf00 & 0x3fff,0,1);
+    if (fighter != 0) {
+      *(ushort *)(fighter + 0x684) = *(ushort *)(fighter + 0x684) | 0x20;
+      if (*(short *)(mission_target_list + 4) == 0) {
+        *(undefined4 *)(fighter + 0x32) = 0x111ba;
       }
-      *(short *)(param_1 + 0x32) = *(short *)(param_1 + 0x32) + -1;
-      if (*(short *)(DAT_0001b5a0 + 0x90) == 7) {
-        *(int *)(DAT_00020adc + 6 + *(short *)(param_1 + 0x32) * 4) = iVar3;
+      *(short *)(ctl + 0x32) = *(short *)(ctl + 0x32) + -1;
+      if (*(short *)(host_world + 0x90) == 7) {
+        *(int *)(mission_target_list + 6 + *(short *)(ctl + 0x32) * 4) = fighter;
       }
     }
-    if (*(short *)(param_1 + 0x32) == 5) {
-      iVar3 = 0x1356;
+    if (*(short *)(ctl + 0x32) == 5) {
+      fighter = 0x1356;
     }
     else {
-      iVar3 = 0x546;
+      fighter = 0x546;
     }
-    uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-    *(uint *)(param_1 + 0x34) = (uVar4 & 0xffff) % 0x1c2 + DAT_0001b838 + iVar3 + -0xe1;
+    rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+    *(uint *)(ctl + 0x34) = (rnd & 0xffff) % 0x1c2 + frame_counter + fighter + -0xe1;
   }
   return;
 }
@@ -29523,259 +29554,259 @@ void tick_wave_spawner /* Original: FUN_000180c8 */ (int param_1)
  * VERIFIED: checked against an independent capstone disassembly of the overlay bytes at
  * 0x1820a..0x188b2 (sections above); widths, signed compares, asr rounding and call targets
  * identical to the C, with the call-argument corrections recorded in DECOMPILATION_SYMBOLS.md. */
-void ai_pursue_target /* Original: FUN_0001820a */ (int *param_1)
+void ai_pursue_target /* Original: FUN_0001820a */ (int *ctl /* attacking aircraft controller */)
 
 {
-  int *piVar1;
-  int *piVar2;
-  char cVar3;
-  ushort uVar4;
-  uint uVar5;
-  int iVar6;
-  int iVar7;
-  short sVar8;
-  int iVar9;
-  int iVar10;
-  ushort local_3a;
-  ushort local_38;
-  short asStack_36 [9];
-  undefined1 auStack_24 [2];
-  short local_22;
-  short local_1e;
-  short local_1a;
-  short local_18;
-  short local_16;
-  int local_14;
-  undefined1 auStack_10 [12];
-  
-  iVar7 = *(int *)((int)param_1 + 0x692);
-  if (*(int *)((int)param_1 + 0x696) < 0x4e21) {
-    iVar6 = *param_1;
-    iVar9 = *(int *)(iVar7 + 8);
-    sVar8 = DAT_0001b878;
-    if (*(short *)param_1[1] == 1) {
-      sVar8 = DAT_0001b876;
+  int *pose_a; /* target pose ring entry lag frames back */
+  int *pose_b; /* next pose ring entry */
+  char manoeuvre; /* +0x69a state / +0x69b phase */
+  ushort pick; /* random manoeuvre choice; then a turn angle */
+  uint rnd; /* rng; also a shift / angle */
+  int own_obj; /* ctl +0 object; reused for isqrt */
+  int target; /* target object (+0x692); reused as a distance / sine */
+  short lag; /* aim lag frames; reused as turn angle, throttle and shift */
+  int target_ctl; /* target +8 controller; reused in the throttle maths */
+  int ring_idx; /* pose ring index (75 entries); reused as lead factor and abs values */
+  ushort rel_att_b; /* second attitude_from_velocity out */
+  ushort rel_att_a; /* first attitude_from_velocity out */
+  short matrix [9]; /* inverse own attitude */
+  undefined1 rel_vec [2]; /* target - own, shifted */
+  short rel_x;
+  short rel_y;
+  short rel_z;
+  short steer_b; /* build_relative_steer_sample *p8 (attitude out, then / 4) */
+  short steer_a; /* build_relative_steer_sample *p7 */
+  int range; /* build_relative_steer_sample *p5 */
+  undefined1 rel_delta [12]; /* scaled delta (+2 / +6 / +0xa) */
+
+  target = *(int *)((int)ctl + 0x692);
+  if (*(int *)((int)ctl + 0x696) < 0x4e21) {
+    own_obj = *ctl;
+    target_ctl = *(int *)(target + 8);
+    lag = ai_aim_lag;
+    if (*(short *)ctl[1] == 1) {
+      lag = ai_aim_lag_key1;
     }
-    iVar10 = (int)*(short *)(iVar9 + 0x612) - (int)sVar8;
-    if (iVar10 < 0) {
-      iVar10 = iVar10 + 0x4b;
+    ring_idx = (int)*(short *)(target_ctl + 0x612) - (int)lag;
+    if (ring_idx < 0) {
+      ring_idx = ring_idx + 0x4b;
     }
-    piVar1 = (int *)(iVar9 + 0x36 + iVar10 * 0x14);
-    iVar10 = iVar10 + 1;
-    if (iVar10 == 0x4b) {
-      iVar10 = 0;
+    pose_a = (int *)(target_ctl + 0x36 + ring_idx * 0x14);
+    ring_idx = ring_idx + 1;
+    if (ring_idx == 0x4b) {
+      ring_idx = 0;
     }
-    piVar2 = (int *)(iVar9 + 0x36 + iVar10 * 0x14);
-    iVar10 = sVar8 + 4;
-    build_relative_steer_sample( /* Original: FUN_00010360 */param_1,*piVar1 + iVar10 * (*piVar2 - *piVar1),
-                 piVar1[1] + iVar10 * (piVar2[1] - piVar1[1]),
-                 piVar1[2] + iVar10 * (piVar2[2] - piVar1[2]),&local_14,(int)auStack_10,&local_16,
-                 &local_18);
-    if (local_16 < 0) {
-      local_16 = local_16 + 3;
+    pose_b = (int *)(target_ctl + 0x36 + ring_idx * 0x14);
+    ring_idx = lag + 4;
+    build_relative_steer_sample( /* Original: FUN_00010360 */ctl,*pose_a + ring_idx * (*pose_b - *pose_a),
+                 pose_a[1] + ring_idx * (pose_b[1] - pose_a[1]),
+                 pose_a[2] + ring_idx * (pose_b[2] - pose_a[2]),&range,(int)rel_delta,&steer_a,
+                 &steer_b);
+    if (steer_a < 0) {
+      steer_a = steer_a + 3;
     }
-    local_16 = local_16 >> 2;
-    if (local_18 < 0) {
-      local_18 = local_18 + 3;
+    steer_a = steer_a >> 2;
+    if (steer_b < 0) {
+      steer_b = steer_b + 3;
     }
-    local_18 = local_18 >> 2;
-    iVar10 = FUN_00002de8();
-    if ((0x53f < iVar10) && (*(char *)((int)param_1 + 0x69a) != '\x04')) {
-      fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(iVar9 + 0x22) - *(short *)((int)param_1 + 0x22));
-      iVar10 = FUN_00002de8();
-      if ((iVar10 < 0x1001) || (uVar5 = overlay_rng_next( /* Original: FUN_00011564 */), (uVar5 & 1) == 0)) {
-        max_ai_throttle_maybe_invert_679( /* Original: FUN_00010cb2 */param_1);
+    steer_b = steer_b >> 2;
+    ring_idx = FUN_00002de8();
+    if ((0x53f < ring_idx) && (*(char *)((int)ctl + 0x69a) != '\x04')) {
+      fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(target_ctl + 0x22) - *(short *)((int)ctl + 0x22));
+      ring_idx = FUN_00002de8();
+      if ((ring_idx < 0x1001) || (rnd = overlay_rng_next( /* Original: FUN_00011564 */), (rnd & 1) == 0)) {
+        max_ai_throttle_maybe_invert_679( /* Original: FUN_00010cb2 */ctl);
         do {
-          if (*(char *)((int)param_1 + 0x69a) == '\0') {
-            param_1[0x1a7] = *(int *)(iVar6 + 0x18);
-            param_1[0x1a8] = *(int *)(iVar6 + 0x1c);
-            param_1[0x1a9] = *(int *)(iVar6 + 0x20);
-            uVar5 = overlay_rng_next( /* Original: FUN_00011564 */);
-            uVar4 = (ushort)uVar5 & 3;
-            if ((uVar4 == 1) && (0x32a0 < *(int *)((int)param_1 + 0x62a))) {
-              iVar7 = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(param_1 + 8));
-              iVar7 = abs_int( /* Original: FUN_00002e08 */(int)(short)iVar7);
-              if (0x1ff < iVar7) goto LAB_000185d4;
-              *(undefined1 *)((int)param_1 + 0x69a) = 3;
+          if (*(char *)((int)ctl + 0x69a) == '\0') {
+            ctl[0x1a7] = *(int *)(own_obj + 0x18);
+            ctl[0x1a8] = *(int *)(own_obj + 0x1c);
+            ctl[0x1a9] = *(int *)(own_obj + 0x20);
+            rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+            pick = (ushort)rnd & 3;
+            if ((pick == 1) && (0x32a0 < *(int *)((int)ctl + 0x62a))) {
+              target = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(ctl + 8));
+              target = abs_int( /* Original: FUN_00002e08 */(int)(short)target);
+              if (0x1ff < target) goto LAB_000185d4;
+              *(undefined1 *)((int)ctl + 0x69a) = 3;
             }
             else {
 LAB_000185d4:
-              if (uVar4 == 1 || (uVar5 & 3) == 0) {
-                *(undefined1 *)((int)param_1 + 0x69a) = 2;
+              if (pick == 1 || (rnd & 3) == 0) {
+                *(undefined1 *)((int)ctl + 0x69a) = 2;
               }
               else {
-                *(undefined1 *)((int)param_1 + 0x69a) = 1;
+                *(undefined1 *)((int)ctl + 0x69a) = 1;
               }
             }
-            *(undefined1 *)((int)param_1 + 0x69b) = 0;
-            param_1[0x1aa] = 0;
-            iVar7 = 1;
+            *(undefined1 *)((int)ctl + 0x69b) = 0;
+            ctl[0x1aa] = 0;
+            target = 1;
           }
           else {
-            iVar7 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+            target = approx_dist3_xyz( /* Original: FUN_00003c68 */);
           }
-          if ((iVar7 < 2000) && ((param_1[0x1aa] < iVar7 || (iVar7 < 400)))) {
-            cVar3 = *(char *)((int)param_1 + 0x69a);
-            if (cVar3 == '\x02') {
-              if (*(char *)((int)param_1 + 0x69b) == '\0') {
-                param_1[0x1a8] = *(int *)(iVar6 + 0x1c);
-                uVar5 = overlay_rng_next( /* Original: FUN_00011564 */);
-                if ((uVar5 & 1) == 0) {
-                  sVar8 = 0x200;
+          if ((target < 2000) && ((ctl[0x1aa] < target || (target < 400)))) {
+            manoeuvre = *(char *)((int)ctl + 0x69a);
+            if (manoeuvre == '\x02') {
+              if (*(char *)((int)ctl + 0x69b) == '\0') {
+                ctl[0x1a8] = *(int *)(own_obj + 0x1c);
+                rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+                if ((rnd & 1) == 0) {
+                  lag = 0x200;
                   goto LAB_00018720;
                 }
-                sVar8 = -0x200;
+                lag = -0x200;
 LAB_0001870c:
-                uVar4 = sVar8 - *(short *)((int)param_1 + 0x22);
-                *(undefined1 *)((int)param_1 + 0x69b) = 2;
+                pick = lag - *(short *)((int)ctl + 0x22);
+                *(undefined1 *)((int)ctl + 0x69b) = 2;
               }
               else {
-                uVar5 = overlay_rng_next( /* Original: FUN_00011564 */);
-                if ((uVar5 & 1) != 0) {
-                  *(undefined1 *)((int)param_1 + 0x69a) = 0;
+                rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+                if ((rnd & 1) != 0) {
+                  *(undefined1 *)((int)ctl + 0x69a) = 0;
                 }
-                if (*(char *)((int)param_1 + 0x69b) == '\x01') {
-                  sVar8 = -0x400;
+                if (*(char *)((int)ctl + 0x69b) == '\x01') {
+                  lag = -0x400;
                   goto LAB_0001870c;
                 }
-                sVar8 = 0x400;
+                lag = 0x400;
 LAB_00018720:
-                uVar4 = sVar8 - *(short *)((int)param_1 + 0x22);
-                *(undefined1 *)((int)param_1 + 0x69b) = 1;
+                pick = lag - *(short *)((int)ctl + 0x22);
+                *(undefined1 *)((int)ctl + 0x69b) = 1;
               }
-              iVar7 = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)(uVar4 & 0x3fff));
-              param_1[0x1a7] =
-                   *(int *)(iVar6 + 0x18) +
-                   ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x2d >> 6) >> 0xc);
-              iVar7 = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)(uVar4 & 0x3fff));
-              param_1[0x1a9] =
-                   *(int *)(iVar6 + 0x20) +
-                   ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x2d >> 6) >> 0xc);
+              target = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)(pick & 0x3fff));
+              ctl[0x1a7] =
+                   *(int *)(own_obj + 0x18) +
+                   ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x2d >> 6) >> 0xc);
+              target = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)(pick & 0x3fff));
+              ctl[0x1a9] =
+                   *(int *)(own_obj + 0x20) +
+                   ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x2d >> 6) >> 0xc);
             }
-            else if (cVar3 < '\x03') {
-              if (cVar3 == '\x01') {
-                if (*(char *)((int)param_1 + 0x69b) == '\0') {
-                  param_1[0x1a8] = *(int *)(iVar6 + 0x1c);
-                  iVar7 = sin_fixed14( /* Original: FUN_00001d76 */-(int)*(short *)((int)param_1 + 0x22) & 0x3fff);
-                  param_1[0x1a7] =
-                       *(int *)(iVar6 + 0x18) +
-                       ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x4b >> 6) >> 0xc);
-                  iVar7 = cos_fixed14( /* Original: FUN_00001dd8 */-(int)*(short *)((int)param_1 + 0x22) & 0x3fff);
-                  param_1[0x1a9] =
-                       *(int *)(iVar6 + 0x20) +
-                       ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x4b >> 6) >> 0xc);
+            else if (manoeuvre < '\x03') {
+              if (manoeuvre == '\x01') {
+                if (*(char *)((int)ctl + 0x69b) == '\0') {
+                  ctl[0x1a8] = *(int *)(own_obj + 0x1c);
+                  target = sin_fixed14( /* Original: FUN_00001d76 */-(int)*(short *)((int)ctl + 0x22) & 0x3fff);
+                  ctl[0x1a7] =
+                       *(int *)(own_obj + 0x18) +
+                       ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x4b >> 6) >> 0xc);
+                  target = cos_fixed14( /* Original: FUN_00001dd8 */-(int)*(short *)((int)ctl + 0x22) & 0x3fff);
+                  ctl[0x1a9] =
+                       *(int *)(own_obj + 0x20) +
+                       ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x4b >> 6) >> 0xc);
 LAB_000187fe:
-                  *(undefined1 *)((int)param_1 + 0x69b) = 1;
+                  *(undefined1 *)((int)ctl + 0x69b) = 1;
                 }
                 else {
 LAB_00018878:
-                  *(undefined1 *)((int)param_1 + 0x69a) = 0;
+                  *(undefined1 *)((int)ctl + 0x69a) = 0;
                 }
               }
             }
-            else if (cVar3 == '\x03') {
-              cVar3 = *(char *)((int)param_1 + 0x69b);
-              if (cVar3 == '\x01') {
-                uVar5 = overlay_rng_next( /* Original: FUN_00011564 */);
-                uVar5 = (uint)(short)(((ushort)uVar5 & 0xff) << 6);
-                iVar7 = sin_fixed14( /* Original: FUN_00001d76 */uVar5);
-                param_1[0x1a7] =
-                     *(int *)(iVar6 + 0x18) +
-                     ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x78 >> 6) >> 0xc);
-                iVar7 = cos_fixed14( /* Original: FUN_00001dd8 */uVar5);
-                param_1[0x1a9] =
-                     *(int *)(iVar6 + 0x20) +
-                     ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x78 >> 6) >> 0xc);
-                param_1[0x1a8] = *(int *)(iVar6 + 0x1c) + 3000;
-                *(undefined1 *)((int)param_1 + 0x69b) = 2;
+            else if (manoeuvre == '\x03') {
+              manoeuvre = *(char *)((int)ctl + 0x69b);
+              if (manoeuvre == '\x01') {
+                rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+                rnd = (uint)(short)(((ushort)rnd & 0xff) << 6);
+                target = sin_fixed14( /* Original: FUN_00001d76 */rnd);
+                ctl[0x1a7] =
+                     *(int *)(own_obj + 0x18) +
+                     ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x78 >> 6) >> 0xc);
+                target = cos_fixed14( /* Original: FUN_00001dd8 */rnd);
+                ctl[0x1a9] =
+                     *(int *)(own_obj + 0x20) +
+                     ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x78 >> 6) >> 0xc);
+                ctl[0x1a8] = *(int *)(own_obj + 0x1c) + 3000;
+                *(undefined1 *)((int)ctl + 0x69b) = 2;
               }
-              else if (cVar3 < '\x02') {
-                if (cVar3 == '\0') {
-                  uVar5 = (ushort)-*(short *)((int)param_1 + 0x22) & 0x3fff;
-                  iVar7 = sin_fixed14( /* Original: FUN_00001d76 */uVar5);
-                  param_1[0x1a7] =
-                       *(int *)(iVar6 + 0x18) +
-                       ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x2d >> 6) >> 0xc);
-                  iVar7 = cos_fixed14( /* Original: FUN_00001dd8 */uVar5);
-                  param_1[0x1a9] =
-                       *(int *)(iVar6 + 0x20) +
-                       ((int)(short)iVar7 * (*(int *)((int)param_1 + 0x62a) * 0x2d >> 6) >> 0xc);
-                  param_1[0x1a8] = *(int *)(iVar6 + 0x1c) + 5000;
+              else if (manoeuvre < '\x02') {
+                if (manoeuvre == '\0') {
+                  rnd = (ushort)-*(short *)((int)ctl + 0x22) & 0x3fff;
+                  target = sin_fixed14( /* Original: FUN_00001d76 */rnd);
+                  ctl[0x1a7] =
+                       *(int *)(own_obj + 0x18) +
+                       ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x2d >> 6) >> 0xc);
+                  target = cos_fixed14( /* Original: FUN_00001dd8 */rnd);
+                  ctl[0x1a9] =
+                       *(int *)(own_obj + 0x20) +
+                       ((int)(short)target * (*(int *)((int)ctl + 0x62a) * 0x2d >> 6) >> 0xc);
+                  ctl[0x1a8] = *(int *)(own_obj + 0x1c) + 5000;
                   goto LAB_000187fe;
                 }
               }
-              else if (cVar3 == '\x02') goto LAB_00018878;
+              else if (manoeuvre == '\x02') goto LAB_00018878;
             }
-            iVar7 = 0x7fffffff;
+            target = 0x7fffffff;
           }
-        } while (*(char *)((int)param_1 + 0x69a) == '\0');
-        param_1[0x1aa] = iVar7;
-        steer_entity_toward_point( /* Original: FUN_00010b2e */param_1,param_1[0x1a7],param_1[0x1a8],param_1[0x1a9]);
+        } while (*(char *)((int)ctl + 0x69a) == '\0');
+        ctl[0x1aa] = target;
+        steer_entity_toward_point( /* Original: FUN_00010b2e */ctl,ctl[0x1a7],ctl[0x1a8],ctl[0x1a9]);
         goto LAB_000188a6;
       }
-      *(undefined1 *)((int)param_1 + 0x69a) = 4;
+      *(undefined1 *)((int)ctl + 0x69a) = 4;
     }
-    apply_relative_heading_steer( /* Original: FUN_000109ba */(int)param_1,local_14,(int)auStack_10,local_16,local_18);
-    if (*(int *)((int)param_1 + 0x696) < 0x3000) {
-      iVar9 = *(int *)(iVar9 + 0x62a) >> 2;
-      if (*(int *)((int)param_1 + 0x696) < 0x800) {
-        iVar9 = 0;
+    apply_relative_heading_steer( /* Original: FUN_000109ba */(int)ctl,range,(int)rel_delta,steer_a,steer_b);
+    if (*(int *)((int)ctl + 0x696) < 0x3000) {
+      target_ctl = *(int *)(target_ctl + 0x62a) >> 2;
+      if (*(int *)((int)ctl + 0x696) < 0x800) {
+        target_ctl = 0;
       }
-      if (*(int *)((int)param_1 + 0x696) < 0x1000) {
-        iVar9 = *(int *)((int)param_1 + 0x696) * iVar9;
-        if (iVar9 < 0) {
-          iVar9 = iVar9 + 0xfff;
+      if (*(int *)((int)ctl + 0x696) < 0x1000) {
+        target_ctl = *(int *)((int)ctl + 0x696) * target_ctl;
+        if (target_ctl < 0) {
+          target_ctl = target_ctl + 0xfff;
         }
-        sVar8 = (short)(iVar9 >> 0xc);
+        lag = (short)(target_ctl >> 0xc);
       }
       else {
-        iVar10 = (*(int *)((int)param_1 + 0x696) + -0x2000) * (0x1c21 - iVar9);
-        if (iVar10 < 0) {
-          iVar10 = iVar10 + 0x1fff;
+        ring_idx = (*(int *)((int)ctl + 0x696) + -0x2000) * (0x1c21 - target_ctl);
+        if (ring_idx < 0) {
+          ring_idx = ring_idx + 0x1fff;
         }
-        sVar8 = (short)(iVar10 >> 0xd) + (short)iVar9;
+        lag = (short)(ring_idx >> 0xd) + (short)target_ctl;
       }
-      adjust_ai_throttle_vs_speed( /* Original: FUN_00010c2c */param_1,sVar8);
+      adjust_ai_throttle_vs_speed( /* Original: FUN_00010c2c */ctl,lag);
     }
     else {
-      max_ai_throttle_maybe_invert_679( /* Original: FUN_00010cb2 */param_1);
+      max_ai_throttle_maybe_invert_679( /* Original: FUN_00010cb2 */ctl);
     }
-    sVar8 = 0;
-    for (uVar5 = *(uint *)((int)param_1 + 0x696); (uVar5 & 0xffff8000) != 0; uVar5 = (int)uVar5 >> 1
+    lag = 0;
+    for (rnd = *(uint *)((int)ctl + 0x696); (rnd & 0xffff8000) != 0; rnd = (int)rnd >> 1
         ) {
-      sVar8 = sVar8 + 1;
+      lag = lag + 1;
     }
-    uVar5 = (uint)(short)(sVar8 + 1);
-    local_22 = (short)(*(int *)(iVar7 + 0x18) - *(int *)(iVar6 + 0x18) >> (uVar5 & 0x3f));
-    local_1e = (short)(*(int *)(iVar7 + 0x1c) - *(int *)(iVar6 + 0x1c) >> (uVar5 & 0x3f));
-    local_1a = (short)(*(int *)(iVar7 + 0x20) - *(int *)(iVar6 + 0x20) >> (uVar5 & 0x3f));
-    build_attitude_matrix_3ang_alt( /* Original: FUN_00002464 */-(int)*(short *)(param_1 + 8) & 0x3fff,
-                 -(int)*(short *)((int)param_1 + 0x22) & 0x3fff,
-                 -(int)*(short *)(param_1 + 9) & 0x3fff,(int)asStack_36);
-    transform_vecs12_by_matrix3(1,(int)auStack_24,(int)auStack_24,asStack_36);
-    iVar7 = (int)local_1a * (int)local_1a +
-            (int)local_1e * (int)local_1e + (int)local_22 * (int)local_22;
-    iVar6 = isqrt_floor( /* Original: FUN_0000e372 */iVar7);
-    attitude_from_velocity( /* Original: FUN_00001f22 */local_22,local_1e,local_1a,(int)(short)iVar6,iVar7,&local_38,&local_3a);
-    local_16 = (*(code *)&LAB_0000e3e8_4)((int)(short)local_38);
-    local_18 = (*(code *)&LAB_0000e3e8_4)((int)(short)local_3a);
-    iVar7 = FUN_00002de8();
-    if (((iVar7 < 0x80) && (iVar7 = FUN_00002de8(), iVar7 < 0x80)) &&
-       (*(char *)((int)param_1 + 0x676) == '\0')) {
-      *(undefined1 *)((int)param_1 + 0x676) = 1;
+    rnd = (uint)(short)(lag + 1);
+    rel_x = (short)(*(int *)(target + 0x18) - *(int *)(own_obj + 0x18) >> (rnd & 0x3f));
+    rel_y = (short)(*(int *)(target + 0x1c) - *(int *)(own_obj + 0x1c) >> (rnd & 0x3f));
+    rel_z = (short)(*(int *)(target + 0x20) - *(int *)(own_obj + 0x20) >> (rnd & 0x3f));
+    build_attitude_matrix_3ang_alt( /* Original: FUN_00002464 */-(int)*(short *)(ctl + 8) & 0x3fff,
+                 -(int)*(short *)((int)ctl + 0x22) & 0x3fff,
+                 -(int)*(short *)(ctl + 9) & 0x3fff,(int)matrix);
+    transform_vecs12_by_matrix3(1,(int)rel_vec,(int)rel_vec,matrix);
+    target = (int)rel_z * (int)rel_z +
+            (int)rel_y * (int)rel_y + (int)rel_x * (int)rel_x;
+    own_obj = isqrt_floor( /* Original: FUN_0000e372 */target);
+    attitude_from_velocity( /* Original: FUN_00001f22 */rel_x,rel_y,rel_z,(int)(short)own_obj,target,&rel_att_a,&rel_att_b);
+    steer_a = (*(code *)&LAB_0000e3e8_4)((int)(short)rel_att_a);
+    steer_b = (*(code *)&LAB_0000e3e8_4)((int)(short)rel_att_b);
+    target = FUN_00002de8();
+    if (((target < 0x80) && (target = FUN_00002de8(), target < 0x80)) &&
+       (*(char *)((int)ctl + 0x676) == '\0')) {
+      *(undefined1 *)((int)ctl + 0x676) = 1;
     }
-    if ((*(char *)((int)param_1 + 0x69a) != '\x04') || (uVar5 = overlay_rng_next( /* Original: FUN_00011564 */), (uVar5 & 0x1f) == 0)
+    if ((*(char *)((int)ctl + 0x69a) != '\x04') || (rnd = overlay_rng_next( /* Original: FUN_00011564 */), (rnd & 0x1f) == 0)
        ) {
-      *(undefined1 *)((int)param_1 + 0x69a) = 0;
+      *(undefined1 *)((int)ctl + 0x69a) = 0;
     }
   }
   else {
-    steer_entity_toward_point( /* Original: FUN_00010b2e */param_1,*(int *)(iVar7 + 0x18),*(int *)(iVar7 + 0x1c),*(int *)(iVar7 + 0x20));
-    max_ai_throttle_maybe_invert_679( /* Original: FUN_00010cb2 */param_1);
-    *(undefined1 *)((int)param_1 + 0x69a) = 0;
+    steer_entity_toward_point( /* Original: FUN_00010b2e */ctl,*(int *)(target + 0x18),*(int *)(target + 0x1c),*(int *)(target + 0x20));
+    max_ai_throttle_maybe_invert_679( /* Original: FUN_00010cb2 */ctl);
+    *(undefined1 *)((int)ctl + 0x69a) = 0;
   }
 LAB_000188a6:
-  update_aircraft_entity(param_1);
+  update_aircraft_entity(ctl);
   return;
 }
 
@@ -29790,17 +29821,17 @@ LAB_000188a6:
  * copied to a0 and never written again before rts; alloc 0x36; +0 = object, object long +4 |= 0x112000, +4 =
  * DAT_0001b524[class].
  */
-uint * create_shadow_controller /* Original: FUN_000188ba */ (uint param_1,int param_2)
+uint * create_shadow_controller /* Original: FUN_000188ba */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x36-byte shadow controller */
   
-  puVar1 = heap_alloc_cleared(0x36);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x112000;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
+  ctl = heap_alloc_cleared(0x36);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x112000;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -29810,21 +29841,21 @@ uint * create_shadow_controller /* Original: FUN_000188ba */ (uint param_1,int p
  * Ghidra C reviewed (function at overlay offset 0x188f4).
  * Create handler of the shadow templates: fills the four slots DAT_00026768 + 4.. (DAT_0002676c[0..3], spawn_object_shadow uses DAT_00026768[kind]) and, once three are taken, redirects the create handler to 0x1889a (Ghidra 0x188ba, create_shadow_controller). Ghidra C.
  */
-undefined4 register_shadow_templates /* Original: FUN_000188f4 */ (undefined4 param_1,int param_2)
+undefined4 register_shadow_templates /* Original: FUN_000188f4 */ (undefined4 tmpl /* shadow template */,int def_key)
 
 {
-  ushort uVar1;
+  ushort slot;
   
-  uVar1 = 0;
+  slot = 0;
   do {
-    if ((&DAT_0002676c)[(short)uVar1] == 0) {
-      (&DAT_0002676c)[(short)uVar1] = param_1;
+    if ((&shadow_template_slots)[(short)slot] == 0) {
+      (&shadow_template_slots)[(short)slot] = tmpl;
       break;
     }
-    uVar1 = uVar1 + 1;
-  } while (uVar1 < 4);
-  if (2 < uVar1) {
-    *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x1889a;
+    slot = slot + 1;
+  } while (slot < 4);
+  if (2 < slot) {
+    *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x1889a;
   }
   return 0;
 }
@@ -29836,14 +29867,14 @@ undefined4 register_shadow_templates /* Original: FUN_000188f4 */ (undefined4 pa
  * Ghidra C reviewed (function at overlay offset 0x18942).
  * Drops the reference on the owner (+0x32 object +3). Complete Ghidra C.
  */
-void destroy_shadow_controller /* Original: FUN_00018942 */ (int param_1)
+void destroy_shadow_controller /* Original: FUN_00018942 */ (int ctl /* shadow controller */)
 
 {
-  char *pcVar1;
+  char *owner_refs; /* owner object +3 reference count */
   
-  if (*(int *)(param_1 + 0x32) != 0) {
-    pcVar1 = (char *)(*(int *)(param_1 + 0x32) + 3);
-    *pcVar1 = *pcVar1 + -1;
+  if (*(int *)(ctl + 0x32) != 0) {
+    owner_refs = (char *)(*(int *)(ctl + 0x32) + 3);
+    *owner_refs = *owner_refs + -1;
   }
   return;
 }
@@ -29859,27 +29890,27 @@ void destroy_shadow_controller /* Original: FUN_00018942 */ (int param_1)
  * decoded by hand), x, y, z, 0, 0, 0, 0); null -> 0; shadow of the player object (*DAT_0001b738)
  * gets +0xc = 1000000000; long +4 |= 0x40 when word DAT_0001b5a0 +0xb0 == 0; ctl +0x32 =
  * parent, parent byte +3 += 1; returns ctl. */
-int spawn_object_shadow /* Original: FUN_00018956 */ (uint param_1,uint param_2,uint param_3,int param_4,int param_5)
+int spawn_object_shadow /* Original: FUN_00018956 */ (uint x,uint y,uint z,int kind,int owner /* owner object */)
 
 {
-  int iVar1;
+  int ctl; /* spawned object, then its controller (+8) */
   
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */*(int *)(&DAT_00026768 + param_4 * 4),param_1,param_2,param_3,0,0,0,0);
-  if (iVar1 == 0) {
-    iVar1 = 0;
+  ctl = spawn_mission_pool_object( /* Original: FUN_00005116 */*(int *)(&shadow_templates + kind * 4),x,y,z,0,0,0,0);
+  if (ctl == 0) {
+    ctl = 0;
   }
   else {
-    if (param_5 == *DAT_0001b738) {
-      *(undefined4 *)(iVar1 + 0xc) = 1000000000;
+    if (owner == *player_object) {
+      *(undefined4 *)(ctl + 0xc) = 1000000000;
     }
-    if (*(short *)(DAT_0001b5a0 + 0xb0) == 0) {
-      *(uint *)(iVar1 + 4) = *(uint *)(iVar1 + 4) | 0x40;
+    if (*(short *)(host_world + 0xb0) == 0) {
+      *(uint *)(ctl + 4) = *(uint *)(ctl + 4) | 0x40;
     }
-    iVar1 = *(int *)(iVar1 + 8);
-    *(int *)(iVar1 + 0x32) = param_5;
-    *(char *)(param_5 + 3) = *(char *)(param_5 + 3) + '\x01';
+    ctl = *(int *)(ctl + 8);
+    *(int *)(ctl + 0x32) = owner;
+    *(char *)(owner + 3) = *(char *)(owner + 3) + '\x01';
   }
-  return iVar1;
+  return ctl;
 }
 
 
@@ -29893,26 +29924,26 @@ int spawn_object_shadow /* Original: FUN_00018956 */ (uint param_1,uint param_2,
  * flagged (byte +7 bit 1) and its controller's long +0 is 0: bsr.l 0x51ec retire_entity(shadow
  * object), parent byte +3 -= 1, ctl +0x32 = 0; otherwise shadow x / z = parent x / z + parent
  * ctl +8 / +0x10, y = parent ctl ground +0x2e, word ctl +0x22 = parent ctl word +0x22. */
-void tick_shadow /* Original: FUN_000189d0 */ (int *param_1)
+void tick_shadow /* Original: FUN_000189d0 */ (int *ctl /* shadow controller */)
 
 {
-  int iVar1;
-  int iVar2;
-  int *piVar3;
+  int obj; /* shadow object (ctl +0) */
+  int owner; /* ctl +0x32 owner object */
+  int *owner_ctl; /* owner +8 controller */
   
-  iVar1 = *param_1;
-  iVar2 = *(int *)((int)param_1 + 0x32);
-  piVar3 = *(int **)(iVar2 + 8);
-  if (((*(byte *)(iVar2 + 7) & 2) == 0) || (*piVar3 != 0)) {
-    *(int *)(iVar1 + 0x18) = piVar3[2] + *(int *)(*(int *)((int)param_1 + 0x32) + 0x18);
-    *(undefined4 *)(iVar1 + 0x1c) = *(undefined4 *)((int)piVar3 + 0x2e);
-    *(int *)(iVar1 + 0x20) = piVar3[4] + *(int *)(*(int *)((int)param_1 + 0x32) + 0x20);
-    *(undefined2 *)((int)param_1 + 0x22) = *(undefined2 *)((int)piVar3 + 0x22);
+  obj = *ctl;
+  owner = *(int *)((int)ctl + 0x32);
+  owner_ctl = *(int **)(owner + 8);
+  if (((*(byte *)(owner + 7) & 2) == 0) || (*owner_ctl != 0)) {
+    *(int *)(obj + 0x18) = owner_ctl[2] + *(int *)(*(int *)((int)ctl + 0x32) + 0x18);
+    *(undefined4 *)(obj + 0x1c) = *(undefined4 *)((int)owner_ctl + 0x2e);
+    *(int *)(obj + 0x20) = owner_ctl[4] + *(int *)(*(int *)((int)ctl + 0x32) + 0x20);
+    *(undefined2 *)((int)ctl + 0x22) = *(undefined2 *)((int)owner_ctl + 0x22);
   }
   else {
-    retire_entity( /* Original: FUN_000051ec */iVar1);
-    *(char *)(iVar2 + 3) = *(char *)(iVar2 + 3) + -1;
-    *(undefined4 *)((int)param_1 + 0x32) = 0;
+    retire_entity( /* Original: FUN_000051ec */obj);
+    *(char *)(owner + 3) = *(char *)(owner + 3) + -1;
+    *(undefined4 *)((int)ctl + 0x32) = 0;
   }
   return;
 }
@@ -29926,66 +29957,66 @@ void tick_shadow /* Original: FUN_000189d0 */ (int *param_1)
 /* VERIFIED (FUN_00018a34): checked against an independent capstone disassembly; the two
  * FUN_00002de8 calls are runtime lea $2de8.l = abs_int (file 0x2e08) on the template vertex and
  * on the sext word cos product, each compared against 0x32 << shift - otherwise identical to the C. */
-undefined4 shadow_pre_render /* Original: FUN_00018a34 */ (int *param_1)
+undefined4 shadow_pre_render /* Original: FUN_00018a34 */ (int *ctl /* shadow controller */)
 
 {
-  int *piVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  short sVar5;
-  undefined4 uVar6;
-  int iVar7;
-  int iVar8;
-  int iVar9;
-  short sVar10;
-  short *psVar11;
-  short sStack_a;
-  
-  iVar7 = *param_1;
-  iVar9 = *(int *)((int)param_1 + 0x32);
-  if ((*(byte *)(iVar9 + 7) & 2) == 0) {
-    if (**(short **)(*(int *)(iVar9 + 8) + 4) < 5) {
-      iVar8 = *(int *)(iVar7 + 0x48);
-      iVar4 = *(int *)(*(int *)(*(int *)(iVar7 + 0x24) + 0x28) + 0x2e +
-                      (uint)*(byte *)(iVar7 + 1) * 0x18);
-      iVar2 = *(int *)(DAT_0001b5a0 + 0x8c);
-      iVar3 = *(int *)(iVar7 + 0x44);
-      sStack_a = (short)(0x32 << ((int)*(short *)(iVar7 + 0x34) & 0x3fU));
-      iVar7 = cos_fixed14( /* Original: FUN_00001dd8 */(int)*(short *)(*(int *)(iVar9 + 8) + 0x24));
-      iVar7 = abs_int( /* Original: FUN_00002e08 */(int)(short)iVar7);
-      psVar11 = *(short **)(iVar8 + 0x18);
-      sVar10 = *(short *)(iVar8 + 0x14);
-      iVar9 = (int)sStack_a;
-      while (sVar10 = sVar10 + -1, sVar10 != -1) {
-        sVar5 = *psVar11;
-        iVar8 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: long template vertex *(int *)(iVar2 + iVar4 + 0x22 + sVar5 * 0xc) */
-        if (iVar9 < iVar8) {
-          piVar1 = (int *)(iVar3 + *psVar11 * 0xc);
-          sVar5 = (short)(*(int *)(iVar2 + iVar4 + 0x22 + sVar5 * 0xc) * (int)(short)iVar7 >> 0xc);
-          iVar8 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: (int)sVar5 (sext word of the cos-scaled product) */
-          if (iVar9 < iVar8) {
-            *piVar1 = (int)sVar5;
+  int *vert; /* shadow vertex x being set */
+  int world_tmpl; /* host_world +0x8c template base */
+  int verts; /* shadow object +0x44 vertex list */
+  int scene_off; /* scene template entry offset */
+  short vidx; /* vertex index; then the cos-scaled x */
+  undefined4 result; /* 0, or 4 when the owner is gone */
+  int obj; /* shadow object; reused as |cos(owner +0x24)| */
+  int face; /* face record +0x48; reused as abs values */
+  int owner; /* ctl +0x32 owner; reused as the minimum half-size */
+  short n; /* face vertex count */
+  short *idx; /* face vertex index list (+0x18) */
+  short min_half; /* 0x32 << shift */
+
+  obj = *ctl;
+  owner = *(int *)((int)ctl + 0x32);
+  if ((*(byte *)(owner + 7) & 2) == 0) {
+    if (**(short **)(*(int *)(owner + 8) + 4) < 5) {
+      face = *(int *)(obj + 0x48);
+      scene_off = *(int *)(*(int *)(*(int *)(obj + 0x24) + 0x28) + 0x2e +
+                      (uint)*(byte *)(obj + 1) * 0x18);
+      world_tmpl = *(int *)(host_world + 0x8c);
+      verts = *(int *)(obj + 0x44);
+      min_half = (short)(0x32 << ((int)*(short *)(obj + 0x34) & 0x3fU));
+      obj = cos_fixed14( /* Original: FUN_00001dd8 */(int)*(short *)(*(int *)(owner + 8) + 0x24));
+      obj = abs_int( /* Original: FUN_00002e08 */(int)(short)obj);
+      idx = *(short **)(face + 0x18);
+      n = *(short *)(face + 0x14);
+      owner = (int)min_half;
+      while (n = n + -1, n != -1) {
+        vidx = *idx;
+        face = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: long template vertex *(int *)(iVar2 + iVar4 + 0x22 + sVar5 * 0xc) */
+        if (owner < face) {
+          vert = (int *)(verts + *idx * 0xc);
+          vidx = (short)(*(int *)(world_tmpl + scene_off + 0x22 + vidx * 0xc) * (int)(short)obj >> 0xc);
+          face = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: (int)sVar5 (sext word of the cos-scaled product) */
+          if (owner < face) {
+            *vert = (int)vidx;
           }
           else {
-            if (sVar5 < 0) {
-              iVar8 = -iVar9;
+            if (vidx < 0) {
+              face = -owner;
             }
             else {
-              iVar8 = (int)sStack_a;
+              face = (int)min_half;
             }
-            *piVar1 = iVar8;
+            *vert = face;
           }
         }
-        psVar11 = psVar11 + 1;
+        idx = idx + 1;
       }
     }
-    uVar6 = 0;
+    result = 0;
   }
   else {
-    uVar6 = 4;
+    result = 4;
   }
-  return uVar6;
+  return result;
 }
 
 
@@ -29999,19 +30030,19 @@ undefined4 shadow_pre_render /* Original: FUN_00018a34 */ (int *param_1)
  * copied to a0 and never written again before rts; alloc 0xfa; +0 = object, +4 = DAT_0001b524[class], word +0x46 = 0x3c, long
  * +0x42 = &DAT_00026ac0, object byte +5 bit 1 set (bset).
  */
-uint * create_flak_controller /* Original: FUN_00018b52 */ (uint param_1,int param_2)
+uint * create_flak_controller /* Original: FUN_00018b52 */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0xfa-byte flak controller */
   
-  puVar1 = heap_alloc_cleared(0xfa);
-  *puVar1 = param_1;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  *(undefined2 *)((int)puVar1 + 0x46) = 0x3c;
-  *(undefined **)((int)puVar1 + 0x42) = &DAT_00026ac0;
-  *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) | 2;
+  ctl = heap_alloc_cleared(0xfa);
+  *ctl = obj;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  *(undefined2 *)((int)ctl + 0x46) = 0x3c;
+  *(undefined **)((int)ctl + 0x42) = &range_0x26ac0;
+  *(byte *)(obj + 5) = *(byte *)(obj + 5) | 2;
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -30021,18 +30052,18 @@ uint * create_flak_controller /* Original: FUN_00018b52 */ (uint param_1,int par
  * Ghidra C reviewed (function at overlay offset 0x18b98).
  * Definition +0xa of type 0x1a: drops the references held on the target (+0x36) and on +0x32. Complete Ghidra C.
  */
-void destroy_flak_controller /* Original: FUN_00018b98 */ (int param_1)
+void destroy_flak_controller /* Original: FUN_00018b98 */ (int ctl /* flak controller */)
 
 {
-  char *pcVar1;
+  char *refs; /* held object +3 reference count */
   
-  if (*(int *)(param_1 + 0x36) != 0) {
-    pcVar1 = (char *)(*(int *)(param_1 + 0x36) + 3);
-    *pcVar1 = *pcVar1 + -1;
+  if (*(int *)(ctl + 0x36) != 0) {
+    refs = (char *)(*(int *)(ctl + 0x36) + 3);
+    *refs = *refs + -1;
   }
-  if (*(int *)(param_1 + 0x32) != 0) {
-    pcVar1 = (char *)(*(int *)(param_1 + 0x32) + 3);
-    *pcVar1 = *pcVar1 + -1;
+  if (*(int *)(ctl + 0x32) != 0) {
+    refs = (char *)(*(int *)(ctl + 0x32) + 3);
+    *refs = *refs + -1;
   }
   return;
 }
@@ -30063,58 +30094,58 @@ void destroy_flak_controller /* Original: FUN_00018b98 */ (int param_1)
  * VERIFIED (, user policy): the body matches the bytes and the call
  * arguments Ghidra dropped are documented above as a call-argument correction.
  */
-uint flak_notice_object /* Original: FUN_00018bba */ (int param_1,int param_2)
+uint flak_notice_object /* Original: FUN_00018bba */ (int gun /* flak gun object */,int other /* noticed object */)
 
 {
-  int iVar1;
-  short sVar2;
-  undefined4 in_D0;
-  uint uVar3;
-  uint uVar4;
-  int iVar5;
-  int iVar6;
-  char *pcVar7;
-  
-  iVar1 = *(int *)(param_1 + 8);
-  sVar2 = **(short **)(*(int *)(param_2 + 8) + 4);
-  uVar3 = CONCAT22((short)((uint)in_D0 >> 0x10),sVar2);
-  if (((((*(short *)(iVar1 + 0x3e) == 0x200) && (2 < sVar2)) && (sVar2 < 5)) ||
-      ((*(short *)(iVar1 + 0x3e) == 0x100 && (sVar2 < 3)))) && (*(short *)(iVar1 + 0x40) != 0)) {
-    uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-    uVar3 = uVar4 & 0xffff003f;
-    if ((uVar4 & 0x3f) == 0) {
-      iVar5 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
-      if (iVar5 == 0) {
-        iVar6 = 0x7fffffff;
+  int ctl; /* gun +8 controller */
+  short other_type; /* other controller template type */
+  undefined4 d0_in; /* incoming D0 (Ghidra register input; only its high word is kept) */
+  uint result;
+  uint rnd;
+  int dist;
+  int chance; /* 0x339000 / dist, halved when a target is held */
+  char *old_refs; /* old target +3 reference count */
+
+  ctl = *(int *)(gun + 8);
+  other_type = **(short **)(*(int *)(other + 8) + 4);
+  result = CONCAT22((short)((uint)d0_in >> 0x10),other_type);
+  if (((((*(short *)(ctl + 0x3e) == 0x200) && (2 < other_type)) && (other_type < 5)) ||
+      ((*(short *)(ctl + 0x3e) == 0x100 && (other_type < 3)))) && (*(short *)(ctl + 0x40) != 0)) {
+    rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+    result = rnd & 0xffff003f;
+    if ((rnd & 0x3f) == 0) {
+      dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+      if (dist == 0) {
+        chance = 0x7fffffff;
       }
       else {
-        iVar6 = 0x339000 / iVar5;
+        chance = 0x339000 / dist;
       }
-      if (*(int *)(iVar1 + 0x36) != 0) {
-        iVar6 = iVar6 >> 1;
+      if (*(int *)(ctl + 0x36) != 0) {
+        chance = chance >> 1;
       }
-      uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-      uVar3 = uVar4 & 0xffff007f;
-      if ((int)(uVar4 & 0x7f) < iVar6) {
-        if (*(int *)(iVar1 + 0x36) == 0) {
-          *(int *)(iVar1 + 0x36) = param_2;
-          *(int *)(iVar1 + 0x3a) = iVar5;
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      result = rnd & 0xffff007f;
+      if ((int)(rnd & 0x7f) < chance) {
+        if (*(int *)(ctl + 0x36) == 0) {
+          *(int *)(ctl + 0x36) = other;
+          *(int *)(ctl + 0x3a) = dist;
         }
         else {
-          uVar3 = iVar5 * 2;
-          if (*(int *)(iVar1 + 0x3a) <= (int)uVar3) {
-            return uVar3;
+          result = dist * 2;
+          if (*(int *)(ctl + 0x3a) <= (int)result) {
+            return result;
           }
-          *(int *)(iVar1 + 0x3a) = iVar5;
-          pcVar7 = (char *)(*(int *)(iVar1 + 0x36) + 3);
-          *pcVar7 = *pcVar7 + -1;
-          *(int *)(iVar1 + 0x36) = param_2;
+          *(int *)(ctl + 0x3a) = dist;
+          old_refs = (char *)(*(int *)(ctl + 0x36) + 3);
+          *old_refs = *old_refs + -1;
+          *(int *)(ctl + 0x36) = other;
         }
-        *(char *)(param_2 + 3) = *(char *)(param_2 + 3) + '\x01';
+        *(char *)(other + 3) = *(char *)(other + 3) + '\x01';
       }
     }
   }
-  return uVar3;
+  return result;
 }
 
 
@@ -30133,150 +30164,150 @@ uint flak_notice_object /* Original: FUN_00018bba */ (int param_1,int param_2)
  * Ghidra C reviewed (function at overlay offset 0x18c96).
  * Definition +2 of type 0x1a (record after the five ship records, runtime 0x1aaea / file 0x1ab0a: +2 this, +6 0x18b52, +0xa 0x18b98) [PROVEN bytes]. First call: finds the gun face (+0x17 == 1), stores its centre and aim direction, and the nearby facility kind (+0x3e). Then, outside replay, explodes due shells: for each scheduled burst whose time (+0xd2[i]) has come, spawn_effect(2, 100, 0x1e,...) at its position (+0x5a + 12 i) and apply_blast_damage there; with a target (+0x36) it schedules new bursts at random delays around the predicted target position. Type 0x1a is one of the types carried on ships (carry_attached_objects) [STRONG INFERENCE: anti-aircraft flak gun]. Ghidra C (partly read).
  */
-void tick_flak_gun /* Original: FUN_00018c96 */ (int *param_1)
+void tick_flak_gun /* Original: FUN_00018c96 */ (int *ctl /* flak gun controller */)
 
 {
-  uint *puVar1;
-  int *piVar2;
-  undefined4 *puVar3;
-  int iVar4;
-  undefined4 uVar5;
-  uint uVar6;
-  int iVar7;
-  int iVar8;
-  ushort uVar9;
-  ushort uVar10;
-  short sVar11;
-  short sVar12;
-  int iVar13;
-  short sVar14;
-  int iVar15;
-  ushort uVar16;
-  char *pcVar17;
-  short *psVar18;
-  int iVar19;
-  short *local_20;
-  int local_18;
-  ushort local_c;
-  ushort local_a;
-  ushort local_8;
-  ushort local_6;
-  
-  iVar8 = *param_1;
-  if ((*(byte *)(iVar8 + 7) & 2) == 0) {
-    if (*(short *)(param_1 + 0x10) == 0) {
-      iVar7 = *(int *)(iVar8 + 0x44) + *(short *)(iVar8 + 0x36) * 0xc;
-      iVar19 = *(int *)(iVar8 + 0x48);
-      sVar11 = 0;
-      if (0 < *(short *)(iVar8 + 0x3a)) {
-        local_20 = (short *)(iVar19 + 0x14);
+  uint *burst; /* burst position (+0x5a + 12 i) */
+  int *new_burst; /* scheduled burst position */
+  undefined4 *vert0; /* object vertex 0 */
+  int voff; /* vertex index * 12 */
+  undefined4 facility; /* probe_nearest_facility_kind result */
+  uint shift; /* vertex shift; then rng / distance / shift */
+  int normals; /* normal points after the vertices; reused as isqrt and lead */
+  int obj; /* gun object; reused as squared length / angle / target controller */
+  ushort i; /* burst slot; reused as rng */
+  ushort rnd;
+  short face_i; /* face index; then rel_x / fuse frames */
+  short n; /* face vertex count; then rel_y */
+  int sum_x;
+  short rel_z;
+  int sum_y;
+  ushort free_slot; /* first free burst slot or 0xffff */
+  char *target_refs; /* target +3 reference count */
+  short *idx; /* face vertex index list */
+  int face; /* face record; reused as offsets and the target (+0x36) */
+  short *face_count; /* face +0x14 vertex count pointer */
+  int sum_z;
+  ushort att_b; /* second attitude_from_velocity out (heading compared with +0x56) */
+  ushort att_a; /* first attitude_from_velocity out (must exceed 0x3f) */
+  ushort aim_b; /* second out -> +0x56 */
+  ushort aim_a; /* first out -> +0x54 */
+
+  obj = *ctl;
+  if ((*(byte *)(obj + 7) & 2) == 0) {
+    if (*(short *)(ctl + 0x10) == 0) {
+      normals = *(int *)(obj + 0x44) + *(short *)(obj + 0x36) * 0xc;
+      face = *(int *)(obj + 0x48);
+      face_i = 0;
+      if (0 < *(short *)(obj + 0x3a)) {
+        face_count = (short *)(face + 0x14);
 LAB_00018cf6:
-        if (*(char *)(iVar19 + 0x17) != '\x01') goto LAB_00018dde;
-        local_18 = 0;
-        iVar15 = 0;
-        iVar13 = 0;
-        sVar12 = *local_20;
-        psVar18 = *(short **)(iVar19 + 0x18);
-        while (sVar12 = sVar12 + -1, sVar12 != -1) {
-          iVar19 = *(int *)(iVar8 + 0x44);
-          iVar4 = *psVar18 * 0xc;
-          uVar6 = (uint)*(short *)(iVar8 + 0x34);
-          iVar13 = (*(int *)(iVar19 + iVar4) >> (uVar6 & 0x3f)) + iVar13;
-          iVar15 = (*(int *)(iVar19 + 4 + iVar4) >> (uVar6 & 0x3f)) + iVar15;
-          local_18 = (*(int *)(iVar19 + 8 + iVar4) >> (uVar6 & 0x3f)) + local_18;
-          psVar18 = psVar18 + 1;
+        if (*(char *)(face + 0x17) != '\x01') goto LAB_00018dde;
+        sum_z = 0;
+        sum_y = 0;
+        sum_x = 0;
+        n = *face_count;
+        idx = *(short **)(face + 0x18);
+        while (n = n + -1, n != -1) {
+          face = *(int *)(obj + 0x44);
+          voff = *idx * 0xc;
+          shift = (uint)*(short *)(obj + 0x34);
+          sum_x = (*(int *)(face + voff) >> (shift & 0x3f)) + sum_x;
+          sum_y = (*(int *)(face + 4 + voff) >> (shift & 0x3f)) + sum_y;
+          sum_z = (*(int *)(face + 8 + voff) >> (shift & 0x3f)) + sum_z;
+          idx = idx + 1;
         }
-        param_1[0x12] = iVar13 / (int)*local_20;
-        param_1[0x13] = iVar15 / (int)*local_20;
-        param_1[0x14] = local_18 / (int)*local_20;
-        iVar19 = sVar11 * 0xc;
-        puVar3 = *(undefined4 **)(iVar8 + 0x44);
-        attitude_from_velocity( /* Original: FUN_00001f22 */(short)*(undefined4 *)(iVar7 + iVar19) - (short)*puVar3,
-                     (short)*(undefined4 *)(iVar7 + 4 + iVar19) - (short)puVar3[1],
-                     (short)*(undefined4 *)(iVar7 + 8 + iVar19) - (short)puVar3[2],0x4000,0x10000000
-                     ,&local_6,&local_8);
-        *(ushort *)(param_1 + 0x15) = local_6;
-        *(ushort *)((int)param_1 + 0x56) = local_8;
-        *(undefined2 *)(param_1 + 0x16) = 0;
+        ctl[0x12] = sum_x / (int)*face_count;
+        ctl[0x13] = sum_y / (int)*face_count;
+        ctl[0x14] = sum_z / (int)*face_count;
+        face = face_i * 0xc;
+        vert0 = *(undefined4 **)(obj + 0x44);
+        attitude_from_velocity( /* Original: FUN_00001f22 */(short)*(undefined4 *)(normals + face) - (short)*vert0,
+                     (short)*(undefined4 *)(normals + 4 + face) - (short)vert0[1],
+                     (short)*(undefined4 *)(normals + 8 + face) - (short)vert0[2],0x4000,0x10000000
+                     ,&aim_a,&aim_b);
+        *(ushort *)(ctl + 0x15) = aim_a;
+        *(ushort *)((int)ctl + 0x56) = aim_b;
+        *(undefined2 *)(ctl + 0x16) = 0;
       }
 LAB_00018df2:
-      uVar5 = probe_nearest_facility_kind( /* Original: FUN_00000354 */*param_1 /* [PROVEN, move.l a4 at 0x18df2] */);
-      *(short *)((int)param_1 + 0x3e) = (short)uVar5;
-      *(undefined2 *)(param_1 + 0x10) = 1;
+      facility = probe_nearest_facility_kind( /* Original: FUN_00000354 */*ctl /* [PROVEN, move.l a4 at 0x18df2] */);
+      *(short *)((int)ctl + 0x3e) = (short)facility;
+      *(undefined2 *)(ctl + 0x10) = 1;
     }
-    if ((*(int *)((int)param_1 + 0x36) != 0) && (DAT_0001b870 == 0)) {
-      uVar9 = 0;
+    if ((*(int *)((int)ctl + 0x36) != 0) && (replay_state == 0)) {
+      i = 0;
       do {
-        iVar19 = (int)(short)uVar9;
-        if ((*(int *)((int)param_1 + iVar19 * 4 + 0xd2) != 0) &&
-           (*(int *)((int)param_1 + iVar19 * 4 + 0xd2) <= DAT_0001b838)) {
-          *(undefined4 *)((int)param_1 + iVar19 * 4 + 0xd2) = 0;
-          puVar1 = (uint *)((int)param_1 + iVar19 * 0xc + 0x5a);
-          spawn_effect(2,100,0x1e,0,0,*puVar1,puVar1[1],puVar1[2]);
+        face = (int)(short)i;
+        if ((*(int *)((int)ctl + face * 4 + 0xd2) != 0) &&
+           (*(int *)((int)ctl + face * 4 + 0xd2) <= frame_counter)) {
+          *(undefined4 *)((int)ctl + face * 4 + 0xd2) = 0;
+          burst = (uint *)((int)ctl + face * 0xc + 0x5a);
+          spawn_effect(2,100,0x1e,0,0,*burst,burst[1],burst[2]);
           /* Arguments reconstructed [PROVEN, 0x18e62..0x18e78]: burst position, size limit 500,
            * credit 0, 1, 0. */
-          apply_blast_damage(*puVar1,puVar1[1],puVar1[2],500,0,1,0);
+          apply_blast_damage(*burst,burst[1],burst[2],500,0,1,0);
         }
-        uVar9 = uVar9 + 1;
-      } while (uVar9 < 10);
-      iVar19 = *(int *)((int)param_1 + 0x36);
-      if (((*(short *)((int)param_1 + 0x46) == 0) || ((*(byte *)(iVar19 + 7) & 2) != 0)) ||
-         (*(int *)(iVar19 + 0x44) == 0)) {
-        *(char *)(iVar19 + 3) = *(char *)(iVar19 + 3) + -1;
-        *(undefined4 *)((int)param_1 + 0x36) = 0;
+        i = i + 1;
+      } while (i < 10);
+      face = *(int *)((int)ctl + 0x36);
+      if (((*(short *)((int)ctl + 0x46) == 0) || ((*(byte *)(face + 7) & 2) != 0)) ||
+         (*(int *)(face + 0x44) == 0)) {
+        *(char *)(face + 3) = *(char *)(face + 3) + -1;
+        *(undefined4 *)((int)ctl + 0x36) = 0;
       }
       else {
-        uVar6 = overlay_rng_next( /* Original: FUN_00011564 */);
-        if (((ushort)uVar6 & 0x3f) == 0x15) {
-          uVar6 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x18ece..0x18ee6): gun x, y, z, target x, y, z */);
-          *(uint *)((int)param_1 + 0x3a) = uVar6;
-          if ((int)uVar6 <= *(int *)((int)param_1 + 0x42)) {
-            sVar11 = 0;
-            for (; (uVar6 & 0xffff8000) != 0; uVar6 = (int)uVar6 >> 1) {
-              sVar11 = sVar11 + 1;
+        shift = overlay_rng_next( /* Original: FUN_00011564 */);
+        if (((ushort)shift & 0x3f) == 0x15) {
+          shift = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x18ece..0x18ee6): gun x, y, z, target x, y, z */);
+          *(uint *)((int)ctl + 0x3a) = shift;
+          if ((int)shift <= *(int *)((int)ctl + 0x42)) {
+            face_i = 0;
+            for (; (shift & 0xffff8000) != 0; shift = (int)shift >> 1) {
+              face_i = face_i + 1;
             }
-            uVar6 = (uint)(short)(sVar11 + 1);
-            sVar11 = (short)(*(int *)(iVar19 + 0x18) - *(int *)(iVar8 + 0x18) >> (uVar6 & 0x3f));
-            sVar12 = (short)(*(int *)(iVar19 + 0x1c) - *(int *)(iVar8 + 0x1c) >> (uVar6 & 0x3f));
-            sVar14 = (short)(*(int *)(iVar19 + 0x20) - *(int *)(iVar8 + 0x20) >> (uVar6 & 0x3f));
-            iVar8 = (int)sVar14 * (int)sVar14 +
-                    (int)sVar12 * (int)sVar12 + (int)sVar11 * (int)sVar11;
-            iVar7 = isqrt_floor( /* Original: FUN_0000e372 */iVar8);
-            attitude_from_velocity( /* Original: FUN_00001f22 */sVar11,sVar12,sVar14,(int)(short)iVar7,iVar8,&local_a,&local_c);
-            if (0x3f < (short)local_a) {
-              iVar8 = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */local_c - *(short *)((int)param_1 + 0x56));
-              iVar8 = abs_int( /* Original: FUN_00002e08 */(int)(short)iVar8);
-              if (iVar8 < 0x1001) {
-                uVar9 = 0;
+            shift = (uint)(short)(face_i + 1);
+            face_i = (short)(*(int *)(face + 0x18) - *(int *)(obj + 0x18) >> (shift & 0x3f));
+            n = (short)(*(int *)(face + 0x1c) - *(int *)(obj + 0x1c) >> (shift & 0x3f));
+            rel_z = (short)(*(int *)(face + 0x20) - *(int *)(obj + 0x20) >> (shift & 0x3f));
+            obj = (int)rel_z * (int)rel_z +
+                    (int)n * (int)n + (int)face_i * (int)face_i;
+            normals = isqrt_floor( /* Original: FUN_0000e372 */obj);
+            attitude_from_velocity( /* Original: FUN_00001f22 */face_i,n,rel_z,(int)(short)normals,obj,&att_a,&att_b);
+            if (0x3f < (short)att_a) {
+              obj = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */att_b - *(short *)((int)ctl + 0x56));
+              obj = abs_int( /* Original: FUN_00002e08 */(int)(short)obj);
+              if (obj < 0x1001) {
+                i = 0;
                 do {
-                  uVar16 = uVar9;
-                  if (*(int *)((int)param_1 + (short)uVar9 * 4 + 0xd2) == 0) break;
-                  uVar9 = uVar9 + 1;
-                  uVar16 = 0xffff;
-                } while (uVar9 < 10);
-                if (uVar16 != 0xffff) {
-                  *(short *)((int)param_1 + 0x46) = *(short *)((int)param_1 + 0x46) + -1;
-                  iVar8 = *(int *)((int)param_1 + 0x3a);
-                  if (iVar8 < 0) {
-                    iVar8 = iVar8 + 0x3ff;
+                  free_slot = i;
+                  if (*(int *)((int)ctl + (short)i * 4 + 0xd2) == 0) break;
+                  i = i + 1;
+                  free_slot = 0xffff;
+                } while (i < 10);
+                if (free_slot != 0xffff) {
+                  *(short *)((int)ctl + 0x46) = *(short *)((int)ctl + 0x46) + -1;
+                  obj = *(int *)((int)ctl + 0x3a);
+                  if (obj < 0) {
+                    obj = obj + 0x3ff;
                   }
-                  sVar11 = (short)(iVar8 >> 10);
-                  *(int *)((int)param_1 + (short)uVar16 * 4 + 0xd2) = DAT_0001b838 + sVar11;
-                  uVar9 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-                  iVar8 = *(int *)(iVar19 + 8);
-                  uVar10 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-                  piVar2 = (int *)((int)param_1 + (short)uVar16 * 0xc + 0x5a);
-                  iVar7 = (int)(short)((uVar9 & 0x3f) + sVar11);
-                  *piVar2 = (uint)(uVar10 & 0xfff) +
-                            *(int *)(iVar19 + 0x18) + *(int *)(iVar8 + 8) * iVar7 + -0x800;
-                  uVar9 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-                  piVar2[1] = (uint)(uVar9 & 0xfff) +
-                              *(int *)(iVar19 + 0x1c) + *(int *)(iVar8 + 0xc) * iVar7 + -0x800;
-                  uVar9 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-                  piVar2[2] = (uint)(uVar9 & 0xfff) +
-                              *(int *)(iVar19 + 0x20) + *(int *)(iVar8 + 0x10) * iVar7 + -0x800;
-                  if (piVar2[1] + -500 < *(int *)(iVar8 + 0x2e)) {
-                    piVar2[1] = *(int *)(iVar8 + 0x2e) + 500;
+                  face_i = (short)(obj >> 10);
+                  *(int *)((int)ctl + (short)free_slot * 4 + 0xd2) = frame_counter + face_i;
+                  i = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+                  obj = *(int *)(face + 8);
+                  rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+                  new_burst = (int *)((int)ctl + (short)free_slot * 0xc + 0x5a);
+                  normals = (int)(short)((i & 0x3f) + face_i);
+                  *new_burst = (uint)(rnd & 0xfff) +
+                            *(int *)(face + 0x18) + *(int *)(obj + 8) * normals + -0x800;
+                  i = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+                  new_burst[1] = (uint)(i & 0xfff) +
+                              *(int *)(face + 0x1c) + *(int *)(obj + 0xc) * normals + -0x800;
+                  i = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+                  new_burst[2] = (uint)(i & 0xfff) +
+                              *(int *)(face + 0x20) + *(int *)(obj + 0x10) * normals + -0x800;
+                  if (new_burst[1] + -500 < *(int *)(obj + 0x2e)) {
+                    new_burst[1] = *(int *)(obj + 0x2e) + 500;
                   }
                 }
               }
@@ -30286,17 +30317,17 @@ LAB_00018df2:
       }
     }
   }
-  else if (*(int *)((int)param_1 + 0x36) != 0) {
-    pcVar17 = (char *)(*(int *)((int)param_1 + 0x36) + 3);
-    *pcVar17 = *pcVar17 + -1;
-    *(undefined4 *)((int)param_1 + 0x36) = 0;
+  else if (*(int *)((int)ctl + 0x36) != 0) {
+    target_refs = (char *)(*(int *)((int)ctl + 0x36) + 3);
+    *target_refs = *target_refs + -1;
+    *(undefined4 *)((int)ctl + 0x36) = 0;
   }
   return;
 LAB_00018dde:
-  sVar11 = sVar11 + 1;
-  local_20 = local_20 + 0x10;
-  iVar19 = iVar19 + 0x20;
-  if (*(short *)(iVar8 + 0x3a) <= sVar11) goto LAB_00018df2;
+  face_i = face_i + 1;
+  face_count = face_count + 0x10;
+  face = face + 0x20;
+  if (*(short *)(obj + 0x3a) <= face_i) goto LAB_00018df2;
   goto LAB_00018cf6;
 }
 
@@ -30310,20 +30341,20 @@ LAB_00018dde:
  * object long +0x1c == 0, +4 = DAT_0001b524[class], long +0x42 = 0xce40; returns a1
  * (move.l to d0 before rts; index scale *4 decoded by hand).
  */
-uint * create_turret_controller /* Original: FUN_000190c0 */ (uint param_1,int param_2)
+uint * create_turret_controller /* Original: FUN_000190c0 */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x54-byte turret controller */
   
-  puVar1 = heap_alloc_cleared(0x54);
-  *puVar1 = param_1;
-  *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) | 2;
-  if (*(int *)(param_1 + 0x1c) == 0) {
-    *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) | 0x10;
+  ctl = heap_alloc_cleared(0x54);
+  *ctl = obj;
+  *(byte *)(obj + 5) = *(byte *)(obj + 5) | 2;
+  if (*(int *)(obj + 0x1c) == 0) {
+    *(byte *)(obj + 5) = *(byte *)(obj + 5) | 0x10;
   }
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  *(undefined4 *)((int)puVar1 + 0x42) = 0xce40;
-  return puVar1;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  *(undefined4 *)((int)ctl + 0x42) = 0xce40;
+  return ctl;
 }
 
 
@@ -30333,11 +30364,11 @@ uint * create_turret_controller /* Original: FUN_000190c0 */ (uint param_1,int p
  * Ghidra C reviewed (function at overlay offset 0x1910e).
  * DAT_0002677c = template; create handler -> 0x190a0 (Ghidra 0x190c0). Type 0x1b (file 0x1ab24: +2 0x1917c, +0xe turret_pre_render) [PROVEN bytes] is one of the types carried on ships (carry_attached_objects) and is hit by bullets (bullet_hits_shape sets its +0x46) [STRONG INFERENCE: ship gun turret]. Ghidra C.
  */
-undefined4 register_turret_template /* Original: FUN_0001910e */ (undefined4 param_1,int param_2)
+undefined4 register_turret_template /* Original: FUN_0001910e */ (undefined4 tmpl /* turret template */,int def_key)
 
 {
-  DAT_0002677c = param_1;
-  *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x190a0;
+  turret_template = tmpl;
+  *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x190a0;
   return 0;
 }
 
@@ -30351,24 +30382,24 @@ undefined4 register_turret_template /* Original: FUN_0001910e */ (undefined4 par
  * found identical to the C: bsr.l 0x5116 spawn_mission_pool_object(DAT_0002677c, parent x, y, z, 0,
  * 0, 0, 0); null -> 0; else ctl +0x32 = parent, parent byte +3 += 1, new object word +6 &=
  * ~0x400; returns ctl. */
-int spawn_turret_on_object /* Original: FUN_00019130 */ (int param_1)
+int spawn_turret_on_object /* Original: FUN_00019130 */ (int host_obj /* object carrying the turret */)
 
 {
-  int iVar1;
-  int iVar2;
+  int turret_obj; /* spawned turret object */
+  int ctl; /* turret controller (+8) */
   
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */DAT_0002677c,*(uint *)(param_1 + 0x18),*(uint *)(param_1 + 0x1c),
-                       *(uint *)(param_1 + 0x20),0,0,0,0);
-  if (iVar1 == 0) {
-    iVar2 = 0;
+  turret_obj = spawn_mission_pool_object( /* Original: FUN_00005116 */turret_template,*(uint *)(host_obj + 0x18),*(uint *)(host_obj + 0x1c),
+                       *(uint *)(host_obj + 0x20),0,0,0,0);
+  if (turret_obj == 0) {
+    ctl = 0;
   }
   else {
-    iVar2 = *(int *)(iVar1 + 8);
-    *(int *)(iVar2 + 0x32) = param_1;
-    *(char *)(param_1 + 3) = *(char *)(param_1 + 3) + '\x01';
-    *(ushort *)(iVar1 + 6) = *(ushort *)(iVar1 + 6) & 0xfbff;
+    ctl = *(int *)(turret_obj + 8);
+    *(int *)(ctl + 0x32) = host_obj;
+    *(char *)(host_obj + 3) = *(char *)(host_obj + 3) + '\x01';
+    *(ushort *)(turret_obj + 6) = *(ushort *)(turret_obj + 6) & 0xfbff;
   }
-  return iVar2;
+  return ctl;
 }
 
 
@@ -30399,100 +30430,100 @@ int spawn_turret_on_object /* Original: FUN_00019130 */ (int param_1)
  * Turret rounds never get bullet +0x36 = 1, so they give no kill credit. Turret aiming
  * and firing stop for good once +0x46 is set (knocked out, ).
  */
-void tick_turret /* Original: FUN_0001917c */ (undefined4 *param_1)
+void tick_turret /* Original: FUN_0001917c */ (undefined4 *ctl /* turret controller */)
 
 {
-  char *pcVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  undefined4 uVar5;
-  uint uVar6;
-  int iVar7;
-  int iVar8;
-  ushort uVar9;
-  short sVar10;
-  
-  pcVar1 = (char *)*param_1;
-  if (*(short *)(param_1 + 0x10) == 0) {
-    uVar5 = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)pcVar1 /* [PROVEN, move.l a3 at 0x1918c] */);
-    *(short *)((int)param_1 + 0x3e) = (short)uVar5;
-    *(undefined2 *)(param_1 + 0x10) = 1;
+  char *obj; /* turret object (ctl +0) */
+  int rel_x;
+  int rel_y;
+  int rel_z;
+  undefined4 facility; /* probe_nearest_facility_kind result */
+  uint dist; /* target distance; then the shift */
+  int len; /* isqrt_floor of the squared offset */
+  int other; /* carrier (+0x32) or target (+0x36); reused as squared length / spread */
+  ushort rnd;
+  short shift;
+
+  obj = (char *)*ctl;
+  if (*(short *)(ctl + 0x10) == 0) {
+    facility = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)obj /* [PROVEN, move.l a3 at 0x1918c] */);
+    *(short *)((int)ctl + 0x3e) = (short)facility;
+    *(undefined2 *)(ctl + 0x10) = 1;
   }
-  if (*(int *)((int)param_1 + 0x32) != 0) {
-    iVar8 = *(int *)((int)param_1 + 0x32);
-    if ((((*(byte *)(iVar8 + 7) & 2) == 0) && (*(int *)(iVar8 + 0x44) != 0)) &&
-       ((*(int *)(iVar8 + 8) == 0 || ((*(byte *)(*(int *)(iVar8 + 8) + 0x685) & 0x10) == 0)))) {
-      *(undefined4 *)(pcVar1 + 0x18) = *(undefined4 *)(iVar8 + 0x18);
-      *(undefined4 *)(pcVar1 + 0x1c) = *(undefined4 *)(iVar8 + 0x1c);
-      *(undefined4 *)(pcVar1 + 0x20) = *(undefined4 *)(iVar8 + 0x20);
+  if (*(int *)((int)ctl + 0x32) != 0) {
+    other = *(int *)((int)ctl + 0x32);
+    if ((((*(byte *)(other + 7) & 2) == 0) && (*(int *)(other + 0x44) != 0)) &&
+       ((*(int *)(other + 8) == 0 || ((*(byte *)(*(int *)(other + 8) + 0x685) & 0x10) == 0)))) {
+      *(undefined4 *)(obj + 0x18) = *(undefined4 *)(other + 0x18);
+      *(undefined4 *)(obj + 0x1c) = *(undefined4 *)(other + 0x1c);
+      *(undefined4 *)(obj + 0x20) = *(undefined4 *)(other + 0x20);
     }
     else {
-      *(char *)(iVar8 + 3) = *(char *)(iVar8 + 3) + -1;
-      *(undefined4 *)((int)param_1 + 0x32) = 0;
-      dispatch_entity_cleanup( /* Original: FUN_0000528a */pcVar1);
+      *(char *)(other + 3) = *(char *)(other + 3) + -1;
+      *(undefined4 *)((int)ctl + 0x32) = 0;
+      dispatch_entity_cleanup( /* Original: FUN_0000528a */obj);
     }
   }
-  if (((pcVar1[7] & 2U) == 0) && (*(int *)((int)param_1 + 0x36) != 0)) {
-    iVar8 = *(int *)((int)param_1 + 0x36);
-    if (((*(byte *)(iVar8 + 7) & 2) == 0) && (*(int *)(iVar8 + 0x44) != 0)) {
-      if (*(short *)((int)param_1 + 0x46) == 0) {
-        uVar6 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x19228..0x1923c): turret x, y, z, target x, y, z */);
-        *(uint *)((int)param_1 + 0x3a) = uVar6;
-        if ((int)uVar6 <= *(int *)((int)param_1 + 0x42)) {
-          sVar10 = 0;
-          for (; (uVar6 & 0xffff8000) != 0; uVar6 = (int)uVar6 >> 1) {
-            sVar10 = sVar10 + 1;
+  if (((obj[7] & 2U) == 0) && (*(int *)((int)ctl + 0x36) != 0)) {
+    other = *(int *)((int)ctl + 0x36);
+    if (((*(byte *)(other + 7) & 2) == 0) && (*(int *)(other + 0x44) != 0)) {
+      if (*(short *)((int)ctl + 0x46) == 0) {
+        dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x19228..0x1923c): turret x, y, z, target x, y, z */);
+        *(uint *)((int)ctl + 0x3a) = dist;
+        if ((int)dist <= *(int *)((int)ctl + 0x42)) {
+          shift = 0;
+          for (; (dist & 0xffff8000) != 0; dist = (int)dist >> 1) {
+            shift = shift + 1;
           }
-          uVar6 = (uint)(short)(sVar10 + 1);
-          iVar2 = *(int *)(iVar8 + 0x18) - *(int *)(pcVar1 + 0x18) >> (uVar6 & 0x3f);
-          iVar3 = *(int *)(iVar8 + 0x1c) - *(int *)(pcVar1 + 0x1c) >> (uVar6 & 0x3f);
-          iVar4 = *(int *)(iVar8 + 0x20) - *(int *)(pcVar1 + 0x20) >> (uVar6 & 0x3f);
-          iVar8 = iVar4 * iVar4 + iVar3 * iVar3 + iVar2 * iVar2;
-          iVar7 = isqrt_floor( /* Original: FUN_0000e372 */iVar8);
-          attitude_from_velocity( /* Original: FUN_00001f22 */(short)iVar2,(short)iVar3,(short)iVar4,(int)(short)iVar7,iVar8,
-                       (ushort *)(param_1 + 0x13),(ushort *)((int)param_1 + 0x4e));
-          if (DAT_0001b870 == 0) {
-            if (*(short *)((int)param_1 + 0x4a) == 0) {
-              uVar9 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-              if ((uVar9 & 0xf) == 0) {
-                uVar9 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-                *(ushort *)((int)param_1 + 0x4a) = (uVar9 & 7) + 7;
-                uVar9 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-                *(ushort *)(param_1 + 0x14) = 0x80 - (uVar9 & 0xff);
-                uVar9 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-                *(ushort *)((int)param_1 + 0x52) = 0x80 - (uVar9 & 0xff);
+          dist = (uint)(short)(shift + 1);
+          rel_x = *(int *)(other + 0x18) - *(int *)(obj + 0x18) >> (dist & 0x3f);
+          rel_y = *(int *)(other + 0x1c) - *(int *)(obj + 0x1c) >> (dist & 0x3f);
+          rel_z = *(int *)(other + 0x20) - *(int *)(obj + 0x20) >> (dist & 0x3f);
+          other = rel_z * rel_z + rel_y * rel_y + rel_x * rel_x;
+          len = isqrt_floor( /* Original: FUN_0000e372 */other);
+          attitude_from_velocity( /* Original: FUN_00001f22 */(short)rel_x,(short)rel_y,(short)rel_z,(int)(short)len,other,
+                       (ushort *)(ctl + 0x13),(ushort *)((int)ctl + 0x4e));
+          if (replay_state == 0) {
+            if (*(short *)((int)ctl + 0x4a) == 0) {
+              rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+              if ((rnd & 0xf) == 0) {
+                rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+                *(ushort *)((int)ctl + 0x4a) = (rnd & 7) + 7;
+                rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+                *(ushort *)(ctl + 0x14) = 0x80 - (rnd & 0xff);
+                rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+                *(ushort *)((int)ctl + 0x52) = 0x80 - (rnd & 0xff);
               }
             }
             else {
-              *(short *)(param_1 + 0x12) = *(short *)(param_1 + 0x12) + -1;
-              if (*(short *)(param_1 + 0x12) < 1) {
-                spawn_ordnance_oriented_3ang(0,0,*(int *)(pcVar1 + 0x18),*(int *)(pcVar1 + 0x1c),
-                             *(int *)(pcVar1 + 0x20),
-                             *(short *)(param_1 + 0x14) + *(short *)(param_1 + 0x13) & 0x3fff,
-                             *(short *)((int)param_1 + 0x52) + *(short *)((int)param_1 + 0x4e) &
+              *(short *)(ctl + 0x12) = *(short *)(ctl + 0x12) + -1;
+              if (*(short *)(ctl + 0x12) < 1) {
+                spawn_ordnance_oriented_3ang(0,0,*(int *)(obj + 0x18),*(int *)(obj + 0x1c),
+                             *(int *)(obj + 0x20),
+                             *(short *)(ctl + 0x14) + *(short *)(ctl + 0x13) & 0x3fff,
+                             *(short *)((int)ctl + 0x52) + *(short *)((int)ctl + 0x4e) &
                              0x3fff,0);
-                iVar8 = *(short *)(param_1 + 0x14) * 7;
-                if (iVar8 < 0) {
-                  iVar8 = iVar8 + 7;
+                other = *(short *)(ctl + 0x14) * 7;
+                if (other < 0) {
+                  other = other + 7;
                 }
-                *(short *)(param_1 + 0x14) = (short)(iVar8 >> 3);
-                iVar8 = *(short *)((int)param_1 + 0x52) * 7;
-                if (iVar8 < 0) {
-                  iVar8 = iVar8 + 7;
+                *(short *)(ctl + 0x14) = (short)(other >> 3);
+                other = *(short *)((int)ctl + 0x52) * 7;
+                if (other < 0) {
+                  other = other + 7;
                 }
-                *(short *)((int)param_1 + 0x52) = (short)(iVar8 >> 3);
-                *(undefined2 *)(param_1 + 0x12) = 2;
+                *(short *)((int)ctl + 0x52) = (short)(other >> 3);
+                *(undefined2 *)(ctl + 0x12) = 2;
               }
-              *(short *)((int)param_1 + 0x4a) = *(short *)((int)param_1 + 0x4a) + -1;
+              *(short *)((int)ctl + 0x4a) = *(short *)((int)ctl + 0x4a) + -1;
             }
           }
         }
       }
     }
     else {
-      *(char *)(iVar8 + 3) = *(char *)(iVar8 + 3) + -1;
-      *(undefined4 *)((int)param_1 + 0x36) = 0;
+      *(char *)(other + 3) = *(char *)(other + 3) + -1;
+      *(undefined4 *)((int)ctl + 0x36) = 0;
     }
   }
   return;
@@ -30508,11 +30539,11 @@ void tick_turret /* Original: FUN_0001917c */ (undefined4 *param_1)
 /* VERIFIED (FUN_00019394): 0x19394..0x193b2 checked against an independent capstone disassembly and
  * found identical to the C: word +0x22 = word +0x4e & 0x3fff when long +0x36 != 0 and word +0x46
  * == 0; returns 0 (clr.l d0). */
-undefined4 turret_pre_render /* Original: FUN_00019394 */ (int param_1)
+undefined4 turret_pre_render /* Original: FUN_00019394 */ (int ctl /* turret controller */)
 
 {
-  if ((*(int *)(param_1 + 0x36) != 0) && (*(short *)(param_1 + 0x46) == 0)) {
-    *(ushort *)(param_1 + 0x22) = *(ushort *)(param_1 + 0x4e) & 0x3fff;
+  if ((*(int *)(ctl + 0x36) != 0) && (*(short *)(ctl + 0x46) == 0)) {
+    *(ushort *)(ctl + 0x22) = *(ushort *)(ctl + 0x4e) & 0x3fff;
   }
   return 0;
 }
@@ -30527,18 +30558,18 @@ undefined4 turret_pre_render /* Original: FUN_00019394 */ (int param_1)
  * DAT_0001b524[class], bsr.l 0xdf5e fill_pose_history(ctl + 0x32, object x, y, z); returns a3
  * (move.l to d0 before rts; index scale *4 decoded by hand).
  */
-uint * create_parachute_controller /* Original: FUN_000193b6 */ (uint param_1,int param_2)
+uint * create_parachute_controller /* Original: FUN_000193b6 */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x6be-byte parachute controller */
   
-  puVar1 = heap_alloc_cleared(0x6be);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x132000;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  fill_pose_history((int)puVar1 + 0x32,*(undefined4 *)(param_1 + 0x18),*(undefined4 *)(param_1 + 0x1c),
-               *(undefined4 *)(param_1 + 0x20));
-  return puVar1;
+  ctl = heap_alloc_cleared(0x6be);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x132000;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  fill_pose_history((int)ctl + 0x32,*(undefined4 *)(obj + 0x18),*(undefined4 *)(obj + 0x1c),
+               *(undefined4 *)(obj + 0x20));
+  return ctl;
 }
 
 
@@ -30548,11 +30579,11 @@ uint * create_parachute_controller /* Original: FUN_000193b6 */ (uint param_1,in
  * Ghidra C reviewed (function at overlay offset 0x1940e).
  * DAT_00026780 = template (spawn_bailout_parachute); create handler -> 0x19396 (Ghidra 0x193b6). Type 0x1c = bailed-out pilot / parachute [STRONG INFERENCE]: spawn_bailout_parachute (named earlier) spawns it from update_aircraft_entity when an aircraft is abandoned (+0x677 = 2, damage bit 0); for the player it sets mission state 9 and DAT_0001b87c = the parachute, and update_aircraft_damage_state only declares the pilot Dead while DAT_0001b87c is 0. Definition key 0x1c (file 0x1ab3e): +2 parachute_tick, +0xa destroy_parachute_controller [PROVEN bytes]. Ghidra C.
  */
-undefined4 register_parachute_template /* Original: FUN_0001940e */ (undefined4 param_1,int param_2)
+undefined4 register_parachute_template /* Original: FUN_0001940e */ (undefined4 tmpl /* parachute template */,int def_key)
 
 {
-  DAT_00026780 = param_1;
-  *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x19396;
+  parachute_template = tmpl;
+  *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x19396;
   return 0;
 }
 
@@ -30585,43 +30616,43 @@ undefined4 register_parachute_template /* Original: FUN_0001940e */ (undefined4 
  * word +0x614 = p1 (low word $a), words +0x20 / +0x22 / +0x24 = p5 / p6 / p7; the 13 vertices
  * are shifted right by 3 and ctl +0x622 / +0x656 / +0x68a + 4 i = x * 0x1c6 / y * 0x1c6 / z *
  * 0x255 (muls.l, scale *4 decoded by hand); +0x618 = 7, word +0x61c = 0x62; returns ctl. */
-int spawn_bailout_parachute(undefined2 param_1,uint param_2,uint param_3,uint param_4,
-                undefined2 param_5,undefined2 param_6,undefined2 param_7) /* Original: FUN_00019430 */
+int spawn_bailout_parachute(undefined2 word_614 /* stored at controller +0x614 [meaning unknown] */,uint x,uint y,uint z,
+                undefined2 pitch /* +0x20 [STRONG INFERENCE] */,undefined2 heading /* +0x22 */,undefined2 bank /* +0x24 [STRONG INFERENCE] */) /* Original: FUN_00019430 */
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  short sVar5;
+  int slot; /* controller + 4 v */
+  int voff; /* vertex index * 12 */
+  int obj; /* spawned object; then its +0x44 vertex list */
+  int ctl; /* controller (+8); returned */
+  short v; /* vertex 0..12 */
   
-  iVar3 = spawn_mission_pool_object( /* Original: FUN_00005116 */DAT_00026780,param_2,param_3,param_4,param_5,param_6,param_7,0);
-  if (iVar3 == 0) {
-    iVar4 = 0;
+  obj = spawn_mission_pool_object( /* Original: FUN_00005116 */parachute_template,x,y,z,pitch,heading,bank,0);
+  if (obj == 0) {
+    ctl = 0;
   }
   else {
-    iVar4 = *(int *)(iVar3 + 8);
-    *(undefined4 *)(iVar4 + 0x610) = DAT_0001b838;
-    *(undefined2 *)(iVar4 + 0x614) = param_1;
-    *(undefined2 *)(iVar4 + 0x20) = param_5;
-    *(undefined2 *)(iVar4 + 0x22) = param_6;
-    *(undefined2 *)(iVar4 + 0x24) = param_7;
-    iVar3 = *(int *)(iVar3 + 0x44); /* vertex base / gate */
-    sVar5 = 0;
+    ctl = *(int *)(obj + 8);
+    *(undefined4 *)(ctl + 0x610) = frame_counter;
+    *(undefined2 *)(ctl + 0x614) = word_614;
+    *(undefined2 *)(ctl + 0x20) = pitch;
+    *(undefined2 *)(ctl + 0x22) = heading;
+    *(undefined2 *)(ctl + 0x24) = bank;
+    obj = *(int *)(obj + 0x44); /* vertex base / gate */
+    v = 0;
     do {
-      iVar2 = sVar5 * 0xc;
-      *(int *)(iVar3 + iVar2) = *(int *)(iVar3 + iVar2) >> 3;
-      *(int *)(iVar3 + 4 + iVar2) = *(int *)(iVar3 + 4 + iVar2) >> 3;
-      *(int *)(iVar3 + 8 + iVar2) = *(int *)(iVar3 + 8 + iVar2) >> 3;
-      iVar1 = iVar4 + sVar5 * 4;
-      *(int *)(iVar1 + 0x622) = *(int *)(iVar3 + iVar2) * 0x1c6;
-      *(int *)(iVar1 + 0x656) = *(int *)(iVar3 + 4 + iVar2) * 0x1c6;
-      *(int *)(iVar1 + 0x68a) = *(int *)(iVar3 + 8 + iVar2) * 0x255;
-      sVar5 = sVar5 + 1;
-    } while (sVar5 < 0xd);
-    *(undefined4 *)(iVar4 + 0x618) = 7;
-    *(undefined2 *)(iVar4 + 0x61c) = 0x62;
+      voff = v * 0xc;
+      *(int *)(obj + voff) = *(int *)(obj + voff) >> 3;
+      *(int *)(obj + 4 + voff) = *(int *)(obj + 4 + voff) >> 3;
+      *(int *)(obj + 8 + voff) = *(int *)(obj + 8 + voff) >> 3;
+      slot = ctl + v * 4;
+      *(int *)(slot + 0x622) = *(int *)(obj + voff) * 0x1c6;
+      *(int *)(slot + 0x656) = *(int *)(obj + 4 + voff) * 0x1c6;
+      *(int *)(slot + 0x68a) = *(int *)(obj + 8 + voff) * 0x255;
+      v = v + 1;
+    } while (v < 0xd);
+    *(undefined4 *)(ctl + 0x618) = 7;
+    *(undefined2 *)(ctl + 0x61c) = 0x62;
   }
-  return iVar4;
+  return ctl;
 }
 
 
@@ -30631,11 +30662,11 @@ int spawn_bailout_parachute(undefined2 param_1,uint param_2,uint param_3,uint pa
  * Ghidra C reviewed (function at overlay offset 0x1951a).
  * Clears DAT_0001b87c when it is this parachute. Type 0x1c = bailed-out pilot / parachute [STRONG INFERENCE]: spawn_bailout_parachute (named earlier) spawns it from update_aircraft_entity when an aircraft is abandoned (+0x677 = 2, damage bit 0); for the player it sets mission state 9 and DAT_0001b87c = the parachute, and update_aircraft_damage_state only declares the pilot Dead while DAT_0001b87c is 0. Definition key 0x1c (file 0x1ab3e): +2 parachute_tick, +0xa destroy_parachute_controller [PROVEN bytes]. Complete Ghidra C.
  */
-void destroy_parachute_controller /* Original: FUN_0001951a */ (int param_1)
+void destroy_parachute_controller /* Original: FUN_0001951a */ (int ctl /* parachute controller */)
 
 {
-  if (param_1 == DAT_0001b87c) {
-    DAT_0001b87c = 0;
+  if (ctl == parachute_object) {
+    parachute_object = 0;
   }
   return;
 }
@@ -30658,158 +30689,158 @@ void destroy_parachute_controller /* Original: FUN_0001951a */ (int param_1)
  * Ghidra C reviewed (function at overlay offset 0x1952e).
  * From 16 frames after the bail-out (+0x612 = frame) adds a shadow (spawn_object_shadow kind 3) and, until frame 30, unfolds the 13 canopy vertices with velocities * 3 / 4 per frame; then descends (further down). Type 0x1c = bailed-out pilot / parachute [STRONG INFERENCE]: spawn_bailout_parachute (named earlier) spawns it from update_aircraft_entity when an aircraft is abandoned (+0x677 = 2, damage bit 0); for the player it sets mission state 9 and DAT_0001b87c = the parachute, and update_aircraft_damage_state only declares the pilot Dead while DAT_0001b87c is 0. Definition key 0x1c (file 0x1ab3e): +2 parachute_tick, +0xa destroy_parachute_controller [PROVEN bytes]. Ghidra C (partly read).
  */
-void parachute_descend /* Original: FUN_0001952e */ (undefined4 *param_1)
+void parachute_descend /* Original: FUN_0001952e */ (undefined4 *ctl /* parachute controller */)
 
 {
-  int *piVar1;
-  char *pcVar2;
-  short sVar3;
-  short sVar4;
-  short sVar5;
-  int iVar6;
-  bool bVar7;
-  int iVar8;
-  int iVar9;
-  uint uVar10;
-  int iVar11;
-  short sVar12;
-  short sVar13;
-  int iVar14;
-  ushort local_26;
-  ushort local_24;
-  short asStack_22 [9];
-  undefined1 auStack_10 [2];
-  short local_e;
-  short local_a;
-  short local_6;
-  
-  pcVar2 = (char *)*param_1;
-  sVar12 = DAT_0001b838._2_2_ - *(short *)((int)param_1 + 0x612);
-  iVar8 = param_1[0x186];
-  if (0xf < sVar12) {
-    if ((DAT_0001b870 == 0) && (sVar12 < 0x1f)) {
-      if (sVar12 == 0x10) {
-        spawn_object_shadow(*(uint *)(pcVar2 + 0x18),0,*(uint *)(pcVar2 + 0x20),3,(int)pcVar2);
+  int *coord; /* vertex coordinate being updated */
+  char *obj; /* parachute object (ctl +0) */
+  short speed; /* word +0x614 (|velocity|); later a collapsed vertex x */
+  short cz; /* collapsed vertex z */
+  short dy; /* 0x15e - vertex y */
+  int voff;
+  bool any_low; /* a canopy vertex is still below 0x17f << shift */
+  int drag; /* +0x618 drag term; reused as vertices / squared length / sine */
+  int tmp; /* vertex offset; then table_lerp_1b2c0, isqrt and cosine */
+  uint ang; /* folded angle; then the shift */
+  int len;
+  short age; /* frames since the bail-out (+0x612); reused as heading change / shift */
+  short v; /* canopy vertex 0..12; reused as bank */
+  int vi; /* vertex index; then speed / 4 and sine */
+  ushort heading; /* +0x22, then attitude_from_velocity second out */
+  ushort pitch; /* +0x20 [STRONG INFERENCE], then first out */
+  short matrix [9];
+  undefined1 vel [2]; /* velocity vector (-0x10(A6)) */
+  short vx;
+  short vy; /* minus gravity 0x5b */
+  short vz;
+
+  obj = (char *)*ctl;
+  age = frame_counter._2_2_ - *(short *)((int)ctl + 0x612);
+  drag = ctl[0x186];
+  if (0xf < age) {
+    if ((replay_state == 0) && (age < 0x1f)) {
+      if (age == 0x10) {
+        spawn_object_shadow(*(uint *)(obj + 0x18),0,*(uint *)(obj + 0x20),3,(int)obj);
       }
-      iVar8 = *(int *)(pcVar2 + 0x44);
-      sVar13 = 0;
+      drag = *(int *)(obj + 0x44);
+      v = 0;
       do {
-        iVar14 = (int)sVar13;
-        iVar9 = iVar14 * 0xc;
-        *(int *)(iVar8 + iVar9) =
-             (*(int *)((int)param_1 + iVar14 * 4 + 0x622) >> 8) + *(int *)(iVar8 + iVar9);
-        piVar1 = (int *)(iVar8 + 4 + iVar9);
-        *piVar1 = (*(int *)((int)param_1 + iVar14 * 4 + 0x656) >> 8) + *piVar1;
-        piVar1 = (int *)(iVar8 + 8 + iVar9);
-        *piVar1 = (*(int *)((int)param_1 + iVar14 * 4 + 0x68a) >> 8) + *piVar1;
-        iVar9 = *(int *)((int)param_1 + iVar14 * 4 + 0x622) +
-                *(int *)((int)param_1 + iVar14 * 4 + 0x622) * 2;
-        if (iVar9 < 0) {
-          iVar9 = iVar9 + 3;
+        vi = (int)v;
+        tmp = vi * 0xc;
+        *(int *)(drag + tmp) =
+             (*(int *)((int)ctl + vi * 4 + 0x622) >> 8) + *(int *)(drag + tmp);
+        coord = (int *)(drag + 4 + tmp);
+        *coord = (*(int *)((int)ctl + vi * 4 + 0x656) >> 8) + *coord;
+        coord = (int *)(drag + 8 + tmp);
+        *coord = (*(int *)((int)ctl + vi * 4 + 0x68a) >> 8) + *coord;
+        tmp = *(int *)((int)ctl + vi * 4 + 0x622) +
+                *(int *)((int)ctl + vi * 4 + 0x622) * 2;
+        if (tmp < 0) {
+          tmp = tmp + 3;
         }
-        *(int *)((int)param_1 + iVar14 * 4 + 0x622) = iVar9 >> 2;
-        iVar14 = (int)sVar13;
-        iVar9 = *(int *)((int)param_1 + iVar14 * 4 + 0x656) +
-                *(int *)((int)param_1 + iVar14 * 4 + 0x656) * 2;
-        if (iVar9 < 0) {
-          iVar9 = iVar9 + 3;
+        *(int *)((int)ctl + vi * 4 + 0x622) = tmp >> 2;
+        vi = (int)v;
+        tmp = *(int *)((int)ctl + vi * 4 + 0x656) +
+                *(int *)((int)ctl + vi * 4 + 0x656) * 2;
+        if (tmp < 0) {
+          tmp = tmp + 3;
         }
-        *(int *)((int)param_1 + iVar14 * 4 + 0x656) = iVar9 >> 2;
-        *(int *)((int)param_1 + sVar13 * 4 + 0x68a) =
-             (*(int *)((int)param_1 + sVar13 * 4 + 0x68a) << 1) / 3;
-        sVar13 = sVar13 + 1;
-      } while (sVar13 < 0xd);
-      param_1[0x186] = param_1[0x186] + (int)*(short *)(param_1 + 0x187);
-      iVar8 = *(short *)(param_1 + 0x187) * 0xf;
-      if (iVar8 < 0) {
-        iVar8 = iVar8 + 0xf;
+        *(int *)((int)ctl + vi * 4 + 0x656) = tmp >> 2;
+        *(int *)((int)ctl + v * 4 + 0x68a) =
+             (*(int *)((int)ctl + v * 4 + 0x68a) << 1) / 3;
+        v = v + 1;
+      } while (v < 0xd);
+      ctl[0x186] = ctl[0x186] + (int)*(short *)(ctl + 0x187);
+      drag = *(short *)(ctl + 0x187) * 0xf;
+      if (drag < 0) {
+        drag = drag + 0xf;
       }
-      *(short *)(param_1 + 0x187) = (short)(iVar8 >> 4);
-      iVar8 = param_1[0x186];
+      *(short *)(ctl + 0x187) = (short)(drag >> 4);
+      drag = ctl[0x186];
     }
-    else if ((pcVar2[5] & 1U) != 0) {
-      *(uint *)(pcVar2 + 4) = *(uint *)(pcVar2 + 4) & 0xfffeffff;
-      drop_contact_records_for_object((int)pcVar2);
+    else if ((obj[5] & 1U) != 0) {
+      *(uint *)(obj + 4) = *(uint *)(obj + 4) & 0xfffeffff;
+      drop_contact_records_for_object((int)obj);
     }
   }
-  if (*(short *)((int)param_1 + 0x61e) == 0) {
-    local_24 = *(ushort *)(param_1 + 8);
-    local_26 = *(ushort *)((int)param_1 + 0x22);
-    sVar13 = *(short *)(param_1 + 9);
-    sVar3 = *(short *)(param_1 + 0x185);
-    iVar14 = (int)(sVar3 >> 2);
-    iVar9 = table_lerp_1b2c0(*(uint *)(pcVar2 + 0x1c)); /* Original: FUN_0000e42a */
-    iVar8 = (int)*(short *)((int)param_1 + 0x616) +
-            (iVar14 * ((iVar14 * iVar8) / (int)(short)iVar9) * 2) / 0xa0;
-    *(short *)((int)param_1 + 0x616) = (short)iVar9; /* CORRECTED [PROVEN]: 0x196d4 divs.l d7,d1 has ext 0x1801 (Dr == Dq == d1, quotient only, no remainder) and 0x196d8 stores D0, which still holds ext.l(table_lerp_1b2c0) from 0x196b6; Ghidra's iVar8 % 10 was wrong */
-    local_a = 0;
-    local_e = 0;
-    local_6 = sVar3 - (short)(iVar8 / 10);
-    build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)(short)local_24,(int)(short)local_26,(int)sVar13,(int)asStack_22);
-    transform_vecs12_by_matrix3(1,(int)auStack_10,(int)auStack_10,asStack_22);
-    local_a = local_a + -0x5b;
-    param_1[2] = (int)(local_e >> 6);
-    param_1[3] = (int)(local_a >> 6);
-    param_1[4] = (int)(local_6 >> 6);
-    if (0xf < sVar12) {
-      param_1[2] = param_1[2] + -0xd;
-      param_1[4] = param_1[4] + -7;
+  if (*(short *)((int)ctl + 0x61e) == 0) {
+    pitch = *(ushort *)(ctl + 8);
+    heading = *(ushort *)((int)ctl + 0x22);
+    v = *(short *)(ctl + 9);
+    speed = *(short *)(ctl + 0x185);
+    vi = (int)(speed >> 2);
+    tmp = table_lerp_1b2c0(*(uint *)(obj + 0x1c)); /* Original: FUN_0000e42a */
+    drag = (int)*(short *)((int)ctl + 0x616) +
+            (vi * ((vi * drag) / (int)(short)tmp) * 2) / 0xa0;
+    *(short *)((int)ctl + 0x616) = (short)tmp; /* CORRECTED [PROVEN]: 0x196d4 divs.l d7,d1 has ext 0x1801 (Dr == Dq == d1, quotient only, no remainder) and 0x196d8 stores D0, which still holds ext.l(table_lerp_1b2c0) from 0x196b6; Ghidra's iVar8 % 10 was wrong */
+    vy = 0;
+    vx = 0;
+    vz = speed - (short)(drag / 10);
+    build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)(short)pitch,(int)(short)heading,(int)v,(int)matrix);
+    transform_vecs12_by_matrix3(1,(int)vel,(int)vel,matrix);
+    vy = vy + -0x5b;
+    ctl[2] = (int)(vx >> 6);
+    ctl[3] = (int)(vy >> 6);
+    ctl[4] = (int)(vz >> 6);
+    if (0xf < age) {
+      ctl[2] = ctl[2] + -0xd;
+      ctl[4] = ctl[4] + -7;
     }
-    iVar8 = (int)local_6 * (int)local_6 + (int)local_a * (int)local_a + (int)local_e * (int)local_e;
-    iVar9 = isqrt_floor( /* Original: FUN_0000e372 */iVar8);
-    attitude_from_velocity( /* Original: FUN_00001f22 */local_e,local_a,local_6,(int)(short)iVar9,iVar8,&local_24,&local_26);
-    sVar12 = local_26 - *(short *)((int)param_1 + 0x22);
-    if (sVar12 < 0x2001) {
-      if (sVar12 < -0x2000) {
-        sVar12 = sVar12 + 0x4000;
+    drag = (int)vz * (int)vz + (int)vy * (int)vy + (int)vx * (int)vx;
+    tmp = isqrt_floor( /* Original: FUN_0000e372 */drag);
+    attitude_from_velocity( /* Original: FUN_00001f22 */vx,vy,vz,(int)(short)tmp,drag,&pitch,&heading);
+    age = heading - *(short *)((int)ctl + 0x22);
+    if (age < 0x2001) {
+      if (age < -0x2000) {
+        age = age + 0x4000;
       }
     }
     else {
-      sVar12 = sVar12 + -0x4000;
+      age = age + -0x4000;
     }
-    *(ushort *)(param_1 + 8) = local_24;
-    *(ushort *)((int)param_1 + 0x22) = local_26 & 0x3fff;
-    iVar8 = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)local_24);
-    *(ushort *)(param_1 + 9) = sVar13 + (short)((int)(short)iVar8 * (int)sVar12 >> 0xc) & 0x3fff;
-    *(short *)(param_1 + 0x185) = (short)iVar9;
-    if (param_1[3] + *(int *)(pcVar2 + 0x1c) <= *(int *)((int)param_1 + 0x2e) + 0x17f) {
-      param_1[4] = 0;
-      param_1[3] = 0;
-      param_1[2] = 0;
-      *(undefined2 *)((int)param_1 + 0x61e) = 1;
+    *(ushort *)(ctl + 8) = pitch;
+    *(ushort *)((int)ctl + 0x22) = heading & 0x3fff;
+    drag = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)pitch);
+    *(ushort *)(ctl + 9) = v + (short)((int)(short)drag * (int)age >> 0xc) & 0x3fff;
+    *(short *)(ctl + 0x185) = (short)tmp;
+    if (ctl[3] + *(int *)(obj + 0x1c) <= *(int *)((int)ctl + 0x2e) + 0x17f) {
+      ctl[4] = 0;
+      ctl[3] = 0;
+      ctl[2] = 0;
+      *(undefined2 *)((int)ctl + 0x61e) = 1;
     }
   }
   else {
-    sVar12 = *(short *)(pcVar2 + 0x34);
-    uVar10 = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */0x588 - *(short *)((int)param_1 + 0x22));
-    iVar8 = *(int *)(pcVar2 + 0x44);
-    iVar9 = cos_fixed14( /* Original: FUN_00001dd8 */uVar10 & 0x3fff);
-    iVar14 = sin_fixed14( /* Original: FUN_00001d76 */uVar10 & 0x3fff);
-    bVar7 = false;
-    sVar13 = 0;
-    uVar10 = (uint)sVar12;
+    age = *(short *)(obj + 0x34);
+    ang = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */0x588 - *(short *)((int)ctl + 0x22));
+    drag = *(int *)(obj + 0x44);
+    tmp = cos_fixed14( /* Original: FUN_00001dd8 */ang & 0x3fff);
+    vi = sin_fixed14( /* Original: FUN_00001d76 */ang & 0x3fff);
+    any_low = false;
+    v = 0;
+    ang = (uint)age;
     do {
-      iVar6 = sVar13 * 0xc;
-      if (*(int *)(iVar8 + 8 + iVar6) < 0x17f << (uVar10 & 0x3f)) {
-        bVar7 = true;
-        sVar3 = *(short *)(iVar8 + 2 + iVar6) -
-                (short)(((short)iVar9 * 0xf << ((int)sVar12 & 0x3fU)) >> 0xc);
-        sVar4 = *(short *)(iVar8 + 6 + iVar6) -
-                (short)(((short)iVar14 * 0xf << ((int)sVar12 & 0x3fU)) >> 0xc);
-        piVar1 = (int *)(iVar8 + 8 + iVar6);
-        *piVar1 = (10 << (uVar10 & 0x3f)) + *piVar1;
-        sVar5 = 0x15e - *(short *)(iVar8 + 10 + iVar6);
-        iVar11 = isqrt_floor( /* Original: FUN_0000e372 */(int)sVar4 * (int)sVar4 + (int)sVar3 * (int)sVar3 +
-                              (int)sVar5 * (int)sVar5);
-        if ((int)(short)iVar11 < 0x15e << (uVar10 & 0x3f)) {
-          *(int *)(iVar8 + iVar6) = (int)sVar3;
-          *(int *)(iVar8 + 4 + iVar6) = (int)sVar4;
+      voff = v * 0xc;
+      if (*(int *)(drag + 8 + voff) < 0x17f << (ang & 0x3f)) {
+        any_low = true;
+        speed = *(short *)(drag + 2 + voff) -
+                (short)(((short)tmp * 0xf << ((int)age & 0x3fU)) >> 0xc);
+        cz = *(short *)(drag + 6 + voff) -
+                (short)(((short)vi * 0xf << ((int)age & 0x3fU)) >> 0xc);
+        coord = (int *)(drag + 8 + voff);
+        *coord = (10 << (ang & 0x3f)) + *coord;
+        dy = 0x15e - *(short *)(drag + 10 + voff);
+        len = isqrt_floor( /* Original: FUN_0000e372 */(int)cz * (int)cz + (int)speed * (int)speed +
+                              (int)dy * (int)dy);
+        if ((int)(short)len < 0x15e << (ang & 0x3f)) {
+          *(int *)(drag + voff) = (int)speed;
+          *(int *)(drag + 4 + voff) = (int)cz;
         }
       }
-      sVar13 = sVar13 + 1;
-    } while (sVar13 < 0xd);
-    if (!bVar7) {
-      dispatch_entity_cleanup( /* Original: FUN_0000528a */pcVar2);
+      v = v + 1;
+    } while (v < 0xd);
+    if (!any_low) {
+      dispatch_entity_cleanup( /* Original: FUN_0000528a */obj);
     }
   }
   return;
@@ -30829,46 +30860,46 @@ void parachute_descend /* Original: FUN_0001952e */ (undefined4 *param_1)
  * long object +0x40 <= DAT_0001b838: in mode 1 or on that exact frame the velocity is zeroed
  * and the object placed at the slot, otherwise velocity = slot - object position; angles
  * restored from the slot. */
-void parachute_tick /* Original: FUN_00019938 */ (int *param_1)
+void parachute_tick /* Original: FUN_00019938 */ (int *ctl /* parachute controller */)
 
 {
-  int *piVar1;
-  int iVar2;
-  short *psVar3;
-  
-  iVar2 = *param_1;
-  psVar3 = (short *)((int)param_1 + 0x60e);
-  piVar1 = (int *)((int)param_1 + *psVar3 * 0x14 + 0x32);
-  *psVar3 = *psVar3 + 1;
-  if (*(short *)((int)param_1 + 0x60e) == 0x4b) {
-    *psVar3 = 0;
+  int *pose; /* replay pose ring entry (+0x32 + 20 i) */
+  int obj; /* parachute object (ctl +0) */
+  short *ring_idx; /* pose ring index +0x60e (75 entries) */
+
+  obj = *ctl;
+  ring_idx = (short *)((int)ctl + 0x60e);
+  pose = (int *)((int)ctl + *ring_idx * 0x14 + 0x32);
+  *ring_idx = *ring_idx + 1;
+  if (*(short *)((int)ctl + 0x60e) == 0x4b) {
+    *ring_idx = 0;
   }
-  if (DAT_0001b870 == 0) {
-    parachute_descend(param_1);
-    *piVar1 = param_1[2] + *(int *)(iVar2 + 0x18);
-    piVar1[1] = param_1[3] + *(int *)(iVar2 + 0x1c);
-    piVar1[2] = param_1[4] + *(int *)(iVar2 + 0x20);
-    *(undefined2 *)(piVar1 + 3) = *(undefined2 *)(param_1 + 8);
-    *(undefined2 *)((int)piVar1 + 0xe) = *(undefined2 *)((int)param_1 + 0x22);
-    *(undefined2 *)(piVar1 + 4) = *(undefined2 *)(param_1 + 9);
+  if (replay_state == 0) {
+    parachute_descend(ctl);
+    *pose = ctl[2] + *(int *)(obj + 0x18);
+    pose[1] = ctl[3] + *(int *)(obj + 0x1c);
+    pose[2] = ctl[4] + *(int *)(obj + 0x20);
+    *(undefined2 *)(pose + 3) = *(undefined2 *)(ctl + 8);
+    *(undefined2 *)((int)pose + 0xe) = *(undefined2 *)((int)ctl + 0x22);
+    *(undefined2 *)(pose + 4) = *(undefined2 *)(ctl + 9);
   }
-  else if (*(int *)(iVar2 + 0x40) <= DAT_0001b838) {
-    if ((DAT_0001b870 == 1) || (DAT_0001b838 == *(int *)(iVar2 + 0x40))) {
-      param_1[4] = 0;
-      param_1[3] = 0;
-      param_1[2] = 0;
-      *(int *)(iVar2 + 0x18) = *piVar1;
-      *(int *)(iVar2 + 0x1c) = piVar1[1];
-      *(int *)(iVar2 + 0x20) = piVar1[2];
+  else if (*(int *)(obj + 0x40) <= frame_counter) {
+    if ((replay_state == 1) || (frame_counter == *(int *)(obj + 0x40))) {
+      ctl[4] = 0;
+      ctl[3] = 0;
+      ctl[2] = 0;
+      *(int *)(obj + 0x18) = *pose;
+      *(int *)(obj + 0x1c) = pose[1];
+      *(int *)(obj + 0x20) = pose[2];
     }
     else {
-      param_1[2] = *piVar1 - *(int *)(iVar2 + 0x18);
-      param_1[3] = piVar1[1] - *(int *)(iVar2 + 0x1c);
-      param_1[4] = piVar1[2] - *(int *)(iVar2 + 0x20);
+      ctl[2] = *pose - *(int *)(obj + 0x18);
+      ctl[3] = pose[1] - *(int *)(obj + 0x1c);
+      ctl[4] = pose[2] - *(int *)(obj + 0x20);
     }
-    *(undefined2 *)(param_1 + 8) = *(undefined2 *)(piVar1 + 3);
-    *(undefined2 *)((int)param_1 + 0x22) = *(undefined2 *)((int)piVar1 + 0xe);
-    *(undefined2 *)(param_1 + 9) = *(undefined2 *)(piVar1 + 4);
+    *(undefined2 *)(ctl + 8) = *(undefined2 *)(pose + 3);
+    *(undefined2 *)((int)ctl + 0x22) = *(undefined2 *)((int)pose + 0xe);
+    *(undefined2 *)(ctl + 9) = *(undefined2 *)(pose + 4);
   }
   return;
 }
@@ -30884,17 +30915,17 @@ void parachute_tick /* Original: FUN_00019938 */ (int *param_1)
  * copied to a0 and never written again before rts; alloc 0x40; +0 = object, object long +4 |= 0x132000, +4 =
  * DAT_0001b524[class].
  */
-uint * create_cloud_controller /* Original: FUN_00019a1a */ (uint param_1,int param_2)
+uint * create_cloud_controller /* Original: FUN_00019a1a */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x40-byte cloud controller */
   
-  puVar1 = heap_alloc_cleared(0x40);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x132000;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
+  ctl = heap_alloc_cleared(0x40);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x132000;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -30904,21 +30935,21 @@ uint * create_cloud_controller /* Original: FUN_00019a1a */ (uint param_1,int pa
  * Ghidra C reviewed (function at overlay offset 0x19a54).
  * Fills the five template slots DAT_00026784[0..4] and, once four are taken, redirects the create handler to 0x199fa (Ghidra 0x19a1a, create_cloud_controller). Cloud definition key 0x1d (file 0x1ab58): +2 follow_camera_offset (0x19b30), +6 register_cloud_templates [PROVEN bytes]; the five templates DAT_00026784[0..4] are the classes spawned by spawn_camera_relative_object for spawn_cloud_layer. Ghidra C.
  */
-undefined4 register_cloud_templates /* Original: FUN_00019a54 */ (undefined4 param_1,int param_2)
+undefined4 register_cloud_templates /* Original: FUN_00019a54 */ (undefined4 tmpl /* cloud template */,int def_key)
 
 {
-  ushort uVar1;
+  ushort slot;
   
-  uVar1 = 0;
+  slot = 0;
   do {
-    if ((&DAT_00026784)[(short)uVar1] == 0) {
-      (&DAT_00026784)[(short)uVar1] = param_1;
+    if ((&cloud_templates)[(short)slot] == 0) {
+      (&cloud_templates)[(short)slot] = tmpl;
       break;
     }
-    uVar1 = uVar1 + 1;
-  } while (uVar1 < 5);
-  if (3 < uVar1) {
-    *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x199fa;
+    slot = slot + 1;
+  } while (slot < 5);
+  if (3 < slot) {
+    *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x199fa;
   }
   return 0;
 }
@@ -30934,28 +30965,28 @@ undefined4 register_cloud_templates /* Original: FUN_00019a54 */ (undefined4 par
  * decoded by hand), camera + (dx, dy, dz), 0, 0, 0, 0); null -> 0; else words ctl +0x20 / +0x22 /
  * +0x24 = p5 / p6 / p7 (low words $1a / $1e / $22), longs +0x32 / +0x36 / +0x3a = dx / dy / dz,
  * word +0x3e = kind; returns ctl. */
-int spawn_camera_relative_object /* Original: FUN_00019aa2 */ (int param_1,int param_2,int param_3,int param_4,undefined2 param_5,
-                undefined2 param_6,undefined2 param_7)
+int spawn_camera_relative_object /* Original: FUN_00019aa2 */ (int cls /* class 0..4 */,int dx,int dy,int dz,undefined2 ang1 /* +0x20 */,
+                undefined2 ang2 /* +0x22 */,undefined2 ang3 /* +0x24 */)
 
 {
-  int iVar1;
+  int ctl; /* spawned object, then its controller (+8) */
   
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */(&DAT_00026784)[param_1],DAT_0001d838 + param_2,DAT_0001d834 + param_3,
-                       DAT_0001d830 + param_4,0,0,0,0);
-  if (iVar1 == 0) {
-    iVar1 = 0;
+  ctl = spawn_mission_pool_object( /* Original: FUN_00005116 */(&cloud_templates)[cls],camera_x + dx,camera_y + dy,
+                       camera_z + dz,0,0,0,0);
+  if (ctl == 0) {
+    ctl = 0;
   }
   else {
-    iVar1 = *(int *)(iVar1 + 8);
-    *(undefined2 *)(iVar1 + 0x20) = param_5;
-    *(undefined2 *)(iVar1 + 0x22) = param_6;
-    *(undefined2 *)(iVar1 + 0x24) = param_7;
-    *(int *)(iVar1 + 0x32) = param_2;
-    *(int *)(iVar1 + 0x36) = param_3;
-    *(int *)(iVar1 + 0x3a) = param_4;
-    *(short *)(iVar1 + 0x3e) = (short)param_1;
+    ctl = *(int *)(ctl + 8);
+    *(undefined2 *)(ctl + 0x20) = ang1;
+    *(undefined2 *)(ctl + 0x22) = ang2;
+    *(undefined2 *)(ctl + 0x24) = ang3;
+    *(int *)(ctl + 0x32) = dx;
+    *(int *)(ctl + 0x36) = dy;
+    *(int *)(ctl + 0x3a) = dz;
+    *(short *)(ctl + 0x3e) = (short)cls;
   }
-  return iVar1;
+  return ctl;
 }
 
 
@@ -30968,20 +30999,20 @@ int spawn_camera_relative_object /* Original: FUN_00019aa2 */ (int param_1,int p
  * found identical to the C: +8 = cam x + long +0x32 - object x; +0xc = cam y - object y when long
  * +0x36 - 10000 < cam y (signed; addi.l #-10000, bge), else 0; +0x10 = cam z + long +0x3a -
  * object z. */
-void follow_camera_offset /* Original: FUN_00019b30 */ (int *param_1)
+void follow_camera_offset /* Original: FUN_00019b30 */ (int *ctl /* camera-relative controller */)
 
 {
-  int iVar1;
+  int obj; /* ctl +0 object */
   
-  iVar1 = *param_1;
-  param_1[2] = (DAT_0001d838 + *(int *)((int)param_1 + 0x32)) - *(int *)(iVar1 + 0x18);
-  if (*(int *)((int)param_1 + 0x36) + -10000 < DAT_0001d834) {
-    param_1[3] = DAT_0001d834 - *(int *)(iVar1 + 0x1c);
+  obj = *ctl;
+  ctl[2] = (camera_x + *(int *)((int)ctl + 0x32)) - *(int *)(obj + 0x18);
+  if (*(int *)((int)ctl + 0x36) + -10000 < camera_y) {
+    ctl[3] = camera_y - *(int *)(obj + 0x1c);
   }
   else {
-    param_1[3] = 0;
+    ctl[3] = 0;
   }
-  param_1[4] = (DAT_0001d830 + *(int *)((int)param_1 + 0x3a)) - *(int *)(iVar1 + 0x20);
+  ctl[4] = (camera_z + *(int *)((int)ctl + 0x3a)) - *(int *)(obj + 0x20);
   return;
 }
 
@@ -30996,17 +31027,17 @@ void follow_camera_offset /* Original: FUN_00019b30 */ (int *param_1)
  * copied to a0 and never written again before rts; alloc 0x32; +0 = object, object long +4 |= 0x132000, +4 =
  * DAT_0001b524[class].
  */
-uint * create_view_attached_controller /* Original: FUN_00019b82 */ (uint param_1,int param_2)
+uint * create_view_attached_controller /* Original: FUN_00019b82 */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x32-byte controller */
   
-  puVar1 = heap_alloc_cleared(0x32);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x132000;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
+  ctl = heap_alloc_cleared(0x32);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x132000;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -31018,17 +31049,17 @@ uint * create_view_attached_controller /* Original: FUN_00019b82 */ (uint param_
 /* VERIFIED (FUN_00019bbc): 0x19bbc..0x19c24 checked against an independent capstone disassembly and
  * found identical to the C: +8 / +0xc / +0x10 = camera - (object x + 0xdff, y - 0x133e, z +
  * 0x161d); word +0x22 = -DAT_0001d80e & 0x3fff, word +0x20 = -DAT_0001d810 & 0x3fff. */
-void tick_view_attached_object /* Original: FUN_00019bbc */ (int *param_1)
+void tick_view_attached_object /* Original: FUN_00019bbc */ (int *ctl /* view-attached controller */)
 
 {
-  int iVar1;
+  int obj; /* ctl +0 object */
   
-  iVar1 = *param_1;
-  param_1[2] = DAT_0001d838 - (*(int *)(iVar1 + 0x18) + 0xdff);
-  param_1[3] = DAT_0001d834 - (*(int *)(iVar1 + 0x1c) + -0x133e);
-  param_1[4] = DAT_0001d830 - (*(int *)(iVar1 + 0x20) + 0x161d);
-  *(ushort *)((int)param_1 + 0x22) = -DAT_0001d80e & 0x3fff;
-  *(ushort *)(param_1 + 8) = -DAT_0001d810 & 0x3fff;
+  obj = *ctl;
+  ctl[2] = camera_x - (*(int *)(obj + 0x18) + 0xdff);
+  ctl[3] = camera_y - (*(int *)(obj + 0x1c) + -0x133e);
+  ctl[4] = camera_z - (*(int *)(obj + 0x20) + 0x161d);
+  *(ushort *)((int)ctl + 0x22) = -neg_camera_heading & 0x3fff;
+  *(ushort *)(ctl + 8) = -neg_camera_pitch & 0x3fff;
   return;
 }
 
@@ -31047,13 +31078,13 @@ void tick_view_attached_object /* Original: FUN_00019bbc */ (int *param_1)
  * (a1), d0 = a1); identical to the C (in_A1 = the register destination, which Ghidra's
  * call sites in find_nearest_runway_approach_ends do not show).
  */
-void store_xyz_asr(int param_1,int param_2,int param_3,uint param_4) /* Original: FUN_00019c26 */
+void store_xyz_asr(int x,int y,int z,uint shift) /* Original: FUN_00019c26 */
 {
-  int *in_A1;
+  int *out; /* A1: destination int[3] (register argument) */
   
-  *in_A1 = param_1 >> (param_4 & 0x3f);
-  in_A1[1] = param_2 >> (param_4 & 0x3f);
-  in_A1[2] = param_3 >> (param_4 & 0x3f);
+  *out = x >> (shift & 0x3f);
+  out[1] = y >> (shift & 0x3f);
+  out[2] = z >> (shift & 0x3f);
   return;
 }
 
@@ -31092,162 +31123,162 @@ void store_xyz_asr(int param_1,int param_2,int param_3,uint param_4) /* Original
  * VERIFIED: checked against an independent capstone disassembly of the bytes; identical
  * to the C with the dropped arguments recorded.
  */
-undefined4 find_nearest_runway_approach_ends(undefined4 param_1,int *param_2,int *param_3) /* Original: FUN_00019c5e */
+undefined4 find_nearest_runway_approach_ends(undefined4 own /* own aircraft (only used by dropped call arguments) */,int *near_end /* nearer short-edge midpoint (out) */,int *far_end /* farther short-edge midpoint (out) */) /* Original: FUN_00019c5e */
 {
-  int *piVar1;
-  char *pcVar2;
-  short *psVar3;
-  int iVar4;
-  int iVar5;
-  int iVar6;
-  int iVar7;
-  int iVar8;
-  int iVar9;
-  int iVar10;
-  int iVar11;
-  int iVar12;
-  undefined4 uVar13;
-  int iVar14;
-  bool bVar15;
-  int local_6a;
-  int local_66;
-  int *local_62;
-  short local_5e;
-  short local_5c;
-  short local_5a;
-  int local_58;
-  int local_54;
-  int local_50;
-  int local_4c;
-  int local_48;
-  int local_44;
-  int local_34;
-  int local_30;
-  int local_2c;
-  int local_28;
-  int local_24;
-  int local_20;
-  int local_1c;
-  int local_18;
-  int local_14;
-  int local_10;
-  int local_c;
-  int local_8;
-  
-  local_6a = 0x7fffffff;
-  local_66 = 0x7fffffff;
-  local_62 = &DAT_0001b5a4 + DAT_0001b734;
-  local_5e = DAT_0001b734._2_2_;
-  local_5c = 0;
+  int *vert;
+  char *cand; /* candidate object */
+  short *vidx; /* pad face vertex index list (+0x18) */
+  int obj_dist; /* approx_dist3_xyz(own, object) */
+  int m34_x; /* vertex base, then |P1P2|, then (P4+P3) x */
+  int m34_y; /* |P2P3|, then (P4+P3) y */
+  int m12_x; /* (P1+P2) x */
+  int m12_y;
+  int m12_z;
+  int m34_z;
+  int near_dist; /* distance to the nearer midpoint */
+  int dist_m34;
+  undefined4 result; /* 1 = nothing within 0x40740 */
+  int face; /* face record (+0x48, stride 0x20) */
+  bool more;
+  int best_end_dist;
+  int best_obj_dist; /* frame -0x62 */
+  int *list_ptr;
+  short count;
+  short pass; /* 0 = object_pool, 1 = entity_array_1 */
+  short nfaces;
+  int far_x;
+  int far_y;
+  int far_z;
+  int near_x;
+  int near_y;
+  int near_z;
+  int p4_x; /* P4, frame -0x30 */
+  int p4_y;
+  int p4_z;
+  int p3_x; /* P3, frame -0x24 */
+  int p3_y;
+  int p3_z;
+  int p2_x; /* P2, frame -0x18 */
+  int p2_y;
+  int p2_z;
+  int p1_x; /* P1, frame -0xc */
+  int p1_y;
+  int p1_z;
+
+  best_end_dist = 0x7fffffff;
+  best_obj_dist = 0x7fffffff;
+  list_ptr = &object_pool + object_count;
+  count = object_count._2_2_;
+  pass = 0;
   do {
-    while (bVar15 = local_5e != 0, local_5e = local_5e + -1, bVar15) {
-      local_62 = local_62 + -1;
-      pcVar2 = (char *)*local_62;
-      if (*pcVar2 == '\x02') {
-        iVar4 = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)pcVar2 /* [PROVEN, move.l a5 at 0x19ccc] */);
-        if (iVar4 == 0x200) {
-          iVar4 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
-          if (iVar4 < local_66) {
-            iVar14 = *(int *)(pcVar2 + 0x48);
-            local_5a = *(short *)(pcVar2 + 0x3a);
-            while (iVar9 = local_8, iVar8 = local_c, iVar7 = local_10, bVar15 = local_5a != 0,
-                  local_5a = local_5a + -1, bVar15) {
-              if ((*(char *)(iVar14 + 0x16) == 'p') && (*(short *)(iVar14 + 0x14) == 4)) {
-                iVar5 = *(int *)(pcVar2 + 0x44);
-                psVar3 = *(short **)(iVar14 + 0x18);
-                piVar1 = (int *)(iVar5 + *psVar3 * 0xc);
-                store_xyz_asr( /* Original: FUN_00019c26 */*piVar1,piVar1[1],piVar1[2],(int)*(short *)(pcVar2 + 0x34));
-                piVar1 = (int *)(iVar5 + psVar3[1] * 0xc);
-                store_xyz_asr( /* Original: FUN_00019c26 */*piVar1,piVar1[1],piVar1[2],(int)*(short *)(pcVar2 + 0x34));
-                piVar1 = (int *)(iVar5 + psVar3[2] * 0xc);
-                store_xyz_asr( /* Original: FUN_00019c26 */*piVar1,piVar1[1],piVar1[2],(int)*(short *)(pcVar2 + 0x34));
-                piVar1 = (int *)(iVar5 + psVar3[3] * 0xc);
-                store_xyz_asr( /* Original: FUN_00019c26 */*piVar1,piVar1[1],piVar1[2],(int)*(short *)(pcVar2 + 0x34));
-                iVar5 = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
-                iVar6 = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
-                if (iVar6 < iVar5) {
-                  local_10 = local_1c;
-                  local_c = local_18;
-                  local_8 = local_14;
-                  local_1c = local_28;
-                  local_18 = local_24;
-                  local_14 = local_20;
-                  local_28 = local_34;
-                  local_24 = local_30;
-                  local_20 = local_2c;
-                  local_34 = iVar7;
-                  local_30 = iVar8;
-                  local_2c = iVar9;
+    while (more = count != 0, count = count + -1, more) {
+      list_ptr = list_ptr + -1;
+      cand = (char *)*list_ptr;
+      if (*cand == '\x02') {
+        obj_dist = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)cand /* [PROVEN, move.l a5 at 0x19ccc] */);
+        if (obj_dist == 0x200) {
+          obj_dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+          if (obj_dist < best_obj_dist) {
+            face = *(int *)(cand + 0x48);
+            nfaces = *(short *)(cand + 0x3a);
+            while (m12_z = p1_z, m12_y = p1_y, m12_x = p1_x, more = nfaces != 0,
+                  nfaces = nfaces + -1, more) {
+              if ((*(char *)(face + 0x16) == 'p') && (*(short *)(face + 0x14) == 4)) {
+                m34_x = *(int *)(cand + 0x44);
+                vidx = *(short **)(face + 0x18);
+                vert = (int *)(m34_x + *vidx * 0xc);
+                store_xyz_asr( /* Original: FUN_00019c26 */*vert,vert[1],vert[2],(int)*(short *)(cand + 0x34));
+                vert = (int *)(m34_x + vidx[1] * 0xc);
+                store_xyz_asr( /* Original: FUN_00019c26 */*vert,vert[1],vert[2],(int)*(short *)(cand + 0x34));
+                vert = (int *)(m34_x + vidx[2] * 0xc);
+                store_xyz_asr( /* Original: FUN_00019c26 */*vert,vert[1],vert[2],(int)*(short *)(cand + 0x34));
+                vert = (int *)(m34_x + vidx[3] * 0xc);
+                store_xyz_asr( /* Original: FUN_00019c26 */*vert,vert[1],vert[2],(int)*(short *)(cand + 0x34));
+                m34_x = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+                m34_y = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+                if (m34_y < m34_x) {
+                  p1_x = p2_x;
+                  p1_y = p2_y;
+                  p1_z = p2_z;
+                  p2_x = p3_x;
+                  p2_y = p3_y;
+                  p2_z = p3_z;
+                  p3_x = p4_x;
+                  p3_y = p4_y;
+                  p3_z = p4_z;
+                  p4_x = m12_x;
+                  p4_y = m12_y;
+                  p4_z = m12_z;
                 }
-                iVar7 = local_1c + local_10;
-                if (iVar7 < 0) {
-                  iVar7 = iVar7 + 1;
+                m12_x = p2_x + p1_x;
+                if (m12_x < 0) {
+                  m12_x = m12_x + 1;
                 }
-                iVar8 = local_18 + local_c;
-                if (iVar8 < 0) {
-                  iVar8 = iVar8 + 1;
+                m12_y = p2_y + p1_y;
+                if (m12_y < 0) {
+                  m12_y = m12_y + 1;
                 }
-                iVar9 = local_14 + local_8;
-                if (iVar9 < 0) {
-                  iVar9 = iVar9 + 1;
+                m12_z = p2_z + p1_z;
+                if (m12_z < 0) {
+                  m12_z = m12_z + 1;
                 }
-                iVar5 = local_34 + local_28;
-                if (iVar5 < 0) {
-                  iVar5 = iVar5 + 1;
+                m34_x = p4_x + p3_x;
+                if (m34_x < 0) {
+                  m34_x = m34_x + 1;
                 }
-                iVar6 = local_30 + local_24;
-                if (iVar6 < 0) {
-                  iVar6 = iVar6 + 1;
+                m34_y = p4_y + p3_y;
+                if (m34_y < 0) {
+                  m34_y = m34_y + 1;
                 }
-                iVar10 = local_2c + local_20;
-                if (iVar10 < 0) {
-                  iVar10 = iVar10 + 1;
+                m34_z = p4_z + p3_z;
+                if (m34_z < 0) {
+                  m34_z = m34_z + 1;
                 }
-                iVar11 = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
-                iVar12 = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
-                local_58 = iVar5 >> 1;
-                local_54 = iVar6 >> 1;
-                local_50 = iVar10 >> 1;
-                local_4c = iVar7 >> 1;
-                local_48 = iVar8 >> 1;
-                local_44 = iVar9 >> 1;
-                if (iVar12 < iVar11) {
-                  iVar11 = iVar12;
-                  local_58 = iVar7 >> 1;
-                  local_54 = iVar8 >> 1;
-                  local_50 = iVar9 >> 1;
-                  local_4c = iVar5 >> 1;
-                  local_48 = iVar6 >> 1;
-                  local_44 = iVar10 >> 1;
+                near_dist = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+                dist_m34 = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+                far_x = m34_x >> 1;
+                far_y = m34_y >> 1;
+                far_z = m34_z >> 1;
+                near_x = m12_x >> 1;
+                near_y = m12_y >> 1;
+                near_z = m12_z >> 1;
+                if (dist_m34 < near_dist) {
+                  near_dist = dist_m34;
+                  far_x = m12_x >> 1;
+                  far_y = m12_y >> 1;
+                  far_z = m12_z >> 1;
+                  near_x = m34_x >> 1;
+                  near_y = m34_y >> 1;
+                  near_z = m34_z >> 1;
                 }
-                local_66 = iVar4;
-                if (iVar11 < local_6a) {
-                  *param_2 = local_4c;
-                  param_2[1] = local_48;
-                  param_2[2] = local_44;
-                  *param_3 = local_58;
-                  param_3[1] = local_54;
-                  param_3[2] = local_50;
-                  local_6a = iVar11;
+                best_obj_dist = obj_dist;
+                if (near_dist < best_end_dist) {
+                  *near_end = near_x;
+                  near_end[1] = near_y;
+                  near_end[2] = near_z;
+                  *far_end = far_x;
+                  far_end[1] = far_y;
+                  far_end[2] = far_z;
+                  best_end_dist = near_dist;
                 }
               }
-              iVar14 = iVar14 + 0x20;
+              face = face + 0x20;
             }
           }
         }
       }
     }
-    local_62 = &DAT_0001d4a4 + DAT_0001c1e0;
-    local_5e = DAT_0001c1e0._2_2_;
-    local_5c = local_5c + 1;
-  } while (local_5c < 2);
-  if ((local_6a == 0x7fffffff) || (0x40740 < local_6a)) {
-    uVar13 = 1;
+    list_ptr = &entity_array_1 + entity_array_1_count;
+    count = entity_array_1_count._2_2_;
+    pass = pass + 1;
+  } while (pass < 2);
+  if ((best_end_dist == 0x7fffffff) || (0x40740 < best_end_dist)) {
+    result = 1;
   }
   else {
-    uVar13 = 0;
+    result = 0;
   }
-  return uVar13;
+  return result;
 }
 
 
@@ -31282,74 +31313,74 @@ undefined4 find_nearest_runway_approach_ends(undefined4 param_1,int *param_2,int
  * VERIFIED: checked against an independent capstone disassembly of the bytes; identical
  * to the C with the call-argument correction.
  */
-undefined4 try_begin_landing_approach(int *param_1) /* Original: FUN_00019fba */
+undefined4 try_begin_landing_approach(int *ctl /* aircraft controller */) /* Original: FUN_00019fba */
 {
-  int iVar1;
-  int iVar2;
-  int local_1c;
-  int local_18;
-  int local_14;
-  int local_10;
-  int local_c;
-  int local_8;
-  
-  iVar1 = *param_1;
-  iVar2 = find_nearest_runway_approach_ends( /* Original: FUN_00019c5e */iVar1,&local_10,&local_1c);
-  if (((iVar2 == 0) && (iVar2 = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, runway end A at local_10 / local_c / local_8) [PROVEN, pushes 0x19fe2..0x19ffa] */), 9999 < iVar2)) && (iVar2 < 0x26ac1)) {
-    iVar2 = (local_1c - local_10) * 6;
-    if (iVar2 < 0) {
-      iVar2 = iVar2 + 0x3f;
+  int obj; /* ctl +0 object */
+  int tmp; /* result / distance / scaled values */
+  int end_b_x; /* runway end B (frame -0x18) */
+  int end_b_y;
+  int end_b_z;
+  int end_a_x; /* runway end A (frame -0xc), the nearer */
+  int end_a_y;
+  int end_a_z;
+
+  obj = *ctl;
+  tmp = find_nearest_runway_approach_ends( /* Original: FUN_00019c5e */obj,&end_a_x,&end_b_x);
+  if (((tmp == 0) && (tmp = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, runway end A at local_10 / local_c / local_8) [PROVEN, pushes 0x19fe2..0x19ffa] */), 9999 < tmp)) && (tmp < 0x26ac1)) {
+    tmp = (end_b_x - end_a_x) * 6;
+    if (tmp < 0) {
+      tmp = tmp + 0x3f;
     }
-    DAT_000267bc = local_10 + (iVar2 >> 6);
-    DAT_000267c0 = local_c;
-    iVar2 = (local_14 - local_8) * 6;
-    if (iVar2 < 0) {
-      iVar2 = iVar2 + 0x3f;
+    glide_aim_x = end_a_x + (tmp >> 6);
+    glide_aim_y = end_a_y;
+    tmp = (end_b_z - end_a_z) * 6;
+    if (tmp < 0) {
+      tmp = tmp + 0x3f;
     }
-    DAT_000267c4 = local_8 + (iVar2 >> 6);
-    DAT_000267b2 = (short)(local_1c - local_10 >> 3);
-    DAT_000267b6 = (short)(local_18 - local_c >> 3);
-    DAT_000267ba = (short)(local_14 - local_8 >> 3);
-    iVar2 = isqrt_floor( /* Original: FUN_0000e372 */(int)DAT_000267b6 * (int)DAT_000267b6 +
-                         (int)DAT_000267b2 * (int)DAT_000267b2 +
-                         (int)DAT_000267ba * (int)DAT_000267ba);
-    DAT_000267b2 = (short)(((int)DAT_000267b2 << 0xc) / (int)(short)iVar2);
-    DAT_000267b6 = 0xfdc0;
-    DAT_000267ba = (short)(((int)DAT_000267ba << 0xc) / (int)(short)iVar2);
-    iVar2 = DAT_000267b2 * 10000;
-    if (iVar2 < 0) {
-      iVar2 = iVar2 + 0xfff;
+    glide_aim_z = end_a_z + (tmp >> 6);
+    glide_dir_x = (short)(end_b_x - end_a_x >> 3);
+    glide_dir_y = (short)(end_b_y - end_a_y >> 3);
+    glide_dir_z = (short)(end_b_z - end_a_z >> 3);
+    tmp = isqrt_floor( /* Original: FUN_0000e372 */(int)glide_dir_y * (int)glide_dir_y +
+                         (int)glide_dir_x * (int)glide_dir_x +
+                         (int)glide_dir_z * (int)glide_dir_z);
+    glide_dir_x = (short)(((int)glide_dir_x << 0xc) / (int)(short)tmp);
+    glide_dir_y = 0xfdc0;
+    glide_dir_z = (short)(((int)glide_dir_z << 0xc) / (int)(short)tmp);
+    tmp = glide_dir_x * 10000;
+    if (tmp < 0) {
+      tmp = tmp + 0xfff;
     }
-    DAT_000267bc = DAT_000267bc + (iVar2 >> 0xc);
-    DAT_000267c0 = DAT_000267c0 + 0x43;
-    iVar2 = DAT_000267ba * 10000;
-    if (iVar2 < 0) {
-      iVar2 = iVar2 + 0xfff;
+    glide_aim_x = glide_aim_x + (tmp >> 0xc);
+    glide_aim_y = glide_aim_y + 0x43;
+    tmp = glide_dir_z * 10000;
+    if (tmp < 0) {
+      tmp = tmp + 0xfff;
     }
-    DAT_000267c4 = DAT_000267c4 + (iVar2 >> 0xc);
-    DAT_000267ac = 0;
-    if ('\0' < *(char *)((int)param_1 + 0x67b)) {
-      *(char *)((int)param_1 + 0x67b) = -*(char *)((int)param_1 + 0x67b);
+    glide_aim_z = glide_aim_z + (tmp >> 0xc);
+    glide_blend = 0;
+    if ('\0' < *(char *)((int)ctl + 0x67b)) {
+      *(char *)((int)ctl + 0x67b) = -*(char *)((int)ctl + 0x67b);
     }
-    *(ushort *)(param_1 + 0x1a1) = *(ushort *)(param_1 + 0x1a1) & 0xbfff;
-    *(undefined4 *)((int)param_1 + 0x622) = 0;
-    *(undefined2 *)(param_1 + 0x188) = 0;
-    DAT_000267a8 = 0;
-    DAT_000267a4 = 0;
-    DAT_000267a0 = *(undefined4 *)(iVar1 + 0x18);
-    DAT_0002679c = *(undefined4 *)(iVar1 + 0x20);
-    if (DAT_000267c0 < 0x44) {
-      DAT_000267ae = 0x11b;
+    *(ushort *)(ctl + 0x1a1) = *(ushort *)(ctl + 0x1a1) & 0xbfff;
+    *(undefined4 *)((int)ctl + 0x622) = 0;
+    *(undefined2 *)(ctl + 0x188) = 0;
+    glide_long_267a8 = 0;
+    glide_long_267a4 = 0;
+    glide_start_x = *(undefined4 *)(obj + 0x18);
+    glide_start_z = *(undefined4 *)(obj + 0x20);
+    if (glide_aim_y < 0x44) {
+      glide_height_floor = 0x11b;
     }
     else {
-      DAT_000267ae = 0x181;
+      glide_height_floor = 0x181;
     }
-    DAT_00026798 = *(undefined4 *)((int)param_1 + 0x32);
+    glide_saved_state = *(undefined4 *)((int)ctl + 0x32);
     /* Literal 0x1A186 = tick_landing_approach_glide @0x1A1A6 − 0x20
      * [BLOCKED false mid-label family]; intended AI callback is 0x1A1A6.
      * Resolved [PROVEN]: +0x32 holds RUNTIME addresses (file - 0x20), like the AI states
      * 0x110d4 / 0x11162 / 0x111ba / 0x112c0; 0x1a186 is tick_landing_approach_glide. */
-    *(undefined4 *)((int)param_1 + 0x32) = 0x1a186;
+    *(undefined4 *)((int)ctl + 0x32) = 0x1a186;
     return 0;
   }
   return 1;
@@ -31372,80 +31403,80 @@ undefined4 try_begin_landing_approach(int *param_1) /* Original: FUN_00019fba */
  * disassembly (section checks in the body); identical to the C with the call-argument
  * corrections for approx_dist3_xyz and the four abs_int (Ghidra FUN_00002de8) calls.
  */
-void tick_landing_approach_glide(int *param_1) /* Original: FUN_0001a1a6 */
+void tick_landing_approach_glide(int *ctl /* aircraft controller */) /* Original: FUN_0001a1a6 */
 {
-  undefined4 uVar1;
-  undefined1 uVar2;
-  int *piVar3;
-  int iVar4;
-  int iVar5;
-  int iVar6;
-  int iVar7;
-  int iVar8;
-  int iVar9;
-  uint uVar10;
-  short sVar11;
-  int iVar12;
-  short local_12;
-  ushort local_6;
+  undefined4 saved_2e; /* long +0x2e, restored at exit */
+  undefined1 saved_gear; /* byte +0x679, restored at exit */
+  int *tracker; /* type10_controller snapshot */
+  int range; /* approx_dist3_xyz(own, aim) */
+  int tmp;
+  int lead; /* s: along-track lead; reused for abs / lateral offset / height error */
+  int tx; /* target x */
+  int tz; /* target z */
+  int obj; /* ctl +0 object; reused for intermediate values */
+  uint sum; /* |dx| + |dz| */
+  short shift;
+  int ty; /* target y */
+  short throttle_target; /* 0 / 0x7bc / 0x9d8 */
+  ushort heading; /* attitude_from_velocity heading out */
   
   /* Snapshot aim (267bc/c0/c4), save +0x2e/+0x679, range to aim via approx_dist3_xyz.
    * Force +0x2e to 0xFFFFF060 while computing (restored at exit). */
-  iVar8 = DAT_000267c4;
-  iVar12 = DAT_000267c0;
-  iVar7 = DAT_000267bc;
-  uVar1 = *(undefined4 *)((int)param_1 + 0x2e);
-  uVar2 = *(undefined1 *)((int)param_1 + 0x679);
-  iVar9 = *param_1;
-  iVar4 = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, aim 0x267bc / c0 / c4) in 3D [PROVEN, pushes 0x1a1d4..0x1a1e2] */);
-  *(undefined4 *)((int)param_1 + 0x2e) = 0xfffff060;
+  tz = glide_aim_z;
+  ty = glide_aim_y;
+  tx = glide_aim_x;
+  saved_2e = *(undefined4 *)((int)ctl + 0x2e);
+  saved_gear = *(undefined1 *)((int)ctl + 0x679);
+  obj = *ctl;
+  range = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, aim 0x267bc / c0 / c4) in 3D [PROVEN, pushes 0x1a1d4..0x1a1e2] */);
+  *(undefined4 *)((int)ctl + 0x2e) = 0xfffff060;
   /* iVar6 = along-track lead from range bands (10000 / 0x8e30 / 13000). */
-  if (iVar4 < 0xae31) {
-    if (iVar4 < 0x8e31) {
-      iVar6 = iVar4 + -10000;
+  if (range < 0xae31) {
+    if (range < 0x8e31) {
+      lead = range + -10000;
     }
     else {
-      iVar6 = (iVar4 + -0x8e30) * 3000;
-      if (iVar6 < 0) {
-        iVar6 = iVar6 + 0x1fff;
+      lead = (range + -0x8e30) * 3000;
+      if (lead < 0) {
+        lead = lead + 0x1fff;
       }
-      iVar6 = (iVar4 + -10000) - (iVar6 >> 0xd);
+      lead = (range + -10000) - (lead >> 0xd);
     }
   }
   else {
-    iVar6 = iVar4 + -13000;
+    lead = range + -13000;
   }
   /* Slide aim XYZ opposite glide dir (267b2/b6/ba) by lead iVar6. */
-  iVar5 = iVar6 * DAT_000267b2;
-  if (iVar5 < 0) {
-    iVar5 = iVar5 + 0xfff;
+  tmp = lead * glide_dir_x;
+  if (tmp < 0) {
+    tmp = tmp + 0xfff;
   }
-  iVar7 = iVar7 - (iVar5 >> 0xc);
-  iVar5 = iVar6 * DAT_000267b6;
-  if (iVar5 < 0) {
-    iVar5 = iVar5 + 0xfff;
+  tx = tx - (tmp >> 0xc);
+  tmp = lead * glide_dir_y;
+  if (tmp < 0) {
+    tmp = tmp + 0xfff;
   }
-  iVar12 = iVar12 - (iVar5 >> 0xc);
+  ty = ty - (tmp >> 0xc);
   /* Vertical floor: clamp Y to 267c0+267ae or blend toward obj+0x1c. */
-  if (DAT_000267c0 + DAT_000267ae < iVar12) {
-    if (iVar6 < 0x9c41) {
-      if (iVar6 < 0x8c41) goto LAB_0001a2da;
-      iVar5 = (iVar6 + -0x8c40) * (*(int *)(iVar9 + 0x1c) - iVar12);
-      if (iVar5 < 0) {
-        iVar5 = iVar5 + 0xfff;
+  if (glide_aim_y + glide_height_floor < ty) {
+    if (lead < 0x9c41) {
+      if (lead < 0x8c41) goto LAB_0001a2da;
+      tmp = (lead + -0x8c40) * (*(int *)(obj + 0x1c) - ty);
+      if (tmp < 0) {
+        tmp = tmp + 0xfff;
       }
-      iVar5 = iVar5 >> 0xc;
+      tmp = tmp >> 0xc;
     }
     else {
-      iVar5 = *(int *)(iVar9 + 0x1c) - iVar12;
+      tmp = *(int *)(obj + 0x1c) - ty;
     }
-    if (iVar5 < 0) {
-      iVar5 = iVar5 + 7;
+    if (tmp < 0) {
+      tmp = tmp + 7;
     }
-    iVar12 = (iVar5 >> 3) + iVar12;
+    ty = (tmp >> 3) + ty;
   }
   else {
-    iVar12 = DAT_000267c0 + DAT_000267ae;
+    ty = glide_aim_y + glide_height_floor;
   }
   /* Section check 0x1a1a6..0x1a2d8 (part 1 of 2) [PROVEN, matches the C; independent
    * capstone disassembly]: saves long +0x2e and sext byte +0x679 (gear); d =
@@ -31459,132 +31490,132 @@ void tick_landing_approach_glide(int *param_1) /* Original: FUN_0001a1a6 */
    * target y) / 8 and 0x8c40 < s <= 40000 adds ((s - 0x8c40) * (own y - target y) /
    * 4096) / 8 (all truncating). Part 2 (0x1a2da..) is still to be checked. */
 LAB_0001a2da:
-  iVar5 = iVar6 * DAT_000267ba;
-  if (iVar5 < 0) {
-    iVar5 = iVar5 + 0xfff;
+  tmp = lead * glide_dir_z;
+  if (tmp < 0) {
+    tmp = tmp + 0xfff;
   }
-  iVar8 = iVar8 - (iVar5 >> 0xc);
+  tz = tz - (tmp >> 0xc);
   /* Throttle target from lead distance: 0 / 0x7bc / 0x9d8. */
-  if (iVar6 < 0x9ab1) {
-    if (iVar6 < 4000) {
-      local_12 = 0;
+  if (lead < 0x9ab1) {
+    if (lead < 4000) {
+      throttle_target = 0;
     }
     else {
-      local_12 = 0x7bc;
+      throttle_target = 0x7bc;
     }
   }
   else {
-    local_12 = 0x9d8;
+    throttle_target = 0x9d8;
   }
   /* Heading from Δxz to aim; lateral offset via sin/cos of local_6. */
-  iVar6 = FUN_00002de8( /* = abs_int(own x - target x) [PROVEN: lea.l $2de8.l runtime = file 0x2e08; arg pushed at 0x1a31e, dropped by Ghidra] */);
-  iVar5 = FUN_00002de8( /* = abs_int(own z - target z) [PROVEN, arg pushed at 0x1a330] */);
-  sVar11 = 0;
-  for (uVar10 = iVar5 + iVar6; (uVar10 & 0xffff8000) != 0; uVar10 = (int)uVar10 >> 1) {
-    sVar11 = sVar11 + 1;
+  lead = FUN_00002de8( /* = abs_int(own x - target x) [PROVEN: lea.l $2de8.l runtime = file 0x2e08; arg pushed at 0x1a31e, dropped by Ghidra] */);
+  tmp = FUN_00002de8( /* = abs_int(own z - target z) [PROVEN, arg pushed at 0x1a330] */);
+  shift = 0;
+  for (sum = tmp + lead; (sum & 0xffff8000) != 0; sum = (int)sum >> 1) {
+    shift = shift + 1;
   }
-  attitude_from_velocity( /* Original: FUN_00001f22 */(short)(iVar7 - *(int *)(iVar9 + 0x18) >> ((int)(short)(sVar11 + 1) & 0x3fU)),0,
-               (short)(iVar8 - *(int *)(iVar9 + 0x20) >> ((int)(short)(sVar11 + 1) & 0x3fU)),0,0,
-               (ushort *)0x0,&local_6);
-  iVar6 = (*(int *)(iVar9 + 0x18) - DAT_000267bc) * (int)DAT_000267ba -
-          (*(int *)(iVar9 + 0x20) - DAT_000267c4) * (int)DAT_000267b2;
-  if (iVar6 < 0) {
-    iVar6 = iVar6 + 0xfff;
+  attitude_from_velocity( /* Original: FUN_00001f22 */(short)(tx - *(int *)(obj + 0x18) >> ((int)(short)(shift + 1) & 0x3fU)),0,
+               (short)(tz - *(int *)(obj + 0x20) >> ((int)(short)(shift + 1) & 0x3fU)),0,0,
+               (ushort *)0x0,&heading);
+  lead = (*(int *)(obj + 0x18) - glide_aim_x) * (int)glide_dir_z -
+          (*(int *)(obj + 0x20) - glide_aim_z) * (int)glide_dir_x;
+  if (lead < 0) {
+    lead = lead + 0xfff;
   }
-  iVar5 = abs_int( /* Original: FUN_00002e08 */(int)(short)(iVar6 >> 0xc));
-  iVar6 = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)local_6);
-  iVar6 = (int)(short)iVar6 * (int)(short)iVar5;
-  if (iVar6 < 0) {
-    iVar6 = iVar6 + 0xfff;
+  tmp = abs_int( /* Original: FUN_00002e08 */(int)(short)(lead >> 0xc));
+  lead = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)heading);
+  lead = (int)(short)lead * (int)(short)tmp;
+  if (lead < 0) {
+    lead = lead + 0xfff;
   }
-  iVar7 = iVar7 - (iVar6 >> 0xc);
-  iVar6 = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)local_6);
-  iVar6 = (int)(short)iVar6 * (int)(short)iVar5;
-  if (iVar6 < 0) {
-    iVar6 = iVar6 + 0xfff;
+  tx = tx - (lead >> 0xc);
+  lead = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)heading);
+  lead = (int)(short)lead * (int)(short)tmp;
+  if (lead < 0) {
+    lead = lead + 0xfff;
   }
-  iVar8 = (iVar6 >> 0xc) + iVar8;
+  tz = (lead >> 0xc) + tz;
   /* Touchdown (+0x63e): restore prior AI callback. */
-  if (*(char *)((int)param_1 + 0x63e) != '\0') {
-    *(undefined4 *)((int)param_1 + 0x32) = DAT_00026798;
+  if (*(char *)((int)ctl + 0x63e) != '\0') {
+    *(undefined4 *)((int)ctl + 0x32) = glide_saved_state;
   }
   /* Optional 2-frame blend (267ac) toward predicted entity position. */
-  if (DAT_000267ac != 0) {
-    iVar7 = (int)DAT_000267ac * (iVar7 - DAT_000267bc) +
-            (2 - DAT_000267ac) * ((*(int *)(iVar9 + 0x18) + param_1[2] * 0x2d) - DAT_000267bc);
-    if (iVar7 < 0) {
-      iVar7 = iVar7 + 1;
+  if (glide_blend != 0) {
+    tx = (int)glide_blend * (tx - glide_aim_x) +
+            (2 - glide_blend) * ((*(int *)(obj + 0x18) + ctl[2] * 0x2d) - glide_aim_x);
+    if (tx < 0) {
+      tx = tx + 1;
     }
-    iVar12 = iVar12 * DAT_000267ac +
-             (*(int *)(iVar9 + 0x1c) + param_1[3] * 0x2d) * (2 - DAT_000267ac);
-    if (iVar12 < 0) {
-      iVar12 = iVar12 + 1;
+    ty = ty * glide_blend +
+             (*(int *)(obj + 0x1c) + ctl[3] * 0x2d) * (2 - glide_blend);
+    if (ty < 0) {
+      ty = ty + 1;
     }
-    iVar12 = iVar12 >> 1;
-    iVar8 = (int)DAT_000267ac * (iVar8 - DAT_000267c4) +
-            (2 - DAT_000267ac) * ((*(int *)(iVar9 + 0x20) + param_1[4] * 0x2d) - DAT_000267c4);
-    if (iVar8 < 0) {
-      iVar8 = iVar8 + 1;
+    ty = ty >> 1;
+    tz = (int)glide_blend * (tz - glide_aim_z) +
+            (2 - glide_blend) * ((*(int *)(obj + 0x20) + ctl[4] * 0x2d) - glide_aim_z);
+    if (tz < 0) {
+      tz = tz + 1;
     }
-    iVar7 = DAT_000267bc + (iVar7 >> 1);
-    iVar8 = DAT_000267c4 + (iVar8 >> 1);
-    if (DAT_000267ac == 1) {
-      DAT_0002679c = iVar8;
-      DAT_000267a0 = iVar7;
+    tx = glide_aim_x + (tx >> 1);
+    tz = glide_aim_z + (tz >> 1);
+    if (glide_blend == 1) {
+      glide_start_z = tz;
+      glide_start_x = tx;
     }
-    DAT_000267ac = DAT_000267ac + 1;
-    if (DAT_000267ac == 2) {
-      DAT_000267ac = 0;
+    glide_blend = glide_blend + 1;
+    if (glide_blend == 2) {
+      glide_blend = 0;
     }
   }
-  iVar6 = iVar12 - *(int *)(iVar9 + 0x1c);
-  iVar9 = *(int *)((int)param_1 + 0x622);
-  *(int *)((int)param_1 + 0x622) = iVar6;
-  piVar3 = DAT_00020b40;
-  iVar9 = DAT_000267a4 + iVar6 * 0x21 + iVar9 * -0x20;
-  DAT_000267a4 = iVar9 % 0x10;
-  if (iVar9 < 0) {
-    iVar9 = iVar9 + 0xf;
+  lead = ty - *(int *)(obj + 0x1c);
+  obj = *(int *)((int)ctl + 0x622);
+  *(int *)((int)ctl + 0x622) = lead;
+  tracker = type10_controller;
+  obj = glide_long_267a4 + lead * 0x21 + obj * -0x20;
+  glide_long_267a4 = obj % 0x10;
+  if (obj < 0) {
+    obj = obj + 0xf;
   }
-  DAT_000267a8 = (iVar9 >> 4) + DAT_000267a8;
-  if (DAT_000267a8 < 0x4b1) {
-    if (DAT_000267a8 < -0x4b0) {
-      DAT_000267a8 = -0x4b0;
+  glide_long_267a8 = (obj >> 4) + glide_long_267a8;
+  if (glide_long_267a8 < 0x4b1) {
+    if (glide_long_267a8 < -0x4b0) {
+      glide_long_267a8 = -0x4b0;
     }
   }
   else {
-    DAT_000267a8 = 0x4b0;
+    glide_long_267a8 = 0x4b0;
   }
-  iVar12 = DAT_000267a8 + iVar12;
-  iVar7 = iVar7 - DAT_000267a0;
-  if (iVar7 < 0) {
-    iVar7 = iVar7 + 7;
+  ty = glide_long_267a8 + ty;
+  tx = tx - glide_start_x;
+  if (tx < 0) {
+    tx = tx + 7;
   }
-  iVar9 = DAT_000267a0 + (iVar7 >> 3);
-  iVar8 = iVar8 - DAT_0002679c;
-  if (iVar8 < 0) {
-    iVar8 = iVar8 + 7;
+  obj = glide_start_x + (tx >> 3);
+  tz = tz - glide_start_z;
+  if (tz < 0) {
+    tz = tz + 7;
   }
-  iVar7 = DAT_0002679c + (iVar8 >> 3);
-  DAT_0002679c = iVar7;
-  DAT_000267a0 = iVar9;
+  tx = glide_start_z + (tz >> 3);
+  glide_start_z = tx;
+  glide_start_x = obj;
   /* Mirror aim into optional tracker object DAT_00020b40. */
-  if (DAT_00020b40 != (int *)0x0) {
-    *(int *)(*DAT_00020b40 + 0x18) = iVar9;
-    *(int *)(*piVar3 + 0x1c) = iVar12;
-    *(int *)(*piVar3 + 0x20) = iVar7;
+  if (type10_controller != (int *)0x0) {
+    *(int *)(*type10_controller + 0x18) = obj;
+    *(int *)(*tracker + 0x1c) = ty;
+    *(int *)(*tracker + 0x20) = tx;
   }
-  adjust_ai_throttle_vs_speed( /* Original: FUN_00010c2c */param_1,local_12);
-  steer_entity_toward_point( /* Original: FUN_00010b2e */param_1,iVar9,iVar12,iVar7);
+  adjust_ai_throttle_vs_speed( /* Original: FUN_00010c2c */ctl,throttle_target);
+  steer_entity_toward_point( /* Original: FUN_00010b2e */ctl,obj,ty,tx);
   /* Mid-band range + abs noise: abort glide, restore prior +0x32. */
-  if (((iVar4 < 18000) && (15000 < iVar4)) &&
-     ((iVar9 = FUN_00002de8( /* = abs_int(vertical error: target y - own y, register d2) [PROVEN, 0x1a5e8] */), 100 < iVar9 || (iVar9 = FUN_00002de8( /* = abs_int(sext local_12 - (+0x62a >> 2)): speed error [PROVEN, 0x1a5fa..0x1a602] */), 0x5a < iVar9)))) {
-    _DAT_0001b83c = 1;
-    *(undefined4 *)((int)param_1 + 0x32) = DAT_00026798;
+  if (((range < 18000) && (15000 < range)) &&
+     ((obj = FUN_00002de8( /* = abs_int(vertical error: target y - own y, register d2) [PROVEN, 0x1a5e8] */), 100 < obj || (obj = FUN_00002de8( /* = abs_int(sext local_12 - (+0x62a >> 2)): speed error [PROVEN, 0x1a5fa..0x1a602] */), 0x5a < obj)))) {
+    snd_approach_ok = 1;
+    *(undefined4 *)((int)ctl + 0x32) = glide_saved_state;
   }
-  *(undefined4 *)((int)param_1 + 0x2e) = uVar1;
-  *(undefined1 *)((int)param_1 + 0x679) = uVar2;
-  update_aircraft_entity(param_1);
+  *(undefined4 *)((int)ctl + 0x2e) = saved_2e;
+  *(undefined1 *)((int)ctl + 0x679) = saved_gear;
+  update_aircraft_entity(ctl);
   /* Section check 0x1a2da..0x1a63a (part 2 of 2) [PROVEN, matches the C with the abs_int
    * argument corrections; independent capstone disassembly]: target z = aim z - s * word
    * 0x267ba / 4096; throttle target local_12 = 0x9d8 (s > 0x9ab0) / 0x7bc / 0 (s < 4000).
@@ -31631,123 +31662,123 @@ LAB_0001a2da:
  * The return value is always 0 (moveq #0,d0); Ghidra's stale puVar6 returns were corrected and no caller
  * reads it. 0x1a6b2 is a separate entry (args d0 / a0 / a1 with cmpa / bmi) that joins this body at
  * 0x1a648 or 0x1a6c0. Otherwise identical to the C. */
-undefined4 * memmove_block(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3) /* Original: FUN_0001a63e */
+undefined4 * memmove_block(undefined4 *src,undefined4 *dst,undefined4 *nbytes) /* Original: FUN_0001a63e */
 {
-  int iVar1;
-  int iVar2;
-  uint uVar3;
-  uint uVar4;
-  undefined2 uVar5;
-  short sVar7;
-  undefined4 *puVar8;
-  undefined4 *puVar9;
-  undefined4 *puVar6;
+  int count; /* dbra counter (low word) with high-word carry */
+  int count_next;
+  uint nlongs; /* long count (dbra) */
+  uint nlongs_next;
+  undefined2 hi_word; /* high word kept by CONCAT22 */
+  short lo_count; /* low word after dbra decrement */
+  undefined4 *d; /* destination cursor; first |src - dst| */
+  undefined4 *s; /* source cursor */
+  undefined4 *diff; /* src - dst; reused as scratch */
   
   /* param_1=src, param_2=dst, param_3=nbytes */
-  puVar6 = (undefined4 *)((int)param_1 - (int)param_2);
-  if (puVar6 != (undefined4 *)0x0) {
-    puVar8 = puVar6;
-    if (((int)param_1 < (int)param_2) &&
-       (puVar8 = (undefined4 *)-(int)puVar6,
-       (undefined4 *)-(int)param_3 == puVar6 || (int)puVar8 < (int)param_3)) {
-      puVar6 = (undefined4 *)((uint)param_1 | (uint)param_2);
-      puVar8 = (undefined4 *)((int)param_3 + (int)param_2);
-      puVar9 = (undefined4 *)((int)param_3 + (int)param_1);
-      if ((((uint)puVar6 & 1) == 0) && (puVar6 = (undefined4 *)((int)puVar9 + 2), puVar6 != puVar8))
+  diff = (undefined4 *)((int)src - (int)dst);
+  if (diff != (undefined4 *)0x0) {
+    d = diff;
+    if (((int)src < (int)dst) &&
+       (d = (undefined4 *)-(int)diff,
+       (undefined4 *)-(int)nbytes == diff || (int)d < (int)nbytes)) {
+      diff = (undefined4 *)((uint)src | (uint)dst);
+      d = (undefined4 *)((int)nbytes + (int)dst);
+      s = (undefined4 *)((int)nbytes + (int)src);
+      if ((((uint)diff & 1) == 0) && (diff = (undefined4 *)((int)s + 2), diff != d))
       {
-        uVar5 = (undefined2)((uint)puVar6 >> 0x10);
-        puVar6 = (undefined4 *)(CONCAT22(uVar5,(ushort)param_3) & 0xffff0003);
-        if (((uint)param_3 & 3) != 0) {
-          puVar6 = (undefined4 *)CONCAT22(uVar5,((ushort)param_3 & 3) - 1);
+        hi_word = (undefined2)((uint)diff >> 0x10);
+        diff = (undefined4 *)(CONCAT22(hi_word,(ushort)nbytes) & 0xffff0003);
+        if (((uint)nbytes & 3) != 0) {
+          diff = (undefined4 *)CONCAT22(hi_word,((ushort)nbytes & 3) - 1);
           do {
-            puVar9 = (undefined4 *)((int)puVar9 + -1);
-            puVar8 = (undefined4 *)((int)puVar8 + -1);
-            *(undefined1 *)puVar8 = *(undefined1 *)puVar9;
-            sVar7 = (short)puVar6 + -1;
-            puVar6 = (undefined4 *)CONCAT22((short)((uint)puVar6 >> 0x10),sVar7);
-          } while (sVar7 != -1);
+            s = (undefined4 *)((int)s + -1);
+            d = (undefined4 *)((int)d + -1);
+            *(undefined1 *)d = *(undefined1 *)s;
+            lo_count = (short)diff + -1;
+            diff = (undefined4 *)CONCAT22((short)((uint)diff >> 0x10),lo_count);
+          } while (lo_count != -1);
         }
-        uVar3 = (uint)param_3 >> 2;
-        if (uVar3 != 0) {
-          uVar3 = uVar3 - 1;
+        nlongs = (uint)nbytes >> 2;
+        if (nlongs != 0) {
+          nlongs = nlongs - 1;
         }
         do {
           do {
-            puVar9 = puVar9 + -1;
-            puVar8 = puVar8 + -1;
-            *puVar8 = *puVar9;
-            sVar7 = (short)uVar3 + -1;
-            uVar4 = CONCAT22((short)(uVar3 >> 0x10),sVar7);
-            uVar3 = uVar4;
-          } while (sVar7 != -1);
-          uVar3 = uVar4 - 0x10000;
-        } while (0xffff < (int)uVar4);
+            s = s + -1;
+            d = d + -1;
+            *d = *s;
+            lo_count = (short)nlongs + -1;
+            nlongs_next = CONCAT22((short)(nlongs >> 0x10),lo_count);
+            nlongs = nlongs_next;
+          } while (lo_count != -1);
+          nlongs = nlongs_next - 0x10000;
+        } while (0xffff < (int)nlongs_next);
       }
       else {
-        iVar1 = (int)param_3 + -1;
-        if ((int)param_3 < 1) {
+        count = (int)nbytes + -1;
+        if ((int)nbytes < 1) {
           return (undefined4 *)0; /* every exit is moveq #0,d0 (0x1a6aa / 0x1a710); Ghidra returned the stale puVar6 */
         }
         do {
           do {
-            puVar9 = (undefined4 *)((int)puVar9 + -1);
-            puVar8 = (undefined4 *)((int)puVar8 + -1);
-            *(undefined1 *)puVar8 = *(undefined1 *)puVar9;
-            sVar7 = (short)iVar1 + -1;
-            iVar2 = CONCAT22((short)((uint)iVar1 >> 0x10),sVar7);
-            iVar1 = iVar2;
-          } while (sVar7 != -1);
-          iVar1 = iVar2 + -0x10000;
-        } while (0xffff < iVar2);
+            s = (undefined4 *)((int)s + -1);
+            d = (undefined4 *)((int)d + -1);
+            *(undefined1 *)d = *(undefined1 *)s;
+            lo_count = (short)count + -1;
+            count_next = CONCAT22((short)((uint)count >> 0x10),lo_count);
+            count = count_next;
+          } while (lo_count != -1);
+          count = count_next + -0x10000;
+        } while (0xffff < count_next);
       }
       return (undefined4 *)0; /* every exit is moveq #0,d0 (0x1a6aa / 0x1a710); Ghidra returned the stale puVar6 */
     }
-    puVar6 = puVar8;
-    if (((0x19 < (int)param_3) && (((uint)puVar8 & 1) == 0)) &&
-       (puVar6 = (undefined4 *)0x0, puVar8 != (undefined4 *)0x2)) {
-      puVar8 = param_3;
-      if (((uint)param_1 & 1) != 0) {
-        *(undefined1 *)param_2 = *(undefined1 *)param_1;
-        puVar8 = (undefined4 *)((int)param_3 - 1);
-        param_2 = (undefined4 *)((int)param_2 + 1);
-        param_1 = (undefined4 *)((int)param_1 + 1);
+    diff = d;
+    if (((0x19 < (int)nbytes) && (((uint)d & 1) == 0)) &&
+       (diff = (undefined4 *)0x0, d != (undefined4 *)0x2)) {
+      d = nbytes;
+      if (((uint)src & 1) != 0) {
+        *(undefined1 *)dst = *(undefined1 *)src;
+        d = (undefined4 *)((int)nbytes - 1);
+        dst = (undefined4 *)((int)dst + 1);
+        src = (undefined4 *)((int)src + 1);
       }
-      param_3 = (undefined4 *)((uint)puVar8 & 3);
-      puVar6 = param_3;
-      if ((uint)puVar8 >> 2 != 0) {
-        iVar1 = ((uint)puVar8 >> 2) - 1;
-        puVar8 = param_2;
-        puVar9 = param_1;
+      nbytes = (undefined4 *)((uint)d & 3);
+      diff = nbytes;
+      if ((uint)d >> 2 != 0) {
+        count = ((uint)d >> 2) - 1;
+        d = dst;
+        s = src;
         do {
           do {
-            param_1 = puVar9 + 1;
-            param_2 = puVar8 + 1;
-            *puVar8 = *puVar9;
-            sVar7 = (short)iVar1 + -1;
-            iVar2 = CONCAT22((short)((uint)iVar1 >> 0x10),sVar7);
-            iVar1 = iVar2;
-            puVar8 = param_2;
-            puVar9 = param_1;
-          } while (sVar7 != -1);
-          iVar1 = iVar2 + -0x10000;
-        } while (0xffff < iVar2);
+            src = s + 1;
+            dst = d + 1;
+            *d = *s;
+            lo_count = (short)count + -1;
+            count_next = CONCAT22((short)((uint)count >> 0x10),lo_count);
+            count = count_next;
+            d = dst;
+            s = src;
+          } while (lo_count != -1);
+          count = count_next + -0x10000;
+        } while (0xffff < count_next);
       }
     }
-    iVar1 = (int)param_3 - 1;
-    if (0 < (int)param_3) {
+    count = (int)nbytes - 1;
+    if (0 < (int)nbytes) {
       do {
         do {
-          puVar9 = (undefined4 *)((int)param_1 + 1);
-          puVar8 = (undefined4 *)((int)param_2 + 1);
-          *(undefined1 *)param_2 = *(undefined1 *)param_1;
-          sVar7 = (short)iVar1 + -1;
-          iVar2 = CONCAT22((short)((uint)iVar1 >> 0x10),sVar7);
-          iVar1 = iVar2;
-          param_2 = puVar8;
-          param_1 = puVar9;
-        } while (sVar7 != -1);
-        iVar1 = iVar2 + -0x10000;
-      } while (0xffff < iVar2);
+          s = (undefined4 *)((int)src + 1);
+          d = (undefined4 *)((int)dst + 1);
+          *(undefined1 *)dst = *(undefined1 *)src;
+          lo_count = (short)count + -1;
+          count_next = CONCAT22((short)((uint)count >> 0x10),lo_count);
+          count = count_next;
+          dst = d;
+          src = s;
+        } while (lo_count != -1);
+        count = count_next + -0x10000;
+      } while (0xffff < count_next);
     }
   }
   return (undefined4 *)0; /* every exit is moveq #0,d0 (0x1a6aa / 0x1a710); Ghidra returned the stale puVar6 */
@@ -31774,41 +31805,41 @@ undefined4 * memmove_block(undefined4 *param_1,undefined4 *param_2,undefined4 *p
  * nbytes & 3 tail bytes; returns 0. */
 undefined4 memzero(undefined4 *dst, uint nbytes) /* Original: FUN_0001a716 */
 {
-  int iVar1;
-  int iVar2;
-  undefined4 *puVar4;
-  undefined4 *puVar5;
-  short sVar3;
+  int count; /* dbra long counter (low word) with high-word carry */
+  int count_next;
+  undefined4 *p; /* write cursor */
+  undefined4 *p_long; /* long write cursor */
+  short lo_count; /* low word after dbra decrement */
   
   if (-1 < (int)nbytes) {
-    puVar4 = dst;
+    p = dst;
     if (((uint)dst & 1) != 0) {
-      puVar4 = (undefined4 *)((int)dst + 1);
+      p = (undefined4 *)((int)dst + 1);
       *(undefined1 *)dst = 0;
       nbytes = nbytes - 1;
     }
     if (nbytes >> 2 != 0) {
-      iVar1 = (nbytes >> 2) - 1;
-      puVar5 = puVar4;
+      count = (nbytes >> 2) - 1;
+      p_long = p;
       do {
         do {
-          puVar4 = puVar5 + 1;
-          *puVar5 = 0;
-          sVar3 = (short)iVar1 + -1;
-          iVar2 = CONCAT22((short)((uint)iVar1 >> 0x10),sVar3);
-          iVar1 = iVar2;
-          puVar5 = puVar4;
-        } while (sVar3 != -1);
-        iVar1 = iVar2 + -0x10000;
-      } while (0xffff < iVar2);
+          p = p_long + 1;
+          *p_long = 0;
+          lo_count = (short)count + -1;
+          count_next = CONCAT22((short)((uint)count >> 0x10),lo_count);
+          count = count_next;
+          p_long = p;
+        } while (lo_count != -1);
+        count = count_next + -0x10000;
+      } while (0xffff < count_next);
     }
     if ((nbytes & 3) != 0) {
-      sVar3 = ((byte)nbytes & 3) - 1;
+      lo_count = ((byte)nbytes & 3) - 1;
       do {
-        *(undefined1 *)puVar4 = 0;
-        sVar3 = sVar3 + -1;
-        puVar4 = (undefined4 *)((int)puVar4 + 1);
-      } while (sVar3 != -1);
+        *(undefined1 *)p = 0;
+        lo_count = lo_count + -1;
+        p = (undefined4 *)((int)p + 1);
+      } while (lo_count != -1);
     }
   }
   return 0;
@@ -31821,26 +31852,26 @@ undefined4 memzero(undefined4 *dst, uint nbytes) /* Original: FUN_0001a716 */
  * Ghidra C reviewed (function at overlay offset 0x1a75e).
  * Returns the length of the C string (renamed from bounded_strlen: the D0 count of the dbeq loop is only an inner counter - when it runs out without a zero byte, bne restarts the loop, so the scan is unbounded; the Ghidra C has the same behaviour). Used by update_view_readouts_and_overlays for the readout text. Ghidra C.
  */
-char * c_strlen /* Original: FUN_0001a75e */ (char *param_1)
+char * c_strlen /* Original: FUN_0001a75e */ (char *s /* string */)
 
 {
-  char cVar1;
-  short in_D0w;
-  char *pcVar2;
-  char *pcVar3;
+  char c;
+  short d0_count; /* D0 word on entry: dbra limit (register input) */
+  char *next;
+  char *p;
   
-  pcVar3 = param_1;
+  p = s;
 LAB_0001a768:
   do {
-    pcVar2 = pcVar3 + 1;
-    cVar1 = *pcVar3;
-    pcVar3 = pcVar2;
-    if (cVar1 != '\0') {
-      in_D0w = in_D0w + -1;
-      if (in_D0w != -1) goto LAB_0001a768;
+    next = p + 1;
+    c = *p;
+    p = next;
+    if (c != '\0') {
+      d0_count = d0_count + -1;
+      if (d0_count != -1) goto LAB_0001a768;
     }
-    if (cVar1 == '\0') {
-      return pcVar2 + (-1 - (int)param_1);
+    if (c == '\0') {
+      return next + (-1 - (int)s);
     }
   } while( true );
 }

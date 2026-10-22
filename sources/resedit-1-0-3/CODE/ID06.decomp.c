@@ -325,12 +325,12 @@ undefined4 init_row_table_fields /* Original: FUN_0000026c */ (undefined4 level_
 
 {
   undefined4 map_word; /* uVar1: lookup_colour_map result */
-  undefined4 unaff_D7;
+  undefined4 d7_in; /* caller D7 (register input); only its high word reaches lookup_colour_map */
   short row; /* sVar2: row index */
   int unaff_A5;
   
   **(int **)(unaff_A5 + -0x1cd2) = unaff_A5 + 0x192;
-  map_word = lookup_colour_map(CONCAT22(level_rows._0_2_,(short)((uint)unaff_D7 >> 0x10)));
+  map_word = lookup_colour_map(CONCAT22(level_rows._0_2_,(short)((uint)d7_in >> 0x10)));
   *(short *)(*(int *)(unaff_A5 + -0x1cd2) + 8) = (short)map_word;
   *(undefined2 *)(*(int *)(unaff_A5 + -0x1cd2) + 10) = 0xb;
   *(short *)(*(int *)(unaff_A5 + -0x1cd2) + 0xc) =
@@ -398,7 +398,7 @@ void render_scanline_spans /* Original: FUN_00000318 */ (undefined4 band /* para
   short rows_left; /* sVar6: row countdown */
   uint x_or_colour; /* uVar7: previous edge x word, then the colour pattern long */
   short run_len; /* sVar8: whole longs to store before the next crossing */
-  uint unaff_D6;
+  uint d6_in; /* caller D6 (register input), saved into spans_saved_d6_out_long */
   int *edges; /* piVar9: active edge array, new-edge cursor, then compacted end */
   int *cursor; /* piVar10: insert / compaction write / walk cursor, then next row entry */
   int node; /* iVar11: priority list node */
@@ -418,7 +418,7 @@ void render_scanline_spans /* Original: FUN_00000318 */ (undefined4 band /* para
     spans_list_head = *(int *)(*(int *)(unaff_A5 + -0x1cd6) + 0x898);
     spans_list_tail = work;
     *edges = work;
-    spans_saved_d6_out_long = unaff_D6;
+    spans_saved_d6_out_long = d6_in;
     spans_saved_d7_active_end = edges;
     spans_saved_a2_row_entry = walk;
     spans_saved_a6_temp = (int *)&stack0xfffffffc;
@@ -1089,7 +1089,7 @@ void add_rect_polygon /* Original: FUN_00000d02 */ (undefined4 colour_x0 /* para
 
 {
   undefined4 map_word; /* uVar1: lookup_colour_map result */
-  undefined4 unaff_A4;
+  undefined4 a4_in; /* caller A4 (register input); only its high word reaches lookup_colour_map */
   int pt0_x; /* local_34, -$34(A6): pts[0] = (x0, y0); &pt0_x is the 4-point array */
   int pt0_y; /* local_30, -$30(A6) */
   int pt1_x; /* local_2c, -$2c(A6): pts[1] = (x1, y0) */
@@ -1107,7 +1107,7 @@ void add_rect_polygon /* Original: FUN_00000d02 */ (undefined4 colour_x0 /* para
   pt2_y = (int)y1._0_2_;
   pt3_x = (int)colour_x0._2_2_;
   pt3_y = (int)y1._0_2_;
-  map_word = lookup_colour_map(CONCAT22(colour_x0._0_2_,(short)((uint)unaff_A4 >> 0x10)));
+  map_word = lookup_colour_map(CONCAT22(colour_x0._0_2_,(short)((uint)a4_in >> 0x10)));
   add_polygon_edges(4,(short)map_word,0,&pt0_x);
   return;
 }
@@ -1197,14 +1197,14 @@ void rasterize_and_present /* Original: FUN_00000e10 */ (int dest /* param_1: of
   short pixel_depth2; /* sVar4: A5-0x137a re-read */
   int a5; /* iVar5: CurrentA5 copy */
   short band_offset; /* sVar6: active rows - rows still to draw after this band */
-  undefined4 unaff_D2;
+  undefined4 d2_in; /* caller D2 (register input); its high word becomes d2_residue */
   undefined2 d2_residue; /* uVar7: unaff_D2 high word, unread low half of the pushed long */
   undefined4 rows_left; /* local_e, -$e(A6): rows still to render */
   undefined2 continue_flag; /* local_8, -8(A6): 0 for the first band, then 1 */
   undefined2 band; /* local_6, -6(A6): rows in this band, min(band_rows, rows_left) */
   
   a5 = CurrentA5;
-  d2_residue = (undefined2)((uint)unaff_D2 >> 0x10);
+  d2_residue = (undefined2)((uint)d2_in >> 0x10);
   if (*(int *)(CurrentA5 + -0x1cd2) != 0) {
     *(undefined4 *)(*(int *)(*(int *)(CurrentA5 + -0x1cd6) + 0x898) + 0x10) =
          *(undefined4 *)(*(int *)(CurrentA5 + -0x1cd6) + 0x89c);
