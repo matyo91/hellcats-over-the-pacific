@@ -38,6 +38,8 @@ class StrictPortSyncTest(unittest.TestCase):
         self.assertEqual(SYNC.extract_function(source, "one_line"), "int one_line(int a) /* c */\n{\n  return a;\n}")
         self.assertTrue(SYNC.extract_function(source, "wrapped").startswith("void wrapped(int a,\n"))
         self.assertTrue(SYNC.extract_function(source, "wrapped").endswith("  }\n}"))
+        commented = "void noted /* c */ (int a /* (one) */,\n           int b /* two */)\n{\n  return;\n}\n"
+        self.assertEqual(SYNC.extract_function(commented, "noted"), commented.rstrip("\n"))
 
     def test_changed_source_is_reported_without_rewriting_manifest(self) -> None:
         manifest_before = MANIFEST.read_bytes()

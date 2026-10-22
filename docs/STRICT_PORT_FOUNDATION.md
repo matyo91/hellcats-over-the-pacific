@@ -174,6 +174,101 @@ word or a long. The port keeps Ghidra's form of the 32-bit `dbra` / `clr.w` /
 in-place transform, a sum that wraps at 32 bits (visible in the long store), and
 count 0x10001, which exercises the high word of the counter.
 
+`transform_int3_vecs_by_matrix3` (`0x2ada`) transforms 32-bit vectors with 64-bit
+`muls.l` sums and keeps bits 12..43 (no rounding); its sign-extended matrix copy
+in the frame is kept as a local because nothing else reads it, and the count-0
+return value (d0 = matrix + 18 from the copy loop) is reproduced.
+`transform_listed_object_vecs12_by_1d744` (`0x2a0e`) walks the visible list from
+`visible_list_split` to `visible_count`, shifts each int3 vertex by the object's
+word +0x32 (`asr.l`, count mod 64), cuts it to a word and transforms it in place by
+the camera matrix at `0x1d744`. The test checks wide 64-bit sums, the count-0
+return, the split boundary, a shift of 40 and the untouched high words.
+
+`translate_int3_vecs` (`0x1c5c`), `apply_template_chain_xform` (`0x2bd8`) and
+`apply_template_chain_xform_always` (`0x2d10`) walk an object's parent chain and
+apply each parent slot's rotation and offset. Their position copy and slot matrix
+are frame locals passed by address, so they live in `Memory68k` at a6 - 0x1e and
+a6 - 0x12 (a7 - 0x22 / a7 - 0x16), and `build_attitude_matrix_3ang` is entered
+0x5c (nine saved registers) or 0x58 (eight) below the entry, as the link / movem /
+push / bsr sequences give. The test covers the committed point path, the
+uncommitted point path (src set, dst 0), the mesh path with the +0x34 offset
+shift (only in the first variant) and the 32-bit wrap of the translation.
+
+`scale_int3_vecs` (`0x1cac`) multiplies int3 vectors component-wise (`muls.l`, low
+32 bits). `transform_through_node_chain` (`0x4f8`) pops nodes from a node-pointer
+stack and applies each node's rotation and offset to the object position (longs at
++2 / +6 / +0xa) and, with a vertex buffer, to its vertices (offsets shifted by
+word +0x18). Its matrix and running position are frame locals passed by address
+(a6 - 0x1e / a6 - 0xc), and `build_attitude_matrix_3ang` is entered 0x60 below the
+entry. The `check_sync.py` fallback for wrapped signatures now requires the
+function body's `{` after the match, so a `)` inside a parameter comment on the
+first line no longer ends the signature early; earlier hashes are unchanged.
+
+`traverse_scene_tree` (`0x5fa`) and `for_each_mission_scene_object` (`0x6a6`)
+introduce calls through code pointers (`jsr (a6)`). The strict module now has
+`code_table`, a map from original code addresses to ported Callables, and `_jsr`,
+which fails loudly for an address with no ported target. Only tests register
+entries so far; ported visitors will be registered as they are translated. The
+ten-slot path stack is a frame local written through memory (a6 - 0x28 of
+`for_each_mission_scene_object`); traverse and its visitors are entered 0x6d8 and
+then 0x40 per level below, as the movem / push / bsr sequences give. The test
+builds a two-level scene and checks every visit's arguments, the path stack
+contents and the visitor's stack depth.
+
+The first real visitor is `nearest_type80_centroid_visitor` (`0xaba`), registered
+in `code_table` at 0xaba because `point_near_camera_or_type80_object` (`0xbea`)
+passes it with `pea $aba(pc)`. The visitor places the node through
+`transform_through_node_chain` into its 0x690-byte frame buffer, averages the
+face's vertices and keeps the nearer centroid; its frame (buffer, sums, origin
+outs) lives in `Memory68k` because those addresses are passed to other functions.
+The test runs the full chain - `point_near_camera_or_type80_object` ->
+`for_each_mission_scene_object` -> `traverse_scene_tree` -> visitor ->
+`transform_through_node_chain` -> attitude matrix -> vector transforms - over a
+one-leaf scene: a far point replaced by the centroid, a near point kept, a scene
+without a type-0x80 face returning 0, and an equal metric keeping the old best.
+
+The four polygon clippers `clip_polygon_x_min / _x_max / _y_min / _y_max`
+(`0xb190`, `0xb242`, `0xb2f4`, `0xb3aa`) are the leaves of `collect_map_features`
+(and of other polygon paths). They interpolate crossings with a 64-bit `muls.l`
+product and a 64 / 32 `divs.l`, so `C68k` gained `divs_l_64_32`, which applies the
+68020 overflow rule (quotient register unchanged, i.e. the low long of the
+dividend). The test runs a quadrilateral through all four passes, a polygon fully
+outside, count 0, and a wrapped-difference case where that overflow rule decides
+the result.
+
+`collect_map_features` (`0x6ec`), registered at 0x6ec (`pea $6ec(pc)` in
+`plot_mission_map_symbols`), is the map visitor. Land nodes go through the node
+chain, are made player-relative, divided by the map scale (32-bit `divs.l`), and
+their face outline is clipped by the four clippers - with `clip_y_max` swapped for
+the word at 0x1b740 around the last pass - before the host hook stored at
+host_world +0x292 is called through `code_table`. Zone faces (type 0x70) and
+kind 0x12 / 0x13 sites append to the context lists. The test registers a stand-in
+hook and checks the clipped outline, the restored `clip_y_max`, the hook's stack
+depth and all three list cases. (The land test is byte +0x16 bit 4, i.e. word
+0x1000; the decomp header that said "flag 0x10 ... in the node word" was corrected.)
+
+`plot_mission_map_symbols` (`0x954`) completes the map path: it fills its frame
+context (a6 - 0xb5c) through `for_each_mission_scene_object` with code 0x6ec, picks
+A / B / C (or none) per zone point from the first site within range, adds the 'T'
+marker for missions 3 and 4, and calls the plot callback through `code_table`. Its
+test replaces 0x6ec by a stub that fills the lists, to isolate the symbol logic
+(the visitor has its own test), and checks every plotted symbol, the callback's
+stack depth and the mission-dependent 'T'.
+
+`segment_point_min_distance` (`0x3cca`) bisects a segment four times with
+`approx_dist3_xyz`; only the low words of the deltas are used (`adda.w`) and the
+distances are compared and returned as words, which the test exercises (a 0x12345
+delta, a distance above 0x7fff). Its bullet-test callers also need
+`overlay_rng_next` (0x11564) and `retire_entity` (0x51ec) and come after those.
+
+The overlay RNG is now strict: `overlay_rng_mul_mix` (`0x114ca`), `overlay_rng_init`
+(`0x1150a`: LCG fill, cursor 0x260e4, 10000 warm-up steps) and `overlay_rng_next`
+(`0x11564`: lagged-Fibonacci ring 0x2600c..0x260e7 in `Memory68k`). Its vectors
+(seeds 0 and 12345) come from an instruction-level model, not from the prototype
+RNG in `godot/hellcats/`. `retire_entity` (`0x51ec`) is ported with it; its test
+covers the shot latch, the child-table clear, the scatter-slot window and the
+equal-byte path.
+
 The manifest records the exact source-function SHA-256, source/original names,
 address, target, and independent milestone booleans. Run
 `python3 tools/progress_stats.py` for current orthogonal coverage counts.

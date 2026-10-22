@@ -41,3 +41,12 @@ static func divs_trunc(numerator: int, denominator: int) -> int:
 
 static func rems_trunc(numerator: int, denominator: int) -> int:
 	return numerator - divs_trunc(numerator, denominator) * denominator
+
+## 68020 divs.l <ea>,Dr:Dq (64 / 32 -> 32 quotient, truncating). On overflow (quotient
+## outside 32 bits) V is set and Dq keeps its value: the low long of the dividend.
+static func divs_l_64_32(dividend: int, divisor: int) -> int:
+	assert(divisor != 0, "68020 divs.l by zero traps")
+	var quotient: int = divs_trunc(dividend, divisor)
+	if quotient < -0x80000000 or quotient > 0x7fffffff:
+		return s32(dividend)
+	return quotient

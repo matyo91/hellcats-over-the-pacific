@@ -26,7 +26,7 @@ def extract_function(source: str, name: str) -> str:
     signature = re.compile(rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\([^;\n]*\)[^\n]*$", re.MULTILINE)
     # Fallback for parameter lists wrapped over several lines (tried only when the
     # one-line form finds no definition, so existing hashes are unchanged).
-    wrapped = re.compile(rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\([^;{{}}]*?\)[^\n;{{}}]*$", re.MULTILINE)
+    wrapped = re.compile(rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\([^;{{}}]*?\)[^\n;{{}}]*$(?=\s*\{{)", re.MULTILINE)
     for pattern in (signature, wrapped):
         found = _extract_with(source, pattern)
         if found is not None:
