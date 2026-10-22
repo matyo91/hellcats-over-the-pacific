@@ -1618,3 +1618,29 @@ inventory yet.
 | Pacific Conflict | `effect_log_index` | `DAT_000260ec` | next entry of effect_log (wraps at 16) |
 | Pacific Conflict | `effect_log` | `DAT_000260ee` | 16-entry log (0x18 bytes) of spawn_effect arguments replayed by replay_logged_effects; byte +0 = kind, +0x14 frame |
 | Pacific Conflict | `effect_init_table` | `DAT_0001b40c` | per-kind effect initialiser called by spawn_effect on the new effect object |
+| Pacific Conflict | `effect_anim_table` | `DAT_0001b41c` | per-kind effect animator called by tick_effect (returns 1 when finished) |
+| Pacific Conflict | `effect_pre_render_table` | `DAT_0001b42c` | per-kind effect pre-render hook called by effect_pre_render_hook |
+| Pacific Conflict | `ordnance_template` | `DAT_00026280` | ordnance template object stored by register_ordnance_template, spawned by spawn_weapon_entity |
+| Pacific Conflict | `type10_controller` | `DAT_00020b40` | the single type-10 controller published by create_singleton_type10_controller [HYPOTHESIS per that function's name] |
+| Pacific Conflict | `contact_table` | `DAT_0001bdbc` | 256-slot open-addressing table of contact records keyed by contact_pair_hash(a, b), linear probing |
+| Pacific Conflict | `cell_face_a` | `DAT_00020b44` | fractal_height_at: face of the current cell whose centre z is at or below the cell centre (-1 = none) [INFERENCE] |
+| Pacific Conflict | `cell_face_b` | `DAT_00020b46` | fractal_height_at: face of the current cell whose centre z is above the cell centre (-1 = none) [INFERENCE] |
+| Pacific Conflict | `cell_plane` | `DAT_00020b48` | fractal_height_at: plane entry in use (record +0x22 or +0x30) |
+| Pacific Conflict | `collision_pair_table` | `DAT_0001b43c` | 10 entries of 8 bytes (type word, type word, handler long) scanned by dispatch_collision |
+| Pacific Conflict | `collision_pair_cursor` | `DAT_00026284` | dispatch_collision cursor into collision_pair_table (left on the matching entry) |
+| Pacific Conflict | `first_carrier_ctl` | `_DAT_0001b864` | first type-0x15 (carrier) controller, published by create_carrier_controller when still 0 |
+| Pacific Conflict | `bullet_template` | `DAT_0002664a` | Bullet scene template: stored by register_bullet_template (0x15bd4), passed to spawn_mission_pool_object by spawn_ordnance_scattered (0x15bf6). |
+| Pacific Conflict | `dot_object_count` | `DAT_000265d0` | Count of queued dot/streak objects; bullet_pre_render (0x15e62) appends while < 0x1e. |
+| Pacific Conflict | `dot_object_list` | `DAT_000265d2` | Object list drawn as dots by draw_distant_object_dots; filled by bullet_pre_render (0x15e62). |
+| Pacific Conflict | `dot_records` | `DAT_00026288` | 14-byte dot records (pixel pointer +0); erase_dots_depth8 (0x15ebe) / plot_dot_depth8 (0x15f3e). |
+| Pacific Conflict | `dot_rec_size` | `DAT_0002628e` | Dot record word +6: size 1..4 pixels. |
+| Pacific Conflict | `dot_rec_colour` | `DAT_00026290` | Dot record byte +8: plotted colour. |
+| Pacific Conflict | `dot_rec_saved0` | `DAT_00026291` | Dot record byte +9: saved pixel (x, y). |
+| Pacific Conflict | `dot_rec_saved1` | `DAT_00026292` | Dot record byte +10: saved pixel (x + 1, y). |
+| Pacific Conflict | `dot_rec_saved2` | `DAT_00026293` | Dot record byte +11: saved pixel (x, y + 1). |
+| Pacific Conflict | `dot_rec_saved3` | `DAT_00026294` | Dot record byte +12: saved pixel (x + 1, y + 1). |
+| Pacific Conflict | `dot_rec_phase` | `DAT_0002628c` | Dot record word +4: depth-4 pixel phase (erase_dots_depth4 0x15fb8 picks the nibble order). |
+| Pacific Conflict | `dot_corner_dx` | `DAT_0001b48c` | long[4 corners][4 sizes] x offsets of the depth-1 dot square (plot_dot_bw 0x16230). |
+| Pacific Conflict | `dot_corner_dy` | `DAT_0001b4cc` | long[4 corners][4 sizes] y offsets of the depth-1 dot square (plot_dot_bw 0x16230). |
+| Pacific Conflict | `trail_templates` | `DAT_00026650` | Trail scene templates by kind [2]; filled by register_trail_templates (0x16a78), spawned by spawn_trail (0x16ae8). |
+| Pacific Conflict | `trail_init_table` | `DAT_0001b50c` | Trail init handlers by kind (0 -> 0x16ac4, 1 -> 0x16ad6) [PROVEN bytes]; called by spawn_trail. |

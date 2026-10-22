@@ -398,6 +398,9 @@ typedef unsigned short    ushort;
 #define camera_pitch DAT_00024d1a /* camera pitch word 0..0x3fff (docs/DECOMPILATION_SYMBOLS.md, PROVEN); neg_camera_pitch is its negative */
 #define camera_heading DAT_00024d18 /* camera heading word 0..0x3fff (PROVEN); neg_camera_heading is its negative */
 #define camera_step_x DAT_0001d81c /* camera x step per frame: (camera_goal_x - camera_x) / (replay_frames_left - 0x1e) */
+#define dot_object_count DAT_000265d0 /* queued dot/streak objects, capped at 0x1e by bullet_pre_render */
+#define dot_object_list DAT_000265d2 /* object list drawn as dots by draw_distant_object_dots */
+#define bullet_template DAT_0002664a /* bullet scene template; stored by register_bullet_template, spawned by spawn_ordnance_scattered */
 #define camera_step_y DAT_0001d818 /* camera y step per frame */
 #define camera_step_z DAT_0001d814 /* camera z step per frame */
 #define camera_goal_x DAT_00024d28 /* camera destination x the replay camera glides to */
@@ -415,6 +418,16 @@ typedef unsigned short    ushort;
 #define snd_distant_explosion_timer DAT_0001b848 /* countdown: sound 9 Distant Explosion when non-zero, decremented each frame */
 #define snd_gear_alt _DAT_0001b846 /* one-frame flag: sound 100 (Gear sample at offset 0x48c0), cleared each frame */
 #define snd_ugh _DAT_0001b844 /* one-frame flag: sound 1 Ugh, cleared each frame */
+#define dot_corner_dx DAT_0001b48c /* long[4 corners][4 sizes]: x offsets of the depth-1 dot square (plot_dot_bw) */
+#define dot_corner_dy DAT_0001b4cc /* long[4 corners][4 sizes]: y offsets of the depth-1 dot square (plot_dot_bw) */
+#define dot_rec_phase DAT_0002628c /* dot record word +4: depth-4 pixel phase (0 = high nibble first) */
+#define dot_records DAT_00026288 /* 14-byte dot records: pixel pointer at +0 (erase_dots_depth8) */
+#define dot_rec_size DAT_0002628e /* record word +6: dot size 1..4 pixels */
+#define dot_rec_colour DAT_00026290 /* record byte +8: plotted colour */
+#define dot_rec_saved0 DAT_00026291 /* record byte +9: saved pixel (x, y) */
+#define dot_rec_saved1 DAT_00026292 /* record byte +10: saved pixel (x + 1, y) */
+#define dot_rec_saved2 DAT_00026293 /* record byte +11: saved pixel (x, y + 1) */
+#define dot_rec_saved3 DAT_00026294 /* record byte +12: saved pixel (x + 1, y + 1) */
 #define snd_hit _DAT_0001b842 /* one-frame flag: sound 2 Hit (player hit), cleared each frame */
 #define gear_moving _DAT_0001b84e /* set when player +0x679 is between 0 and 0x2d (and +0x685 bit 0x20 clear) -> sound 7 [STRONG INFERENCE: gear in motion] */
 #define flaps_moving _DAT_0001b84c /* set when player +0x67b is between 0 and 0xf -> sound 7 [STRONG INFERENCE: flaps in motion] */
@@ -425,6 +438,8 @@ typedef unsigned short    ushort;
 #define vertex0_z DAT_00024d56 /* model vertex 0 long z */
 #define vertex_shift DAT_00024d5a /* object +0x32: asr count applied to model vertex longs */
 #define eye_obj_x DAT_00024d60 /* camera x in object units, paired with vertex x in face_is_back_facing */
+#define trail_templates DAT_00026650 /* trail scene templates [2], by kind (register_trail_templates / spawn_trail) */
+#define trail_init_table DAT_0001b50c /* trail init handlers by kind: 0 -> 0x16ac4, 1 -> 0x16ad6 [PROVEN bytes] */
 #define eye_obj_y DAT_00024d5e /* camera y in object units */
 #define eye_obj_z DAT_00024d5c /* camera z in object units */
 #define screen_poly_x DAT_00024df2 /* clipped screen polygon: x long of each (x, y) long pair (8-byte stride), filled by clip_polygon_y_max */
@@ -500,6 +515,17 @@ typedef unsigned short    ushort;
 #define effect_log_index DAT_000260ec /* next entry of effect_log (wraps at 16) */
 #define effect_log DAT_000260ee /* 16-entry log (0x18 bytes) of spawn_effect arguments replayed by replay_logged_effects; byte +0 = kind, +0x14 frame */
 #define effect_init_table DAT_0001b40c /* per-kind effect initialiser called by spawn_effect on the new effect object */
+#define effect_anim_table DAT_0001b41c /* per-kind effect animator called by tick_effect (returns 1 when finished) */
+#define effect_pre_render_table DAT_0001b42c /* per-kind effect pre-render hook called by effect_pre_render_hook */
+#define ordnance_template DAT_00026280 /* ordnance template object stored by register_ordnance_template, spawned by spawn_weapon_entity */
+#define type10_controller DAT_00020b40 /* the single type-10 controller published by create_singleton_type10_controller [HYPOTHESIS per that function's name] */
+#define contact_table DAT_0001bdbc /* 256-slot open-addressing table of contact records keyed by contact_pair_hash(a, b), linear probing */
+#define cell_face_a DAT_00020b44 /* fractal_height_at: face of the current cell whose centre z is at or below the cell centre (-1 = none) [INFERENCE] */
+#define cell_face_b DAT_00020b46 /* fractal_height_at: face of the current cell whose centre z is above the cell centre (-1 = none) [INFERENCE] */
+#define cell_plane DAT_00020b48 /* fractal_height_at: plane entry in use (record +0x22 or +0x30) */
+#define collision_pair_table DAT_0001b43c /* 10 entries of 8 bytes (type word, type word, handler long) scanned by dispatch_collision */
+#define collision_pair_cursor DAT_00026284 /* dispatch_collision cursor into collision_pair_table (left on the matching entry) */
+#define first_carrier_ctl _DAT_0001b864 /* first type-0x15 (carrier) controller, published by create_carrier_controller when still 0 */
 
 /*
  * Original: DAT_0001a7d2
@@ -23531,11 +23557,11 @@ LAB_0001258c:
  * Ghidra C reviewed (function at overlay offset 0x12738).
  * Sets the object attitude words +0x22 / +0x20 to minus the camera angles DAT_0001d80e / DAT_0001d810 (& 0x3fff) so it faces the viewer (billboard); returns 0. Entry of table DAT_0001b42c. Complete Ghidra C.
  */
-undefined4 face_object_to_camera /* Original: FUN_00012738 */ (int param_1)
+undefined4 face_object_to_camera /* Original: FUN_00012738 */ (int ctl /* param_1: controller (+0x20 / +0x22 attitude words) */)
 
 {
-  *(ushort *)(param_1 + 0x22) = -DAT_0001d80e & 0x3fff;
-  *(ushort *)(param_1 + 0x20) = -DAT_0001d810 & 0x3fff;
+  *(ushort *)(ctl + 0x22) = -neg_camera_heading & 0x3fff;
+  *(ushort *)(ctl + 0x20) = -neg_camera_pitch & 0x3fff;
   return 0;
 }
 
@@ -23549,20 +23575,20 @@ undefined4 face_object_to_camera /* Original: FUN_00012738 */ (int param_1)
  * found identical to the C: D0 = handler DAT_0001b41c[byte +0x32](ctl) (scale *4 decoded by
  * hand); word +0x36 counts down, at 0 the object long +4 |= 0x40; tst.w d0 (a word result,
  * as Ghidra's short) non-zero -> bsr.l 0x51ec retire_entity(object). */
-void tick_effect /* Original: FUN_00012768 */ (int *param_1)
+void tick_effect /* Original: FUN_00012768 */ (int *ctl /* param_1: effect controller (+0x32 kind, +0x36 lifetime) */)
 
 {
-  short sVar1;
+  short finished; /* sVar1; animator result (1 = finished) */
   
-  sVar1 = (**(code **)(&DAT_0001b41c + (uint)*(byte *)((int)param_1 + 0x32) * 4))(param_1);
-  if (*(short *)((int)param_1 + 0x36) == 0) {
-    *(uint *)(*param_1 + 4) = *(uint *)(*param_1 + 4) | 0x40;
+  finished = (**(code **)(&effect_anim_table + (uint)*(byte *)((int)ctl + 0x32) * 4))(ctl);
+  if (*(short *)((int)ctl + 0x36) == 0) {
+    *(uint *)(*ctl + 4) = *(uint *)(*ctl + 4) | 0x40;
   }
   else {
-    *(short *)((int)param_1 + 0x36) = *(short *)((int)param_1 + 0x36) + -1;
+    *(short *)((int)ctl + 0x36) = *(short *)((int)ctl + 0x36) + -1;
   }
-  if (sVar1 != 0) {
-    retire_entity( /* Original: FUN_000051ec */*param_1);
+  if (finished != 0) {
+    retire_entity( /* Original: FUN_000051ec */*ctl);
   }
   return;
 }
@@ -23576,10 +23602,10 @@ void tick_effect /* Original: FUN_00012768 */ (int *param_1)
  * identical to the C: handler = long DAT_0001b42c[byte +0x32] (zero-extended, scale *4
  * decoded by hand), called with the object.
  */
-void effect_pre_render_hook /* Original: FUN_000127aa */ (int param_1)
+void effect_pre_render_hook /* Original: FUN_000127aa */ (int ctl /* param_1: effect controller (+0x32 kind) */)
 
 {
-  (**(code **)(&DAT_0001b42c + (uint)*(byte *)(param_1 + 0x32) * 4))(param_1);
+  (**(code **)(&effect_pre_render_table + (uint)*(byte *)(ctl + 0x32) * 4))(ctl);
   return;
 }
 
@@ -23593,18 +23619,18 @@ void effect_pre_render_hook /* Original: FUN_000127aa */ (int param_1)
  * DAT_0001b524[class], bsr.l 0xdf5e fill_pose_history(ctl + 0x32, object x, y, z); returns a3
  * (move.l to d0 before rts; index scale *4 decoded by hand).
  */
-uint * create_ordnance_controller /* Original: FUN_000127c6 */ (uint param_1,int param_2)
+uint * create_ordnance_controller /* Original: FUN_000127c6 */ (uint obj /* param_1: ordnance object */,int def_key /* param_2: definition key */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* puVar1; new 0x620-byte ordnance controller */
   
-  puVar1 = heap_alloc_cleared(0x620);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x122000;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  fill_pose_history((int)puVar1 + 0x32,*(undefined4 *)(param_1 + 0x18),*(undefined4 *)(param_1 + 0x1c),
-               *(undefined4 *)(param_1 + 0x20));
-  return puVar1;
+  ctl = heap_alloc_cleared(0x620);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x122000;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  fill_pose_history((int)ctl + 0x32,*(undefined4 *)(obj + 0x18),*(undefined4 *)(obj + 0x1c),
+               *(undefined4 *)(obj + 0x20));
+  return ctl;
 }
 
 
@@ -23614,11 +23640,11 @@ uint * create_ordnance_controller /* Original: FUN_000127c6 */ (uint param_1,int
  * Ghidra C reviewed (function at overlay offset 0x1281e).
  * Create handler (definition +6) for the ordnance template: stores the object in DAT_00026280 (used by spawn_weapon_entity) and replaces the create handler with 0x127a6 (Ghidra 0x127c6 = create_ordnance_controller). Type 0xc = ballistic ordnance (definition key 0xc: +2 ordnance_tick, +6 register_ordnance_template -> create_ordnance_controller, +0x12 ordnance_collision) [STRONG INFERENCE]. Complete Ghidra C.
  */
-undefined4 register_ordnance_template /* Original: FUN_0001281e */ (undefined4 param_1,int param_2)
+undefined4 register_ordnance_template /* Original: FUN_0001281e */ (undefined4 template /* param_1: template object */,int def_key /* param_2: definition key (create hook redirected to 0x127a6) */)
 
 {
-  DAT_00026280 = param_1;
-  *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x127a6;
+  ordnance_template = template;
+  *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x127a6;
   return 0;
 }
 
@@ -23641,27 +23667,27 @@ undefined4 register_ordnance_template /* Original: FUN_0001281e */ (undefined4 p
  * p6, sext p7, sext p8, 0) (the shorts read as the low words $1e / $22 / $26); null -> 0; else
  * ctl = object +8, word +0x61c |= 0x40 when p2 != 0, word +0x610 = p1 (low word $a), words
  * +0x20 / +0x22 / +0x24 = p6 / p7 / p8; returns ctl. */
-int spawn_weapon_entity(undefined2 param_1,int param_2,uint param_3,uint param_4,uint param_5,
-                undefined2 param_6,undefined2 param_7,undefined2 param_8) /* Original: FUN_00012840 */
+int spawn_weapon_entity(undefined2 speed /* param_1: speed word stored at +0x610 (callers pass +0x62a) */,int flag_40 /* param_2: non-zero sets bit 0x40 of +0x61c */,uint x /* param_3: spawn x */,uint y /* param_4: spawn y */,uint z /* param_5: spawn z */,
+                undefined2 pitch /* param_6: attitude word +0x20 [STRONG INFERENCE: pitch] */,undefined2 att_22 /* param_7: attitude word +0x22 */,undefined2 bank /* param_8: attitude word +0x24 [STRONG INFERENCE: bank] */) /* Original: FUN_00012840 */
 {
-  int iVar1;
+  int ctl; /* iVar1; spawned object, then its controller (+8) or 0 */
   
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */
-      DAT_00026280,param_3,param_4,param_5,param_6,param_7,param_8,0);
-  if (iVar1 == 0) {
-    iVar1 = 0;
+  ctl = spawn_mission_pool_object( /* Original: FUN_00005116 */
+      ordnance_template,x,y,z,pitch,att_22,bank,0);
+  if (ctl == 0) {
+    ctl = 0;
   }
   else {
-    iVar1 = *(int *)(iVar1 + 8);
-    if (param_2 != 0) {
-      *(ushort *)(iVar1 + 0x61c) = *(ushort *)(iVar1 + 0x61c) | 0x40;
+    ctl = *(int *)(ctl + 8);
+    if (flag_40 != 0) {
+      *(ushort *)(ctl + 0x61c) = *(ushort *)(ctl + 0x61c) | 0x40;
     }
-    *(undefined2 *)(iVar1 + 0x610) = param_1;
-    *(undefined2 *)(iVar1 + 0x20) = param_6;
-    *(undefined2 *)(iVar1 + 0x22) = param_7;
-    *(undefined2 *)(iVar1 + 0x24) = param_8;
+    *(undefined2 *)(ctl + 0x610) = speed;
+    *(undefined2 *)(ctl + 0x20) = pitch;
+    *(undefined2 *)(ctl + 0x22) = att_22;
+    *(undefined2 *)(ctl + 0x24) = bank;
   }
-  return iVar1;
+  return ctl;
 }
 
 
@@ -23679,59 +23705,59 @@ int spawn_weapon_entity(undefined2 param_1,int param_2,uint param_3,uint param_4
  * +-0x2000; +0x20 = a, +0x22 = b & 0x3fff, +0x24 = (c + ((sin(a) * db) >> 12)) & 0x3fff, +0x610 =
  * speed'; at or below ground (object y + vy <= +0x2e): vy = ground - y, word +0x61c |= 0x400, and
  * over raised ground (> 0) of type byte +0x2c 0x30 / 0x60 / 0x70, word +0x616 = 1. */
-void ordnance_ballistic_step /* Original: FUN_000128b6 */ (int *param_1)
+void ordnance_ballistic_step /* Original: FUN_000128b6 */ (int *ctl /* param_1: ordnance controller (+0x610 speed, +0x61c flags, +0x2e ground height) */)
 
 {
-  int iVar1;
-  short sVar2;
-  int iVar3;
-  int iVar4;
-  short sVar5;
-  ushort local_26;
-  ushort local_24;
-  short asStack_22 [9];
-  undefined1 auStack_10 [2];
-  short local_e;
-  short local_a;
-  short local_6;
+  int obj; /* iVar1; ordnance object */
+  short bank; /* sVar2; attitude word +0x24 [STRONG INFERENCE: bank] */
+  int speed; /* iVar3; isqrt_floor of the squared velocity (kept in +0x610) */
+  int tmp; /* iVar4; squared velocity, then sin_fixed14(pitch) */
+  short heading_delta; /* sVar5; change of word +0x22, folded into -0x2000..0x2000 */
+  ushort att_22; /* local_26, -0x26(A6): attitude word +0x22, updated by attitude_from_velocity */
+  ushort pitch; /* local_24, -0x24(A6): attitude word +0x20 [STRONG INFERENCE: pitch], updated by attitude_from_velocity */
+  short matrix [9]; /* asStack_22, -0x22(A6): attitude matrix */
+  undefined1 vel_vec [2]; /* auStack_10, -0x10(A6): velocity vector transformed in place */
+  short vel_x; /* local_e, -0xe(A6): velocity x */
+  short vel_y; /* local_a, -0xa(A6): velocity y (gravity -0x5b added) */
+  short vel_z; /* local_6, -6(A6): velocity z (starts as the speed word +0x610) */
   
-  iVar1 = *param_1;
-  local_24 = *(ushort *)(param_1 + 8);
-  local_26 = *(ushort *)((int)param_1 + 0x22);
-  sVar2 = *(short *)(param_1 + 9);
-  local_6 = *(short *)(param_1 + 0x184);
-  local_a = 0;
-  local_e = 0;
-  build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)(short)local_24,(int)(short)local_26,(int)sVar2,(int)asStack_22);
-  transform_vecs12_by_matrix3(1,(int)auStack_10,(int)auStack_10,asStack_22);
-  local_a = local_a + -0x5b;
-  param_1[2] = (int)(local_e >> 6);
-  param_1[3] = (int)(local_a >> 6);
-  param_1[4] = (int)(local_6 >> 6);
-  iVar4 = (int)local_6 * (int)local_6 + (int)local_a * (int)local_a + (int)local_e * (int)local_e;
-  iVar3 = isqrt_floor( /* Original: FUN_0000e372 */iVar4);
-  attitude_from_velocity( /* Original: FUN_00001f22 */local_e,local_a,local_6,(int)(short)iVar3,iVar4,&local_24,&local_26);
-  sVar5 = local_26 - *(short *)((int)param_1 + 0x22);
-  if (sVar5 < 0x2001) {
-    if (sVar5 < -0x2000) {
-      sVar5 = sVar5 + 0x4000;
+  obj = *ctl;
+  pitch = *(ushort *)(ctl + 8);
+  att_22 = *(ushort *)((int)ctl + 0x22);
+  bank = *(short *)(ctl + 9);
+  vel_z = *(short *)(ctl + 0x184);
+  vel_y = 0;
+  vel_x = 0;
+  build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)(short)pitch,(int)(short)att_22,(int)bank,(int)matrix);
+  transform_vecs12_by_matrix3(1,(int)vel_vec,(int)vel_vec,matrix);
+  vel_y = vel_y + -0x5b;
+  ctl[2] = (int)(vel_x >> 6);
+  ctl[3] = (int)(vel_y >> 6);
+  ctl[4] = (int)(vel_z >> 6);
+  tmp = (int)vel_z * (int)vel_z + (int)vel_y * (int)vel_y + (int)vel_x * (int)vel_x;
+  speed = isqrt_floor( /* Original: FUN_0000e372 */tmp);
+  attitude_from_velocity( /* Original: FUN_00001f22 */vel_x,vel_y,vel_z,(int)(short)speed,tmp,&pitch,&att_22);
+  heading_delta = att_22 - *(short *)((int)ctl + 0x22);
+  if (heading_delta < 0x2001) {
+    if (heading_delta < -0x2000) {
+      heading_delta = heading_delta + 0x4000;
     }
   }
   else {
-    sVar5 = sVar5 + -0x4000;
+    heading_delta = heading_delta + -0x4000;
   }
-  *(ushort *)(param_1 + 8) = local_24;
-  *(ushort *)((int)param_1 + 0x22) = local_26 & 0x3fff;
-  iVar4 = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)local_24);
-  *(ushort *)(param_1 + 9) = sVar2 + (short)((int)(short)iVar4 * (int)sVar5 >> 0xc) & 0x3fff;
-  *(short *)(param_1 + 0x184) = (short)iVar3;
-  if (param_1[3] + *(int *)(iVar1 + 0x1c) <= *(int *)((int)param_1 + 0x2e)) {
-    param_1[3] = *(int *)((int)param_1 + 0x2e) - *(int *)(iVar1 + 0x1c);
-    *(ushort *)(param_1 + 0x187) = *(ushort *)(param_1 + 0x187) | 0x400;
-    if ((0 < *(int *)((int)param_1 + 0x2e)) &&
-       (((*(char *)(param_1 + 0xb) == '0' || (*(char *)(param_1 + 0xb) == '`')) ||
-        (*(char *)(param_1 + 0xb) == 'p')))) {
-      *(undefined2 *)((int)param_1 + 0x616) = 1;
+  *(ushort *)(ctl + 8) = pitch;
+  *(ushort *)((int)ctl + 0x22) = att_22 & 0x3fff;
+  tmp = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)pitch);
+  *(ushort *)(ctl + 9) = bank + (short)((int)(short)tmp * (int)heading_delta >> 0xc) & 0x3fff;
+  *(short *)(ctl + 0x184) = (short)speed;
+  if (ctl[3] + *(int *)(obj + 0x1c) <= *(int *)((int)ctl + 0x2e)) {
+    ctl[3] = *(int *)((int)ctl + 0x2e) - *(int *)(obj + 0x1c);
+    *(ushort *)(ctl + 0x187) = *(ushort *)(ctl + 0x187) | 0x400;
+    if ((0 < *(int *)((int)ctl + 0x2e)) &&
+       (((*(char *)(ctl + 0xb) == '0' || (*(char *)(ctl + 0xb) == '`')) ||
+        (*(char *)(ctl + 0xb) == 'p')))) {
+      *(undefined2 *)((int)ctl + 0x616) = 1;
     }
   }
   return;
@@ -23752,63 +23778,63 @@ void ordnance_ballistic_step /* Original: FUN_000128b6 */ (int *param_1)
  * object at the slot with zero velocity (on the exact frame word +0x61e = slot flags & ~0x40),
  * otherwise velocity = slot - position; flags, angles restored, ordnance_detonation run with
  * word +0x61e saved (the restored +0x61c) and put back afterwards. */
-void ordnance_tick /* Original: FUN_00012a2a */ (int *param_1)
+void ordnance_tick /* Original: FUN_00012a2a */ (int *ctl /* param_1: ordnance controller (+0x60e ring index, +0x32 pose ring, +0x61c / +0x61e flags) */)
 
 {
-  int *piVar1;
-  int iVar2;
-  undefined2 uVar3;
-  short *psVar4;
+  int *pose; /* piVar1; pose ring entry for this frame */
+  int obj; /* iVar2; ordnance object */
+  undefined2 flags_now; /* uVar3; flag word +0x61c after the replay copy, stored as last frame's flags (+0x61e) */
+  short *ring_index; /* psVar4; &controller +0x60e ring index */
   
-  iVar2 = *param_1;
-  psVar4 = (short *)((int)param_1 + 0x60e);
-  piVar1 = (int *)((int)param_1 + *psVar4 * 0x14 + 0x32);
-  *psVar4 = *psVar4 + 1;
-  if (*(short *)((int)param_1 + 0x60e) == 0x4b) {
-    *psVar4 = 0;
+  obj = *ctl;
+  ring_index = (short *)((int)ctl + 0x60e);
+  pose = (int *)((int)ctl + *ring_index * 0x14 + 0x32);
+  *ring_index = *ring_index + 1;
+  if (*(short *)((int)ctl + 0x60e) == 0x4b) {
+    *ring_index = 0;
   }
-  if (DAT_0001b870 == 0) {
-    if (((*(byte *)(param_1 + 0x187) & 4) == 0) || ((*(byte *)((int)param_1 + 0x61e) & 4) == 0)) {
-      ordnance_ballistic_step(param_1);
+  if (replay_state == 0) {
+    if (((*(byte *)(ctl + 0x187) & 4) == 0) || ((*(byte *)((int)ctl + 0x61e) & 4) == 0)) {
+      ordnance_ballistic_step(ctl);
     }
     else {
-      param_1[4] = 0;
-      param_1[3] = 0;
-      param_1[2] = 0;
+      ctl[4] = 0;
+      ctl[3] = 0;
+      ctl[2] = 0;
     }
-    ordnance_detonation(param_1);
-    *piVar1 = param_1[2] + *(int *)(iVar2 + 0x18);
-    piVar1[1] = param_1[3] + *(int *)(iVar2 + 0x1c);
-    piVar1[2] = param_1[4] + *(int *)(iVar2 + 0x20);
-    *(undefined2 *)(piVar1 + 3) = *(undefined2 *)(param_1 + 8);
-    *(undefined2 *)((int)piVar1 + 0xe) = *(undefined2 *)((int)param_1 + 0x22);
-    *(undefined2 *)(piVar1 + 4) = *(undefined2 *)(param_1 + 9);
-    *(undefined2 *)((int)piVar1 + 0x12) = *(undefined2 *)(param_1 + 0x187);
+    ordnance_detonation(ctl);
+    *pose = ctl[2] + *(int *)(obj + 0x18);
+    pose[1] = ctl[3] + *(int *)(obj + 0x1c);
+    pose[2] = ctl[4] + *(int *)(obj + 0x20);
+    *(undefined2 *)(pose + 3) = *(undefined2 *)(ctl + 8);
+    *(undefined2 *)((int)pose + 0xe) = *(undefined2 *)((int)ctl + 0x22);
+    *(undefined2 *)(pose + 4) = *(undefined2 *)(ctl + 9);
+    *(undefined2 *)((int)pose + 0x12) = *(undefined2 *)(ctl + 0x187);
   }
-  else if (*(int *)(iVar2 + 0x40) <= DAT_0001b838) {
-    if ((DAT_0001b870 == 1) || (DAT_0001b838 == *(int *)(iVar2 + 0x40))) {
-      param_1[4] = 0;
-      param_1[3] = 0;
-      param_1[2] = 0;
-      *(int *)(iVar2 + 0x18) = *piVar1;
-      *(int *)(iVar2 + 0x1c) = piVar1[1];
-      *(int *)(iVar2 + 0x20) = piVar1[2];
-      if (DAT_0001b838 == *(int *)(iVar2 + 0x40)) {
-        *(ushort *)((int)param_1 + 0x61e) = *(ushort *)((int)piVar1 + 0x12) & 0xffbf;
+  else if (*(int *)(obj + 0x40) <= frame_counter) {
+    if ((replay_state == 1) || (frame_counter == *(int *)(obj + 0x40))) {
+      ctl[4] = 0;
+      ctl[3] = 0;
+      ctl[2] = 0;
+      *(int *)(obj + 0x18) = *pose;
+      *(int *)(obj + 0x1c) = pose[1];
+      *(int *)(obj + 0x20) = pose[2];
+      if (frame_counter == *(int *)(obj + 0x40)) {
+        *(ushort *)((int)ctl + 0x61e) = *(ushort *)((int)pose + 0x12) & 0xffbf;
       }
     }
     else {
-      param_1[2] = *piVar1 - *(int *)(iVar2 + 0x18);
-      param_1[3] = piVar1[1] - *(int *)(iVar2 + 0x1c);
-      param_1[4] = piVar1[2] - *(int *)(iVar2 + 0x20);
+      ctl[2] = *pose - *(int *)(obj + 0x18);
+      ctl[3] = pose[1] - *(int *)(obj + 0x1c);
+      ctl[4] = pose[2] - *(int *)(obj + 0x20);
     }
-    *(undefined2 *)(param_1 + 0x187) = *(undefined2 *)((int)piVar1 + 0x12);
-    *(undefined2 *)(param_1 + 8) = *(undefined2 *)(piVar1 + 3);
-    *(undefined2 *)((int)param_1 + 0x22) = *(undefined2 *)((int)piVar1 + 0xe);
-    *(undefined2 *)(param_1 + 9) = *(undefined2 *)(piVar1 + 4);
-    uVar3 = *(undefined2 *)(param_1 + 0x187);
-    ordnance_detonation(param_1);
-    *(undefined2 *)((int)param_1 + 0x61e) = uVar3;
+    *(undefined2 *)(ctl + 0x187) = *(undefined2 *)((int)pose + 0x12);
+    *(undefined2 *)(ctl + 8) = *(undefined2 *)(pose + 3);
+    *(undefined2 *)((int)ctl + 0x22) = *(undefined2 *)((int)pose + 0xe);
+    *(undefined2 *)(ctl + 9) = *(undefined2 *)(pose + 4);
+    flags_now = *(undefined2 *)(ctl + 0x187);
+    ordnance_detonation(ctl);
+    *(undefined2 *)((int)ctl + 0x61e) = flags_now;
   }
   return;
 }
@@ -23836,95 +23862,95 @@ void ordnance_tick /* Original: FUN_00012a2a */ (int *param_1)
  * +0x684 |= 0x400, else 0x11db4 spawn_destruction_effect(obj, r / 8, or r / 4 when +0x1c),
  * 0x488 tally_destroyed_entity when param_5, 0x528a dispatch_entity_cleanup.
  */
-void apply_blast_damage /* Original: FUN_00012b66 */ (int param_1,int param_2,int param_3,int param_4,int param_5,
-                        int param_6,int param_7)
+void apply_blast_damage /* Original: FUN_00012b66 */ (int x /* param_1: blast x */,int y /* param_2: blast y */,int z /* param_3: blast z */,int radius /* param_4: blast radius (objects with a larger range take the ship path) */,int credit /* param_5: player-credit flag (tally_destroyed_entity, damage credit) */,
+                        int sure_hit /* param_6: non-zero skips the random miss chance for aircraft */,int hit_ships /* param_7: non-zero lets large ships (types 0x15..0x19) be hit within their range [INFERENCE] */)
 
 {
-  char *pcVar1;
-  ushort *puVar2;
-  bool bVar3;
-  int iVar4;
-  uint uVar5;
-  short sVar6;
-  undefined4 *puVar7;
-  undefined4 *puVar8;
-  int *piVar9;
+  char *obj; /* pcVar1; world object being tested */
+  ushort *damage_word; /* puVar2; &aircraft damage word +0x684 (bit 0x400 set) */
+  bool hit; /* bVar3; the object is hit */
+  int dist; /* iVar4; distance to the blast, then the destruction effect size */
+  uint rnd; /* uVar5; overlay_rng_next result (miss chance) */
+  short left; /* sVar6; objects left */
+  undefined4 *next_slot; /* puVar7; next object_pool slot */
+  undefined4 *slot; /* puVar8; object_pool slot */
+  int *ctl; /* piVar9; hit object's controller (ship path) */
   
-  puVar8 = &DAT_0001b5a4;
-  sVar6 = DAT_0001b734._2_2_;
+  slot = &object_pool;
+  left = object_count._2_2_;
 LAB_00012d26:
   do {
     do {
       do {
         do {
-          sVar6 = sVar6 + -1;
-          if (sVar6 == -1) {
+          left = left + -1;
+          if (left == -1) {
             return;
           }
-          puVar7 = puVar8 + 1;
-          pcVar1 = (char *)*puVar8;
-          puVar8 = puVar7;
-        } while (((*(uint *)(pcVar1 + 4) & 0x10242) != 0) &&
-                ((*(int *)(pcVar1 + 8) == 0 || (*(int *)(pcVar1 + 8) != DAT_0001b738))));
-        if (param_4 < *(int *)(pcVar1 + 0x14)) goto LAB_00012cd4;
-        iVar4 = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */);
-      } while (1999 < iVar4 - *(int *)(pcVar1 + 0x14));
-      if (iVar4 < *(int *)(pcVar1 + 0x14)) {
+          next_slot = slot + 1;
+          obj = (char *)*slot;
+          slot = next_slot;
+        } while (((*(uint *)(obj + 4) & 0x10242) != 0) &&
+                ((*(int *)(obj + 8) == 0 || (*(int *)(obj + 8) != player_object))));
+        if (radius < *(int *)(obj + 0x14)) goto LAB_00012cd4;
+        dist = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */);
+      } while (1999 < dist - *(int *)(obj + 0x14));
+      if (dist < *(int *)(obj + 0x14)) {
 LAB_00012bf4:
-        bVar3 = true;
+        hit = true;
       }
-      else if ((*(int *)(pcVar1 + 8) == 0) || (4 < **(short **)(*(int *)(pcVar1 + 8) + 4))) {
-        bVar3 = iVar4 - *(int *)(pcVar1 + 0x14) < 600;
+      else if ((*(int *)(obj + 8) == 0) || (4 < **(short **)(*(int *)(obj + 8) + 4))) {
+        hit = dist - *(int *)(obj + 0x14) < 600;
       }
       else {
-        if ((param_6 == 0) &&
-           (uVar5 = overlay_rng_next( /* Original: FUN_00011564 */),
-           iVar4 - *(int *)(pcVar1 + 0x14) <= (int)(uint)((ushort)uVar5 & 0x3ff)))
+        if ((sure_hit == 0) &&
+           (rnd = overlay_rng_next( /* Original: FUN_00011564 */),
+           dist - *(int *)(obj + 0x14) <= (int)(uint)((ushort)rnd & 0x3ff)))
         goto LAB_00012bf4;
-        apply_random_aircraft_damage(*(int *)(pcVar1 + 8),param_5);
-        bVar3 = false;
+        apply_random_aircraft_damage(*(int *)(obj + 8),credit);
+        hit = false;
       }
-    } while (!bVar3);
-    if (*(int *)(pcVar1 + 8) != 0) {
-      piVar9 = *(int **)(pcVar1 + 8);
-      if ((*(short *)piVar9[1] < 0x15) || (0x19 < *(short *)piVar9[1])) goto LAB_00012c74;
+    } while (!hit);
+    if (*(int *)(obj + 8) != 0) {
+      ctl = *(int **)(obj + 8);
+      if ((*(short *)ctl[1] < 0x15) || (0x19 < *(short *)ctl[1])) goto LAB_00012c74;
       goto LAB_00012d1e;
     }
 LAB_00012c74:
-    if ((*(int *)(pcVar1 + 8) == 0) || (4 < **(short **)(*(int *)(pcVar1 + 8) + 4))) {
-      if (*(int *)(pcVar1 + 0x1c) == 0) {
-        iVar4 = *(int *)(pcVar1 + 0x14);
-        if (iVar4 < 0) {
-          iVar4 = iVar4 + 7;
+    if ((*(int *)(obj + 8) == 0) || (4 < **(short **)(*(int *)(obj + 8) + 4))) {
+      if (*(int *)(obj + 0x1c) == 0) {
+        dist = *(int *)(obj + 0x14);
+        if (dist < 0) {
+          dist = dist + 7;
         }
-        iVar4 = iVar4 >> 3;
+        dist = dist >> 3;
       }
       else {
-        iVar4 = *(int *)(pcVar1 + 0x14);
-        if (iVar4 < 0) {
-          iVar4 = iVar4 + 3;
+        dist = *(int *)(obj + 0x14);
+        if (dist < 0) {
+          dist = dist + 3;
         }
-        iVar4 = iVar4 >> 2;
+        dist = dist >> 2;
       }
-      spawn_destruction_effect((int)pcVar1,iVar4);
-      if (param_5 != 0) {
-        tally_destroyed_entity((int)pcVar1);
+      spawn_destruction_effect((int)obj,dist);
+      if (credit != 0) {
+        tally_destroyed_entity((int)obj);
       }
-      dispatch_entity_cleanup( /* Original: FUN_0000528a */pcVar1);
+      dispatch_entity_cleanup( /* Original: FUN_0000528a */obj);
     }
     else {
-      puVar2 = (ushort *)(*(int *)(pcVar1 + 8) + 0x684);
-      *puVar2 = *puVar2 | 0x400;
+      damage_word = (ushort *)(*(int *)(obj + 8) + 0x684);
+      *damage_word = *damage_word | 0x400;
     }
   } while( true );
 LAB_00012cd4:
-  if ((((param_7 != 0) && (*(int *)(pcVar1 + 8) != 0)) &&
-      (0x14 < **(short **)(*(int *)(pcVar1 + 8) + 4))) &&
-     ((**(short **)(*(int *)(pcVar1 + 8) + 4) < 0x1a &&
-      (iVar4 = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */), iVar4 < *(int *)(pcVar1 + 0x14))))) {
-    piVar9 = *(int **)(pcVar1 + 8);
+  if ((((hit_ships != 0) && (*(int *)(obj + 8) != 0)) &&
+      (0x14 < **(short **)(*(int *)(obj + 8) + 4))) &&
+     ((**(short **)(*(int *)(obj + 8) + 4) < 0x1a &&
+      (dist = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */), dist < *(int *)(obj + 0x14))))) {
+    ctl = *(int **)(obj + 8);
 LAB_00012d1e:
-    apply_hit_to_sinkable_object(piVar9,param_5);
+    apply_hit_to_sinkable_object(ctl,credit);
   }
   goto LAB_00012d26;
 }
@@ -23941,77 +23967,77 @@ LAB_00012d1e:
  * Ghidra C reviewed (function at overlay offset 0x12d34).
  * On the first frame of impact (+0x61c bit 2): spawns the impact effect (spawn_destruction_effect at size 200 when +0x616 is 0, else an air burst or a debris explosion by height), and for a bomb of kind +0x614 != 0 landing on surface 0x70 counts the hit by the nearby facility (probe_nearest_facility_kind): 0x100 -> host +0xcc (target hits) += 1 outside replay, and in missions 3 / 4 within 0xce40 sets the objective word +0xce = 1; 0x200 -> host +0xd2 (friendly units destroyed) += 1. Schedules the blast 5 frames later (15 when it hit something) in +0x618 and cleans the object up; on that frame calls apply_blast_damage. When bit 0x40 changes, FUN_00016b9e at the position. Type 0xc definition (file 0x1a9a8): +2 ordnance_tick (0x12a2a), +6 0x1281e, +0x12 0x12f52 [PROVEN bytes]; the collision pair table makes type 0xc ignore bullets and aircraft (0x14346 RTS). Template type 0xc = ballistic ordnance [STRONG INFERENCE: its pool template DAT_00026280 is the one spawn_weapon_entity uses, so it covers bombs released by the player and shells fired by ships]. Ghidra C (apply_blast_damage stack arguments not shown).
  */
-void ordnance_detonation /* Original: FUN_00012d34 */ (int *param_1)
+void ordnance_detonation /* Original: FUN_00012d34 */ (int *ctl /* param_1: ordnance controller (+0x614 kind, +0x616 direct hit, +0x618 blast frame, +0x61c flags) */)
 
 {
-  char *pcVar1;
-  undefined3 extraout_var;
-  bool bVar5;
-  short sVar4;
-  undefined4 uVar2;
-  int iVar3;
-  short sVar6;
+  char *obj; /* pcVar1; ordnance object */
+  undefined3 hit_hi; /* extraout_var: upper bytes of the spawn_destruction_effect result */
+  bool near_surface; /* bVar5; spawn_destruction_effect result (on / near the surface) */
+  short surface; /* sVar4; surface code under the object */
+  undefined4 facility; /* uVar2; probe_nearest_facility_kind result (0x100 enemy target, 0x200 friendly) */
+  int dist; /* iVar3; distance to the mission target point */
+  short delay; /* sVar6; hit something (0 / 1), then the frames until the blast (5 or 15) */
   
-  pcVar1 = (char *)*param_1;
-  if ((*(byte *)(param_1 + 0x187) & 4) != 0) {
-    if ((*(byte *)((int)param_1 + 0x61e) & 4) == 0) {
-      sVar6 = 0;
-      if (*(short *)((int)param_1 + 0x616) == 0) {
-        bVar5 = spawn_destruction_effect((int)pcVar1,200);
-        sVar6 = (short)CONCAT31(extraout_var,bVar5);
+  obj = (char *)*ctl;
+  if ((*(byte *)(ctl + 0x187) & 4) != 0) {
+    if ((*(byte *)((int)ctl + 0x61e) & 4) == 0) {
+      delay = 0;
+      if (*(short *)((int)ctl + 0x616) == 0) {
+        near_surface = spawn_destruction_effect((int)obj,200);
+        delay = (short)CONCAT31(hit_hi,near_surface);
       }
-      else if (*(int *)((int)param_1 + 0x2e) < 1) {
-        spawn_effect(2,200,5,1,1,param_1[2] + *(int *)(pcVar1 + 0x18),
-                     param_1[3] + *(int *)(pcVar1 + 0x1c),param_1[4] + *(int *)(pcVar1 + 0x20));
-      }
-      else {
-        spawn_effect(3,0x96,0x2d,1,0,param_1[2] + *(int *)(pcVar1 + 0x18),
-                     param_1[3] + *(int *)(pcVar1 + 0x1c),param_1[4] + *(int *)(pcVar1 + 0x20));
-        sVar6 = 1;
-      }
-      if (sVar6 == 0) {
-        sVar6 = 5;
+      else if (*(int *)((int)ctl + 0x2e) < 1) {
+        spawn_effect(2,200,5,1,1,ctl[2] + *(int *)(obj + 0x18),
+                     ctl[3] + *(int *)(obj + 0x1c),ctl[4] + *(int *)(obj + 0x20));
       }
       else {
-        sVar6 = 0xf;
-        if ((*(short *)(param_1 + 0x185) != 0) && (sVar4 = surface_type_under_object((int)pcVar1), sVar4 == 0x70)
+        spawn_effect(3,0x96,0x2d,1,0,ctl[2] + *(int *)(obj + 0x18),
+                     ctl[3] + *(int *)(obj + 0x1c),ctl[4] + *(int *)(obj + 0x20));
+        delay = 1;
+      }
+      if (delay == 0) {
+        delay = 5;
+      }
+      else {
+        delay = 0xf;
+        if ((*(short *)(ctl + 0x185) != 0) && (surface = surface_type_under_object((int)obj), surface == 0x70)
            ) {
-          uVar2 = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)pcVar1 /* [PROVEN, move.l a2 at 0x12e32] */);
-          if ((short)uVar2 == 0x100) {
-            if (DAT_0001b870 == 0) {
-              *(short *)(DAT_0001b5a0 + 0xcc) = *(short *)(DAT_0001b5a0 + 0xcc) + 1;
+          facility = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)obj /* [PROVEN, move.l a2 at 0x12e32] */);
+          if ((short)facility == 0x100) {
+            if (replay_state == 0) {
+              *(short *)(host_world + 0xcc) = *(short *)(host_world + 0xcc) + 1;
             }
-            if (((*(short *)(DAT_0001b5a0 + 0x90) == 3) && (iVar3 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12e66..0x12e80): object x, y, z, -0x3bcd3, 0, 0x2b246a */), iVar3 < 0xce40))
-               && (*(short *)(DAT_0001b5a0 + 0xce) == 0)) {
-              *(undefined2 *)(DAT_0001b5a0 + 0xce) = 1;
+            if (((*(short *)(host_world + 0x90) == 3) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12e66..0x12e80): object x, y, z, -0x3bcd3, 0, 0x2b246a */), dist < 0xce40))
+               && (*(short *)(host_world + 0xce) == 0)) {
+              *(undefined2 *)(host_world + 0xce) = 1;
             }
-            if (((*(short *)(DAT_0001b5a0 + 0x90) == 4) && (iVar3 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12eb2..0x12ecc): object x, y, z, -0xf29a61, 0, 0xb2584f */), iVar3 < 0xce40))
-               && (*(short *)(DAT_0001b5a0 + 0xce) == 0)) {
-              *(undefined2 *)(DAT_0001b5a0 + 0xce) = 1;
+            if (((*(short *)(host_world + 0x90) == 4) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12eb2..0x12ecc): object x, y, z, -0xf29a61, 0, 0xb2584f */), dist < 0xce40))
+               && (*(short *)(host_world + 0xce) == 0)) {
+              *(undefined2 *)(host_world + 0xce) = 1;
             }
           }
-          else if ((short)uVar2 == 0x200) {
-            *(short *)(DAT_0001b5a0 + 0xd2) = *(short *)(DAT_0001b5a0 + 0xd2) + 1;
+          else if ((short)facility == 0x200) {
+            *(short *)(host_world + 0xd2) = *(short *)(host_world + 0xd2) + 1;
           }
         }
       }
-      param_1[0x186] = DAT_0001b838 + sVar6;
-      dispatch_entity_cleanup( /* Original: FUN_0000528a */pcVar1);
+      ctl[0x186] = frame_counter + delay;
+      dispatch_entity_cleanup( /* Original: FUN_0000528a */obj);
     }
-    else if (DAT_0001b838 == param_1[0x186]) {
+    else if (frame_counter == ctl[0x186]) {
       /* Arguments reconstructed [PROVEN, 0x12d5e..0x12d82]: object position, size limit 0x8d4,
        * credit = sext word ctl +0x614, 0, sext word ctl +0x616. */
-      apply_blast_damage(*(int *)(pcVar1 + 0x18),*(int *)(pcVar1 + 0x1c),*(int *)(pcVar1 + 0x20),
-                         0x8d4,(int)*(short *)((int)param_1 + 0x614),0,
-                         (int)*(short *)((int)param_1 + 0x616));
+      apply_blast_damage(*(int *)(obj + 0x18),*(int *)(obj + 0x1c),*(int *)(obj + 0x20),
+                         0x8d4,(int)*(short *)((int)ctl + 0x614),0,
+                         (int)*(short *)((int)ctl + 0x616));
       return;
     }
   }
-  if (((*(ushort *)((int)param_1 + 0x61e) ^ *(ushort *)(param_1 + 0x187)) & 0x40) != 0) {
-    attach_burning_trail(*(uint *)(pcVar1 + 0x18),*(uint *)(pcVar1 + 0x1c),*(uint *)(pcVar1 + 0x20),param_1)
+  if (((*(ushort *)((int)ctl + 0x61e) ^ *(ushort *)(ctl + 0x187)) & 0x40) != 0) {
+    attach_burning_trail(*(uint *)(obj + 0x18),*(uint *)(obj + 0x1c),*(uint *)(obj + 0x20),ctl)
     ;
   }
-  *(undefined2 *)((int)param_1 + 0x61e) = *(undefined2 *)(param_1 + 0x187);
+  *(undefined2 *)((int)ctl + 0x61e) = *(undefined2 *)(ctl + 0x187);
   return;
 }
 
@@ -24025,18 +24051,18 @@ void ordnance_detonation /* Original: FUN_00012d34 */ (int *param_1)
  * found identical to the C: entity = a +8; when word DAT_0001b870 == 0: word entity +0x61c |=
  * 0x400 and, when b has a controller (b +8) whose type word is 0x15..0x19 (cmpi.w / ble,
  * bgt), word entity +0x616 = 1. */
-void ordnance_collision /* Original: FUN_00012f52 */ (int param_1,int param_2)
+void ordnance_collision /* Original: FUN_00012f52 */ (int self_obj /* param_1: ordnance object (+8 controller) */,int other_obj /* param_2: the object collided with */)
 
 {
-  int iVar1;
-  short *psVar2;
-  ushort *puVar3;
+  int ctl; /* iVar1; ordnance controller */
+  short *other_def; /* psVar2; other object's definition (type word) */
+  ushort *flags; /* puVar3; &ordnance flag word +0x61c (impact bit 0x400) */
   
-  iVar1 = *(int *)(param_1 + 8);
-  if ((((DAT_0001b870 == 0) &&
-       (puVar3 = (ushort *)(iVar1 + 0x61c), *puVar3 = *puVar3 | 0x400, *(int *)(param_2 + 8) != 0))
-      && (psVar2 = *(short **)(*(int *)(param_2 + 8) + 4), 0x14 < *psVar2)) && (*psVar2 < 0x1a)) {
-    *(undefined2 *)(iVar1 + 0x616) = 1;
+  ctl = *(int *)(self_obj + 8);
+  if ((((replay_state == 0) &&
+       (flags = (ushort *)(ctl + 0x61c), *flags = *flags | 0x400, *(int *)(other_obj + 8) != 0))
+      && (other_def = *(short **)(*(int *)(other_obj + 8) + 4), 0x14 < *other_def)) && (*other_def < 0x1a)) {
+    *(undefined2 *)(ctl + 0x616) = 1;
   }
   return;
 }
@@ -24052,20 +24078,20 @@ void ordnance_collision /* Original: FUN_00012f52 */ (int param_1,int param_2)
  * DAT_0001b524[class], then DAT_00020b40 = controller (move.l a0,$20b40.l last); D0 is the
  * heap_alloc_cleared result, untouched to rts, so the controller is also returned.
  */
-uint * create_singleton_type10_controller /* Original: FUN_00012f92 */ (uint param_1,int param_2)
+uint * create_singleton_type10_controller /* Original: FUN_00012f92 */ (uint obj /* param_1: object */,int def_key /* param_2: definition key */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* puVar1; new 0x32-byte controller */
 
   /* Store order follows the bytes (Ghidra wrote the global first and went through it):
    * the controller is filled through a0 and published to DAT_00020b40 last (0x12fc2). */
-  puVar1 = heap_alloc_cleared(0x32);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x112100;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  DAT_00020b40 = puVar1;
+  ctl = heap_alloc_cleared(0x32);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x112100;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  type10_controller = ctl;
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -24075,40 +24101,40 @@ uint * create_singleton_type10_controller /* Original: FUN_00012f92 */ (uint par
  * Ghidra C reviewed (function at overlay offset 0x12fd2).
  * Same even-odd crossing test as point_in_polygon_xz, on vertex words +2 (x) and +6 (y). Used by point_in_face_by_axis. Ghidra C.
  */
-byte point_in_polygon_xy /* Original: FUN_00012fd2 */ (short param_1,short param_2,int param_3,short param_4,short *param_5)
+byte point_in_polygon_xy /* Original: FUN_00012fd2 */ (short px /* param_1: point first coordinate (compared with vertex word +2) */,short py /* param_2: point second coordinate (compared with vertex word +6) */,int verts /* param_3: vertex array (12-byte entries) */,short count /* param_4: vertex index count, then left */,short *vidx /* param_5: vertex index list */)
 
 {
-  int iVar1;
-  char cVar2;
-  int iVar3;
-  short *psVar4;
+  int cur; /* iVar1; current vertex */
+  char crossings; /* cVar2; edge crossings (result = parity) */
+  int prev; /* iVar3; previous vertex */
+  short *next_idx; /* psVar4; next index pointer */
   
-  cVar2 = '\0';
-  iVar1 = param_3 + param_5[param_4 + -1] * 0xc;
+  crossings = '\0';
+  cur = verts + vidx[count + -1] * 0xc;
 LAB_0001305c:
   do {
-    iVar3 = iVar1;
-    param_4 = param_4 + -1;
-    if (param_4 == -1) {
-      return -cVar2 & 1;
+    prev = cur;
+    count = count + -1;
+    if (count == -1) {
+      return -crossings & 1;
     }
-    psVar4 = param_5 + 1;
-    iVar1 = param_3 + *param_5 * 0xc;
-    param_5 = psVar4;
-  } while (((*(short *)(iVar3 + 6) <= param_2) || (param_2 < *(short *)(iVar1 + 6))) &&
-          ((param_2 < *(short *)(iVar3 + 6) || (*(short *)(iVar1 + 6) <= param_2))));
-  if (*(short *)(iVar3 + 2) <= param_1) goto LAB_0001302a;
-  if (*(short *)(iVar1 + 2) <= param_1) goto LAB_00013030;
+    next_idx = vidx + 1;
+    cur = verts + *vidx * 0xc;
+    vidx = next_idx;
+  } while (((*(short *)(prev + 6) <= py) || (py < *(short *)(cur + 6))) &&
+          ((py < *(short *)(prev + 6) || (*(short *)(cur + 6) <= py))));
+  if (*(short *)(prev + 2) <= px) goto LAB_0001302a;
+  if (*(short *)(cur + 2) <= px) goto LAB_00013030;
   goto LAB_00013058;
 LAB_0001302a:
-  if (param_1 < *(short *)(iVar1 + 2)) {
+  if (px < *(short *)(cur + 2)) {
 LAB_00013030:
-    if (0 < ((int)(short)(param_2 - *(short *)(iVar3 + 6)) *
-            (int)(short)(*(short *)(iVar1 + 2) - *(short *)(iVar3 + 2))) /
-            (int)(short)(*(short *)(iVar1 + 6) - *(short *)(iVar3 + 6)) + (int)*(short *)(iVar3 + 2)
+    if (0 < ((int)(short)(py - *(short *)(prev + 6)) *
+            (int)(short)(*(short *)(cur + 2) - *(short *)(prev + 2))) /
+            (int)(short)(*(short *)(cur + 6) - *(short *)(prev + 6)) + (int)*(short *)(prev + 2)
        ) {
 LAB_00013058:
-      cVar2 = cVar2 + '\x01';
+      crossings = crossings + '\x01';
     }
   }
   goto LAB_0001305c;
@@ -24121,40 +24147,40 @@ LAB_00013058:
  * Ghidra C reviewed (function at overlay offset 0x13070).
  * Uses vertex words +2 (x) and +10 (z) [the layout written by project_face_vertices_xz]. Args: point a, point b, vertex buffer (12-byte entries), vertex count, index list. Even-odd crossing test: for each polygon edge (previous vertex, current vertex) that straddles b, counts a crossing when the edge meets the line at a coordinate greater than 0 (the vertices are already relative to the point; callers pass 0, 0), with the shortcut that edges fully on one side of a are decided without the division. Returns the parity (1 = inside). [PROVEN structure; STRONG INFERENCE point-in-polygon] Complete Ghidra C. Called by surface_type_at_point and FUN_000132c8.
  */
-byte point_in_polygon_xz /* Original: FUN_00013070 */ (short param_1,short param_2,int param_3,short param_4,short *param_5)
+byte point_in_polygon_xz /* Original: FUN_00013070 */ (short px /* param_1: point coordinate compared with vertex word +2 */,short pz /* param_2: point coordinate compared with vertex word +10 */,int verts /* param_3: vertex array (12-byte entries) */,short count /* param_4: vertex index count, then left */,short *vidx /* param_5: vertex index list */)
 
 {
-  int iVar1;
-  char cVar2;
-  int iVar3;
-  short *psVar4;
+  int cur; /* iVar1; current vertex */
+  char crossings; /* cVar2; edge crossings (result = parity) */
+  int prev; /* iVar3; previous vertex */
+  short *next_idx; /* psVar4; next index pointer */
   
-  cVar2 = '\0';
-  iVar1 = param_3 + param_5[param_4 + -1] * 0xc;
+  crossings = '\0';
+  cur = verts + vidx[count + -1] * 0xc;
 LAB_000130fa:
   do {
-    iVar3 = iVar1;
-    param_4 = param_4 + -1;
-    if (param_4 == -1) {
-      return -cVar2 & 1;
+    prev = cur;
+    count = count + -1;
+    if (count == -1) {
+      return -crossings & 1;
     }
-    psVar4 = param_5 + 1;
-    iVar1 = param_3 + *param_5 * 0xc;
-    param_5 = psVar4;
-  } while (((*(short *)(iVar3 + 10) <= param_2) || (param_2 < *(short *)(iVar1 + 10))) &&
-          ((param_2 < *(short *)(iVar3 + 10) || (*(short *)(iVar1 + 10) <= param_2))));
-  if (*(short *)(iVar3 + 2) <= param_1) goto LAB_000130c8;
-  if (*(short *)(iVar1 + 2) <= param_1) goto LAB_000130ce;
+    next_idx = vidx + 1;
+    cur = verts + *vidx * 0xc;
+    vidx = next_idx;
+  } while (((*(short *)(prev + 10) <= pz) || (pz < *(short *)(cur + 10))) &&
+          ((pz < *(short *)(prev + 10) || (*(short *)(cur + 10) <= pz))));
+  if (*(short *)(prev + 2) <= px) goto LAB_000130c8;
+  if (*(short *)(cur + 2) <= px) goto LAB_000130ce;
   goto LAB_000130f6;
 LAB_000130c8:
-  if (param_1 < *(short *)(iVar1 + 2)) {
+  if (px < *(short *)(cur + 2)) {
 LAB_000130ce:
-    if (0 < ((int)(short)(param_2 - *(short *)(iVar3 + 10)) *
-            (int)(short)(*(short *)(iVar1 + 2) - *(short *)(iVar3 + 2))) /
-            (int)(short)(*(short *)(iVar1 + 10) - *(short *)(iVar3 + 10)) +
-            (int)*(short *)(iVar3 + 2)) {
+    if (0 < ((int)(short)(pz - *(short *)(prev + 10)) *
+            (int)(short)(*(short *)(cur + 2) - *(short *)(prev + 2))) /
+            (int)(short)(*(short *)(cur + 10) - *(short *)(prev + 10)) +
+            (int)*(short *)(prev + 2)) {
 LAB_000130f6:
-      cVar2 = cVar2 + '\x01';
+      crossings = crossings + '\x01';
     }
   }
   goto LAB_000130fa;
@@ -24167,40 +24193,40 @@ LAB_000130f6:
  * Ghidra C reviewed (function at overlay offset 0x1310e).
  * Same algorithm as point_in_polygon_xz on vertex words +6 (y) and +10 (z). Args: point a, point b, vertex buffer (12-byte entries), vertex count, index list. Even-odd crossing test: for each polygon edge (previous vertex, current vertex) that straddles b, counts a crossing when the edge meets the line at a coordinate greater than 0 (the vertices are already relative to the point; callers pass 0, 0), with the shortcut that edges fully on one side of a are decided without the division. Returns the parity (1 = inside). [PROVEN structure; STRONG INFERENCE point-in-polygon] Complete Ghidra C.
  */
-byte point_in_polygon_yz /* Original: FUN_0001310e */ (short param_1,short param_2,int param_3,short param_4,short *param_5)
+byte point_in_polygon_yz /* Original: FUN_0001310e */ (short py /* param_1: point coordinate compared with vertex word +6 */,short pz /* param_2: point coordinate compared with vertex word +10 */,int verts /* param_3: vertex array (12-byte entries) */,short count /* param_4: vertex index count, then left */,short *vidx /* param_5: vertex index list */)
 
 {
-  int iVar1;
-  char cVar2;
-  int iVar3;
-  short *psVar4;
+  int cur; /* iVar1; current vertex */
+  char crossings; /* cVar2; edge crossings (result = parity) */
+  int prev; /* iVar3; previous vertex */
+  short *next_idx; /* psVar4; next index pointer */
   
-  cVar2 = '\0';
-  iVar1 = param_3 + param_5[param_4 + -1] * 0xc;
+  crossings = '\0';
+  cur = verts + vidx[count + -1] * 0xc;
 LAB_00013198:
   do {
-    iVar3 = iVar1;
-    param_4 = param_4 + -1;
-    if (param_4 == -1) {
-      return -cVar2 & 1;
+    prev = cur;
+    count = count + -1;
+    if (count == -1) {
+      return -crossings & 1;
     }
-    psVar4 = param_5 + 1;
-    iVar1 = param_3 + *param_5 * 0xc;
-    param_5 = psVar4;
-  } while (((*(short *)(iVar3 + 10) <= param_2) || (param_2 < *(short *)(iVar1 + 10))) &&
-          ((param_2 < *(short *)(iVar3 + 10) || (*(short *)(iVar1 + 10) <= param_2))));
-  if (*(short *)(iVar3 + 6) <= param_1) goto LAB_00013166;
-  if (*(short *)(iVar1 + 6) <= param_1) goto LAB_0001316c;
+    next_idx = vidx + 1;
+    cur = verts + *vidx * 0xc;
+    vidx = next_idx;
+  } while (((*(short *)(prev + 10) <= pz) || (pz < *(short *)(cur + 10))) &&
+          ((pz < *(short *)(prev + 10) || (*(short *)(cur + 10) <= pz))));
+  if (*(short *)(prev + 6) <= py) goto LAB_00013166;
+  if (*(short *)(cur + 6) <= py) goto LAB_0001316c;
   goto LAB_00013194;
 LAB_00013166:
-  if (param_1 < *(short *)(iVar1 + 6)) {
+  if (py < *(short *)(cur + 6)) {
 LAB_0001316c:
-    if (0 < ((int)(short)(param_2 - *(short *)(iVar3 + 10)) *
-            (int)(short)(*(short *)(iVar1 + 6) - *(short *)(iVar3 + 6))) /
-            (int)(short)(*(short *)(iVar1 + 10) - *(short *)(iVar3 + 10)) +
-            (int)*(short *)(iVar3 + 6)) {
+    if (0 < ((int)(short)(pz - *(short *)(prev + 10)) *
+            (int)(short)(*(short *)(cur + 6) - *(short *)(prev + 6))) /
+            (int)(short)(*(short *)(cur + 10) - *(short *)(prev + 10)) +
+            (int)*(short *)(prev + 6)) {
 LAB_00013194:
-      cVar2 = cVar2 + '\x01';
+      crossings = crossings + '\x01';
     }
   }
   goto LAB_00013198;
@@ -24213,24 +24239,24 @@ LAB_00013194:
  * Ghidra C reviewed (function at overlay offset 0x131ac).
  * Writes x to +2 and y to +6. Args: object, shift, face, origin a, origin b, output vertex buffer (12-byte entries). For each of the face vertex indices (count face +0x14, list face +0x18) takes the object vertex (+0x44, 12-byte x / y / z longs), shifts it right by the shift and subtracts the origin, storing 16-bit coordinates at the same index in the output buffer. [PROVEN from the Ghidra C] Complete Ghidra C.
  */
-void project_face_vertices_xy /* Original: FUN_000131ac */ (int param_1,short param_2,int param_3,short param_4,short param_5,int param_6)
+void project_face_vertices_xy /* Original: FUN_000131ac */ (int model /* param_1: model (+0x44 vertex longs) */,short shift /* param_2: vertex shift */,int face /* param_3: face record (+0x14 count, +0x18 index list) */,short origin_x /* param_4: origin subtracted from the x coordinate */,short origin_y /* param_5: origin subtracted from the y coordinate */,int out /* param_6: output vertex array (12-byte entries, words +2 / +6 / +10) */)
 
 {
-  int iVar1;
-  short sVar2;
-  int *piVar3;
-  int iVar4;
-  short *psVar5;
+  int model_verts; /* iVar1; model vertex longs */
+  short left; /* sVar2; face vertices left */
+  int *mv; /* piVar3; model vertex */
+  int ov; /* iVar4; output vertex */
+  short *vidx; /* psVar5; face vertex index pointer */
   
-  iVar1 = *(int *)(param_1 + 0x44);
-  sVar2 = *(short *)(param_3 + 0x14);
-  psVar5 = *(short **)(param_3 + 0x18);
-  while (sVar2 = sVar2 + -1, sVar2 != -1) {
-    piVar3 = (int *)(*psVar5 * 0xc + iVar1);
-    iVar4 = *psVar5 * 0xc + param_6;
-    *(short *)(iVar4 + 2) = (short)(*piVar3 >> ((int)param_2 & 0x3fU)) - param_4;
-    *(short *)(iVar4 + 6) = (short)(piVar3[1] >> ((int)param_2 & 0x3fU)) - param_5;
-    psVar5 = psVar5 + 1;
+  model_verts = *(int *)(model + 0x44);
+  left = *(short *)(face + 0x14);
+  vidx = *(short **)(face + 0x18);
+  while (left = left + -1, left != -1) {
+    mv = (int *)(*vidx * 0xc + model_verts);
+    ov = *vidx * 0xc + out;
+    *(short *)(ov + 2) = (short)(*mv >> ((int)shift & 0x3fU)) - origin_x;
+    *(short *)(ov + 6) = (short)(mv[1] >> ((int)shift & 0x3fU)) - origin_y;
+    vidx = vidx + 1;
   }
   return;
 }
@@ -24242,24 +24268,24 @@ void project_face_vertices_xy /* Original: FUN_000131ac */ (int param_1,short pa
  * Ghidra C reviewed (function at overlay offset 0x1320a).
  * Writes x to +2 and z to +10. Args: object, shift, face, origin a, origin b, output vertex buffer (12-byte entries). For each of the face vertex indices (count face +0x14, list face +0x18) takes the object vertex (+0x44, 12-byte x / y / z longs), shifts it right by the shift and subtracts the origin, storing 16-bit coordinates at the same index in the output buffer. [PROVEN from the Ghidra C] Complete Ghidra C.
  */
-void project_face_vertices_xz /* Original: FUN_0001320a */ (int param_1,short param_2,int param_3,short param_4,short param_5,int param_6)
+void project_face_vertices_xz /* Original: FUN_0001320a */ (int model /* param_1: model (+0x44 vertex longs) */,short shift /* param_2: vertex shift */,int face /* param_3: face record (+0x14 count, +0x18 index list) */,short origin_x /* param_4: origin subtracted from the x coordinate */,short origin_z /* param_5: origin subtracted from the z coordinate */,int out /* param_6: output vertex array (12-byte entries, words +2 / +6 / +10) */)
 
 {
-  int iVar1;
-  short sVar2;
-  int *piVar3;
-  int iVar4;
-  short *psVar5;
+  int model_verts; /* iVar1; model vertex longs */
+  short left; /* sVar2; face vertices left */
+  int *mv; /* piVar3; model vertex */
+  int ov; /* iVar4; output vertex */
+  short *vidx; /* psVar5; face vertex index pointer */
   
-  iVar1 = *(int *)(param_1 + 0x44);
-  sVar2 = *(short *)(param_3 + 0x14);
-  psVar5 = *(short **)(param_3 + 0x18);
-  while (sVar2 = sVar2 + -1, sVar2 != -1) {
-    piVar3 = (int *)(*psVar5 * 0xc + iVar1);
-    iVar4 = *psVar5 * 0xc + param_6;
-    *(short *)(iVar4 + 2) = (short)(*piVar3 >> ((int)param_2 & 0x3fU)) - param_4;
-    *(short *)(iVar4 + 10) = (short)(piVar3[2] >> ((int)param_2 & 0x3fU)) - param_5;
-    psVar5 = psVar5 + 1;
+  model_verts = *(int *)(model + 0x44);
+  left = *(short *)(face + 0x14);
+  vidx = *(short **)(face + 0x18);
+  while (left = left + -1, left != -1) {
+    mv = (int *)(*vidx * 0xc + model_verts);
+    ov = *vidx * 0xc + out;
+    *(short *)(ov + 2) = (short)(*mv >> ((int)shift & 0x3fU)) - origin_x;
+    *(short *)(ov + 10) = (short)(mv[2] >> ((int)shift & 0x3fU)) - origin_z;
+    vidx = vidx + 1;
   }
   return;
 }
@@ -24271,24 +24297,24 @@ void project_face_vertices_xz /* Original: FUN_0001320a */ (int param_1,short pa
  * Ghidra C reviewed (function at overlay offset 0x13268).
  * Writes y to +6 and z to +10. Args: object, shift, face, origin a, origin b, output vertex buffer (12-byte entries). For each of the face vertex indices (count face +0x14, list face +0x18) takes the object vertex (+0x44, 12-byte x / y / z longs), shifts it right by the shift and subtracts the origin, storing 16-bit coordinates at the same index in the output buffer. [PROVEN from the Ghidra C] Complete Ghidra C.
  */
-void project_face_vertices_yz /* Original: FUN_00013268 */ (int param_1,short param_2,int param_3,short param_4,short param_5,int param_6)
+void project_face_vertices_yz /* Original: FUN_00013268 */ (int model /* param_1: model (+0x44 vertex longs) */,short shift /* param_2: vertex shift */,int face /* param_3: face record (+0x14 count, +0x18 index list) */,short origin_y /* param_4: origin subtracted from the y coordinate */,short origin_z /* param_5: origin subtracted from the z coordinate */,int out /* param_6: output vertex array (12-byte entries, words +2 / +6 / +10) */)
 
 {
-  int iVar1;
-  short sVar2;
-  int iVar3;
-  int iVar4;
-  short *psVar5;
+  int model_verts; /* iVar1; model vertex longs */
+  short left; /* sVar2; face vertices left */
+  int mv; /* iVar3; model vertex */
+  int ov; /* iVar4; output vertex */
+  short *vidx; /* psVar5; face vertex index pointer */
   
-  iVar1 = *(int *)(param_1 + 0x44);
-  sVar2 = *(short *)(param_3 + 0x14);
-  psVar5 = *(short **)(param_3 + 0x18);
-  while (sVar2 = sVar2 + -1, sVar2 != -1) {
-    iVar3 = *psVar5 * 0xc + iVar1;
-    iVar4 = *psVar5 * 0xc + param_6;
-    *(short *)(iVar4 + 6) = (short)(*(int *)(iVar3 + 4) >> ((int)param_2 & 0x3fU)) - param_4;
-    *(short *)(iVar4 + 10) = (short)(*(int *)(iVar3 + 8) >> ((int)param_2 & 0x3fU)) - param_5;
-    psVar5 = psVar5 + 1;
+  model_verts = *(int *)(model + 0x44);
+  left = *(short *)(face + 0x14);
+  vidx = *(short **)(face + 0x18);
+  while (left = left + -1, left != -1) {
+    mv = *vidx * 0xc + model_verts;
+    ov = *vidx * 0xc + out;
+    *(short *)(ov + 6) = (short)(*(int *)(mv + 4) >> ((int)shift & 0x3fU)) - origin_y;
+    *(short *)(ov + 10) = (short)(*(int *)(mv + 8) >> ((int)shift & 0x3fU)) - origin_z;
+    vidx = vidx + 1;
   }
   return;
 }
@@ -24307,27 +24333,27 @@ void project_face_vertices_yz /* Original: FUN_00013268 */ (int param_1,short pa
  * the (short) casts are exact); bsr.w 0x13070 point_in_polygon_xz(0, 0, buf, sext word face
  * +0x14, face +0x18); callers 0x15236 / 0x1527a test the full D0 (tst.l).
  */
-int point_over_face_xz /* Original: FUN_000132c8 */ (int *param_1,int param_2)
+int point_over_face_xz /* Original: FUN_000132c8 */ (int *rec /* param_1: record (+0 object, +4 model, +0xc position shift, +0xe vertex shift) */,int face /* param_2: face record */)
 
 {
-  int iVar1;
-  short sVar2;
-  short sVar3;
-  undefined1 auStack_694 [1680];
+  int obj; /* iVar1; object */
+  short origin_x; /* sVar2; object x scaled by the position shift */
+  short origin_z; /* sVar3; object z scaled by the position shift */
+  undefined1 projected [1680]; /* auStack_694, -0x694(A6): projected face vertices (1680 bytes) */
   
-  iVar1 = *param_1;
-  if (*(short *)(param_1 + 3) < 0) {
-    sVar2 = (short)(*(int *)(iVar1 + 0x18) >> (-(int)*(short *)(param_1 + 3) & 0x3fU));
-    sVar3 = (short)(*(int *)(iVar1 + 0x20) >> (-(int)*(short *)(param_1 + 3) & 0x3fU));
+  obj = *rec;
+  if (*(short *)(rec + 3) < 0) {
+    origin_x = (short)(*(int *)(obj + 0x18) >> (-(int)*(short *)(rec + 3) & 0x3fU));
+    origin_z = (short)(*(int *)(obj + 0x20) >> (-(int)*(short *)(rec + 3) & 0x3fU));
   }
   else {
-    sVar2 = (short)(*(int *)(iVar1 + 0x18) << ((int)*(short *)(param_1 + 3) & 0x3fU));
-    sVar3 = (short)(*(int *)(iVar1 + 0x20) << ((int)*(short *)(param_1 + 3) & 0x3fU));
+    origin_x = (short)(*(int *)(obj + 0x18) << ((int)*(short *)(rec + 3) & 0x3fU));
+    origin_z = (short)(*(int *)(obj + 0x20) << ((int)*(short *)(rec + 3) & 0x3fU));
   }
-  project_face_vertices_xz(param_1[1],*(short *)((int)param_1 + 0xe),param_2,sVar2,sVar3,(int)auStack_694);
+  project_face_vertices_xz(rec[1],*(short *)((int)rec + 0xe),face,origin_x,origin_z,(int)projected);
   /* Return type applied from the SIGNATURE CORRECTION above (Ghidra: void): D0 of
    * point_in_polygon_xz (and.l d7,d0 / rts, a full long) is returned untouched. */
-  return (int)point_in_polygon_xz(0,0,(int)auStack_694,*(short *)(param_2 + 0x14),*(short **)(param_2 + 0x18));
+  return (int)point_in_polygon_xz(0,0,(int)projected,*(short *)(face + 0x14),*(short **)(face + 0x18));
 }
 
 
@@ -24375,55 +24401,55 @@ int point_over_face_xz /* Original: FUN_000132c8 */ (int *param_1,int param_2)
  * long (Ghidra's CONCAT31). Hit -> face byte +0x16, else DAT_0001bda8 byte +0x16;
  * extb.l sign-extends the result.
  */
-int surface_type_at_point /* Original: FUN_00013346 */ (int param_1,undefined4 param_2,int param_3)
+int surface_type_at_point /* Original: FUN_00013346 */ (int x /* param_1: point x */,undefined4 y_unused /* param_2: y (only passed to the dropped distance calls) */,int z /* param_3: point z */)
 
 {
-  int iVar1;
-  uint uVar2;
-  int iVar3;
-  undefined3 extraout_var;
-  int iVar4;
-  int iVar5;
-  byte bVar6;
-  char cVar7;
-  short sVar8;
-  short sVar9;
-  int *piVar10;
-  undefined1 auStack_694 [1680];
+  int obj; /* iVar1; object being tested */
+  uint shift; /* uVar2; object vertex shift + 1 */
+  int face_end; /* iVar3; end of the current face record (face = face_end - 0x20) */
+  undefined3 inside_hi; /* extraout_var: upper bytes of point_in_polygon_xz */
+  int metric; /* iVar4; compute_camera_abs_metric of the point */
+  int face; /* iVar5; |metric difference| / distance first, then the face record */
+  byte inside; /* bVar6; point_in_polygon_xz result */
+  char code; /* cVar7; surface code returned */
+  short faces_left; /* sVar8; faces left (+0x3a) */
+  short left; /* sVar9; objects left */
+  int *slot; /* piVar10; entity_array_1 slot (walked from the end) */
+  undefined1 projected [1680]; /* auStack_694, -0x694(A6): projected face vertices (1680 bytes) */
   
-  sVar9 = DAT_0001c1e0._2_2_;
-  piVar10 = &DAT_0001d4a4 + DAT_0001c1e0._2_2_;
+  left = entity_array_1_count._2_2_;
+  slot = &entity_array_1 + entity_array_1_count._2_2_;
   /* Dropped call arguments [PROVEN, 0x1336e..0x133c2]: compute_camera_abs_metric(param_1,
    * param_2, param_3) here, and below approx_dist3_xyz(param_1, param_2, param_3, obj +0x18,
    * obj +0x1c, obj +0x20) (the object position). */
-  iVar4 = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+  metric = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
   do {
     do {
-      sVar9 = sVar9 + -1;
-      if (sVar9 == -1) {
-        cVar7 = *(char *)(DAT_0001bda8 + 0x16);
+      left = left + -1;
+      if (left == -1) {
+        code = *(char *)(default_surface_face + 0x16);
 LAB_00013446:
-        return (int)cVar7;
+        return (int)code;
       }
-      piVar10 = piVar10 + -1;
-      iVar1 = *piVar10;
-      iVar5 = abs_int( /* Original: FUN_00002e08 */*(int *)(iVar1 + 0x10) - iVar4);
-    } while (((*(int *)(iVar1 + 0x14) < iVar5) || ((*(uint *)(iVar1 + 4) & 0x42) != 0)) ||
-            (iVar5 = approx_dist3_xyz( /* Original: FUN_00003c68 */), *(int *)(iVar1 + 0x14) < iVar5));
-    sVar8 = *(short *)(iVar1 + 0x3a);
-    iVar5 = *(int *)(iVar1 + 0x48) + sVar8 * 0x20;
+      slot = slot + -1;
+      obj = *slot;
+      face = abs_int( /* Original: FUN_00002e08 */*(int *)(obj + 0x10) - metric);
+    } while (((*(int *)(obj + 0x14) < face) || ((*(uint *)(obj + 4) & 0x42) != 0)) ||
+            (face = approx_dist3_xyz( /* Original: FUN_00003c68 */), *(int *)(obj + 0x14) < face));
+    faces_left = *(short *)(obj + 0x3a);
+    face = *(int *)(obj + 0x48) + faces_left * 0x20;
     while( true ) {
-      iVar3 = iVar5;
-      iVar5 = iVar3 + -0x20;
-      sVar8 = sVar8 + -1;
-      if (sVar8 == -1) break;
-      if (*(char *)(iVar3 + -10) != '\0') {
-        uVar2 = (int)*(short *)(iVar1 + 0x32) + 1;
-        project_face_vertices_xz(iVar1,(short)uVar2,iVar5,(short)(param_1 >> (uVar2 & 0x3f)),
-                     (short)(param_3 >> (uVar2 & 0x3f)),(int)auStack_694);
-        bVar6 = point_in_polygon_xz(0,0,(int)auStack_694,*(short *)(iVar3 + -0xc),*(short **)(iVar3 + -8));
-        if (CONCAT31(extraout_var,bVar6) != 0) {
-          cVar7 = *(char *)(iVar3 + -10);
+      face_end = face;
+      face = face_end + -0x20;
+      faces_left = faces_left + -1;
+      if (faces_left == -1) break;
+      if (*(char *)(face_end + -10) != '\0') {
+        shift = (int)*(short *)(obj + 0x32) + 1;
+        project_face_vertices_xz(obj,(short)shift,face,(short)(x >> (shift & 0x3f)),
+                     (short)(z >> (shift & 0x3f)),(int)projected);
+        inside = point_in_polygon_xz(0,0,(int)projected,*(short *)(face_end + -0xc),*(short **)(face_end + -8));
+        if (CONCAT31(inside_hi,inside) != 0) {
+          code = *(char *)(face_end + -10);
           goto LAB_00013446;
         }
       }
@@ -24441,11 +24467,11 @@ LAB_00013446:
  * identical to the C with the int return applied: pushes +0x20 / +0x1c / +0x18, bsr.w 0x13346
  * surface_type_at_point(x, y, z), adda.w #$c, rts with D0 untouched.
  */
-int surface_type_under_object /* Original: FUN_00013452 */ (int param_1)
+int surface_type_under_object /* Original: FUN_00013452 */ (int obj /* param_1: object (+0x18 / +0x1c / +0x20 position) */)
 
 {
   /* Return type applied from the SIGNATURE CORRECTION above (Ghidra: void). */
-  return surface_type_at_point(*(int *)(param_1 + 0x18),*(undefined4 *)(param_1 + 0x1c),*(int *)(param_1 + 0x20));
+  return surface_type_at_point(*(int *)(obj + 0x18),*(undefined4 *)(obj + 0x1c),*(int *)(obj + 0x20));
 }
 
 
@@ -24463,58 +24489,58 @@ int surface_type_under_object /* Original: FUN_00013452 */ (int param_1)
  * 0x13070; 2 -> 0x131ac xy with x, y + 0x12fd2; other -> 0; returns 1 when the test's D0 (tst.l)
  * is non-zero. Arguments 5..8 are pushed by the only caller (0x14156) but never read here; the
  * nine-parameter signature is now applied and test_object_collision passes all nine. */
-undefined4 point_in_face_by_axis /* Original: FUN_0001346c */ (int param_1,int param_2,int param_3,int param_4,int param_5,
-                                  int param_6,int param_7,int param_8,short param_9)
+undefined4 point_in_face_by_axis /* Original: FUN_0001346c */ (int rec /* param_1: contact record (+0xc position shift, +0xe vertex shift) */,int obj_a /* param_2: object a (its position is the tested point) */,int obj_b /* param_3: object b (model whose face is projected) */,int face /* param_4: face record (+0x14 count, +0x18 index list) */,int unused_5 /* param_5: not read */,
+                                  int unused_6 /* param_6: not read */,int unused_7 /* param_7: not read */,int unused_8 /* param_8: not read */,short axis /* param_9: projection plane (0 y/z, 1 x/z, 2 x/y) [STRONG INFERENCE: face dominant-axis code] */)
 
 {
-  undefined3 extraout_var;
-  undefined3 extraout_var_00;
-  undefined3 extraout_var_01;
-  uint uVar1;
-  byte bVar3;
-  short sVar4;
-  short sVar5;
-  short sVar6;
-  undefined1 auStack_694 [1680];
-  int iVar2;
-  
-  if (*(short *)(param_1 + 0xc) < 0) {
-    uVar1 = -(int)*(short *)(param_1 + 0xc);
-    sVar5 = (short)(*(int *)(param_2 + 0x18) >> (uVar1 & 0x3f));
-    sVar4 = (short)(*(int *)(param_2 + 0x1c) >> (uVar1 & 0x3f));
-    sVar6 = (short)(*(int *)(param_2 + 0x20) >> (uVar1 & 0x3f));
+  undefined3 inside_hi_yz; /* extraout_var: upper bytes of point_in_polygon_yz */
+  undefined3 inside_hi_xz; /* extraout_var_00: upper bytes of point_in_polygon_xz */
+  undefined3 inside_hi_xy; /* extraout_var_01: upper bytes of point_in_polygon_xy */
+  uint shift; /* uVar1; |position shift| */
+  byte inside; /* bVar3; point_in_polygon_* result */
+  short py; /* sVar4; object a y, scaled */
+  short px; /* sVar5; object a x, scaled */
+  short pz; /* sVar6; object a z, scaled */
+  undefined1 projected [1680]; /* auStack_694, -0x694(A6): projected face vertices (1680 bytes) */
+  int result; /* iVar2; point-in-polygon result as an int */
+
+  if (*(short *)(rec + 0xc) < 0) {
+    shift = -(int)*(short *)(rec + 0xc);
+    px = (short)(*(int *)(obj_a + 0x18) >> (shift & 0x3f));
+    py = (short)(*(int *)(obj_a + 0x1c) >> (shift & 0x3f));
+    pz = (short)(*(int *)(obj_a + 0x20) >> (shift & 0x3f));
   }
   else {
-    uVar1 = (uint)*(short *)(param_1 + 0xc);
-    sVar5 = (short)(*(int *)(param_2 + 0x18) << (uVar1 & 0x3f));
-    sVar4 = (short)(*(int *)(param_2 + 0x1c) << (uVar1 & 0x3f));
-    sVar6 = (short)(*(int *)(param_2 + 0x20) << (uVar1 & 0x3f));
+    shift = (uint)*(short *)(rec + 0xc);
+    px = (short)(*(int *)(obj_a + 0x18) << (shift & 0x3f));
+    py = (short)(*(int *)(obj_a + 0x1c) << (shift & 0x3f));
+    pz = (short)(*(int *)(obj_a + 0x20) << (shift & 0x3f));
   }
-  if (param_9 == 1) {
-    project_face_vertices_xz(param_3,*(short *)(param_1 + 0xe),param_4,sVar5,sVar6,(int)auStack_694);
-    bVar3 = point_in_polygon_xz(0,0,(int)auStack_694,*(short *)(param_4 + 0x14),*(short **)(param_4 + 0x18)
+  if (axis == 1) {
+    project_face_vertices_xz(obj_b,*(short *)(rec + 0xe),face,px,pz,(int)projected);
+    inside = point_in_polygon_xz(0,0,(int)projected,*(short *)(face + 0x14),*(short **)(face + 0x18)
                         );
-    iVar2 = CONCAT31(extraout_var_00,bVar3);
+    result = CONCAT31(inside_hi_xz,inside);
   }
-  else if (param_9 < 2) {
-    if (param_9 != 0) {
+  else if (axis < 2) {
+    if (axis != 0) {
       return 0;
     }
-    project_face_vertices_yz(param_3,*(short *)(param_1 + 0xe),param_4,sVar4,sVar6,(int)auStack_694);
-    bVar3 = point_in_polygon_yz(0,0,(int)auStack_694,*(short *)(param_4 + 0x14),*(short **)(param_4 + 0x18)
+    project_face_vertices_yz(obj_b,*(short *)(rec + 0xe),face,py,pz,(int)projected);
+    inside = point_in_polygon_yz(0,0,(int)projected,*(short *)(face + 0x14),*(short **)(face + 0x18)
                         );
-    iVar2 = CONCAT31(extraout_var,bVar3);
+    result = CONCAT31(inside_hi_yz,inside);
   }
   else {
-    if (param_9 != 2) {
+    if (axis != 2) {
       return 0;
     }
-    project_face_vertices_xy(param_3,*(short *)(param_1 + 0xe),param_4,sVar5,sVar4,(int)auStack_694);
-    bVar3 = point_in_polygon_xy(0,0,(int)auStack_694,*(short *)(param_4 + 0x14),*(short **)(param_4 + 0x18)
+    project_face_vertices_xy(obj_b,*(short *)(rec + 0xe),face,px,py,(int)projected);
+    inside = point_in_polygon_xy(0,0,(int)projected,*(short *)(face + 0x14),*(short **)(face + 0x18)
                         );
-    iVar2 = CONCAT31(extraout_var_01,bVar3);
+    result = CONCAT31(inside_hi_xy,inside);
   }
-  if (iVar2 == 0) {
+  if (result == 0) {
     return 0;
   }
   return 1;
@@ -24575,96 +24601,96 @@ int * find_contact_record /* Original: FUN_000135a0 */ (int param_1,int param_2)
  * Ghidra C reviewed (function at overlay offset 0x135e8).
  * Args: object a (player), object b (plain shape). Counts the faces of b whose word +0x1c is at least half of the b metric +0x10, allocates a cleared record of 0x10 + 6 * count bytes (+0 a, +4 b, word +0xa count), stores it in the first free slot of DAT_0001bdbc, computes a shift so that (a range + 2 * b range) << b shift fits in 15 bits (+0xe shift, +0xc = b shift - it) and fills the per-face entries. Used by handle_player_contact. Contact records live in the 256-slot open-addressing hash table DAT_0001bdbc keyed by the (object a, object b) pair: slot = contact_pair_hash(a, b), linear probing modulo 256 [PROVEN]. Ghidra C (tail not shown here).
  */
-uint * create_shape_contact_record /* Original: FUN_000135e8 */ (uint param_1,uint param_2)
+uint * create_shape_contact_record /* Original: FUN_000135e8 */ (uint obj_a /* param_1: object a (player) */,uint obj_b /* param_2: object b (plain shape) */)
 
 {
-  undefined3 extraout_var;
-  uint *puVar1;
-  byte bVar7;
-  uint uVar2;
-  int iVar3;
-  short sVar4;
-  short sVar5;
-  short sVar6;
-  short sVar8;
-  int iVar9;
-  uint *puVar10;
-  uint *puVar11;
-  
-  iVar9 = *(int *)(param_2 + 0x48);
-  sVar4 = 0;
-  sVar8 = *(short *)(param_2 + 0x3a);
-  while (sVar8 = sVar8 + -1, sVar8 != -1) {
-    iVar3 = *(int *)(param_2 + 0x10);
-    if (iVar3 < 0) {
-      iVar3 = iVar3 + 1;
+  undefined3 hash_hi; /* extraout_var: upper bytes of contact_pair_hash */
+  uint *rec; /* puVar1; new contact record (+0 a, +4 b, +0xa count, +0xc / +0xe shifts, faces from +0x10) */
+  byte hash; /* bVar7; contact_pair_hash(a, b) */
+  uint slot; /* uVar2; table slot, then the extent being shifted down to 15 bits */
+  int half_metric; /* iVar3; object b metric +0x10 / 2 */
+  short count; /* sVar4; selected faces, then the face index, then |normal x| */
+  short abs_y; /* sVar5; |normal y| */
+  short abs_z; /* sVar6; |normal z| */
+  short i; /* sVar8; faces left, slot / shift counter, then entries left */
+  int face; /* iVar9; face record (0x20 bytes) */
+  uint *entry; /* puVar10; record entry being written */
+  uint *next_entry; /* puVar11; next record entry */
+
+  face = *(int *)(obj_b + 0x48);
+  count = 0;
+  i = *(short *)(obj_b + 0x3a);
+  while (i = i + -1, i != -1) {
+    half_metric = *(int *)(obj_b + 0x10);
+    if (half_metric < 0) {
+      half_metric = half_metric + 1;
     }
-    if (iVar3 >> 1 <= *(int *)(iVar9 + 0x1c)) {
-      sVar4 = sVar4 + 1;
+    if (half_metric >> 1 <= *(int *)(face + 0x1c)) {
+      count = count + 1;
     }
-    iVar9 = iVar9 + 0x20;
+    face = face + 0x20;
   }
-  puVar1 = heap_alloc_cleared(sVar4 * 6 + 0x10);
-  *(short *)((int)puVar1 + 10) = sVar4;
-  *puVar1 = param_1;
-  puVar1[1] = param_2;
-  bVar7 = contact_pair_hash((byte)param_1,(char)param_2);
-  uVar2 = CONCAT31(extraout_var,bVar7);
-  while (sVar8 = (short)uVar2, (&DAT_0001bdbc)[sVar8] != 0) {
-    uVar2 = (uint)(sVar8 + 1U & 0xff);
+  rec = heap_alloc_cleared(count * 6 + 0x10);
+  *(short *)((int)rec + 10) = count;
+  *rec = obj_a;
+  rec[1] = obj_b;
+  hash = contact_pair_hash((byte)obj_a,(char)obj_b);
+  slot = CONCAT31(hash_hi,hash);
+  while (i = (short)slot, (&contact_table)[i] != 0) {
+    slot = (uint)(i + 1U & 0xff);
   }
-  (&DAT_0001bdbc)[sVar8] = puVar1;
-  sVar8 = 0;
-  for (uVar2 = *(int *)(param_1 + 0x14) + *(int *)(param_2 + 0x14) * 2 <<
-               ((int)*(short *)(param_2 + 0x34) & 0x3fU); (uVar2 & 0xffff8000) != 0;
-      uVar2 = (int)uVar2 >> 1) {
-    sVar8 = sVar8 + 1;
+  (&contact_table)[i] = rec;
+  i = 0;
+  for (slot = *(int *)(obj_a + 0x14) + *(int *)(obj_b + 0x14) * 2 <<
+               ((int)*(short *)(obj_b + 0x34) & 0x3fU); (slot & 0xffff8000) != 0;
+      slot = (int)slot >> 1) {
+    i = i + 1;
   }
-  *(short *)((int)puVar1 + 0xe) = sVar8;
-  *(short *)(puVar1 + 3) = *(short *)(param_2 + 0x34) - *(short *)((int)puVar1 + 0xe);
-  iVar9 = *(int *)(param_2 + 0x48);
-  sVar4 = 0;
-  sVar8 = *(short *)(param_2 + 0x3a);
-  puVar10 = puVar1 + 4;
-  while (sVar8 = sVar8 + -1, sVar8 != -1) {
-    iVar3 = *(int *)(param_2 + 0x10);
-    if (iVar3 < 0) {
-      iVar3 = iVar3 + 1;
+  *(short *)((int)rec + 0xe) = i;
+  *(short *)(rec + 3) = *(short *)(obj_b + 0x34) - *(short *)((int)rec + 0xe);
+  face = *(int *)(obj_b + 0x48);
+  count = 0;
+  i = *(short *)(obj_b + 0x3a);
+  entry = rec + 4;
+  while (i = i + -1, i != -1) {
+    half_metric = *(int *)(obj_b + 0x10);
+    if (half_metric < 0) {
+      half_metric = half_metric + 1;
     }
-    puVar11 = puVar10;
-    if (iVar3 >> 1 <= *(int *)(iVar9 + 0x1c)) {
-      puVar11 = (uint *)((int)puVar10 + 2);
-      *(short *)puVar10 = sVar4;
+    next_entry = entry;
+    if (half_metric >> 1 <= *(int *)(face + 0x1c)) {
+      next_entry = (uint *)((int)entry + 2);
+      *(short *)entry = count;
     }
-    iVar9 = iVar9 + 0x20;
-    sVar4 = sVar4 + 1;
-    puVar10 = puVar11;
+    face = face + 0x20;
+    count = count + 1;
+    entry = next_entry;
   }
-  sVar8 = *(short *)((int)puVar1 + 10);
-  puVar10 = puVar1 + sVar8 + 4;
+  i = *(short *)((int)rec + 10);
+  entry = rec + i + 4;
   do {
     while( true ) {
-      sVar8 = sVar8 + -1;
-      if (sVar8 == -1) {
-        return puVar1;
+      i = i + -1;
+      if (i == -1) {
+        return rec;
       }
-      sVar4 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: x of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) - x of vertex 0 */
-      sVar5 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: y of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) + 4 - y of vertex 0 */
-      sVar6 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: z of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) + 8 - z of vertex 0 */
-      if (sVar4 <= sVar5) break;
-      if (sVar6 < sVar4) {
-        *(undefined2 *)puVar10 = 0;
-        puVar10 = (uint *)((int)puVar10 + 2);
+      count = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: x of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) - x of vertex 0 */
+      abs_y = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: y of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) + 4 - y of vertex 0 */
+      abs_z = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: z of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) + 8 - z of vertex 0 */
+      if (count <= abs_y) break;
+      if (abs_z < count) {
+        *(undefined2 *)entry = 0;
+        entry = (uint *)((int)entry + 2);
       }
       else {
 LAB_00013764:
-        *(undefined2 *)puVar10 = 2;
-        puVar10 = (uint *)((int)puVar10 + 2);
+        *(undefined2 *)entry = 2;
+        entry = (uint *)((int)entry + 2);
       }
     }
-    if (sVar5 <= sVar6) goto LAB_00013764;
-    *(undefined2 *)puVar10 = 1;
-    puVar10 = (uint *)((int)puVar10 + 2);
+    if (abs_y <= abs_z) goto LAB_00013764;
+    *(undefined2 *)entry = 1;
+    entry = (uint *)((int)entry + 2);
   } while( true );
 }
 
@@ -24678,30 +24704,30 @@ LAB_00013764:
 void age_contact_records /* Original: FUN_0001377a */ (void)
 
 {
-  int *piVar1;
-  int iVar2;
-  short sVar3;
-  int *piVar4;
-  
-  piVar4 = &DAT_0001bdbc;
-  sVar3 = 0x100;
-  while (sVar3 = sVar3 + -1, sVar3 != -1) {
-    piVar1 = (int *)*piVar4;
-    if (piVar1 != (int *)0x0) {
-      if (*(short *)(piVar1 + 2) == 0) {
-        if ((((*(byte *)(piVar1[1] + 6) & 2) != 0) &&
-            (iVar2 = *piVar1, (*(byte *)(iVar2 + 6) & 0x20) != 0)) && (*(int *)(iVar2 + 0x2c) != 0))
+  int *rec; /* piVar1; contact record in this slot (+0 a, +4 b, +8 age word) */
+  int obj_a; /* iVar2; record object a */
+  short left; /* sVar3; table slots left */
+  int *slot; /* piVar4; contact_table slot */
+
+  slot = &contact_table;
+  left = 0x100;
+  while (left = left + -1, left != -1) {
+    rec = (int *)*slot;
+    if (rec != (int *)0x0) {
+      if (*(short *)(rec + 2) == 0) {
+        if ((((*(byte *)(rec[1] + 6) & 2) != 0) &&
+            (obj_a = *rec, (*(byte *)(obj_a + 6) & 0x20) != 0)) && (*(int *)(obj_a + 0x2c) != 0))
         {
-          release_fractal_reference(iVar2);
+          release_fractal_reference(obj_a);
         }
-        heap_free_coalesce((int)piVar1);
-        *piVar4 = 0;
+        heap_free_coalesce((int)rec);
+        *slot = 0;
       }
       else {
-        *(short *)(piVar1 + 2) = *(short *)(piVar1 + 2) + -1;
+        *(short *)(rec + 2) = *(short *)(rec + 2) + -1;
       }
     }
-    piVar4 = piVar4 + 1;
+    slot = slot + 1;
   }
   return;
 }
@@ -24713,27 +24739,27 @@ void age_contact_records /* Original: FUN_0001377a */ (void)
  * Ghidra C reviewed (function at overlay offset 0x137da).
  * Frees every contact record whose a or b is the object (with the same fractal-reference release); eight call sites, e.g. begin_replay_view for the player and the object clean-up paths. Contact records: hash table DAT_0001bdbc (see find_contact_record); record word +8 is the "touched" mark set by the collision tests. Complete Ghidra C.
  */
-void drop_contact_records_for_object /* Original: FUN_000137da */ (int param_1)
+void drop_contact_records_for_object /* Original: FUN_000137da */ (int obj /* param_1: object whose records (as a or b) are dropped */)
 
 {
-  int *piVar1;
-  int iVar2;
-  short sVar3;
-  int *piVar4;
+  int *rec; /* piVar1; contact record in this slot (+0 a, +4 b, +8 age word) */
+  int obj_a; /* iVar2; record object a */
+  short left; /* sVar3; table slots left */
+  int *slot; /* piVar4; contact_table slot */
   
-  piVar4 = &DAT_0001bdbc;
-  sVar3 = 0x100;
-  while (sVar3 = sVar3 + -1, sVar3 != -1) {
-    piVar1 = (int *)*piVar4;
-    if ((piVar1 != (int *)0x0) && ((param_1 == *piVar1 || (param_1 == piVar1[1])))) {
-      if (((*(byte *)(piVar1[1] + 6) & 2) != 0) &&
-         ((iVar2 = *piVar1, (*(byte *)(iVar2 + 6) & 0x20) != 0 && (*(int *)(iVar2 + 0x2c) != 0)))) {
-        release_fractal_reference(iVar2);
+  slot = &contact_table;
+  left = 0x100;
+  while (left = left + -1, left != -1) {
+    rec = (int *)*slot;
+    if ((rec != (int *)0x0) && ((obj == *rec || (obj == rec[1])))) {
+      if (((*(byte *)(rec[1] + 6) & 2) != 0) &&
+         ((obj_a = *rec, (*(byte *)(obj_a + 6) & 0x20) != 0 && (*(int *)(obj_a + 0x2c) != 0)))) {
+        release_fractal_reference(obj_a);
       }
-      heap_free_coalesce((int)piVar1);
-      *piVar4 = 0;
+      heap_free_coalesce((int)rec);
+      *slot = 0;
     }
-    piVar4 = piVar4 + 1;
+    slot = slot + 1;
   }
   return;
 }
@@ -24749,72 +24775,72 @@ void drop_contact_records_for_object /* Original: FUN_000137da */ (int param_1)
  * Ghidra C reviewed (function at overlay offset 0x1383c).
  * Fractal / group counterpart of create_shape_contact_record (0x3e-byte record, heap_alloc): +0 a, +4 b, slot in DAT_0001bdbc, word +0xc shift, word +0xa = b shift +0x34 - shift. Used by handle_terrain_contact. Contact records live in the 256-slot open-addressing hash table DAT_0001bdbc keyed by the (object a, object b) pair: slot = contact_pair_hash(a, b), linear probing modulo 256 [PROVEN]. Ghidra C.
  */
-uint * create_fractal_contact_record /* Original: FUN_0001383c */ (uint param_1,uint param_2)
+uint * create_fractal_contact_record /* Original: FUN_0001383c */ (uint obj_a /* param_1: object a */,uint obj_b /* param_2: object b (fractal / group object) */)
 
 {
-  short sVar1;
-  undefined3 extraout_var;
-  uint *puVar2;
-  byte bVar7;
-  short sVar5;
-  uint uVar3;
-  int iVar4;
-  short sVar6;
-  ushort uVar8;
-  
-  puVar2 = heap_alloc(0x3e);
-  *puVar2 = param_1;
-  puVar2[1] = param_2;
-  bVar7 = contact_pair_hash((byte)param_1,(char)param_2);
-  uVar3 = CONCAT31(extraout_var,bVar7);
-  while (sVar5 = (short)uVar3, (&DAT_0001bdbc)[sVar5] != 0) {
-    uVar3 = (uint)(sVar5 + 1U & 0xff);
+  short neg_sin; /* sVar1; -sin_fixed14(angle) */
+  undefined3 hash_hi; /* extraout_var: upper bytes of contact_pair_hash */
+  uint *rec; /* puVar2; new 0x3e-byte contact record */
+  byte part_i; /* bVar7; contact_pair_hash, then the part index byte (+2) of each group link */
+  short tmp; /* sVar5; table slot, shift counter, then halving temporaries */
+  uint slot; /* uVar3; table slot, then the extent being shifted down to 15 bits */
+  int link; /* iVar4; group chain link (+0x24), then cos / sin results */
+  short cos_v; /* sVar6; cos_fixed14(angle) */
+  ushort angle; /* uVar8; sum of the part angle words (+4 of each 0x18-byte part entry) along the chain */
+
+  rec = heap_alloc(0x3e);
+  *rec = obj_a;
+  rec[1] = obj_b;
+  part_i = contact_pair_hash((byte)obj_a,(char)obj_b);
+  slot = CONCAT31(hash_hi,part_i);
+  while (tmp = (short)slot, (&contact_table)[tmp] != 0) {
+    slot = (uint)(tmp + 1U & 0xff);
   }
-  (&DAT_0001bdbc)[sVar5] = puVar2;
-  sVar5 = 0;
-  for (uVar3 = *(int *)(param_1 + 0x14) + *(int *)(param_2 + 0x14) * 2 <<
-               ((int)*(short *)(param_2 + 0x34) & 0x3fU); (uVar3 & 0xffff8000) != 0;
-      uVar3 = (int)uVar3 >> 1) {
-    sVar5 = sVar5 + 1;
+  (&contact_table)[tmp] = rec;
+  tmp = 0;
+  for (slot = *(int *)(obj_a + 0x14) + *(int *)(obj_b + 0x14) * 2 <<
+               ((int)*(short *)(obj_b + 0x34) & 0x3fU); (slot & 0xffff8000) != 0;
+      slot = (int)slot >> 1) {
+    tmp = tmp + 1;
   }
-  *(short *)(puVar2 + 3) = sVar5;
-  *(short *)((int)puVar2 + 10) = *(short *)(param_2 + 0x34) - sVar5;
-  uVar8 = 0;
-  bVar7 = *(byte *)(param_2 + 2);
-  for (iVar4 = *(int *)(param_2 + 0x24); iVar4 != 0; iVar4 = *(int *)(iVar4 + 0x24)) {
-    uVar8 = *(short *)(*(int *)(iVar4 + 0x30) + (short)(ushort)bVar7 * 0x18 + 4) + uVar8 & 0x3fff;
-    bVar7 = *(byte *)(iVar4 + 2);
+  *(short *)(rec + 3) = tmp;
+  *(short *)((int)rec + 10) = *(short *)(obj_b + 0x34) - tmp;
+  angle = 0;
+  part_i = *(byte *)(obj_b + 2);
+  for (link = *(int *)(obj_b + 0x24); link != 0; link = *(int *)(link + 0x24)) {
+    angle = *(short *)(*(int *)(link + 0x30) + (short)(ushort)part_i * 0x18 + 4) + angle & 0x3fff;
+    part_i = *(byte *)(link + 2);
   }
-  if (uVar8 == 0) {
-    *(undefined2 *)(puVar2 + 5) = 0;
-    *(undefined2 *)((int)puVar2 + 0xe) = 0;
+  if (angle == 0) {
+    *(undefined2 *)(rec + 5) = 0;
+    *(undefined2 *)((int)rec + 0xe) = 0;
   }
   else {
-    iVar4 = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)uVar8);
-    sVar6 = (short)iVar4;
-    iVar4 = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)uVar8);
-    sVar1 = -(short)iVar4;
-    sVar5 = sVar1;
-    if (sVar1 < 0) {
-      sVar5 = sVar1 + 1;
+    link = cos_fixed14( /* Original: FUN_00001dd8 */(int)(short)angle);
+    cos_v = (short)link;
+    link = sin_fixed14( /* Original: FUN_00001d76 */(int)(short)angle);
+    neg_sin = -(short)link;
+    tmp = neg_sin;
+    if (neg_sin < 0) {
+      tmp = neg_sin + 1;
     }
-    *(short *)((int)puVar2 + 0xe) = sVar6 + (sVar5 >> 1);
-    *(short *)(puVar2 + 4) = sVar1;
-    sVar5 = sVar6;
-    if (sVar6 < 0) {
-      sVar5 = sVar6 + 1;
+    *(short *)((int)rec + 0xe) = cos_v + (tmp >> 1);
+    *(short *)(rec + 4) = neg_sin;
+    tmp = cos_v;
+    if (cos_v < 0) {
+      tmp = cos_v + 1;
     }
-    *(short *)((int)puVar2 + 0x12) = (sVar5 >> 1) + (short)iVar4;
-    *(short *)(puVar2 + 5) = sVar6;
+    *(short *)((int)rec + 0x12) = (tmp >> 1) + (short)link;
+    *(short *)(rec + 5) = cos_v;
   }
-  *(short *)((int)puVar2 + 0x16) =
-       (short)((0x19c80 << ((int)*(short *)(param_2 + 0x34) & 0x3fU)) >>
-              (*(ushort *)(puVar2 + 3) & 0x3f));
-  *(undefined2 *)(puVar2 + 6) = 1;
-  *(undefined2 *)((int)puVar2 + 0x1a) = 0xffff;
-  *(undefined2 *)(puVar2 + 7) = 0xffff;
-  *(undefined2 *)((int)puVar2 + 0x1e) = 1;
-  return puVar2;
+  *(short *)((int)rec + 0x16) =
+       (short)((0x19c80 << ((int)*(short *)(obj_b + 0x34) & 0x3fU)) >>
+              (*(ushort *)(rec + 3) & 0x3f));
+  *(undefined2 *)(rec + 6) = 1;
+  *(undefined2 *)((int)rec + 0x1a) = 0xffff;
+  *(undefined2 *)(rec + 7) = 0xffff;
+  *(undefined2 *)((int)rec + 0x1e) = 1;
+  return rec;
 }
 
 
@@ -24834,142 +24860,142 @@ uint * create_fractal_contact_record /* Original: FUN_0001383c */ (uint param_1,
  * Ghidra C reviewed (function at overlay offset 0x13980).
  * Args: contact record, x, z (relative to the fractal object, scaled by the record shift), out word. Interpolates a height from the fractal data of the record object (record +4), with an optional rotation (record words +0x10 / +0x14, >> 12) [details not yet decoded]. Returned value is stored by handle_terrain_contact as the player ground height. Ghidra C.
  */
-int fractal_height_at /* Original: FUN_00013980 */ (int param_1,short param_2,short param_3,undefined2 *param_4)
+int fractal_height_at /* Original: FUN_00013980 */ (int rec /* param_1: contact record (+4 object, +0xe..+0x14 rotation, +0x16 cell size, +0x18..+0x1e cell bounds, +0x22 / +0x30 planes) */,short x /* param_2: x relative to the fractal object, scaled */,short z /* param_3: z relative to the fractal object, scaled */,undefined2 *changed /* param_4: out word set to 1 when the plane in use changes */)
 
 {
-  int *piVar1;
-  undefined2 *puVar2;
-  short sVar5;
-  short sVar6;
-  int iVar3;
-  int iVar4;
-  int iVar7;
-  short sVar8;
-  short sVar9;
-  short sVar11;
-  int iVar10;
-  int iVar12;
-  int iVar13;
-  int *local_16;
-  short local_6;
-  
-  local_6 = param_3;
-  iVar13 = *(int *)(param_1 + 4);
-  if ((*(short *)(param_1 + 0xe) == 0) && (*(short *)(param_1 + 0x14) == 0)) {
-    sVar5 = param_3;
-    if (param_3 < 0) {
-      sVar5 = param_3 + 1;
+  int *face_v0; /* piVar1; first vertex of the cell face */
+  undefined2 *plane; /* puVar2; plane entry being filled (0xe bytes) */
+  short cell_u; /* sVar5; first cell coordinate (rotated x) */
+  short cell_v0; /* sVar6; cell start on the second coordinate */
+  int dx; /* iVar3; |vertex x - cell centre x| */
+  int dz; /* iVar4; |vertex z - cell centre z| */
+  int centres; /* iVar7; face-centre vertex table, then the face slot index */
+  short col; /* sVar8; cell column (cell_u / cell size, floored) */
+  short n; /* sVar9; cell size, then loop counters */
+  short half_size; /* sVar11; cell size rounded for the halving */
+  int centre_z; /* iVar10; cell centre z (shifted), then the model vertex longs */
+  int centre; /* iVar12; face-centre entry, then the face centre vertex */
+  int obj; /* iVar13; fractal object, then the height result */
+  int *centre_z_p; /* local_16, -0x16(A6): z long of the face-centre entry */
+  short cell_v; /* local_6, -6(A6): second cell coordinate (rotated z) */
+
+  cell_v = z;
+  obj = *(int *)(rec + 4);
+  if ((*(short *)(rec + 0xe) == 0) && (*(short *)(rec + 0x14) == 0)) {
+    cell_u = z;
+    if (z < 0) {
+      cell_u = z + 1;
     }
-    sVar5 = (sVar5 >> 1) + param_2;
+    cell_u = (cell_u >> 1) + x;
   }
   else {
-    local_6 = (short)((int)param_3 * (int)*(short *)(param_1 + 0x14) +
-                      (int)param_2 * (int)*(short *)(param_1 + 0x10) >> 0xc);
-    sVar5 = (short)((int)param_3 * (int)*(short *)(param_1 + 0x12) +
-                    (int)param_2 * (int)*(short *)(param_1 + 0xe) >> 0xc);
+    cell_v = (short)((int)z * (int)*(short *)(rec + 0x14) +
+                      (int)x * (int)*(short *)(rec + 0x10) >> 0xc);
+    cell_u = (short)((int)z * (int)*(short *)(rec + 0x12) +
+                    (int)x * (int)*(short *)(rec + 0xe) >> 0xc);
   }
-  if ((((sVar5 < *(short *)(param_1 + 0x18)) || (*(short *)(param_1 + 0x1a) <= sVar5)) ||
-      (local_6 < *(short *)(param_1 + 0x1c))) || (*(short *)(param_1 + 0x1e) <= local_6)) {
-    *(undefined2 *)(param_1 + 0x20) = 0xffff;
-    sVar9 = *(short *)(param_1 + 0x16);
-    sVar11 = sVar9;
-    if (sVar9 < 0) {
-      sVar11 = sVar9 + 1;
+  if ((((cell_u < *(short *)(rec + 0x18)) || (*(short *)(rec + 0x1a) <= cell_u)) ||
+      (cell_v < *(short *)(rec + 0x1c))) || (*(short *)(rec + 0x1e) <= cell_v)) {
+    *(undefined2 *)(rec + 0x20) = 0xffff;
+    n = *(short *)(rec + 0x16);
+    half_size = n;
+    if (n < 0) {
+      half_size = n + 1;
     }
-    sVar8 = sVar5 / sVar9;
-    if ((int)sVar5 % (int)sVar9 << 0x10 < 0) {
-      sVar8 = sVar8 + -1;
+    col = cell_u / n;
+    if ((int)cell_u % (int)n << 0x10 < 0) {
+      col = col + -1;
     }
-    sVar6 = local_6 / sVar9;
-    if ((int)local_6 % (int)sVar9 << 0x10 < 0) {
-      sVar6 = sVar6 + -1;
+    cell_v0 = cell_v / n;
+    if ((int)cell_v % (int)n << 0x10 < 0) {
+      cell_v0 = cell_v0 + -1;
     }
-    sVar6 = sVar6 * sVar9;
-    *(short *)(param_1 + 0x18) = sVar8 * sVar9;
-    *(short *)(param_1 + 0x1a) = sVar9 + sVar8 * sVar9;
-    *(short *)(param_1 + 0x1c) = sVar6;
-    *(short *)(param_1 + 0x1e) = sVar6 + sVar9;
-    iVar10 = (int)(sVar11 >> 1) + (int)sVar6;
-    if (*(short *)(param_1 + 10) < 0) {
-      iVar10 = iVar10 << (-(int)*(short *)(param_1 + 10) & 0x3fU);
+    cell_v0 = cell_v0 * n;
+    *(short *)(rec + 0x18) = col * n;
+    *(short *)(rec + 0x1a) = n + col * n;
+    *(short *)(rec + 0x1c) = cell_v0;
+    *(short *)(rec + 0x1e) = cell_v0 + n;
+    centre_z = (int)(half_size >> 1) + (int)cell_v0;
+    if (*(short *)(rec + 10) < 0) {
+      centre_z = centre_z << (-(int)*(short *)(rec + 10) & 0x3fU);
     }
     else {
-      iVar10 = iVar10 >> ((int)*(short *)(param_1 + 10) & 0x3fU);
+      centre_z = centre_z >> ((int)*(short *)(rec + 10) & 0x3fU);
     }
-    iVar7 = *(int *)(DAT_0001b5a0 + 0x8c) +
-            *(int *)(*(int *)(*(int *)(iVar13 + 0x24) + 0x28) + 0x2e +
-                    (uint)*(byte *)(iVar13 + 1) * 0x18) + 0x22 +
-            ((int)*(short *)(iVar13 + 0x36) - (int)*(short *)(iVar13 + 0x38)) * 0xc;
-    DAT_00020b46 = 0xffff;
-    DAT_00020b44 = 0xffff;
-    sVar9 = *(short *)(iVar13 + 0x38);
-    local_16 = (int *)(iVar7 + 8);
-    iVar12 = iVar7;
-    while (sVar9 = sVar9 + -1, sVar9 != -1) {
-      iVar3 = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)iVar12 - xc, where xc (D6, computed at 0x13a66..0x13a9a and dropped by Ghidra) = ((short)(sVar11 >> 1) + sVar8 * cell) - iVar10_unshifted / 2 (signed), shifted by +0xa like iVar10 */
-      iVar4 = FUN_00002de8(); /* runtime abs_int; dropped arg: *local_16 - iVar10 (vertex z - cell z centre) */
-      if (iVar4 + iVar3 < 0xad40) {
-        if (iVar10 < *local_16) {
-          DAT_00020b46 = (undefined2)((iVar12 - iVar7) / 0xc);
+    centres = *(int *)(host_world + 0x8c) +
+            *(int *)(*(int *)(*(int *)(obj + 0x24) + 0x28) + 0x2e +
+                    (uint)*(byte *)(obj + 1) * 0x18) + 0x22 +
+            ((int)*(short *)(obj + 0x36) - (int)*(short *)(obj + 0x38)) * 0xc;
+    cell_face_b = 0xffff;
+    cell_face_a = 0xffff;
+    n = *(short *)(obj + 0x38);
+    centre_z_p = (int *)(centres + 8);
+    centre = centres;
+    while (n = n + -1, n != -1) {
+      dx = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)iVar12 - xc, where xc (D6, computed at 0x13a66..0x13a9a and dropped by Ghidra) = ((short)(sVar11 >> 1) + sVar8 * cell) - iVar10_unshifted / 2 (signed), shifted by +0xa like iVar10 */
+      dz = FUN_00002de8(); /* runtime abs_int; dropped arg: *local_16 - iVar10 (vertex z - cell z centre) */
+      if (dz + dx < 0xad40) {
+        if (centre_z < *centre_z_p) {
+          cell_face_b = (undefined2)((centre - centres) / 0xc);
         }
         else {
-          DAT_00020b44 = (undefined2)((iVar12 - iVar7) / 0xc);
+          cell_face_a = (undefined2)((centre - centres) / 0xc);
         }
       }
-      local_16 = local_16 + 3;
-      iVar12 = iVar12 + 0xc;
+      centre_z_p = centre_z_p + 3;
+      centre = centre + 0xc;
     }
-    *(undefined2 *)(param_1 + 0x34) = 0;
-    *(undefined2 *)(param_1 + 0x26) = 0;
-    iVar10 = *(int *)(iVar13 + 0x44);
-    sVar9 = 0;
+    *(undefined2 *)(rec + 0x34) = 0;
+    *(undefined2 *)(rec + 0x26) = 0;
+    centre_z = *(int *)(obj + 0x44);
+    n = 0;
     do {
-      iVar7 = (int)sVar9;
-      if ((&DAT_00020b44)[iVar7] != -1) {
-        piVar1 = (int *)(iVar10 + **(short **)
-                                    (*(int *)(iVar13 + 0x48) + (short)(&DAT_00020b44)[iVar7] * 0x20
+      centres = (int)n;
+      if ((&cell_face_a)[centres] != -1) {
+        face_v0 = (int *)(centre_z + **(short **)
+                                    (*(int *)(obj + 0x48) + (short)(&cell_face_a)[centres] * 0x20
                                     + 0x18) * 0xc);
-        iVar12 = iVar10 + *(short *)(iVar13 + 0x36) * 0xc + (short)(&DAT_00020b44)[iVar7] * 0xc;
-        puVar2 = (undefined2 *)(param_1 + 0x22 + iVar7 * 0xe);
-        *puVar2 = (&DAT_00020b44)[iVar7];
-        puVar2[1] = *(short *)(iVar12 + 2) - *(short *)(iVar10 + 2);
-        puVar2[2] = *(short *)(iVar12 + 6) - *(short *)(iVar10 + 6);
-        puVar2[3] = *(short *)(iVar12 + 10) - *(short *)(iVar10 + 10);
-        puVar2[4] = (short)(*piVar1 - *(int *)(iVar13 + 0x18) >> (*(ushort *)(param_1 + 0xc) & 0x3f)
+        centre = centre_z + *(short *)(obj + 0x36) * 0xc + (short)(&cell_face_a)[centres] * 0xc;
+        plane = (undefined2 *)(rec + 0x22 + centres * 0xe);
+        *plane = (&cell_face_a)[centres];
+        plane[1] = *(short *)(centre + 2) - *(short *)(centre_z + 2);
+        plane[2] = *(short *)(centre + 6) - *(short *)(centre_z + 6);
+        plane[3] = *(short *)(centre + 10) - *(short *)(centre_z + 10);
+        plane[4] = (short)(*face_v0 - *(int *)(obj + 0x18) >> (*(ushort *)(rec + 0xc) & 0x3f)
                            );
-        puVar2[5] = (short)(piVar1[1] - *(int *)(iVar13 + 0x1c) >>
-                           (*(ushort *)(param_1 + 0xc) & 0x3f));
-        puVar2[6] = (short)(piVar1[2] - *(int *)(iVar13 + 0x20) >>
-                           (*(ushort *)(param_1 + 0xc) & 0x3f));
+        plane[5] = (short)(face_v0[1] - *(int *)(obj + 0x1c) >>
+                           (*(ushort *)(rec + 0xc) & 0x3f));
+        plane[6] = (short)(face_v0[2] - *(int *)(obj + 0x20) >>
+                           (*(ushort *)(rec + 0xc) & 0x3f));
       }
-      sVar9 = sVar9 + 1;
-    } while (sVar9 < 2);
+      n = n + 1;
+    } while (n < 2);
   }
-  if ((int)local_6 - (int)*(short *)(param_1 + 0x1c) < (int)sVar5 - (int)*(short *)(param_1 + 0x18))
+  if ((int)cell_v - (int)*(short *)(rec + 0x1c) < (int)cell_u - (int)*(short *)(rec + 0x18))
   {
-    DAT_00020b48 = param_1 + 0x22;
-    if (*(short *)(param_1 + 0x20) != 0) {
-      *param_4 = 1;
-      *(undefined2 *)(param_1 + 0x20) = 0;
+    cell_plane = rec + 0x22;
+    if (*(short *)(rec + 0x20) != 0) {
+      *changed = 1;
+      *(undefined2 *)(rec + 0x20) = 0;
     }
   }
   else {
-    DAT_00020b48 = param_1 + 0x30;
-    if (*(short *)(param_1 + 0x20) != 1) {
-      *param_4 = 1;
-      *(undefined2 *)(param_1 + 0x20) = 1;
+    cell_plane = rec + 0x30;
+    if (*(short *)(rec + 0x20) != 1) {
+      *changed = 1;
+      *(undefined2 *)(rec + 0x20) = 1;
     }
   }
-  if ((*(short *)(DAT_00020b48 + 4) == 0) ||
-     (iVar13 = (int)*(short *)(DAT_00020b48 + 10) +
-               ((int)(short)(param_3 - *(short *)(DAT_00020b48 + 0xc)) *
-                -(int)*(short *)(DAT_00020b48 + 6) -
-               (int)(short)(param_2 - *(short *)(DAT_00020b48 + 8)) *
-               (int)*(short *)(DAT_00020b48 + 2)) / (int)*(short *)(DAT_00020b48 + 4), iVar13 < 0))
+  if ((*(short *)(cell_plane + 4) == 0) ||
+     (obj = (int)*(short *)(cell_plane + 10) +
+               ((int)(short)(z - *(short *)(cell_plane + 0xc)) *
+                -(int)*(short *)(cell_plane + 6) -
+               (int)(short)(x - *(short *)(cell_plane + 8)) *
+               (int)*(short *)(cell_plane + 2)) / (int)*(short *)(cell_plane + 4), obj < 0))
   {
-    iVar13 = 0;
+    obj = 0;
   }
-  return iVar13;
+  return obj;
 }
 
 
@@ -24983,67 +25009,67 @@ int fractal_height_at /* Original: FUN_00013980 */ (int param_1,short param_2,sh
  * Ghidra C reviewed (function at overlay offset 0x13cdc).
  * Args: object a, fractal / group object b. Only within +-0x33900 of b (x + z / 2 and z, a rough square). Finds / creates the fractal contact record, takes the a - b x / z and a height y scaled by the record shift, gets the ground height (fractal_height_at), stores it in the a controller +0x2e as handle_terrain_contact does (clearing controller +0x2c when DAT_0001b870 == 0), optionally refines the a height with FUN_00014830 when the height query flags it, and calls FUN_00014348 when a is below the ground. FUN_00014348 = dispatch_collision. Ghidra C.
  */
-void test_terrain_collision /* Original: FUN_00013cdc */ (uint param_1,uint param_2)
+void test_terrain_collision /* Original: FUN_00013cdc */ (uint obj_a /* param_1: object a */,uint obj_b /* param_2: fractal / group object b */)
 
 {
-  int iVar1;
-  uint *puVar2;
-  uint uVar3;
-  int iVar4;
-  short sVar5;
-  short sVar6;
-  short sVar7;
-  short local_6;
+  int dz; /* iVar1; a z - b z */
+  uint *rec; /* puVar2; fractal contact record */
+  uint shift; /* uVar3; |record shift| (+0xa) */
+  int tmp; /* iVar4; (a - b) x + dz / 2 for the range test, then the height result */
+  short ground; /* sVar5; scaled z, then the ground height (fractal_height_at) */
+  short rel_x; /* sVar6; scaled a x - b x */
+  short height; /* sVar7; scaled a y (refined by lift_object_onto_terrain) */
+  short plane_changed; /* local_6, -6(A6): fractal_height_at out flag (plane changed) */
   
-  iVar1 = *(int *)(param_1 + 0x20) - *(int *)(param_2 + 0x20);
-  iVar4 = iVar1;
-  if (iVar1 < 0) {
-    iVar4 = iVar1 + 1;
+  dz = *(int *)(obj_a + 0x20) - *(int *)(obj_b + 0x20);
+  tmp = dz;
+  if (dz < 0) {
+    tmp = dz + 1;
   }
-  iVar4 = (*(int *)(param_1 + 0x18) + (iVar4 >> 1)) - *(int *)(param_2 + 0x18);
-  if ((((-0x33901 < iVar4) && (iVar4 < 0x33901)) && (-0x33901 < iVar1)) && (iVar1 < 0x33901)) {
-    puVar2 = (uint *)find_contact_record(param_1,param_2);
-    if (puVar2 == (uint *)0x0) {
-      if (((*(byte *)(param_2 + 6) & 2) != 0) && (*(int *)(param_1 + 0x2c) != 0)) {
+  tmp = (*(int *)(obj_a + 0x18) + (tmp >> 1)) - *(int *)(obj_b + 0x18);
+  if ((((-0x33901 < tmp) && (tmp < 0x33901)) && (-0x33901 < dz)) && (dz < 0x33901)) {
+    rec = (uint *)find_contact_record(obj_a,obj_b);
+    if (rec == (uint *)0x0) {
+      if (((*(byte *)(obj_b + 6) & 2) != 0) && (*(int *)(obj_a + 0x2c) != 0)) {
         return;
       }
-      puVar2 = create_fractal_contact_record(param_1,param_2);
+      rec = create_fractal_contact_record(obj_a,obj_b);
     }
-    *(undefined2 *)(puVar2 + 2) = 1;
-    if (*(short *)((int)puVar2 + 10) < 0) {
-      uVar3 = -(int)*(short *)((int)puVar2 + 10);
-      sVar6 = (short)(*(int *)(param_1 + 0x18) - *(int *)(param_2 + 0x18) >> (uVar3 & 0x3f));
-      sVar7 = (short)(*(int *)(param_1 + 0x1c) >> (uVar3 & 0x3f));
-      sVar5 = (short)(*(int *)(param_1 + 0x20) - *(int *)(param_2 + 0x20) >> (uVar3 & 0x3f));
+    *(undefined2 *)(rec + 2) = 1;
+    if (*(short *)((int)rec + 10) < 0) {
+      shift = -(int)*(short *)((int)rec + 10);
+      rel_x = (short)(*(int *)(obj_a + 0x18) - *(int *)(obj_b + 0x18) >> (shift & 0x3f));
+      height = (short)(*(int *)(obj_a + 0x1c) >> (shift & 0x3f));
+      ground = (short)(*(int *)(obj_a + 0x20) - *(int *)(obj_b + 0x20) >> (shift & 0x3f));
     }
     else {
-      uVar3 = (uint)*(short *)((int)puVar2 + 10);
-      sVar6 = (short)(*(int *)(param_1 + 0x18) - *(int *)(param_2 + 0x18) << (uVar3 & 0x3f));
-      sVar7 = (short)(*(int *)(param_1 + 0x1c) << (uVar3 & 0x3f));
-      sVar5 = (short)(*(int *)(param_1 + 0x20) - *(int *)(param_2 + 0x20) << (uVar3 & 0x3f));
+      shift = (uint)*(short *)((int)rec + 10);
+      rel_x = (short)(*(int *)(obj_a + 0x18) - *(int *)(obj_b + 0x18) << (shift & 0x3f));
+      height = (short)(*(int *)(obj_a + 0x1c) << (shift & 0x3f));
+      ground = (short)(*(int *)(obj_a + 0x20) - *(int *)(obj_b + 0x20) << (shift & 0x3f));
     }
-    local_6 = 0;
-    iVar4 = fractal_height_at((int)puVar2,sVar6,sVar5,&local_6);
-    sVar5 = (short)iVar4;
-    if ((*(int *)(param_1 + 8) != 0) && (sVar5 != 0)) {
-      if (*(short *)((int)puVar2 + 10) < 0) {
-        *(int *)(*(int *)(param_1 + 8) + 0x2e) =
-             (int)sVar5 << (-(int)*(short *)((int)puVar2 + 10) & 0x3fU);
+    plane_changed = 0;
+    tmp = fractal_height_at((int)rec,rel_x,ground,&plane_changed);
+    ground = (short)tmp;
+    if ((*(int *)(obj_a + 8) != 0) && (ground != 0)) {
+      if (*(short *)((int)rec + 10) < 0) {
+        *(int *)(*(int *)(obj_a + 8) + 0x2e) =
+             (int)ground << (-(int)*(short *)((int)rec + 10) & 0x3fU);
       }
       else {
-        *(int *)(*(int *)(param_1 + 8) + 0x2e) =
-             (int)sVar5 >> (*(ushort *)((int)puVar2 + 10) & 0x3f);
+        *(int *)(*(int *)(obj_a + 8) + 0x2e) =
+             (int)ground >> (*(ushort *)((int)rec + 10) & 0x3f);
       }
-      if (DAT_0001b870 == 0) {
-        *(undefined1 *)(*(int *)(param_1 + 8) + 0x2c) = 0;
+      if (replay_state == 0) {
+        *(undefined1 *)(*(int *)(obj_a + 8) + 0x2c) = 0;
       }
     }
-    if (local_6 != 0) {
-      iVar4 = lift_object_onto_terrain((int)puVar2,sVar5,(int)sVar7,param_1,param_2);
-      sVar7 = (short)iVar4;
+    if (plane_changed != 0) {
+      tmp = lift_object_onto_terrain((int)rec,ground,(int)height,obj_a,obj_b);
+      height = (short)tmp;
     }
-    if (sVar7 < sVar5) {
-      dispatch_collision(param_1,param_2);
+    if (height < ground) {
+      dispatch_collision(obj_a,obj_b);
     }
   }
   return;
@@ -25069,18 +25095,18 @@ void test_terrain_collision /* Original: FUN_00013cdc */ (uint param_1,uint para
  * found identical to the C: bit 20 (btst #$14 = 0x100000) of a +4 & b +4; d =
  * approx_dist3_xyz(a pos, b pos) (arguments reconstructed below); d = (d >> 2) + (d >> 1);
  * bsr.w 0x14348 dispatch_collision(a, b) when d < a +0x14 or d < b +0x14 (signed). */
-void test_proximity_collision /* Original: FUN_00013e4e */ (int param_1,int param_2)
+void test_proximity_collision /* Original: FUN_00013e4e */ (int obj_a /* param_1: object a */,int obj_b /* param_2: object b */)
 
 {
-  int iVar1;
+  int dist; /* iVar1; approx_dist3_xyz, then 3/4 of it */
   
-  if ((*(uint *)(param_2 + 4) & *(uint *)(param_1 + 4) & 0x100000) != 0) {
+  if ((*(uint *)(obj_b + 4) & *(uint *)(obj_a + 4) & 0x100000) != 0) {
     /* Dropped call arguments [PROVEN, 0x13e68..0x13e80]: approx_dist3_xyz(a +0x18, a +0x1c,
      * a +0x20, b +0x18, b +0x1c, b +0x20), the two object positions. */
-    iVar1 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
-    iVar1 = (iVar1 >> 2) + (iVar1 >> 1);
-    if ((iVar1 < *(int *)(param_1 + 0x14)) || (iVar1 < *(int *)(param_2 + 0x14))) {
-      dispatch_collision(param_1,param_2);
+    dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+    dist = (dist >> 2) + (dist >> 1);
+    if ((dist < *(int *)(obj_a + 0x14)) || (dist < *(int *)(obj_b + 0x14))) {
+      dispatch_collision(obj_a,obj_b);
     }
   }
   return;
@@ -25095,11 +25121,11 @@ void test_proximity_collision /* Original: FUN_00013e4e */ (int param_1,int para
 /* VERIFIED (FUN_00013eae): 0x13eae..0x13ede checked against an independent capstone disassembly and
  * found identical to the C: bsr.w 0x13e4e test_proximity_collision(a, b) only when long a +8 ==
  * DAT_0001b738 (cmp.l) and word *((b +8) +4) == 0xe. */
-void test_player_vs_type0e_proximity /* Original: FUN_00013eae */ (int param_1,int param_2)
+void test_player_vs_type0e_proximity /* Original: FUN_00013eae */ (int obj_a /* param_1: object a (must be the player) */,int obj_b /* param_2: object b (must be template type 0xe) */)
 
 {
-  if ((*(int *)(param_1 + 8) == DAT_0001b738) && (**(short **)(*(int *)(param_2 + 8) + 4) == 0xe)) {
-    test_proximity_collision(param_1,param_2);
+  if ((*(int *)(obj_a + 8) == player_object) && (**(short **)(*(int *)(obj_b + 8) + 4) == 0xe)) {
+    test_proximity_collision(obj_a,obj_b);
   }
   return;
 }
@@ -25121,121 +25147,121 @@ void test_player_vs_type0e_proximity /* Original: FUN_00013eae */ (int param_1,i
  * for an existing record a side change runs point_in_face_by_axis (nine arguments) and on a hit
  * bsr.w 0x14348 dispatch_collision(a, b) and returns; the side flag is stored either way.
  */
-uint * test_object_collision /* Original: FUN_00013ee0 */ (uint param_1,uint param_2)
+uint * test_object_collision /* Original: FUN_00013ee0 */ (uint obj_a /* param_1: moving object a */,uint obj_b /* param_2: object b */)
 
 {
-  int *piVar1;
-  int iVar2;
-  short sVar3;
-  int iVar4;
-  int iVar5;
-  ushort uVar6;
-  ushort uVar7;
-  int iVar8;
-  uint *puVar9;
-  uint *puVar10;
-  int iVar11;
-  short sVar12;
-  uint uVar13;
-  bool bVar14;
-  bool bVar15;
-  ushort *local_30;
-  ushort *local_c;
-  int iVar16;
-  uint *local_2c;
-  short sStack_22;
-  short sStack_1e;
-  short local_6;
+  int *face_v0; /* piVar1; first vertex of the face */
+  int verts; /* iVar2; object b vertex longs (+0x44) */
+  short vert_count; /* sVar3; object b vertex count (+0x36); the face normals follow the vertices */
+  int face; /* iVar4; face record (0x20 bytes) */
+  int dot_xy; /* iVar5; x and y terms of the dot product */
+  ushort side; /* uVar6; 1 when a is on the back side of the face plane */
+  ushort crossed; /* uVar7; side ^ last frame's side */
+  int faces; /* iVar8; distance first, then object b face records (+0x48) */
+  uint *result; /* puVar9; reduced distance, then the last call result (returned) */
+  uint *rec; /* puVar10; shape contact record */
+  int normal; /* iVar11; face normal entry, then the point_in_face_by_axis result */
+  short az; /* sVar12; a z scaled by the record shift */
+  uint shift; /* uVar13; record shift, then the vertex shift (+0xe) */
+  bool existed; /* bVar14; the contact record existed before this frame */
+  bool more; /* bVar15; faces remained before the decrement */
+  ushort *side_p; /* local_30, -0x30(A6): stored side word of this face */
+  ushort *axis_p; /* local_c, -0xc(A6): axis word of this face */
+  int dot; /* iVar16; full dot product (a - face vertex) . normal */
+  uint *face_idx_p; /* local_2c, -0x2c(A6): face index word of this entry */
+  short ay; /* sStack_22, -0x22(A6): a y scaled by the record shift */
+  short ax; /* sStack_1e, -0x1e(A6): a x scaled by the record shift */
+  short left; /* local_6, -6(A6): faces left */
   
   /* Dropped call arguments [PROVEN, 0x13ef0..0x13f08]: approx_dist3_xyz(a +0x18, a +0x1c,
    * a +0x20, b +0x18, b +0x1c, b +0x20). */
-  iVar8 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
-  puVar9 = (uint *)(iVar8 - (iVar8 >> 2));
-  if ((int)puVar9 <= *(int *)(param_2 + 0x14) + *(int *)(param_1 + 0x14)) {
-    if ((*(byte *)(param_2 + 6) & 2) == 0) {
-      if (((((*(byte *)(param_2 + 6) & 4) == 0) || (*(int *)(param_1 + 8) == 0)) ||
-          (**(short **)(*(int *)(param_1 + 8) + 4) != 0xe)) || (DAT_0001d858 == 8)) {
-        puVar10 = (uint *)find_contact_record(param_1,param_2);
-        bVar14 = puVar10 != (uint *)0x0;
-        if (!bVar14) {
-          puVar10 = create_shape_contact_record(param_1,param_2);
+  faces = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+  result = (uint *)(faces - (faces >> 2));
+  if ((int)result <= *(int *)(obj_b + 0x14) + *(int *)(obj_a + 0x14)) {
+    if ((*(byte *)(obj_b + 6) & 2) == 0) {
+      if (((((*(byte *)(obj_b + 6) & 4) == 0) || (*(int *)(obj_a + 8) == 0)) ||
+          (**(short **)(*(int *)(obj_a + 8) + 4) != 0xe)) || (view_mode == 8)) {
+        rec = (uint *)find_contact_record(obj_a,obj_b);
+        existed = rec != (uint *)0x0;
+        if (!existed) {
+          rec = create_shape_contact_record(obj_a,obj_b);
         }
-        *(undefined2 *)(puVar10 + 2) = 1;
-        puVar9 = puVar10;
-        if ((*(byte *)(param_2 + 6) & 0x40) != 0) {
-          puVar9 = (uint *)(**(code **)(*(int *)(*(int *)(param_2 + 8) + 4) + 0x12))
-                                     (param_2,param_1,puVar10);
+        *(undefined2 *)(rec + 2) = 1;
+        result = rec;
+        if ((*(byte *)(obj_b + 6) & 0x40) != 0) {
+          result = (uint *)(**(code **)(*(int *)(*(int *)(obj_b + 8) + 4) + 0x12))
+                                     (obj_b,obj_a,rec);
         }
-        if (((*(byte *)(param_1 + 5) & 1) == 0) && ((*(byte *)(param_2 + 5) & 1) == 0)) {
-          iVar8 = *(int *)(param_2 + 0x48);
-          iVar2 = *(int *)(param_2 + 0x44);
-          sVar3 = *(short *)(param_2 + 0x36);
-          if (*(short *)(puVar10 + 3) < 0) {
-            uVar13 = -(int)*(short *)(puVar10 + 3);
-            sStack_1e = (short)(*(int *)(param_1 + 0x18) >> (uVar13 & 0x3f));
-            sStack_22 = (short)(*(int *)(param_1 + 0x1c) >> (uVar13 & 0x3f));
-            sVar12 = (short)(*(int *)(param_1 + 0x20) >> (uVar13 & 0x3f));
+        if (((*(byte *)(obj_a + 5) & 1) == 0) && ((*(byte *)(obj_b + 5) & 1) == 0)) {
+          faces = *(int *)(obj_b + 0x48);
+          verts = *(int *)(obj_b + 0x44);
+          vert_count = *(short *)(obj_b + 0x36);
+          if (*(short *)(rec + 3) < 0) {
+            shift = -(int)*(short *)(rec + 3);
+            ax = (short)(*(int *)(obj_a + 0x18) >> (shift & 0x3f));
+            ay = (short)(*(int *)(obj_a + 0x1c) >> (shift & 0x3f));
+            az = (short)(*(int *)(obj_a + 0x20) >> (shift & 0x3f));
           }
           else {
-            uVar13 = (uint)*(short *)(puVar10 + 3);
-            sStack_1e = (short)(*(int *)(param_1 + 0x18) << (uVar13 & 0x3f));
-            sStack_22 = (short)(*(int *)(param_1 + 0x1c) << (uVar13 & 0x3f));
-            sVar12 = (short)(*(int *)(param_1 + 0x20) << (uVar13 & 0x3f));
+            shift = (uint)*(short *)(rec + 3);
+            ax = (short)(*(int *)(obj_a + 0x18) << (shift & 0x3f));
+            ay = (short)(*(int *)(obj_a + 0x1c) << (shift & 0x3f));
+            az = (short)(*(int *)(obj_a + 0x20) << (shift & 0x3f));
           }
-          local_2c = puVar10 + 4;
-          local_30 = (ushort *)(*(short *)((int)puVar10 + 10) * 2 + (int)local_2c);
-          puVar9 = (uint *)(local_30 + *(short *)((int)puVar10 + 10));
+          face_idx_p = rec + 4;
+          side_p = (ushort *)(*(short *)((int)rec + 10) * 2 + (int)face_idx_p);
+          result = (uint *)(side_p + *(short *)((int)rec + 10));
           /* Third parallel word array: the per-face axis selector [PROVEN, -$8(a6) = d0 at
            * 0x14088, stepped by addq.l #2 at 0x14182]; Ghidra dropped this cursor. */
-          local_c = (ushort *)puVar9;
-          local_6 = *(short *)((int)puVar10 + 10);
-          uVar13 = (uint)*(short *)((int)puVar10 + 0xe);
-          while (bVar15 = local_6 != 0, local_6 = local_6 + -1, bVar15) {
-            iVar4 = *(short *)local_2c * 0x20 + iVar8;
-            piVar1 = (int *)(iVar2 + **(short **)(iVar4 + 0x18) * 0xc);
-            iVar11 = iVar2 + sVar3 * 0xc + *(short *)local_2c * 0xc;
-            iVar5 = (int)(short)(sStack_22 - (short)(piVar1[1] >> (uVar13 & 0x3f))) *
-                    (int)(short)(*(short *)(iVar11 + 6) - *(short *)(iVar2 + 6)) +
-                    (int)(short)(sStack_1e - (short)(*piVar1 >> (uVar13 & 0x3f))) *
-                    (int)(short)(*(short *)(iVar11 + 2) - *(short *)(iVar2 + 2));
+          axis_p = (ushort *)result;
+          left = *(short *)((int)rec + 10);
+          shift = (uint)*(short *)((int)rec + 0xe);
+          while (more = left != 0, left = left + -1, more) {
+            face = *(short *)face_idx_p * 0x20 + faces;
+            face_v0 = (int *)(verts + **(short **)(face + 0x18) * 0xc);
+            normal = verts + vert_count * 0xc + *(short *)face_idx_p * 0xc;
+            dot_xy = (int)(short)(ay - (short)(face_v0[1] >> (shift & 0x3f))) *
+                    (int)(short)(*(short *)(normal + 6) - *(short *)(verts + 6)) +
+                    (int)(short)(ax - (short)(*face_v0 >> (shift & 0x3f))) *
+                    (int)(short)(*(short *)(normal + 2) - *(short *)(verts + 2));
             /* iVar16 = the full dot-product sum (d1 at 0x1411a), also passed as argument 5. */
-            iVar16 = iVar5 + (int)(short)(sVar12 - (short)(piVar1[2] >> (uVar13 & 0x3f))) *
-                             (int)(short)(*(short *)(iVar11 + 10) - *(short *)(iVar2 + 10));
-            puVar9 = (uint *)CONCAT31((int3)((uint)iVar5 >> 8),-(iVar16 < 1));
-            uVar6 = (ushort)puVar9 & 1;
-            if ((bVar14) &&
-               (uVar7 = uVar6 ^ *local_30,
-               puVar9 = (uint *)CONCAT22((short)((uint)iVar5 >> 0x10),uVar7), uVar7 != 0)) {
+            dot = dot_xy + (int)(short)(az - (short)(face_v0[2] >> (shift & 0x3f))) *
+                             (int)(short)(*(short *)(normal + 10) - *(short *)(verts + 10));
+            result = (uint *)CONCAT31((int3)((uint)dot_xy >> 8),-(dot < 1));
+            side = (ushort)result & 1;
+            if ((existed) &&
+               (crossed = side ^ *side_p,
+               result = (uint *)CONCAT22((short)((uint)dot_xy >> 0x10),crossed), crossed != 0)) {
               /* All nine pushed arguments [PROVEN, 0x14136..0x14156]: record, a, b, face, the
                * dot-product sum, the face normal x / y / z word differences (d5 / d4 / a1, sign-
                * extended) and the axis word *local_c (the callee reads 1..4 and the axis). */
-              iVar11 = point_in_face_by_axis((int)puVar10,param_1,param_2,iVar4,iVar16,
-                                             (int)(short)(*(short *)(iVar11 + 2) - *(short *)(iVar2 + 2)),
-                                             (int)(short)(*(short *)(iVar11 + 6) - *(short *)(iVar2 + 6)),
-                                             (int)(short)(*(short *)(iVar11 + 10) - *(short *)(iVar2 + 10)),
-                                             (short)*local_c);
-              puVar9 = (uint *)0x0;
-              if (iVar11 != 0) {
-                puVar9 = (uint *)dispatch_collision(param_1,param_2);
-                return puVar9;
+              normal = point_in_face_by_axis((int)rec,obj_a,obj_b,face,dot,
+                                             (int)(short)(*(short *)(normal + 2) - *(short *)(verts + 2)),
+                                             (int)(short)(*(short *)(normal + 6) - *(short *)(verts + 6)),
+                                             (int)(short)(*(short *)(normal + 10) - *(short *)(verts + 10)),
+                                             (short)*axis_p);
+              result = (uint *)0x0;
+              if (normal != 0) {
+                result = (uint *)dispatch_collision(obj_a,obj_b);
+                return result;
               }
             }
-            *local_30 = uVar6;
-            local_2c = (uint *)((int)local_2c + 2);
-            local_30 = local_30 + 1;
-            local_c = local_c + 1;
+            *side_p = side;
+            face_idx_p = (uint *)((int)face_idx_p + 2);
+            side_p = side_p + 1;
+            axis_p = axis_p + 1;
           }
         }
       }
       else {
-        puVar9 = (uint *)bullet_hits_shape(param_1,param_2);
+        result = (uint *)bullet_hits_shape(obj_a,obj_b);
       }
     }
     else {
-      puVar9 = (uint *)test_terrain_collision(param_1,param_2);
+      result = (uint *)test_terrain_collision(obj_a,obj_b);
     }
   }
-  return puVar9;
+  return result;
 }
 
 
@@ -25252,53 +25278,53 @@ uint * test_object_collision /* Original: FUN_00013ee0 */ (uint param_1,uint par
  * fractal_height_at(record, sext dx, sext dz, &local cleared word); when a has a controller
  * and h (word) != 0, ctl ground +0x2e = sext h << -s (s < 0) or >> s, and in live play ctl byte
  * +0x2c = 0; 0x14af2 release_fractal_reference(a) when a +0x2c; record word +0x20 = 0xffff. */
-void handle_terrain_contact /* Original: FUN_00014198 */ (uint param_1,uint param_2)
+void handle_terrain_contact /* Original: FUN_00014198 */ (uint obj_a /* param_1: player object a */,uint obj_b /* param_2: fractal / group object b */)
 
 {
-  uint *puVar1;
-  short sVar3;
-  int iVar2;
-  short sVar4;
-  undefined2 local_6;
+  uint *rec; /* puVar1; fractal contact record */
+  short rel_x; /* sVar3; scaled a x - b x */
+  int height; /* iVar2; fractal_height_at result */
+  short rel_z; /* sVar4; scaled a z - b z, then the ground height */
+  undefined2 plane_changed; /* local_6, -6(A6): fractal_height_at out flag */
   
-  puVar1 = (uint *)find_contact_record(param_1,param_2);
-  if (puVar1 == (uint *)0x0) {
-    if (((*(byte *)(param_2 + 6) & 2) != 0) && (*(int *)(param_1 + 0x2c) != 0)) {
+  rec = (uint *)find_contact_record(obj_a,obj_b);
+  if (rec == (uint *)0x0) {
+    if (((*(byte *)(obj_b + 6) & 2) != 0) && (*(int *)(obj_a + 0x2c) != 0)) {
       return;
     }
-    puVar1 = create_fractal_contact_record(param_1,param_2);
+    rec = create_fractal_contact_record(obj_a,obj_b);
   }
-  *(undefined2 *)(puVar1 + 2) = 1;
-  if (*(short *)((int)puVar1 + 10) < 0) {
-    sVar3 = (short)(*(int *)(param_1 + 0x18) - *(int *)(param_2 + 0x18) >>
-                   (-(int)*(short *)((int)puVar1 + 10) & 0x3fU));
-    sVar4 = (short)(*(int *)(param_1 + 0x20) - *(int *)(param_2 + 0x20) >>
-                   (-(int)*(short *)((int)puVar1 + 10) & 0x3fU));
+  *(undefined2 *)(rec + 2) = 1;
+  if (*(short *)((int)rec + 10) < 0) {
+    rel_x = (short)(*(int *)(obj_a + 0x18) - *(int *)(obj_b + 0x18) >>
+                   (-(int)*(short *)((int)rec + 10) & 0x3fU));
+    rel_z = (short)(*(int *)(obj_a + 0x20) - *(int *)(obj_b + 0x20) >>
+                   (-(int)*(short *)((int)rec + 10) & 0x3fU));
   }
   else {
-    sVar3 = (short)(*(int *)(param_1 + 0x18) - *(int *)(param_2 + 0x18) <<
-                   ((int)*(short *)((int)puVar1 + 10) & 0x3fU));
-    sVar4 = (short)(*(int *)(param_1 + 0x20) - *(int *)(param_2 + 0x20) <<
-                   ((int)*(short *)((int)puVar1 + 10) & 0x3fU));
+    rel_x = (short)(*(int *)(obj_a + 0x18) - *(int *)(obj_b + 0x18) <<
+                   ((int)*(short *)((int)rec + 10) & 0x3fU));
+    rel_z = (short)(*(int *)(obj_a + 0x20) - *(int *)(obj_b + 0x20) <<
+                   ((int)*(short *)((int)rec + 10) & 0x3fU));
   }
-  local_6 = 0;
-  iVar2 = fractal_height_at((int)puVar1,sVar3,sVar4,&local_6);
-  if ((*(int *)(param_1 + 8) != 0) && (sVar4 = (short)iVar2, sVar4 != 0)) {
-    if (*(short *)((int)puVar1 + 10) < 0) {
-      *(int *)(*(int *)(param_1 + 8) + 0x2e) =
-           (int)sVar4 << (-(int)*(short *)((int)puVar1 + 10) & 0x3fU);
+  plane_changed = 0;
+  height = fractal_height_at((int)rec,rel_x,rel_z,&plane_changed);
+  if ((*(int *)(obj_a + 8) != 0) && (rel_z = (short)height, rel_z != 0)) {
+    if (*(short *)((int)rec + 10) < 0) {
+      *(int *)(*(int *)(obj_a + 8) + 0x2e) =
+           (int)rel_z << (-(int)*(short *)((int)rec + 10) & 0x3fU);
     }
     else {
-      *(int *)(*(int *)(param_1 + 8) + 0x2e) = (int)sVar4 >> (*(ushort *)((int)puVar1 + 10) & 0x3f);
+      *(int *)(*(int *)(obj_a + 8) + 0x2e) = (int)rel_z >> (*(ushort *)((int)rec + 10) & 0x3f);
     }
-    if (DAT_0001b870 == 0) {
-      *(undefined1 *)(*(int *)(param_1 + 8) + 0x2c) = 0;
+    if (replay_state == 0) {
+      *(undefined1 *)(*(int *)(obj_a + 8) + 0x2c) = 0;
     }
   }
-  if (*(int *)(param_1 + 0x2c) != 0) {
-    release_fractal_reference(param_1);
+  if (*(int *)(obj_a + 0x2c) != 0) {
+    release_fractal_reference(obj_a);
   }
-  *(undefined2 *)(puVar1 + 8) = 0xffff;
+  *(undefined2 *)(rec + 8) = 0xffff;
   return;
 }
 
@@ -25314,29 +25340,29 @@ void handle_terrain_contact /* Original: FUN_00014198 */ (uint param_1,uint para
  * + b +0x14: b byte +6 bit 1 -> bsr.w 0x14198 handle_terrain_contact(a, b); else record =
  * 0x135a0 find_contact_record(a, b) or 0x135e8 create_shape_contact_record(a, b), word +8 = 1,
  * and when b byte +6 bit 6 the handler (b ctl +4) +0x12 is called with (b, a, record). */
-void handle_player_contact /* Original: FUN_0001429c */ (uint param_1,uint param_2)
+void handle_player_contact /* Original: FUN_0001429c */ (uint obj_a /* param_1: object a (must be the player) */,uint obj_b /* param_2: object b */)
 
 {
-  int iVar1;
-  uint *puVar2;
+  int dist; /* iVar1; approx_dist3_xyz distance */
+  uint *rec; /* puVar2; shape contact record */
   
-  if (*(int *)(param_1 + 8) == DAT_0001b738) {
+  if (*(int *)(obj_a + 8) == player_object) {
     /* Dropped call arguments [PROVEN, 0x142b6..0x142ce]: approx_dist3_xyz(a +0x18, a +0x1c,
      * a +0x20, b +0x18, b +0x1c, b +0x20). */
-    iVar1 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
-    if (iVar1 - (iVar1 >> 2) <= *(int *)(param_2 + 0x14) + *(int *)(param_1 + 0x14)) {
-      if ((*(byte *)(param_2 + 6) & 2) == 0) {
-        puVar2 = (uint *)find_contact_record(param_1,param_2);
-        if (puVar2 == (uint *)0x0) {
-          puVar2 = create_shape_contact_record(param_1,param_2);
+    dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+    if (dist - (dist >> 2) <= *(int *)(obj_b + 0x14) + *(int *)(obj_a + 0x14)) {
+      if ((*(byte *)(obj_b + 6) & 2) == 0) {
+        rec = (uint *)find_contact_record(obj_a,obj_b);
+        if (rec == (uint *)0x0) {
+          rec = create_shape_contact_record(obj_a,obj_b);
         }
-        *(undefined2 *)(puVar2 + 2) = 1;
-        if ((*(byte *)(param_2 + 6) & 0x40) != 0) {
-          (**(code **)(*(int *)(*(int *)(param_2 + 8) + 4) + 0x12))(param_2,param_1,puVar2);
+        *(undefined2 *)(rec + 2) = 1;
+        if ((*(byte *)(obj_b + 6) & 0x40) != 0) {
+          (**(code **)(*(int *)(*(int *)(obj_b + 8) + 4) + 0x12))(obj_b,obj_a,rec);
         }
       }
       else {
-        handle_terrain_contact(param_1,param_2);
+        handle_terrain_contact(obj_a,obj_b);
       }
     }
   }
@@ -25352,67 +25378,67 @@ void handle_player_contact /* Original: FUN_0001429c */ (uint param_1,uint param
 /* VERIFIED (FUN_00014348): checked against an independent capstone disassembly: handlers read from
  * (ctl+4)+0x12, 10 eight-byte pair entries at DAT_0001b43c, cmpi.w #$ffff no-match test, fallback by
  * byte +6 bit 5 - identical to the C. */
-void dispatch_collision /* Original: FUN_00014348 */ (int param_1,int param_2)
+void dispatch_collision /* Original: FUN_00014348 */ (int obj_a /* param_1: object a */,int obj_b /* param_2: object b */)
 
 {
-  short sVar1;
-  short *in_A1;
-  short *unaff_A2;
-  code *pcVar2;
-  code *pcVar3;
-  int iVar4;
-  int iVar5;
+  short left; /* sVar1; pair table entries left */
+  short *def_a; /* in_A1: object a definition (controller +4) (A1) */
+  short *def_b; /* unaff_A2: object b definition (controller +4) (A2) */
+  code *handler_a; /* pcVar2; object a collision handler (definition +0x12) */
+  code *handler_b; /* pcVar3; object b collision handler (definition +0x12) */
+  int first; /* iVar4; object of the entry's first type */
+  int second; /* iVar5; object of the entry's second type */
   
-  pcVar2 = (code *)0x0;
-  pcVar3 = (code *)0x0;
-  if (DAT_0001d858 == 8) {
+  handler_a = (code *)0x0;
+  handler_b = (code *)0x0;
+  if (view_mode == 8) {
     return;
   }
-  if ((*(byte *)(param_1 + 5) & 1) != 0) {
+  if ((*(byte *)(obj_a + 5) & 1) != 0) {
     return;
   }
-  if ((*(byte *)(param_2 + 5) & 1) != 0) {
+  if ((*(byte *)(obj_b + 5) & 1) != 0) {
     return;
   }
-  if (*(int *)(param_1 + 8) != 0) {
-    in_A1 = *(short **)(*(int *)(param_1 + 8) + 4);
-    pcVar2 = *(code **)(in_A1 + 9);
+  if (*(int *)(obj_a + 8) != 0) {
+    def_a = *(short **)(*(int *)(obj_a + 8) + 4);
+    handler_a = *(code **)(def_a + 9);
   }
-  if (*(int *)(param_2 + 8) != 0) {
-    unaff_A2 = *(short **)(*(int *)(param_2 + 8) + 4);
-    pcVar3 = *(code **)(unaff_A2 + 9);
+  if (*(int *)(obj_b + 8) != 0) {
+    def_b = *(short **)(*(int *)(obj_b + 8) + 4);
+    handler_b = *(code **)(def_b + 9);
   }
-  if ((pcVar2 == (code *)0x0) || (pcVar3 == (code *)0x0)) {
-    if (pcVar2 != (code *)0x0) {
-      (*pcVar2)(param_1,param_2,0);
+  if ((handler_a == (code *)0x0) || (handler_b == (code *)0x0)) {
+    if (handler_a != (code *)0x0) {
+      (*handler_a)(obj_a,obj_b,0);
       return;
     }
-    if (pcVar3 == (code *)0x0) {
+    if (handler_b == (code *)0x0) {
       return;
     }
   }
   else {
-    DAT_00026284 = &DAT_0001b43c;
-    sVar1 = 10;
-    while (sVar1 = sVar1 + -1, sVar1 != -1) {
-      if (((*DAT_00026284 == *in_A1) &&
-          (iVar4 = param_1, iVar5 = param_2, DAT_00026284[1] == *unaff_A2)) ||
-         ((*DAT_00026284 == *unaff_A2 &&
-          (iVar4 = param_2, iVar5 = param_1, DAT_00026284[1] == *in_A1)))) {
-        (**(code **)(DAT_00026284 + 2))(iVar4,iVar5,0);
+    collision_pair_cursor = &collision_pair_table;
+    left = 10;
+    while (left = left + -1, left != -1) {
+      if (((*collision_pair_cursor == *def_a) &&
+          (first = obj_a, second = obj_b, collision_pair_cursor[1] == *def_b)) ||
+         ((*collision_pair_cursor == *def_b &&
+          (first = obj_b, second = obj_a, collision_pair_cursor[1] == *def_a)))) {
+        (**(code **)(collision_pair_cursor + 2))(first,second,0);
         break;
       }
-      DAT_00026284 = DAT_00026284 + 4;
+      collision_pair_cursor = collision_pair_cursor + 4;
     }
-    if (sVar1 != -1) {
+    if (left != -1) {
       return;
     }
-    if ((*(byte *)(param_1 + 6) & 0x20) != 0) {
-      (*pcVar2)(param_1,param_2,0);
+    if ((*(byte *)(obj_a + 6) & 0x20) != 0) {
+      (*handler_a)(obj_a,obj_b,0);
       return;
     }
   }
-  (*pcVar3)(param_2,param_1,0);
+  (*handler_b)(obj_b,obj_a,0);
   return;
 }
 
@@ -25434,203 +25460,203 @@ void dispatch_collision /* Original: FUN_00014348 */ (int param_1,int param_2)
  * Ghidra C reviewed (function at overlay offset 0x1443a).
  * For a group object (+6 & 2; called by render_visible_objects before emit_faces_unnumbered): temporarily moves the camera position into object units (y = 0), computes each root part distance (+0x38 parts, compute_camera_abs_metric) and, with the haze option (+0xaa), blends the part face colours towards the haze colour RGB (0x7d, 0x84, 0xa8) by the distance band (update_record_distance_band, weight / 32) and refreshes their palette slots; insertion-sorts the parts by distance (far first) and hands out draw-order numbers DAT_0001c1be in that order, interleaving the parts of nested objects (steps of count * 0x80); restores the camera position. Ghidra C.
  */
-void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int param_1)
+void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param_1: group object (+0x34 shift, +0x38 part count, +0x3a / +0x48 faces, +0x2c support list) */)
 
 {
-  byte *pbVar1;
-  int iVar2;
-  short sVar3;
-  undefined2 uVar4;
-  int *piVar5;
-  ushort uVar6;
-  int iVar7;
-  undefined4 uVar8;
-  int iVar9;
-  int iVar10;
-  short sVar11;
-  ushort uVar12;
-  short sVar13;
-  int iVar14;
-  int *piVar15;
-  short *psVar16;
-  int *piVar17;
-  short *psVar18;
-  int iVar19;
-  int *local_426;
-  short local_41e;
-  int local_404 [256];
-  
-  iVar9 = DAT_0001d838;
-  uVar8 = DAT_0001d834;
-  iVar7 = DAT_0001d830;
-  DAT_0001d838 = DAT_0001d838 << ((int)*(short *)(param_1 + 0x34) & 0x3fU);
-  DAT_0001d834 = 0;
-  DAT_0001d830 = DAT_0001d830 << ((int)*(short *)(param_1 + 0x34) & 0x3fU);
-  sVar13 = *(short *)(param_1 + 0x38);
-  iVar2 = *(int *)(param_1 + 0x48);
-  local_426 = local_404;
-  psVar16 = (short *)(*(short *)(param_1 + 0x3a) * 0x20 + iVar2);
-  if (*(short *)(DAT_0001b5a0 + 0xaa) == 0) {
-    sVar11 = 0;
-    if (0 < sVar13) {
+  byte *haze_rec; /* pbVar1; part haze record (base RGB bytes +0..2, weight word +4) */
+  int faces; /* iVar2; face records (+0x48) */
+  short part; /* sVar3; part face index, then the haze weight */
+  undefined2 moved_idx; /* uVar4; part index being inserted */
+  int *supports; /* piVar5; support entries (support list + 4) */
+  ushort j; /* uVar6; insertion position */
+  int saved_cam_z; /* iVar7; camera_z restored on exit */
+  undefined4 saved_cam_y; /* uVar8; camera_y restored on exit */
+  int saved_cam_x; /* iVar9; camera_x restored on exit */
+  int tmp; /* iVar10; metric / face record / part index list / support distance */
+  short i; /* sVar11; part index */
+  ushort k; /* uVar12; sort index */
+  short parts_left; /* sVar13; part count (+0x38), then parts left */
+  int slot; /* iVar14; insertion index, then the face record */
+  int *src; /* piVar15; support list read cursor */
+  short *list; /* psVar16; part index list / support list / current support */
+  int *dst; /* piVar17; support list write cursor */
+  short *idx_p; /* psVar18; part index cursor, then a support record */
+  int dist; /* iVar19; distance being placed */
+  int *dist_p; /* local_426, -0x426(A6): cursor into dists */
+  short support_count; /* local_41e, -0x41e(A6): supports left */
+  int dists [256]; /* local_404, -0x404(A6): part distances (256 longs) */
+
+  saved_cam_x = camera_x;
+  saved_cam_y = camera_y;
+  saved_cam_z = camera_z;
+  camera_x = camera_x << ((int)*(short *)(obj + 0x34) & 0x3fU);
+  camera_y = 0;
+  camera_z = camera_z << ((int)*(short *)(obj + 0x34) & 0x3fU);
+  parts_left = *(short *)(obj + 0x38);
+  faces = *(int *)(obj + 0x48);
+  dist_p = dists;
+  list = (short *)(*(short *)(obj + 0x3a) * 0x20 + faces);
+  if (*(short *)(host_world + 0xaa) == 0) {
+    i = 0;
+    if (0 < parts_left) {
       do {
-        iVar10 = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args: template vertex x, 0, z for the face's index entry (vertex block +0x44 + 12 * (+0x36 - +0x38) + 12 * idx) */);
-        *local_426 = iVar10;
-        sVar11 = sVar11 + 1;
-        local_426 = local_426 + 1;
-      } while (sVar11 < sVar13);
+        tmp = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args: template vertex x, 0, z for the face's index entry (vertex block +0x44 + 12 * (+0x36 - +0x38) + 12 * idx) */);
+        *dist_p = tmp;
+        i = i + 1;
+        dist_p = dist_p + 1;
+      } while (i < parts_left);
     }
   }
   else {
-    sVar11 = 0;
-    psVar18 = psVar16;
-    if (0 < sVar13) {
+    i = 0;
+    idx_p = list;
+    if (0 < parts_left) {
       do {
-        sVar3 = *psVar18;
-        pbVar1 = (byte *)(psVar16 + (int)sVar13 + sVar3 * 3);
-        iVar10 = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args: template vertex x, 0, z for the face's index entry (vertex block +0x44 + 12 * (+0x36 - +0x38) + 12 * idx) */);
-        *local_426 = iVar10;
-        iVar10 = update_record_distance_band((int)pbVar1,iVar10);
-        if (iVar10 != 0) {
-          iVar10 = sVar3 * 0x20 + iVar2;
-          sVar3 = *(short *)(pbVar1 + 4);
-          iVar19 = 0x20 - sVar3;
-          *(char *)(iVar10 + 0xc) = (char)(sVar3 * 0x7d + iVar19 * (uint)*pbVar1 >> 5);
-          *(char *)(iVar10 + 0xd) = (char)(sVar3 * 0x84 + iVar19 * (uint)pbVar1[1] >> 5);
-          *(char *)(iVar10 + 0xe) = (char)(sVar3 * 0xa8 + (uint)pbVar1[2] * iVar19 >> 5);
-          if (iVar10 == *(int *)(DAT_0001da7c + (uint)*(byte *)(iVar10 + 0xf) * 4)) {
-            write_face_palette_slot(iVar10);
+        part = *idx_p;
+        haze_rec = (byte *)(list + (int)parts_left + part * 3);
+        tmp = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args: template vertex x, 0, z for the face's index entry (vertex block +0x44 + 12 * (+0x36 - +0x38) + 12 * idx) */);
+        *dist_p = tmp;
+        tmp = update_record_distance_band((int)haze_rec,tmp);
+        if (tmp != 0) {
+          tmp = part * 0x20 + faces;
+          part = *(short *)(haze_rec + 4);
+          dist = 0x20 - part;
+          *(char *)(tmp + 0xc) = (char)(part * 0x7d + dist * (uint)*haze_rec >> 5);
+          *(char *)(tmp + 0xd) = (char)(part * 0x84 + dist * (uint)haze_rec[1] >> 5);
+          *(char *)(tmp + 0xe) = (char)(part * 0xa8 + (uint)haze_rec[2] * dist >> 5);
+          if (tmp == *(int *)(palette_owner_current + (uint)*(byte *)(tmp + 0xf) * 4)) {
+            write_face_palette_slot(tmp);
           }
           else {
-            *(undefined1 *)(iVar10 + 0xf) = 0;
+            *(undefined1 *)(tmp + 0xf) = 0;
           }
         }
-        sVar11 = sVar11 + 1;
-        psVar18 = psVar18 + 1;
-        local_426 = local_426 + 1;
-      } while (sVar11 < sVar13);
+        i = i + 1;
+        idx_p = idx_p + 1;
+        dist_p = dist_p + 1;
+      } while (i < parts_left);
     }
   }
-  iVar10 = *(short *)(param_1 + 0x3a) * 0x20 + iVar2;
-  uVar12 = 0;
-  local_426 = local_404;
-  if (0 < sVar13) {
+  tmp = *(short *)(obj + 0x3a) * 0x20 + faces;
+  k = 0;
+  dist_p = dists;
+  if (0 < parts_left) {
     do {
-      uVar4 = *(undefined2 *)(iVar10 + (short)uVar12 * 2);
-      iVar19 = *local_426;
-      uVar6 = uVar12;
-      while ((uVar6 = uVar6 - 1, -1 < (int)((uint)uVar6 << 0x10) &&
-             (iVar14 = (int)(short)uVar6, local_404[iVar14] < iVar19))) {
-        *(undefined2 *)(iVar10 + 2 + iVar14 * 2) = *(undefined2 *)(iVar10 + iVar14 * 2);
-        local_404[iVar14 + 1] = local_404[iVar14];
+      moved_idx = *(undefined2 *)(tmp + (short)k * 2);
+      dist = *dist_p;
+      j = k;
+      while ((j = j - 1, -1 < (int)((uint)j << 0x10) &&
+             (slot = (int)(short)j, dists[slot] < dist))) {
+        *(undefined2 *)(tmp + 2 + slot * 2) = *(undefined2 *)(tmp + slot * 2);
+        dists[slot + 1] = dists[slot];
       }
-      *(undefined2 *)(iVar10 + 2 + (short)uVar6 * 2) = uVar4;
-      local_404[(short)uVar6 + 1] = iVar19;
-      uVar12 = uVar12 + 1;
-      local_426 = local_426 + 1;
-    } while ((short)uVar12 < sVar13);
+      *(undefined2 *)(tmp + 2 + (short)j * 2) = moved_idx;
+      dists[(short)j + 1] = dist;
+      k = k + 1;
+      dist_p = dist_p + 1;
+    } while ((short)k < parts_left);
   }
-  psVar16 = *(short **)(param_1 + 0x2c);
-  if (psVar16 != (short *)0x0) {
-    local_41e = *psVar16;
-    piVar5 = (int *)(psVar16 + 2);
-    piVar15 = piVar5;
-    piVar17 = piVar5;
-    if (_DAT_0001c1bc != 0) {
-      while (local_41e = local_41e + -1, local_41e != -1) {
-        psVar18 = (short *)*piVar15;
-        if (*psVar18 == 0) {
-          heap_free_coalesce((int)psVar18);
-          piVar15 = piVar15 + 1;
+  list = *(short **)(obj + 0x2c);
+  if (list != (short *)0x0) {
+    support_count = *list;
+    supports = (int *)(list + 2);
+    src = supports;
+    dst = supports;
+    if (deferred_free_flag != 0) {
+      while (support_count = support_count + -1, support_count != -1) {
+        idx_p = (short *)*src;
+        if (*idx_p == 0) {
+          heap_free_coalesce((int)idx_p);
+          src = src + 1;
         }
         else {
-          *piVar17 = (int)psVar18;
-          piVar15 = piVar15 + 1;
-          piVar17 = piVar17 + 1;
+          *dst = (int)idx_p;
+          src = src + 1;
+          dst = dst + 1;
         }
       }
-      local_41e = (short)((int)piVar17 - (int)piVar5 >> 2);
-      *psVar16 = local_41e;
+      support_count = (short)((int)dst - (int)supports >> 2);
+      *list = support_count;
     }
-    if (local_41e != 0) {
-      uVar12 = 0;
-      if (0 < local_41e) {
+    if (support_count != 0) {
+      k = 0;
+      if (0 < support_count) {
         do {
-          iVar10 = piVar5[(short)uVar12];
-          iVar19 = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args (0x146cc..0x146d2): support point +4 (x), 0, +8 (z) */);
-          *(int *)(iVar10 + 0xc) = iVar19;
-          uVar6 = uVar12;
-          while (uVar6 = uVar6 - 1, -1 < (int)((uint)uVar6 << 0x10)) {
-            if (iVar19 <= *(int *)(piVar5[(short)uVar6] + 0xc)) break;
-            *(int *)(psVar16 + (short)uVar6 * 2 + 4) = piVar5[(short)uVar6];
+          tmp = supports[(short)k];
+          dist = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args (0x146cc..0x146d2): support point +4 (x), 0, +8 (z) */);
+          *(int *)(tmp + 0xc) = dist;
+          j = k;
+          while (j = j - 1, -1 < (int)((uint)j << 0x10)) {
+            if (dist <= *(int *)(supports[(short)j] + 0xc)) break;
+            *(int *)(list + (short)j * 2 + 4) = supports[(short)j];
           }
-          *(int *)(psVar16 + (short)uVar6 * 2 + 4) = iVar10;
-          uVar12 = uVar12 + 1;
-        } while ((short)uVar12 < local_41e);
+          *(int *)(list + (short)j * 2 + 4) = tmp;
+          k = k + 1;
+        } while ((short)k < support_count);
       }
-      piVar15 = (int *)(psVar16 + 4);
-      psVar16 = (short *)*piVar5;
-      iVar10 = *(int *)(psVar16 + 6);
-      local_41e = local_41e + -1;
-      psVar18 = (short *)(*(short *)(param_1 + 0x3a) * 0x20 + iVar2);
-      local_426 = local_404;
+      src = (int *)(list + 4);
+      list = (short *)*supports;
+      tmp = *(int *)(list + 6);
+      support_count = support_count + -1;
+      idx_p = (short *)(*(short *)(obj + 0x3a) * 0x20 + faces);
+      dist_p = dists;
       do {
-        sVar13 = sVar13 + -1;
-        if (sVar13 == -1) {
+        parts_left = parts_left + -1;
+        if (parts_left == -1) {
           while( true ) {
-            psVar16[1] = DAT_0001c1be;
-            DAT_0001c1be = *psVar16 * 0x80 + DAT_0001c1be;
-            local_41e = local_41e + -1;
-            if (local_41e == -1) break;
-            psVar16 = (short *)*piVar15;
-            piVar15 = piVar15 + 1;
+            list[1] = draw_order_next;
+            draw_order_next = *list * 0x80 + draw_order_next;
+            support_count = support_count + -1;
+            if (support_count == -1) break;
+            list = (short *)*src;
+            src = src + 1;
           }
-          DAT_0001d830 = iVar7;
-          DAT_0001d834 = uVar8;
-          DAT_0001d838 = iVar9;
+          camera_z = saved_cam_z;
+          camera_y = saved_cam_y;
+          camera_x = saved_cam_x;
           return;
         }
-        iVar14 = *psVar18 * 0x20 + iVar2;
-        iVar19 = *local_426;
-        while (iVar19 < iVar10) {
-          psVar16[1] = DAT_0001c1be;
-          DAT_0001c1be = DAT_0001c1be + *psVar16 * 0x80;
-          local_41e = local_41e + -1;
-          if (local_41e == -1) {
-            *(short *)(iVar14 + 2) = DAT_0001c1be;
-            psVar16 = psVar18 + 1;
+        slot = *idx_p * 0x20 + faces;
+        dist = *dist_p;
+        while (dist < tmp) {
+          list[1] = draw_order_next;
+          draw_order_next = draw_order_next + *list * 0x80;
+          support_count = support_count + -1;
+          if (support_count == -1) {
+            *(short *)(slot + 2) = draw_order_next;
+            list = idx_p + 1;
             while( true ) {
-              DAT_0001c1be = DAT_0001c1be + 1;
-              sVar13 = sVar13 + -1;
-              if (sVar13 == -1) break;
-              *(short *)(iVar2 + 2 + *psVar16 * 0x20) = DAT_0001c1be;
-              psVar16 = psVar16 + 1;
+              draw_order_next = draw_order_next + 1;
+              parts_left = parts_left + -1;
+              if (parts_left == -1) break;
+              *(short *)(faces + 2 + *list * 0x20) = draw_order_next;
+              list = list + 1;
             }
-            DAT_0001d830 = iVar7;
-            DAT_0001d834 = uVar8;
-            DAT_0001d838 = iVar9;
+            camera_z = saved_cam_z;
+            camera_y = saved_cam_y;
+            camera_x = saved_cam_x;
             return;
           }
-          psVar16 = (short *)*piVar15;
-          piVar15 = piVar15 + 1;
-          iVar10 = *(int *)(psVar16 + 6);
+          list = (short *)*src;
+          src = src + 1;
+          tmp = *(int *)(list + 6);
         }
-        *(short *)(iVar14 + 2) = DAT_0001c1be;
-        DAT_0001c1be = DAT_0001c1be + 1;
-        psVar18 = psVar18 + 1;
-        local_426 = local_426 + 1;
+        *(short *)(slot + 2) = draw_order_next;
+        draw_order_next = draw_order_next + 1;
+        idx_p = idx_p + 1;
+        dist_p = dist_p + 1;
       } while( true );
     }
   }
-  psVar16 = (short *)(*(short *)(param_1 + 0x3a) * 0x20 + iVar2);
-  while (sVar13 = sVar13 + -1, sVar13 != -1) {
-    *(short *)(iVar2 + 2 + *psVar16 * 0x20) = DAT_0001c1be;
-    DAT_0001c1be = DAT_0001c1be + 1;
-    psVar16 = psVar16 + 1;
+  list = (short *)(*(short *)(obj + 0x3a) * 0x20 + faces);
+  while (parts_left = parts_left + -1, parts_left != -1) {
+    *(short *)(faces + 2 + *list * 0x20) = draw_order_next;
+    draw_order_next = draw_order_next + 1;
+    list = list + 1;
   }
-  DAT_0001d838 = iVar9;
-  DAT_0001d834 = uVar8;
-  DAT_0001d830 = iVar7;
+  camera_x = saved_cam_x;
+  camera_y = saved_cam_y;
+  camera_z = saved_cam_z;
   return;
 }
 
@@ -25653,119 +25679,119 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int param_1)
  * Ghidra C reviewed (function at overlay offset 0x14830).
  * Called by test_terrain_collision when the height query reports it. When the object (arg 4) is below the ground height (arg 2, rescaled by the contact-record shift) and holds no fractal reference: raises its y (+0x1c) to the ground, moves its vertices up (translate_int3_vecs, unless +5 & 0x10), refreshes its distance metric and the face detail thresholds, and marks it settled (+5 | 8); then continues with the fractal data DAT_00020b48 (further down). Returns the new height. Ghidra C (partly read).
  */
-int lift_object_onto_terrain /* Original: FUN_00014830 */ (int param_1,short param_2,int param_3,int param_4,int param_5)
+int lift_object_onto_terrain /* Original: FUN_00014830 */ (int rec /* param_1: fractal contact record */,short ground /* param_2: ground height (record scale) */,int height /* param_3: object height (record scale), returned */,int obj /* param_4: object lifted onto the terrain (+0x2c fractal reference) */,int terrain /* param_5: fractal / group object (+0x2c support list) */)
 
 {
-  int iVar1;
-  short sVar5;
-  short sVar6;
-  int iVar2;
-  uint *puVar3;
-  uint *puVar4;
-  short sVar8;
-  uint uVar7;
-  uint uVar9;
-  int *piVar10;
-  uint *puVar11;
-  uint *puVar12;
+  int tmp; /* iVar1; camera metric, then 2:1 cell-corner sum, then the vertex block */
+  short n; /* sVar5; faces left, then the support point u, then supports left */
+  short half_v; /* sVar6; support v rounded for the halving */
+  int dy; /* iVar2; lift in world units, then cell-corner sums / vertex offsets */
+  uint *support; /* puVar3; support point record (+0 users, +4 x, +8 z) */
+  uint *support_list; /* puVar4; terrain support list (+0 count, +2 capacity, entries from +4) */
+  short sup_v; /* sVar8; support point second cell coordinate */
+  uint sup_z; /* uVar7; support point z */
+  uint sup_x; /* uVar9; support point x */
+  int *face_thr; /* piVar10; face +0x1c detail threshold */
+  uint *next_p; /* puVar11; next support list entry */
+  uint *entry_p; /* puVar12; support list entry */
   
-  if ((param_3 < param_2) && (*(int *)(param_4 + 0x2c) == 0)) {
-    if (*(short *)(param_1 + 10) < 0) {
-      iVar2 = (int)param_2 << (-(int)*(short *)(param_1 + 10) & 0x3fU);
+  if ((height < ground) && (*(int *)(obj + 0x2c) == 0)) {
+    if (*(short *)(rec + 10) < 0) {
+      dy = (int)ground << (-(int)*(short *)(rec + 10) & 0x3fU);
     }
     else {
-      iVar2 = (int)param_2 >> (*(ushort *)(param_1 + 10) & 0x3f);
+      dy = (int)ground >> (*(ushort *)(rec + 10) & 0x3f);
     }
-    *(int *)(param_4 + 0x1c) = iVar2 + *(int *)(param_4 + 0x1c);
-    if ((*(byte *)(param_4 + 5) & 0x10) == 0) {
-      translate_int3_vecs( /* Original: FUN_00001c5c */(int)*(short *)(param_4 + 0x3a) + (int)*(short *)(param_4 + 0x36),
-                   *(int **)(param_4 + 0x44),*(int **)(param_4 + 0x44),0,
-                   iVar2 << ((int)*(short *)(param_4 + 0x34) & 0x3fU),0);
+    *(int *)(obj + 0x1c) = dy + *(int *)(obj + 0x1c);
+    if ((*(byte *)(obj + 5) & 0x10) == 0) {
+      translate_int3_vecs( /* Original: FUN_00001c5c */(int)*(short *)(obj + 0x3a) + (int)*(short *)(obj + 0x36),
+                   *(int **)(obj + 0x44),*(int **)(obj + 0x44),0,
+                   dy << ((int)*(short *)(obj + 0x34) & 0x3fU),0);
     }
-    if ((*(byte *)(param_4 + 5) & 8) == 0) {
-      iVar1 = update_object_camera_metric( /* Original: FUN_00003b98 */param_4);
-      *(int *)(param_4 + 0xc) = (iVar1 - *(int *)(param_4 + 0x10)) + *(int *)(param_4 + 0xc);
-      sVar5 = *(short *)(param_4 + 0x3a);
-      piVar10 = (int *)(*(int *)(param_4 + 0x48) + 0x1c);
-      while (sVar5 = sVar5 + -1, sVar5 != -1) {
-        *piVar10 = iVar2 + *piVar10;
-        piVar10 = piVar10 + 8;
+    if ((*(byte *)(obj + 5) & 8) == 0) {
+      tmp = update_object_camera_metric( /* Original: FUN_00003b98 */obj);
+      *(int *)(obj + 0xc) = (tmp - *(int *)(obj + 0x10)) + *(int *)(obj + 0xc);
+      n = *(short *)(obj + 0x3a);
+      face_thr = (int *)(*(int *)(obj + 0x48) + 0x1c);
+      while (n = n + -1, n != -1) {
+        *face_thr = dy + *face_thr;
+        face_thr = face_thr + 8;
       }
     }
-    *(byte *)(param_4 + 5) = *(byte *)(param_4 + 5) | 8;
-    param_3 = (int)param_2;
+    *(byte *)(obj + 5) = *(byte *)(obj + 5) | 8;
+    height = (int)ground;
   }
-  if (*(short *)(DAT_00020b48 + 4) == 0) {
-    if (*(short *)(param_1 + 0x20) == 0) {
-      iVar1 = (int)*(short *)(param_1 + 0x18) + *(short *)(param_1 + 0x1a) * 2;
-      iVar2 = (int)*(short *)(param_1 + 0x1e) + *(short *)(param_1 + 0x1c) * 2;
+  if (*(short *)(cell_plane + 4) == 0) {
+    if (*(short *)(rec + 0x20) == 0) {
+      tmp = (int)*(short *)(rec + 0x18) + *(short *)(rec + 0x1a) * 2;
+      dy = (int)*(short *)(rec + 0x1e) + *(short *)(rec + 0x1c) * 2;
     }
     else {
-      iVar1 = (int)*(short *)(param_1 + 0x1a) + *(short *)(param_1 + 0x18) * 2;
-      iVar2 = (int)*(short *)(param_1 + 0x1c) + *(short *)(param_1 + 0x1e) * 2;
+      tmp = (int)*(short *)(rec + 0x1a) + *(short *)(rec + 0x18) * 2;
+      dy = (int)*(short *)(rec + 0x1c) + *(short *)(rec + 0x1e) * 2;
     }
-    sVar5 = (short)(iVar1 / 3);
-    sVar8 = (short)(iVar2 / 3);
-    if ((*(short *)(param_1 + 0xe) == 0) && (*(short *)(param_1 + 0x14) == 0)) {
-      sVar6 = sVar8;
-      if (sVar8 < 0) {
-        sVar6 = sVar8 + 1;
+    n = (short)(tmp / 3);
+    sup_v = (short)(dy / 3);
+    if ((*(short *)(rec + 0xe) == 0) && (*(short *)(rec + 0x14) == 0)) {
+      half_v = sup_v;
+      if (sup_v < 0) {
+        half_v = sup_v + 1;
       }
-      sVar5 = sVar5 - (sVar6 >> 1);
+      n = n - (half_v >> 1);
     }
-    if (*(short *)(param_1 + 10) < 0) {
-      uVar9 = *(int *)(param_5 + 0x18) + ((int)sVar5 << (-(int)*(short *)(param_1 + 10) & 0x3fU));
-      iVar2 = (int)sVar8 << (-(int)*(short *)(param_1 + 10) & 0x3fU);
+    if (*(short *)(rec + 10) < 0) {
+      sup_x = *(int *)(terrain + 0x18) + ((int)n << (-(int)*(short *)(rec + 10) & 0x3fU));
+      dy = (int)sup_v << (-(int)*(short *)(rec + 10) & 0x3fU);
     }
     else {
-      uVar9 = *(int *)(param_5 + 0x18) + ((int)sVar5 >> ((int)*(short *)(param_1 + 10) & 0x3fU));
-      iVar2 = (int)sVar8 >> ((int)*(short *)(param_1 + 10) & 0x3fU);
+      sup_x = *(int *)(terrain + 0x18) + ((int)n >> ((int)*(short *)(rec + 10) & 0x3fU));
+      dy = (int)sup_v >> ((int)*(short *)(rec + 10) & 0x3fU);
     }
-    uVar7 = *(int *)(param_5 + 0x20) + iVar2;
+    sup_z = *(int *)(terrain + 0x20) + dy;
   }
   else {
-    iVar1 = *(int *)(param_5 + 0x44) +
-            ((int)*(short *)(param_5 + 0x36) - (int)*(short *)(param_5 + 0x38)) * 0xc;
-    iVar2 = *(short *)(param_1 + 0x22 + *(short *)(param_1 + 0x20) * 0xe) * 0xc;
-    uVar9 = *(uint *)(iVar1 + iVar2);
-    uVar7 = *(uint *)(iVar1 + 8 + iVar2);
+    tmp = *(int *)(terrain + 0x44) +
+            ((int)*(short *)(terrain + 0x36) - (int)*(short *)(terrain + 0x38)) * 0xc;
+    dy = *(short *)(rec + 0x22 + *(short *)(rec + 0x20) * 0xe) * 0xc;
+    sup_x = *(uint *)(tmp + dy);
+    sup_z = *(uint *)(tmp + 8 + dy);
   }
-  if (*(int *)(param_5 + 0x2c) == 0) {
-    puVar3 = heap_alloc(0x1c);
-    *(undefined2 *)((int)puVar3 + 2) = 5;
-    *(undefined2 *)puVar3 = 0;
-    *(uint **)(param_5 + 0x2c) = puVar3;
+  if (*(int *)(terrain + 0x2c) == 0) {
+    support = heap_alloc(0x1c);
+    *(undefined2 *)((int)support + 2) = 5;
+    *(undefined2 *)support = 0;
+    *(uint **)(terrain + 0x2c) = support;
   }
-  puVar3 = *(uint **)(param_4 + 0x2c);
-  if (puVar3 != (uint *)0x0) {
-    *(short *)puVar3 = *(short *)puVar3 + -1;
-    _DAT_0001c1bc = 1;
+  support = *(uint **)(obj + 0x2c);
+  if (support != (uint *)0x0) {
+    *(short *)support = *(short *)support + -1;
+    deferred_free_flag = 1;
   }
-  puVar4 = *(uint **)(param_5 + 0x2c);
-  sVar5 = *(short *)puVar4;
-  puVar12 = puVar4 + 1;
+  support_list = *(uint **)(terrain + 0x2c);
+  n = *(short *)support_list;
+  entry_p = support_list + 1;
   do {
-    sVar5 = sVar5 + -1;
-    if (sVar5 == -1) break;
-    puVar11 = puVar12 + 1;
-    puVar3 = (uint *)*puVar12;
-    puVar12 = puVar11;
-  } while ((uVar9 != puVar3[1]) || (uVar7 != puVar3[2]));
-  if (sVar5 == -1) {
-    puVar3 = heap_alloc_cleared(0x10);
-    puVar3[1] = uVar9;
-    puVar3[2] = uVar7;
-    if ((short)*puVar4 == *(short *)puVar4) {
-      *(short *)((int)puVar4 + 2) = *(short *)((int)puVar4 + 2) + 5;
-      puVar4 = heap_realloc_grow_only( /* Original: FUN_00001ba8 */puVar4,(undefined4 *)((short)*puVar4 * 4 + 8));
-      *(uint **)(param_5 + 0x2c) = puVar4;
+    n = n + -1;
+    if (n == -1) break;
+    next_p = entry_p + 1;
+    support = (uint *)*entry_p;
+    entry_p = next_p;
+  } while ((sup_x != support[1]) || (sup_z != support[2]));
+  if (n == -1) {
+    support = heap_alloc_cleared(0x10);
+    support[1] = sup_x;
+    support[2] = sup_z;
+    if ((short)*support_list == *(short *)support_list) {
+      *(short *)((int)support_list + 2) = *(short *)((int)support_list + 2) + 5;
+      support_list = heap_realloc_grow_only( /* Original: FUN_00001ba8 */support_list,(undefined4 *)((short)*support_list * 4 + 8));
+      *(uint **)(terrain + 0x2c) = support_list;
     }
-    puVar4[*(short *)puVar4 + 1] = (uint)puVar3;
-    *(short *)puVar4 = *(short *)puVar4 + 1;
+    support_list[*(short *)support_list + 1] = (uint)support;
+    *(short *)support_list = *(short *)support_list + 1;
   }
-  *(short *)puVar3 = *(short *)puVar3 + 1;
-  *(uint **)(param_4 + 0x2c) = puVar3;
-  return (int)(short)param_3;
+  *(short *)support = *(short *)support + 1;
+  *(uint **)(obj + 0x2c) = support;
+  return (int)(short)height;
 }
 
 
@@ -25797,69 +25823,69 @@ int lift_object_onto_terrain /* Original: FUN_00014830 */ (int param_1,short par
  * branch conditions, call targets and arguments identical to the C, with the corrections
  * above. The name keeps [STRONG INFERENCE].
  */
-void release_fractal_reference /* Original: FUN_00014af2 */ (int param_1)
+void release_fractal_reference /* Original: FUN_00014af2 */ (int obj /* param_1: object holding a fractal reference (+0x2c) */)
 
 {
-  short *psVar1;
-  undefined4 unaff_D2;
-  short sVar2;
-  undefined4 unaff_D3;
-  short sVar3;
-  int iVar4;
-  undefined4 unaff_A2;
-  int *piVar5;
-  int *piVar6;
-  undefined4 unaff_A3;
-  undefined4 unaff_A4;
-  int *piVar7;
-  
-  if (((*(byte *)(param_1 + 5) & 8) != 0) && ((*(byte *)(param_1 + 5) & 0x10) == 0)) {
-    iVar4 = *(int *)(DAT_0001b5a0 + 0x8c) +
-            *(int *)(*(int *)(*(int *)(param_1 + 0x24) + 0x28) + 0x2e +
-                    (uint)*(byte *)(param_1 + 1) * 0x18);
-    *(undefined4 *)(param_1 + 0x18) = *(undefined4 *)(iVar4 + 2);
-    *(undefined4 *)(param_1 + 0x1c) = *(undefined4 *)(iVar4 + 6);
-    *(undefined4 *)(param_1 + 0x20) = *(undefined4 *)(iVar4 + 10);
-    apply_template_chain_xform( /* Original: FUN_00002bd8 */param_1,1,(uint *)0x0,(uint *)0x0);
+  short *block; /* psVar1; shared fractal block (+0 users) */
+  undefined4 arg_d2; /* unaff_D2: register passed on to overlay_printf (D2) */
+  short left; /* sVar2; objects left */
+  undefined4 arg_d3; /* unaff_D3: register passed on to overlay_printf (D3) */
+  short n; /* sVar3; users after the decrement, then blocks left */
+  int entry; /* iVar4; template entry, then the object being checked */
+  undefined4 arg_a2; /* unaff_A2: register passed on to overlay_printf (A2) */
+  int *next_slot; /* piVar5; next object_pool slot */
+  int *slot; /* piVar6; object_pool slot */
+  undefined4 arg_a3; /* unaff_A3: register passed on to overlay_printf (A3) */
+  undefined4 arg_a4; /* unaff_A4: register passed on to overlay_printf (A4) */
+  int *block_p; /* piVar7; cursor into the block list (+0 count, entries from +4) */
+
+  if (((*(byte *)(obj + 5) & 8) != 0) && ((*(byte *)(obj + 5) & 0x10) == 0)) {
+    entry = *(int *)(host_world + 0x8c) +
+            *(int *)(*(int *)(*(int *)(obj + 0x24) + 0x28) + 0x2e +
+                    (uint)*(byte *)(obj + 1) * 0x18);
+    *(undefined4 *)(obj + 0x18) = *(undefined4 *)(entry + 2);
+    *(undefined4 *)(obj + 0x1c) = *(undefined4 *)(entry + 6);
+    *(undefined4 *)(obj + 0x20) = *(undefined4 *)(entry + 10);
+    apply_template_chain_xform( /* Original: FUN_00002bd8 */obj,1,(uint *)0x0,(uint *)0x0);
   }
-  if ((*(byte *)(param_1 + 6) & 2) == 0) {
-    sVar3 = **(short **)(param_1 + 0x2c) + -1;
-    **(short **)(param_1 + 0x2c) = sVar3;
-    if (sVar3 == 0) {
-      _DAT_0001c1bc = 1;
+  if ((*(byte *)(obj + 6) & 2) == 0) {
+    n = **(short **)(obj + 0x2c) + -1;
+    **(short **)(obj + 0x2c) = n;
+    if (n == 0) {
+      deferred_free_flag = 1;
     }
   }
   else {
-    piVar7 = *(int **)(param_1 + 0x2c);
-    if (piVar7 != (int *)0x0) {
-      sVar3 = *(short *)piVar7;
+    block_p = *(int **)(obj + 0x2c);
+    if (block_p != (int *)0x0) {
+      n = *(short *)block_p;
       while( true ) {
-        piVar7 = piVar7 + 1;
-        sVar3 = sVar3 + -1;
-        if (sVar3 == -1) break;
-        psVar1 = (short *)*piVar7;
-        if (*psVar1 != 0) {
-          piVar6 = &DAT_0001b5a4;
-          sVar2 = DAT_0001b734._2_2_;
-          while (sVar2 = sVar2 + -1, sVar2 != -1) {
-            piVar5 = piVar6 + 1;
-            iVar4 = *piVar6;
-            piVar6 = piVar5;
-            if (psVar1 == *(short **)(iVar4 + 0x2c)) {
-              release_fractal_reference(iVar4);
+        block_p = block_p + 1;
+        n = n + -1;
+        if (n == -1) break;
+        block = (short *)*block_p;
+        if (*block != 0) {
+          slot = &object_pool;
+          left = object_count._2_2_;
+          while (left = left + -1, left != -1) {
+            next_slot = slot + 1;
+            entry = *slot;
+            slot = next_slot;
+            if (block == *(short **)(entry + 0x2c)) {
+              release_fractal_reference(entry);
             }
           }
         }
-        if (*psVar1 != 0) {
-          overlay_printf(s_____Deactivating_Fractal__but_st_00014aba,unaff_D2,unaff_D3,unaff_A2,
-                       unaff_A3,unaff_A4);
+        if (*block != 0) {
+          overlay_printf(s_____Deactivating_Fractal__but_st_00014aba,arg_d2,arg_d3,arg_a2,
+                       arg_a3,arg_a4);
         }
-        heap_free_coalesce((int)psVar1);
+        heap_free_coalesce((int)block);
       }
-      heap_free_coalesce(*(int *)(param_1 + 0x2c));
+      heap_free_coalesce(*(int *)(obj + 0x2c));
     }
   }
-  *(undefined4 *)(param_1 + 0x2c) = 0;
+  *(undefined4 *)(obj + 0x2c) = 0;
   return;
 }
 
@@ -25877,82 +25903,82 @@ void release_fractal_reference /* Original: FUN_00014af2 */ (int param_1)
  * Ghidra C reviewed (function at overlay offset 0x14bea).
  * Args: object, pitch / heading / roll-like angle deltas (param_2..param_4), drop (param_5), remove flag. Accumulates the heading of the object through its parent chain (+0x24 links, scene entry +4), builds an attitude matrix (build_attitude_matrix) from the deltas, then for every active entity in DAT_0001b5a4 (count DAT_0001b734) not flagged 0x202, within the object range (+0x14, approx_dist3_xyz) and whose template type (*(entity +8) +4) is 7, 0x1b, 0x1a or 8: with remove = 0 it rotates the entity offset from the object centre by the matrix, re-positions it and lowers it by the drop, cleaning it up (dispatch_entity_cleanup) when it goes below 0; with remove = 1 it cleans it up at once. Both calls come from FUN_00014d86, which steps a timed rotation / drop of an object and on completion removes the carried objects, tallies the kill and updates mission flags (+0xce, missions 7 / 8 / 9) [STRONG INFERENCE: objects riding a sinking ship]. Ghidra C.
  */
-uint carry_attached_objects /* Original: FUN_00014bea */ (int param_1,short param_2,short param_3,short param_4,short param_5,int param_6)
+uint carry_attached_objects /* Original: FUN_00014bea */ (int carrier /* param_1: object carrying the others (+0x14 range) */,short angle1 /* param_2: first angle (sinking controller +0x34; the header calls these deltas) */,short angle2 /* param_3: second angle (+0x36, added to the chain heading) */,short angle3 /* param_4: third angle (+0x38) */,short drop /* param_5: height drop applied to carried objects */,int remove /* param_6: non-zero removes the carried objects at once */)
 
 {
-  char *pcVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  int iVar5;
-  short sVar6;
-  byte bVar7;
-  uint uVar8;
-  ushort uVar9;
-  short sVar10;
-  undefined4 *puVar11;
-  undefined4 *puVar12;
-  undefined1 auStack_22 [2];
-  short local_20;
-  short local_1c;
-  short local_18;
-  short asStack_16 [9];
-  
-  iVar2 = *(int *)(param_1 + 0x18);
-  iVar3 = *(int *)(param_1 + 0x1c);
-  iVar4 = *(int *)(param_1 + 0x20);
-  bVar7 = *(byte *)(param_1 + 2);
-  uVar9 = 0;
-  for (iVar5 = *(int *)(param_1 + 0x24); iVar5 != 0; iVar5 = *(int *)(iVar5 + 0x24)) {
-    uVar9 = *(short *)(*(int *)(iVar5 + 0x30) + (short)(ushort)bVar7 * 0x18 + 4) + uVar9 & 0x3fff;
-    bVar7 = *(byte *)(iVar5 + 2);
+  char *obj; /* pcVar1; object being checked / carried */
+  int cx; /* iVar2; carrier x */
+  int cy; /* iVar3; carrier y */
+  int cz; /* iVar4; carrier z */
+  int link; /* iVar5; carrier parent chain link (+0x24) */
+  short type; /* sVar6; object template type */
+  byte part_i; /* bVar7; part index byte (+2) of each chain link */
+  uint result; /* uVar8; last call result / flag mask (returned) */
+  ushort heading; /* uVar9; heading accumulated along the parent chain */
+  short left; /* sVar10; objects left */
+  undefined4 *next_slot; /* puVar11; next object_pool slot */
+  undefined4 *slot; /* puVar12; object_pool slot */
+  undefined1 off_vec [2]; /* auStack_22, -0x22(A6): offset vector rotated in place */
+  short off_x; /* local_20, -0x20(A6): object x offset from the carrier */
+  short off_y; /* local_1c, -0x1c(A6): object y offset from the carrier */
+  short off_z; /* local_18, -0x18(A6): object z offset from the carrier */
+  short matrix [9]; /* asStack_16, -0x16(A6): rotation matrix built from the deltas */
+
+  cx = *(int *)(carrier + 0x18);
+  cy = *(int *)(carrier + 0x1c);
+  cz = *(int *)(carrier + 0x20);
+  part_i = *(byte *)(carrier + 2);
+  heading = 0;
+  for (link = *(int *)(carrier + 0x24); link != 0; link = *(int *)(link + 0x24)) {
+    heading = *(short *)(*(int *)(link + 0x30) + (short)(ushort)part_i * 0x18 + 4) + heading & 0x3fff;
+    part_i = *(byte *)(link + 2);
   }
-  uVar8 = build_attitude_matrix(-(int)(short)uVar9 & 0x3fff,(int)param_2,(ushort)(uVar9 + param_3) & 0x3fff,
-                       (int)param_4,(int)asStack_16);
-  puVar12 = &DAT_0001b5a4;
-  sVar10 = DAT_0001b734._2_2_;
+  result = build_attitude_matrix(-(int)(short)heading & 0x3fff,(int)angle1,(ushort)(heading + angle2) & 0x3fff,
+                       (int)angle3,(int)matrix);
+  slot = &object_pool;
+  left = object_count._2_2_;
 LAB_00014d78:
   do {
     do {
-      sVar10 = sVar10 + -1;
-      if (sVar10 == -1) {
-        return uVar8;
+      left = left + -1;
+      if (left == -1) {
+        return result;
       }
-      puVar11 = puVar12 + 1;
-      pcVar1 = (char *)*puVar12;
-      uVar8 = *(uint *)(pcVar1 + 4) & 0x202;
-      puVar12 = puVar11;
-    } while (((uVar8 != 0) || (uVar8 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14ca2..0x14cb0): object x, y, z, carrier x, y, z (iVar2, iVar3, iVar4) */), *(int *)(param_1 + 0x14) <= (int)uVar8)) ||
-            (*(int *)(pcVar1 + 8) == 0));
-    sVar6 = **(short **)(*(int *)(pcVar1 + 8) + 4);
-    uVar8 = CONCAT22((short)(uVar8 >> 0x10),sVar6);
-  } while (((sVar6 != 7) && (sVar6 != 0x1b)) && ((sVar6 != 0x1a && (sVar6 != 8))));
-  if (param_6 == 0) goto code_r0x00014cf6;
+      next_slot = slot + 1;
+      obj = (char *)*slot;
+      result = *(uint *)(obj + 4) & 0x202;
+      slot = next_slot;
+    } while (((result != 0) || (result = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14ca2..0x14cb0): object x, y, z, carrier x, y, z (iVar2, iVar3, iVar4) */), *(int *)(carrier + 0x14) <= (int)result)) ||
+            (*(int *)(obj + 8) == 0));
+    type = **(short **)(*(int *)(obj + 8) + 4);
+    result = CONCAT22((short)(result >> 0x10),type);
+  } while (((type != 7) && (type != 0x1b)) && ((type != 0x1a && (type != 8))));
+  if (remove == 0) goto code_r0x00014cf6;
   goto LAB_00014d6e;
 code_r0x00014cf6:
-  pcVar1[0x20] = '\0';
-  pcVar1[0x21] = '\0';
-  pcVar1[0x22] = '\0';
-  pcVar1[0x23] = '\0';
-  pcVar1[0x1c] = '\0';
-  pcVar1[0x1d] = '\0';
-  pcVar1[0x1e] = '\0';
-  pcVar1[0x1f] = '\0';
-  pcVar1[0x18] = '\0';
-  pcVar1[0x19] = '\0';
-  pcVar1[0x1a] = '\0';
-  pcVar1[0x1b] = '\0';
-  apply_template_chain_xform( /* Original: FUN_00002bd8 */(int)pcVar1,1,(uint *)0x0,(uint *)0x0);
-  local_20 = *(short *)(pcVar1 + 0x1a) - (short)iVar2;
-  local_1c = *(short *)(pcVar1 + 0x1e) - (short)iVar3;
-  local_18 = *(short *)(pcVar1 + 0x22) - (short)iVar4;
-  uVar8 = transform_vecs12_by_matrix3(1,(int)auStack_22,(int)auStack_22,asStack_16);
-  *(int *)(pcVar1 + 0x18) = iVar2 + local_20;
-  *(int *)(pcVar1 + 0x1c) = (iVar3 + local_1c) - (int)param_5;
-  *(int *)(pcVar1 + 0x20) = iVar4 + local_18;
-  if (*(int *)(pcVar1 + 0x1c) < 0) {
+  obj[0x20] = '\0';
+  obj[0x21] = '\0';
+  obj[0x22] = '\0';
+  obj[0x23] = '\0';
+  obj[0x1c] = '\0';
+  obj[0x1d] = '\0';
+  obj[0x1e] = '\0';
+  obj[0x1f] = '\0';
+  obj[0x18] = '\0';
+  obj[0x19] = '\0';
+  obj[0x1a] = '\0';
+  obj[0x1b] = '\0';
+  apply_template_chain_xform( /* Original: FUN_00002bd8 */(int)obj,1,(uint *)0x0,(uint *)0x0);
+  off_x = *(short *)(obj + 0x1a) - (short)cx;
+  off_y = *(short *)(obj + 0x1e) - (short)cy;
+  off_z = *(short *)(obj + 0x22) - (short)cz;
+  result = transform_vecs12_by_matrix3(1,(int)off_vec,(int)off_vec,matrix);
+  *(int *)(obj + 0x18) = cx + off_x;
+  *(int *)(obj + 0x1c) = (cy + off_y) - (int)drop;
+  *(int *)(obj + 0x20) = cz + off_z;
+  if (*(int *)(obj + 0x1c) < 0) {
 LAB_00014d6e:
-    uVar8 = dispatch_entity_cleanup( /* Original: FUN_0000528a */pcVar1);
+    result = dispatch_entity_cleanup( /* Original: FUN_0000528a */obj);
   }
   goto LAB_00014d78;
 }
@@ -25968,69 +25994,69 @@ LAB_00014d6e:
  * Ghidra C reviewed (function at overlay offset 0x14d86).
  * Arg: sinking controller (+0 object, +4 template type pointer, +0x34.. angles, +0x3a.. per-step angle rates, +0x40 drop with rate +0x42, +0x44 step interval, +0x46 remaining steps, +0x48 next frame). When the frame counter DAT_0001b838 reaches the next step time and the object is not flagged (+7 & 2): advances the three angles (& 0x3fff) and the drop (type 0x15 also adjusts +0x54), schedules the next step, then sink_object_shape_at_waterline. If nothing is left above water: removes the carried objects (carry_attached_objects remove = 1), tallies the kill when +0x4e is set, and for type 0x15 updates the mission state +0xce from probe_nearest_facility_kind (0x200: missions 7 / 9, also DAT_00020adc + 4 = 1 in mission 7; 0x100: missions 8 / 9), then dispatch_entity_cleanup. Otherwise moves the carried objects with the new attitude. Called by FUN_00015580 and FUN_000155d8. Ghidra C.
  */
-void step_sinking_object /* Original: FUN_00014d86 */ (undefined4 *param_1)
+void step_sinking_object /* Original: FUN_00014d86 */ (undefined4 *ctl /* param_1: sinking controller (+0x34.. angles, +0x3a.. rates, +0x40 drop, +0x44 interval, +0x46 steps, +0x48 next frame) */)
 
 {
-  char *pcVar1;
-  short sVar2;
-  undefined2 extraout_D0u;
-  undefined2 uVar4;
-  int iVar3;
+  char *obj; /* pcVar1; sinking object */
+  short steps_left; /* sVar2; remaining steps after the decrement */
+  undefined2 afloat_hi; /* extraout_D0u: upper word of the sink_object_shape_at_waterline result */
+  undefined2 afloat; /* uVar4; sink_object_shape_at_waterline result (0 = nothing left above water) */
+  int facility; /* iVar3; probe_nearest_facility_kind result */
   
-  if (((int)param_1[0x12] <= DAT_0001b838) && (pcVar1 = (char *)*param_1, (pcVar1[7] & 2U) == 0)) {
-    *(ushort *)(param_1 + 0xd) =
-         *(short *)((int)param_1 + 0x3a) + *(short *)(param_1 + 0xd) & 0x3fff;
-    *(ushort *)((int)param_1 + 0x36) =
-         *(short *)(param_1 + 0xf) + *(short *)((int)param_1 + 0x36) & 0x3fff;
-    *(ushort *)(param_1 + 0xe) =
-         *(short *)((int)param_1 + 0x3e) + *(short *)(param_1 + 0xe) & 0x3fff;
-    *(short *)(param_1 + 0x10) = *(short *)((int)param_1 + 0x42) + *(short *)(param_1 + 0x10);
-    if (*(short *)param_1[1] == 0x15) {
-      *(short *)(param_1 + 0x15) = *(short *)(param_1 + 0x15) - *(short *)((int)param_1 + 0x42);
+  if (((int)ctl[0x12] <= frame_counter) && (obj = (char *)*ctl, (obj[7] & 2U) == 0)) {
+    *(ushort *)(ctl + 0xd) =
+         *(short *)((int)ctl + 0x3a) + *(short *)(ctl + 0xd) & 0x3fff;
+    *(ushort *)((int)ctl + 0x36) =
+         *(short *)(ctl + 0xf) + *(short *)((int)ctl + 0x36) & 0x3fff;
+    *(ushort *)(ctl + 0xe) =
+         *(short *)((int)ctl + 0x3e) + *(short *)(ctl + 0xe) & 0x3fff;
+    *(short *)(ctl + 0x10) = *(short *)((int)ctl + 0x42) + *(short *)(ctl + 0x10);
+    if (*(short *)ctl[1] == 0x15) {
+      *(short *)(ctl + 0x15) = *(short *)(ctl + 0x15) - *(short *)((int)ctl + 0x42);
     }
-    sVar2 = *(short *)((int)param_1 + 0x46) + -1;
-    *(short *)((int)param_1 + 0x46) = sVar2;
-    if (sVar2 == 0) {
-      param_1[0x12] = 1000000000;
+    steps_left = *(short *)((int)ctl + 0x46) + -1;
+    *(short *)((int)ctl + 0x46) = steps_left;
+    if (steps_left == 0) {
+      ctl[0x12] = 1000000000;
     }
     else {
-      param_1[0x12] = DAT_0001b838 + *(short *)(param_1 + 0x11);
+      ctl[0x12] = frame_counter + *(short *)(ctl + 0x11);
     }
-    uVar4 = sink_object_shape_at_waterline(pcVar1,*(short *)(param_1 + 0xd),*(short *)((int)param_1 + 0x36),
-                         *(short *)(param_1 + 0xe),*(short *)(param_1 + 0x10));
-    if (CONCAT22(extraout_D0u,uVar4) == 0) {
-      carry_attached_objects((int)pcVar1,0,0,0,0,1); /* 0x14e3a also pushes a seventh long, sext word +0x4e; carry_attached_objects never reads $20(a6), so it is dropped */
-      if (*(short *)((int)param_1 + 0x4e) != 0) {
-        tally_destroyed_entity((int)pcVar1);
+    afloat = sink_object_shape_at_waterline(obj,*(short *)(ctl + 0xd),*(short *)((int)ctl + 0x36),
+                         *(short *)(ctl + 0xe),*(short *)(ctl + 0x10));
+    if (CONCAT22(afloat_hi,afloat) == 0) {
+      carry_attached_objects((int)obj,0,0,0,0,1); /* 0x14e3a also pushes a seventh long, sext word +0x4e; carry_attached_objects never reads $20(a6), so it is dropped */
+      if (*(short *)((int)ctl + 0x4e) != 0) {
+        tally_destroyed_entity((int)obj);
       }
-      if (*(short *)param_1[1] == 0x15) {
-        iVar3 = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)pcVar1 /* [PROVEN, move.l a3 at 0x14e70 / 0x14ece] */);
-        if ((iVar3 == 0x200) &&
-           ((*(short *)(DAT_0001b5a0 + 0x90) == 7 || (*(short *)(DAT_0001b5a0 + 0x90) == 9)))) {
-          if (-1 < *(short *)(DAT_0001b5a0 + 0xce)) {
-            *(undefined2 *)(DAT_0001b5a0 + 0xce) = 0xffff;
+      if (*(short *)ctl[1] == 0x15) {
+        facility = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)obj /* [PROVEN, move.l a3 at 0x14e70 / 0x14ece] */);
+        if ((facility == 0x200) &&
+           ((*(short *)(host_world + 0x90) == 7 || (*(short *)(host_world + 0x90) == 9)))) {
+          if (-1 < *(short *)(host_world + 0xce)) {
+            *(undefined2 *)(host_world + 0xce) = 0xffff;
           }
-          if (*(short *)(DAT_0001b5a0 + 0x90) == 7) {
-            *(undefined2 *)(DAT_00020adc + 4) = 1;
+          if (*(short *)(host_world + 0x90) == 7) {
+            *(undefined2 *)(mission_target_list + 4) = 1;
           }
         }
       }
-      if (*(short *)param_1[1] == 0x15) {
-        iVar3 = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)pcVar1 /* [PROVEN, move.l a3 at 0x14e70 / 0x14ece] */);
-        if ((iVar3 == 0x100) &&
-           (((*(short *)(DAT_0001b5a0 + 0x90) == 8 || (*(short *)(DAT_0001b5a0 + 0x90) == 9)) &&
-            (*(short *)(DAT_0001b5a0 + 0xce) == 0)))) {
-          *(undefined2 *)(DAT_0001b5a0 + 0xce) = 1;
+      if (*(short *)ctl[1] == 0x15) {
+        facility = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)obj /* [PROVEN, move.l a3 at 0x14e70 / 0x14ece] */);
+        if ((facility == 0x100) &&
+           (((*(short *)(host_world + 0x90) == 8 || (*(short *)(host_world + 0x90) == 9)) &&
+            (*(short *)(host_world + 0xce) == 0)))) {
+          *(undefined2 *)(host_world + 0xce) = 1;
         }
       }
-      dispatch_entity_cleanup( /* Original: FUN_0000528a */pcVar1);
+      dispatch_entity_cleanup( /* Original: FUN_0000528a */obj);
     }
     else {
-      carry_attached_objects((int)pcVar1,*(short *)(param_1 + 0xd),*(short *)((int)param_1 + 0x36),
-                   *(short *)(param_1 + 0xe),*(short *)(param_1 + 0x10),0);
+      carry_attached_objects((int)obj,*(short *)(ctl + 0xd),*(short *)((int)ctl + 0x36),
+                   *(short *)(ctl + 0xe),*(short *)(ctl + 0x10),0);
     }
-    if (*(short *)((int)param_1 + 0x32) == 0) {
-      *(short *)((int)param_1 + 0x46) = *(short *)((int)param_1 + 0x46) + 1;
+    if (*(short *)((int)ctl + 0x32) == 0) {
+      *(short *)((int)ctl + 0x46) = *(short *)((int)ctl + 0x46) + 1;
     }
   }
   return;
@@ -26049,77 +26075,77 @@ void step_sinking_object /* Original: FUN_00014d86 */ (undefined4 *param_1)
  * Ghidra C reviewed (function at overlay offset 0x14f48).
  * Args: controller (layout of create_sinking_controller / FUN_000150c8 / create_firing_ship_controller), kill-credit flag. Clears DAT_0001d854 when the camera is within the object range; a non-zero flag sets +0x4e (later read by step_sinking_object to tally the kill). Does nothing once the hit counter +0x32 (initialised from definition +0x1a) is 0; otherwise decrements it and, depending on the hits left, draws random rates: 2 left: heading 0x200..0x27f (random sign), drop 100..199; 1 left: heading 0x100..0x13f (random sign), drop 100..199; 0 left: roll 0x500..0x63f towards the side given by the object attitude (+0x34, fold_angle_pm_0x2000), drop 1000..1199. Then sets 15 steps (+0x46), the per-step rates +0x3a / +0x3c / +0x3e / +0x42 (total / 15; the middle one is 0), the first step 30 frames ahead (+0x48 = DAT_0001b838 + 0x1e) and +0x4c = 1 (sinking started). [STRONG INFERENCE: a ship lists after hits and capsizes / sinks on the last one] Exact branch structure of the 1-hit case follows the Ghidra gotos. Ghidra C.
  */
-void apply_hit_to_sinkable_object /* Original: FUN_00014f48 */ (int *param_1,int param_2)
+void apply_hit_to_sinkable_object /* Original: FUN_00014f48 */ (int *ctl /* param_1: sinking controller (+0x32 hits left, +0x3a.. rates, +0x46 steps, +0x48 next frame, +0x4c started, +0x4e credit) */,int credit /* param_2: kill-credit flag (sets +0x4e) */)
 
 {
-  short sVar1;
-  int iVar2;
-  uint uVar3;
-  int iVar4;
-  ushort uVar5;
-  short sVar6;
-  short sVar7;
-  short unaff_D4w;
+  short hits_left; /* sVar1; hits left after the decrement, then +0x4c (sinking already started) */
+  int dist; /* iVar2; distance from the camera anchor to the object */
+  uint rnd; /* uVar3; overlay_rng_next result */
+  int tmp; /* iVar4; object, then the folded attitude word +0x34 */
+  ushort rnd_w; /* uVar5; overlay_rng_next result (word) */
+  short total_a; /* sVar6; total change of the first angle (+0x34, rate +0x3a) */
+  short total_c; /* sVar7; total change of the third angle (+0x38, rate +0x3e) */
+  short total_drop; /* unaff_D4w: total drop (rate +0x42) (D4.w) */
   
-  if ((DAT_0001d854 != 0) &&
-     (iVar4 = *param_1, iVar2 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14f60..0x14f74): DAT_0001d83c, DAT_0001d840, DAT_0001d844 (anchor), object x, y, z */), iVar2 <= *(int *)(iVar4 + 0x14))) {
-    DAT_0001d854 = 0;
+  if ((anchor_found != 0) &&
+     (tmp = *ctl, dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14f60..0x14f74): DAT_0001d83c, DAT_0001d840, DAT_0001d844 (anchor), object x, y, z */), dist <= *(int *)(tmp + 0x14))) {
+    anchor_found = 0;
   }
-  if (param_2 != 0) {
-    *(undefined2 *)((int)param_1 + 0x4e) = 1;
+  if (credit != 0) {
+    *(undefined2 *)((int)ctl + 0x4e) = 1;
   }
-  if (*(short *)((int)param_1 + 0x32) == 0) {
+  if (*(short *)((int)ctl + 0x32) == 0) {
     return;
   }
-  *(short *)((int)param_1 + 0x32) = *(short *)((int)param_1 + 0x32) + -1;
-  sVar7 = 0;
-  sVar6 = 0;
-  sVar1 = *(short *)((int)param_1 + 0x32);
-  if (sVar1 == 1) {
-    uVar5 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    sVar6 = (uVar5 & 0x3f) + 0x100;
-    uVar3 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-    if ((uVar3 & 1) != 0) {
-      sVar6 = -sVar6;
+  *(short *)((int)ctl + 0x32) = *(short *)((int)ctl + 0x32) + -1;
+  total_c = 0;
+  total_a = 0;
+  hits_left = *(short *)((int)ctl + 0x32);
+  if (hits_left == 1) {
+    rnd_w = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    total_a = (rnd_w & 0x3f) + 0x100;
+    rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+    if ((rnd & 1) != 0) {
+      total_a = -total_a;
     }
-    uVar3 = overlay_rng_next( /* Original: FUN_00011564 */);
-    unaff_D4w = (short)((uVar3 & 0xffff) % 100) + 100;
-    sVar1 = *(short *)(param_1 + 0x13);
+    rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+    total_drop = (short)((rnd & 0xffff) % 100) + 100;
+    hits_left = *(short *)(ctl + 0x13);
 joined_r0x0001504c:
-    if (sVar1 != 0) goto LAB_00015082;
+    if (hits_left != 0) goto LAB_00015082;
   }
   else {
-    if (sVar1 < 2) {
-      if (sVar1 != 0) goto LAB_00015082;
-      uVar3 = overlay_rng_next( /* Original: FUN_00011564 */);
-      sVar6 = (short)((uVar3 & 0xffff) % 0x140) + 0x500;
-      iVar4 = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(param_1 + 0xd));
-      if ((short)iVar4 < 0) {
-        sVar6 = -sVar6;
+    if (hits_left < 2) {
+      if (hits_left != 0) goto LAB_00015082;
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      total_a = (short)((rnd & 0xffff) % 0x140) + 0x500;
+      tmp = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(ctl + 0xd));
+      if ((short)tmp < 0) {
+        total_a = -total_a;
       }
-      uVar3 = overlay_rng_next( /* Original: FUN_00011564 */);
-      unaff_D4w = (short)((uVar3 & 0xffff) % 200) + 1000;
-      sVar1 = *(short *)(param_1 + 0x13);
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      total_drop = (short)((rnd & 0xffff) % 200) + 1000;
+      hits_left = *(short *)(ctl + 0x13);
       goto joined_r0x0001504c;
     }
-    if (sVar1 != 2) goto LAB_00015082;
+    if (hits_left != 2) goto LAB_00015082;
   }
-  uVar5 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-  sVar7 = (uVar5 & 0x7f) + 0x200;
-  uVar3 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-  if ((uVar3 & 1) != 0) {
-    sVar7 = -sVar7;
+  rnd_w = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+  total_c = (rnd_w & 0x7f) + 0x200;
+  rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+  if ((rnd & 1) != 0) {
+    total_c = -total_c;
   }
-  uVar3 = overlay_rng_next( /* Original: FUN_00011564 */);
-  unaff_D4w = (short)((uVar3 & 0xffff) % 100) + 100;
+  rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+  total_drop = (short)((rnd & 0xffff) % 100) + 100;
 LAB_00015082:
-  *(undefined2 *)((int)param_1 + 0x46) = 0xf;
-  *(short *)((int)param_1 + 0x3a) = sVar6 / *(short *)((int)param_1 + 0x46);
-  *(short *)(param_1 + 0xf) = (short)(0 / (int)*(short *)((int)param_1 + 0x46));
-  *(short *)((int)param_1 + 0x3e) = sVar7 / *(short *)((int)param_1 + 0x46);
-  *(short *)((int)param_1 + 0x42) = unaff_D4w / *(short *)((int)param_1 + 0x46);
-  param_1[0x12] = DAT_0001b838 + 0x1e;
-  *(undefined2 *)(param_1 + 0x13) = 1;
+  *(undefined2 *)((int)ctl + 0x46) = 0xf;
+  *(short *)((int)ctl + 0x3a) = total_a / *(short *)((int)ctl + 0x46);
+  *(short *)(ctl + 0xf) = (short)(0 / (int)*(short *)((int)ctl + 0x46));
+  *(short *)((int)ctl + 0x3e) = total_c / *(short *)((int)ctl + 0x46);
+  *(short *)((int)ctl + 0x42) = total_drop / *(short *)((int)ctl + 0x46);
+  ctl[0x12] = frame_counter + 0x1e;
+  *(undefined2 *)(ctl + 0x13) = 1;
   return;
 }
 
@@ -26136,24 +26162,24 @@ LAB_00015082:
  * DAT_0001b524[class], words +0x50 / +0x52 = 0xffff, +0x48 = 1000000000, word +0x32 = word
  * (+4) +0x1a, word +0x44 = 7; published to DAT_0001b864 when that is 0; returns a1.
  */
-uint * create_carrier_controller /* Original: FUN_000150c8 */ (uint param_1,int param_2)
+uint * create_carrier_controller /* Original: FUN_000150c8 */ (uint obj /* param_1: object */,int def_key /* param_2: definition key */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* puVar1; new 0x56-byte carrier controller */
   
-  puVar1 = heap_alloc_cleared(0x56);
-  *puVar1 = param_1;
-  *(ushort *)(param_1 + 6) = *(ushort *)(param_1 + 6) | 0x4000;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  *(undefined2 *)(puVar1 + 0x14) = 0xffff;
-  *(undefined2 *)((int)puVar1 + 0x52) = 0xffff;
-  puVar1[0x12] = 1000000000;
-  *(undefined2 *)((int)puVar1 + 0x32) = *(undefined2 *)(puVar1[1] + 0x1a);
-  *(undefined2 *)(puVar1 + 0x11) = 7;
-  if (_DAT_0001b864 == (uint *)0x0) {
-    _DAT_0001b864 = puVar1;
+  ctl = heap_alloc_cleared(0x56);
+  *ctl = obj;
+  *(ushort *)(obj + 6) = *(ushort *)(obj + 6) | 0x4000;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  *(undefined2 *)(ctl + 0x14) = 0xffff;
+  *(undefined2 *)((int)ctl + 0x52) = 0xffff;
+  ctl[0x12] = 1000000000;
+  *(undefined2 *)((int)ctl + 0x32) = *(undefined2 *)(ctl[1] + 0x1a);
+  *(undefined2 *)(ctl + 0x11) = 7;
+  if (first_carrier_ctl == (uint *)0x0) {
+    first_carrier_ctl = ctl;
   }
-  return puVar1;
+  return ctl;
 }
 
 
@@ -26213,20 +26239,20 @@ uint * create_carrier_controller /* Original: FUN_000150c8 */ (uint param_1,int 
  * +0x48 = 1000000000, word +0x44 = 7, word +0x32 = word (+4) +0x1a (index scale *4 decoded by
  * hand).
  */
-uint * create_firing_ship_controller /* Original: FUN_0001530e */ (uint param_1,int param_2)
+uint * create_firing_ship_controller /* Original: FUN_0001530e */ (uint obj /* param_1: object */,int def_key /* param_2: definition key */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* puVar1; new 300-byte firing-ship controller */
   
-  puVar1 = heap_alloc_cleared(300);
-  *puVar1 = param_1;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  *(undefined2 *)(puVar1 + 0x14) = 0x14;
-  puVar1[0x12] = 1000000000;
-  *(undefined2 *)(puVar1 + 0x11) = 7;
-  *(undefined2 *)((int)puVar1 + 0x32) = *(undefined2 *)(puVar1[1] + 0x1a);
+  ctl = heap_alloc_cleared(300);
+  *ctl = obj;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  *(undefined2 *)(ctl + 0x14) = 0x14;
+  ctl[0x12] = 1000000000;
+  *(undefined2 *)(ctl + 0x11) = 7;
+  *(undefined2 *)((int)ctl + 0x32) = *(undefined2 *)(ctl[1] + 0x1a);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -26244,112 +26270,112 @@ uint * create_firing_ship_controller /* Original: FUN_0001530e */ (uint param_1,
  * Ghidra C reviewed (function at overlay offset 0x15356).
  * While not sinking (+0x4c == 0): on the first call (+0x52 == 0) finds the faces of the object with byte +0x17 == 1, stores each centroid (vertex average >> shift +0x34) at +0x54 and an aim direction from attitude_from_velocity at +0xe4, count in +0x52. Then, while shots +0x50 remain, with probability 1/256 (overlay_rng_next == 0x1b) uses a shot and, when DAT_0001b870 == 0, fires spawn_weapon_entity from a random marked face with the aim jittered by +-0x80. Once sinking it runs step_sinking_object instead. [HYPOTHESIS: anti-aircraft fire from a warship] Ghidra C.
  */
-void tick_firing_ship_controller /* Original: FUN_00015356 */ (int *param_1)
+void tick_firing_ship_controller /* Original: FUN_00015356 */ (int *ctl /* param_1: firing-ship controller (+0x4c sinking, +0x50 shots, +0x52 guns, +0x54 gun positions, +0xe4 aims) */)
 
 {
-  int *piVar1;
-  uint *puVar2;
-  undefined4 *puVar3;
-  int iVar4;
-  int iVar5;
-  char cVar8;
-  ushort uVar6;
-  ushort uVar7;
-  uint uVar9;
-  int iVar10;
-  int iVar11;
-  int iVar12;
-  short sVar13;
-  int iVar14;
-  int iVar15;
-  short *psVar16;
-  short *psVar17;
-  int iVar18;
-  bool bVar19;
-  uint uVar20;
-  uint uVar21;
-  ushort uVar22;
-  undefined2 uVar23;
-  short local_10;
-  short local_a;
-  ushort local_8;
-  ushort local_6;
+  int *gun_pos; /* piVar1; gun position slot being filled (3 longs) */
+  uint *gun; /* puVar2; chosen gun position */
+  undefined4 *vert0; /* puVar3; model vertex 0 */
+  int normals; /* iVar4; face normals (after the vertices) */
+  int voff; /* iVar5; vertex byte offset */
+  char roll_c; /* cVar8; overlay_rng_next low byte (fires on 0x1b) */
+  ushort rnd; /* uVar6; overlay_rng_next result, then the shot pitch */
+  ushort rnd2; /* uVar7; overlay_rng_next result (speed jitter) */
+  uint shift; /* uVar9; vertex shift, then the shot x */
+  int sum_x; /* iVar10; vertex x sum, then the normal byte offset */
+  int sum_y; /* iVar11; vertex y sum */
+  int sum_z; /* iVar12; vertex z sum */
+  short face_i; /* sVar13; face index */
+  int tmp; /* iVar14; vertex longs, then the gun index */
+  int obj; /* iVar15; ship object, then the gun index, then the flag argument */
+  short *vidx; /* psVar16; face vertex index pointer */
+  short *vcount_p; /* psVar17; face vertex count word (+0x14) */
+  int face; /* iVar18; face record */
+  bool more; /* bVar19; vertices remained before the decrement */
+  uint shot_y; /* uVar20; shot y (gun y + 10) */
+  uint shot_z; /* uVar21; shot z */
+  ushort shot_att_22; /* uVar22; shot attitude word +0x22 */
+  undefined2 shot_bank; /* uVar23; shot bank (0) */
+  short left; /* local_10, -0x10(A6): face vertices left */
+  short guns; /* local_a, -0xa(A6): marked faces (guns) found */
+  ushort aim_22; /* local_8, -8(A6): aim attitude word +0x22 (attitude_from_velocity 2nd output) */
+  ushort aim_pitch; /* local_6, -6(A6): aim pitch (attitude_from_velocity 1st output) */
   
-  iVar15 = *param_1;
-  if (*(short *)(param_1 + 0x13) == 0) {
-    if (*(short *)((int)param_1 + 0x52) == 0) {
-      iVar4 = *(int *)(iVar15 + 0x44) + *(short *)(iVar15 + 0x36) * 0xc;
-      iVar18 = *(int *)(iVar15 + 0x48);
-      local_a = 0;
-      sVar13 = 0;
-      if (0 < *(short *)(iVar15 + 0x3a)) {
-        psVar17 = (short *)(iVar18 + 0x14);
+  obj = *ctl;
+  if (*(short *)(ctl + 0x13) == 0) {
+    if (*(short *)((int)ctl + 0x52) == 0) {
+      normals = *(int *)(obj + 0x44) + *(short *)(obj + 0x36) * 0xc;
+      face = *(int *)(obj + 0x48);
+      guns = 0;
+      face_i = 0;
+      if (0 < *(short *)(obj + 0x3a)) {
+        vcount_p = (short *)(face + 0x14);
         do {
-          if (*(char *)(iVar18 + 0x17) == '\x01') {
-            iVar12 = 0;
-            iVar11 = 0;
-            iVar10 = 0;
-            local_10 = *psVar17;
-            psVar16 = *(short **)(iVar18 + 0x18);
-            while (bVar19 = local_10 != 0, local_10 = local_10 + -1, bVar19) {
-              iVar14 = *(int *)(iVar15 + 0x44);
-              iVar5 = *psVar16 * 0xc;
-              uVar9 = (uint)*(short *)(iVar15 + 0x34);
-              iVar10 = (*(int *)(iVar14 + iVar5) >> (uVar9 & 0x3f)) + iVar10;
-              iVar11 = (*(int *)(iVar14 + 4 + iVar5) >> (uVar9 & 0x3f)) + iVar11;
-              iVar12 = (*(int *)(iVar14 + 8 + iVar5) >> (uVar9 & 0x3f)) + iVar12;
-              psVar16 = psVar16 + 1;
+          if (*(char *)(face + 0x17) == '\x01') {
+            sum_z = 0;
+            sum_y = 0;
+            sum_x = 0;
+            left = *vcount_p;
+            vidx = *(short **)(face + 0x18);
+            while (more = left != 0, left = left + -1, more) {
+              tmp = *(int *)(obj + 0x44);
+              voff = *vidx * 0xc;
+              shift = (uint)*(short *)(obj + 0x34);
+              sum_x = (*(int *)(tmp + voff) >> (shift & 0x3f)) + sum_x;
+              sum_y = (*(int *)(tmp + 4 + voff) >> (shift & 0x3f)) + sum_y;
+              sum_z = (*(int *)(tmp + 8 + voff) >> (shift & 0x3f)) + sum_z;
+              vidx = vidx + 1;
             }
-            iVar14 = (int)local_a;
-            piVar1 = param_1 + iVar14 * 3 + 0x15;
-            *piVar1 = iVar10 / (int)*psVar17;
-            piVar1[1] = iVar11 / (int)*psVar17;
-            piVar1[2] = iVar12 / (int)*psVar17;
-            iVar10 = sVar13 * 0xc;
-            puVar3 = *(undefined4 **)(iVar15 + 0x44);
-            attitude_from_velocity( /* Original: FUN_00001f22 */(short)*(undefined4 *)(iVar4 + iVar10) - (short)*puVar3,
-                         (short)*(undefined4 *)(iVar4 + 4 + iVar10) - (short)puVar3[1],
-                         (short)*(undefined4 *)(iVar4 + 8 + iVar10) - (short)puVar3[2],0x4000,
-                         0x10000000,&local_6,&local_8);
-            *(ushort *)((int)param_1 + iVar14 * 6 + 0xe4) = local_6;
-            *(ushort *)((int)param_1 + iVar14 * 6 + 0xe6) = local_8;
-            *(undefined2 *)((int)param_1 + iVar14 * 6 + 0xe8) = 0;
-            local_a = local_a + 1;
+            tmp = (int)guns;
+            gun_pos = ctl + tmp * 3 + 0x15;
+            *gun_pos = sum_x / (int)*vcount_p;
+            gun_pos[1] = sum_y / (int)*vcount_p;
+            gun_pos[2] = sum_z / (int)*vcount_p;
+            sum_x = face_i * 0xc;
+            vert0 = *(undefined4 **)(obj + 0x44);
+            attitude_from_velocity( /* Original: FUN_00001f22 */(short)*(undefined4 *)(normals + sum_x) - (short)*vert0,
+                         (short)*(undefined4 *)(normals + 4 + sum_x) - (short)vert0[1],
+                         (short)*(undefined4 *)(normals + 8 + sum_x) - (short)vert0[2],0x4000,
+                         0x10000000,&aim_pitch,&aim_22);
+            *(ushort *)((int)ctl + tmp * 6 + 0xe4) = aim_pitch;
+            *(ushort *)((int)ctl + tmp * 6 + 0xe6) = aim_22;
+            *(undefined2 *)((int)ctl + tmp * 6 + 0xe8) = 0;
+            guns = guns + 1;
           }
-          sVar13 = sVar13 + 1;
-          psVar17 = psVar17 + 0x10;
-          iVar18 = iVar18 + 0x20;
-        } while (sVar13 < *(short *)(iVar15 + 0x3a));
+          face_i = face_i + 1;
+          vcount_p = vcount_p + 0x10;
+          face = face + 0x20;
+        } while (face_i < *(short *)(obj + 0x3a));
       }
-      *(short *)((int)param_1 + 0x52) = local_a;
+      *(short *)((int)ctl + 0x52) = guns;
     }
-    if (*(short *)(param_1 + 0x14) != 0) {
-      cVar8 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-      if (cVar8 == '\x1b') {
-        *(short *)(param_1 + 0x14) = *(short *)(param_1 + 0x14) + -1;
-        uVar6 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-        iVar15 = (int)(short)((int)(uint)uVar6 % (int)*(short *)((int)param_1 + 0x52));
-        puVar2 = (uint *)(param_1 + iVar15 * 3 + 0x15);
-        uVar6 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-        local_6 = (*(short *)((int)param_1 + iVar15 * 6 + 0xe4) + (uVar6 & 0xff)) - 0x80 & 0x3fff;
-        uVar6 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-        local_8 = (*(short *)((int)param_1 + iVar15 * 6 + 0xe6) + (uVar6 & 0xff)) - 0x80 & 0x3fff;
-        if (DAT_0001b870 == 0) {
-          uVar23 = 0;
-          uVar21 = puVar2[2];
-          uVar20 = puVar2[1] + 10;
-          uVar9 = *puVar2;
-          iVar15 = 1;
-          uVar6 = local_6;
-          uVar22 = local_8;
-          uVar7 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-          spawn_weapon_entity( /* Original: FUN_00012840 */0x7fff - (uVar7 & 0xff),iVar15,uVar9,uVar20,uVar21,uVar6,uVar22,uVar23);
+    if (*(short *)(ctl + 0x14) != 0) {
+      roll_c = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+      if (roll_c == '\x1b') {
+        *(short *)(ctl + 0x14) = *(short *)(ctl + 0x14) + -1;
+        rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+        obj = (int)(short)((int)(uint)rnd % (int)*(short *)((int)ctl + 0x52));
+        gun = (uint *)(ctl + obj * 3 + 0x15);
+        rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+        aim_pitch = (*(short *)((int)ctl + obj * 6 + 0xe4) + (rnd & 0xff)) - 0x80 & 0x3fff;
+        rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+        aim_22 = (*(short *)((int)ctl + obj * 6 + 0xe6) + (rnd & 0xff)) - 0x80 & 0x3fff;
+        if (replay_state == 0) {
+          shot_bank = 0;
+          shot_z = gun[2];
+          shot_y = gun[1] + 10;
+          shift = *gun;
+          obj = 1;
+          rnd = aim_pitch;
+          shot_att_22 = aim_22;
+          rnd2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+          spawn_weapon_entity( /* Original: FUN_00012840 */0x7fff - (rnd2 & 0xff),obj,shift,shot_y,shot_z,rnd,shot_att_22,shot_bank);
         }
       }
     }
   }
   else {
-    step_sinking_object(param_1);
+    step_sinking_object(ctl);
   }
   return;
 }
@@ -26367,21 +26393,21 @@ void tick_firing_ship_controller /* Original: FUN_00015356 */ (int *param_1)
  * word +0x32 = word (+4) +0x1a (index scale *4 decoded by
  * hand).
  */
-uint * create_sinking_controller /* Original: FUN_00015580 */ (uint param_1,int param_2,undefined2 param_3)
+uint * create_sinking_controller /* Original: FUN_00015580 */ (uint obj /* param_1: object */,int def_key /* param_2: definition key */,undefined2 word_54 /* param_3: word stored at controller +0x54 (type 0x15 adjusts it while sinking) */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* puVar1; new 0x56-byte sinking controller */
   
-  puVar1 = heap_alloc_cleared(0x56);
-  *puVar1 = param_1;
-  *(undefined2 *)(puVar1 + 0x15) = param_3;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x102000;
-  puVar1[0x12] = 1000000000;
-  *(undefined2 *)(puVar1 + 0x11) = 3;
-  *(undefined2 *)((int)puVar1 + 0x32) = *(undefined2 *)(puVar1[1] + 0x1a);
+  ctl = heap_alloc_cleared(0x56);
+  *ctl = obj;
+  *(undefined2 *)(ctl + 0x15) = word_54;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x102000;
+  ctl[0x12] = 1000000000;
+  *(undefined2 *)(ctl + 0x11) = 3;
+  *(undefined2 *)((int)ctl + 0x32) = *(undefined2 *)(ctl[1] + 0x1a);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -26392,11 +26418,11 @@ uint * create_sinking_controller /* Original: FUN_00015580 */ (uint param_1,int 
  */
 /* VERIFIED (FUN_000155d8): 0x155d8..0x155ea checked against an independent capstone disassembly and
  * found identical to the C: bsr.w 0x14d86 step_sinking_object(ctl) when word +0x4c != 0. */
-void tick_sinking_controller /* Original: FUN_000155d8 */ (undefined4 *param_1)
+void tick_sinking_controller /* Original: FUN_000155d8 */ (undefined4 *ctl /* param_1: sinking controller (+0x4c sinking started) */)
 
 {
-  if (*(short *)(param_1 + 0x13) != 0) {
-    step_sinking_object(param_1);
+  if (*(short *)(ctl + 0x13) != 0) {
+    step_sinking_object(ctl);
   }
   return;
 }
@@ -26411,19 +26437,19 @@ void tick_sinking_controller /* Original: FUN_000155d8 */ (undefined4 *param_1)
  * to the C with the uint * return applied: bsr.l 0x1b6c heap_alloc_cleared, D0 copied to a0
  * and never written again before rts; alloc 0x50; +0 = object, +4 = DAT_0001b524[class], +0x48 = 1000000000, word +0x44 = 7, word +0x32 = word (+4) +0x1a (DAT_0001b524 index scale *4 decoded by hand).
  */
-uint * create_basic_ship_controller /* Original: FUN_000155ec */ (uint param_1,int param_2)
+uint * create_basic_ship_controller /* Original: FUN_000155ec */ (uint obj /* param_1: object */,int def_key /* param_2: definition key */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* puVar1; new 0x50-byte ship controller */
   
-  puVar1 = heap_alloc_cleared(0x50);
-  *puVar1 = param_1;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  puVar1[0x12] = 1000000000;
-  *(undefined2 *)(puVar1 + 0x11) = 7;
-  *(undefined2 *)((int)puVar1 + 0x32) = *(undefined2 *)(puVar1[1] + 0x1a);
+  ctl = heap_alloc_cleared(0x50);
+  *ctl = obj;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  ctl[0x12] = 1000000000;
+  *(undefined2 *)(ctl + 0x11) = 7;
+  *(undefined2 *)((int)ctl + 0x32) = *(undefined2 *)(ctl[1] + 0x1a);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -26443,70 +26469,70 @@ uint * create_basic_ship_controller /* Original: FUN_000155ec */ (uint param_1,i
  * word +0 of each entry is not written. Count = (end - out) / 12 (divs.l) stored as a word;
  * returns the sign-extended flag.
  */
-undefined2 clip_polygon_y_nonneg /* Original: FUN_0001562e */ (short *param_1,int param_2,short *param_3,int param_4)
+undefined2 clip_polygon_y_nonneg /* Original: FUN_0001562e */ (short *count /* param_1: &vertex count, rewritten with the clipped count */,int verts /* param_2: vertices (12 bytes, words +2 / +6 / +10) */,short *vidx /* param_3: face vertex index list */,int out /* param_4: output vertices (12 bytes) */)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  undefined2 uVar5;
-  int iVar6;
-  int iVar7;
+  int cur; /* iVar1; current vertex */
+  int dy; /* iVar2; y difference across the edge */
+  int dy_cut; /* iVar3; -y of the vertex below 0 */
+  int prev; /* iVar4; previous vertex */
+  undefined2 clipped; /* uVar5; 1 once a vertex was below y 0 */
+  int left; /* iVar6; vertices left */
+  int dst; /* iVar7; output write pointer */
   
-  uVar5 = 0;
-  iVar6 = (int)*param_1;
-  iVar4 = param_2 + param_3[iVar6 + -1] * 0xc;
-  iVar7 = param_4;
+  clipped = 0;
+  left = (int)*count;
+  prev = verts + vidx[left + -1] * 0xc;
+  dst = out;
   do {
-    if (iVar6 == 0) {
-      *param_1 = (short)((iVar7 - param_4) / 0xc);
-      return uVar5;
+    if (left == 0) {
+      *count = (short)((dst - out) / 0xc);
+      return clipped;
     }
-    iVar1 = param_2 + *param_3 * 0xc;
-    if (*(short *)(iVar1 + 6) < 0) {
-      uVar5 = 1;
-      if (-1 < *(short *)(iVar4 + 6)) {
-        iVar2 = (int)*(short *)(iVar4 + 6) - (int)*(short *)(iVar1 + 6);
-        iVar3 = -(int)*(short *)(iVar1 + 6);
-        *(short *)(iVar7 + 2) =
-             *(short *)(iVar1 + 2) +
-             (short)((iVar3 * ((int)*(short *)(iVar4 + 2) - (int)*(short *)(iVar1 + 2))) / iVar2);
-        *(undefined2 *)(iVar7 + 6) = 0;
-        *(short *)(iVar7 + 10) =
-             *(short *)(iVar1 + 10) +
-             (short)((iVar3 * ((int)*(short *)(iVar4 + 10) - (int)*(short *)(iVar1 + 10))) / iVar2);
+    cur = verts + *vidx * 0xc;
+    if (*(short *)(cur + 6) < 0) {
+      clipped = 1;
+      if (-1 < *(short *)(prev + 6)) {
+        dy = (int)*(short *)(prev + 6) - (int)*(short *)(cur + 6);
+        dy_cut = -(int)*(short *)(cur + 6);
+        *(short *)(dst + 2) =
+             *(short *)(cur + 2) +
+             (short)((dy_cut * ((int)*(short *)(prev + 2) - (int)*(short *)(cur + 2))) / dy);
+        *(undefined2 *)(dst + 6) = 0;
+        *(short *)(dst + 10) =
+             *(short *)(cur + 10) +
+             (short)((dy_cut * ((int)*(short *)(prev + 10) - (int)*(short *)(cur + 10))) / dy);
         goto LAB_0001573e;
       }
     }
     else {
-      if (*(short *)(iVar4 + 6) < 0) {
-        uVar5 = 1;
-        iVar2 = (int)*(short *)(iVar1 + 6) - (int)*(short *)(iVar4 + 6);
-        iVar3 = -(int)*(short *)(iVar4 + 6);
-        *(short *)(iVar7 + 2) =
-             *(short *)(iVar4 + 2) +
-             (short)((iVar3 * ((int)*(short *)(iVar1 + 2) - (int)*(short *)(iVar4 + 2))) / iVar2);
-        *(undefined2 *)(iVar7 + 6) = 0;
-        *(short *)(iVar7 + 10) =
-             *(short *)(iVar4 + 10) +
-             (short)((iVar3 * ((int)*(short *)(iVar1 + 10) - (int)*(short *)(iVar4 + 10))) / iVar2);
-        *(undefined2 *)(iVar7 + 0xe) = *(undefined2 *)(iVar1 + 2);
-        *(undefined2 *)(iVar7 + 0x12) = *(undefined2 *)(iVar1 + 6);
-        *(undefined2 *)(iVar7 + 0x16) = *(undefined2 *)(iVar1 + 10);
-        iVar7 = iVar7 + 0xc;
+      if (*(short *)(prev + 6) < 0) {
+        clipped = 1;
+        dy = (int)*(short *)(cur + 6) - (int)*(short *)(prev + 6);
+        dy_cut = -(int)*(short *)(prev + 6);
+        *(short *)(dst + 2) =
+             *(short *)(prev + 2) +
+             (short)((dy_cut * ((int)*(short *)(cur + 2) - (int)*(short *)(prev + 2))) / dy);
+        *(undefined2 *)(dst + 6) = 0;
+        *(short *)(dst + 10) =
+             *(short *)(prev + 10) +
+             (short)((dy_cut * ((int)*(short *)(cur + 10) - (int)*(short *)(prev + 10))) / dy);
+        *(undefined2 *)(dst + 0xe) = *(undefined2 *)(cur + 2);
+        *(undefined2 *)(dst + 0x12) = *(undefined2 *)(cur + 6);
+        *(undefined2 *)(dst + 0x16) = *(undefined2 *)(cur + 10);
+        dst = dst + 0xc;
       }
       else {
-        *(undefined2 *)(iVar7 + 2) = *(undefined2 *)(iVar1 + 2);
-        *(undefined2 *)(iVar7 + 6) = *(undefined2 *)(iVar1 + 6);
-        *(undefined2 *)(iVar7 + 10) = *(undefined2 *)(iVar1 + 10);
+        *(undefined2 *)(dst + 2) = *(undefined2 *)(cur + 2);
+        *(undefined2 *)(dst + 6) = *(undefined2 *)(cur + 6);
+        *(undefined2 *)(dst + 10) = *(undefined2 *)(cur + 10);
       }
 LAB_0001573e:
-      iVar7 = iVar7 + 0xc;
+      dst = dst + 0xc;
     }
-    iVar6 = iVar6 + -1;
-    param_3 = param_3 + 1;
-    iVar4 = iVar1;
+    left = left + -1;
+    vidx = vidx + 1;
+    prev = cur;
   } while( true );
 }
 
@@ -26519,73 +26545,73 @@ LAB_0001573e:
  * disassembly (section checks in the body); identical to the C with the
  * LAB_00001b86_2 = heap_realloc_grow_only resolution.
  */
-undefined2 sink_object_shape_at_waterline /* Original: FUN_00015762 */ (char *param_1,short param_2,short param_3,short param_4,short param_5)
+undefined2 sink_object_shape_at_waterline /* Original: FUN_00015762 */ (char *obj,short ang1 /* first attitude angle (controller +0x34) */,short ang2 /* second attitude angle (+0x36) */,short ang3 /* third attitude angle (+0x38) */,short drop /* y lowering (+0x40), shifted by object +0x34 */)
 
 {
-  uint *puVar1;
-  undefined4 uVar2;
-  int iVar3;
-  ushort uVar4;
-  short sVar5;
-  short sVar6;
-  int iVar7;
-  short *psVar8;
-  short *psVar9;
-  int iVar10;
-  int iVar11;
-  int iVar12;
-  short *psVar13;
-  int iVar14;
-  int *piVar15;
-  uint *puVar16;
-  uint uVar17;
-  int iVar18;
-  int iVar19;
-  short sVar20;
-  uint auStackY_c1e94 [96988];
-  uint auStackY_63324 [896];
-  short asStackY_62522 [1679];
-  int aiStackY_61804 [80568];
-  ushort auStackY_12d24 [31936];
-  short sStack_3348;
-  short sStack_3344;
-  short *local_3342;
-  undefined2 uStack_333a;
-  ushort local_3338;
-  short asStack_3336 [9];
-  uint local_3324 [384];
-  ushort local_2d24 [512];
-  short asStack_2924 [512];
-  undefined1 auStack_2524 [2];
-  short local_2522 [839];
-  undefined4 local_1e94;
-  undefined4 local_1e90;
-  undefined4 local_1e8c;
-  int aiStack_1804 [1536];
-  
-  uStack_333a = 0;
-  iVar11 = *(int *)(DAT_0001b5a0 + 0x8c) +
-           *(int *)(*(int *)(*(int *)(param_1 + 0x24) + 0x28) + 0x2e + (uint)(byte)param_1[1] * 0x18
+  uint *nrm; /* normal-point slot; also heap_realloc_grow_only result */
+  undefined4 grown_buf;
+  int slot;
+  ushort bucket; /* hash bucket ((y>>1)+x+z)>>2 & 0xff */
+  short i; /* face / vertex loop counter */
+  short k; /* clipped vertex index */
+  int py;
+  short *vx_lo; /* low word of vertex x */
+  short *vz_lo; /* low word of vertex z; reused as bucket-clear cursor */
+  int pz; /* index, then point z */
+  int tmpl; /* scene template; reused as byte size / index */
+  int off_x; /* object x << shift; first a loop index */
+  short *vy_lo; /* low word of vertex y */
+  int px;
+  int *pt; /* bucket point entry */
+  uint *dst;
+  uint n; /* vertex+normal count; reused as shift +0x34 */
+  int off_z; /* object z << shift; first a vertex index */
+  int face; /* face record +0x48 + 32 i */
+  short uniq; /* unique vertex count */
+  uint unused_y_c1e94 [96988]; /* Ghidra stack alias, unused */
+  uint unused_y_63324 [896]; /* Ghidra stack alias, unused */
+  short unused_y_62522 [1679]; /* Ghidra stack alias, unused */
+  int unused_y_61804 [80568]; /* Ghidra stack alias, unused */
+  ushort unused_y_12d24 [31936]; /* Ghidra stack alias, unused */
+  short unused_3348;
+  short unused_3344;
+  short *packed_face; /* packed face cursor (byte +8 count, +0xe indices) */
+  undefined2 any_face; /* 1 when a face survives */
+  ushort clip_count;
+  short att_matrix [9]; /* build_attitude_matrix_3ang output */
+  uint normals [384]; /* normal points minus vertex 0 */
+  ushort id_bucket [512]; /* bucket of each unique id */
+  short bucket_ids [512]; /* 256 words, -1 = empty */
+  undefined1 clip_out [2]; /* clip_polygon_y_nonneg output */
+  short clip_out_lo [839]; /* low words of clip_out (x/y/z at 0/2/4) */
+  undefined4 verts_x; /* transformed vertex buffer, 12-byte entries */
+  undefined4 verts_y;
+  undefined4 verts_z;
+  int bucket_pts [1536]; /* 12-byte points per bucket */
+
+  any_face = 0;
+  tmpl = *(int *)(DAT_0001b5a0 + 0x8c) +
+           *(int *)(*(int *)(*(int *)(obj + 0x24) + 0x28) + 0x2e + (uint)(byte)obj[1] * 0x18
                    );
-  uVar17 = (uint)(short)(*(short *)(iVar11 + 0x1e) + *(short *)(iVar11 + 0x1a));
-  local_3342 = (short *)(iVar11 + 0x22 + uVar17 * 0xc);
-  build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)param_2,(int)param_3,(int)param_4,(int)asStack_3336);
-  transform_vecs12_to_int3_by_matrix3( /* Original: FUN_00002976 */uVar17,iVar11 + 0x22,&local_1e94,asStack_3336);
-  apply_template_chain_xform( /* Original: FUN_00002bd8 */(int)param_1,uVar17,&local_1e94,&local_1e94);
-  sVar5 = 0;
-  if (0 < *(short *)(iVar11 + 0x1e)) {
+  n = (uint)(short)(*(short *)(tmpl + 0x1e) + *(short *)(tmpl + 0x1a));
+  packed_face = (short *)(tmpl + 0x22 + n * 0xc);
+  build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)ang1,(int)ang2,(int)ang3,(int)att_matrix);
+  transform_vecs12_to_int3_by_matrix3( /* Original: FUN_00002976 */n,tmpl + 0x22,&verts_x,att_matrix);
+  apply_template_chain_xform( /* Original: FUN_00002bd8 */(int)obj,n,&verts_x,&verts_x);
+  i = 0;
+  if (0 < *(short *)(tmpl + 0x1e)) {
     do {
-      iVar12 = (int)sVar5;
-      puVar1 = local_3324 + iVar12 * 3;
-      iVar18 = iVar12 + *(short *)(iVar11 + 0x1a);
-      *puVar1 = (&local_1e94)[iVar18 * 3];
-      local_3324[iVar12 * 3 + 1] = (&local_1e90)[iVar18 * 3];
-      local_3324[iVar12 * 3 + 2] = (&local_1e8c)[iVar18 * 3];
-      *puVar1 = *puVar1 - local_1e94;
-      local_3324[iVar12 * 3 + 1] = local_3324[iVar12 * 3 + 1] - local_1e90;
-      local_3324[iVar12 * 3 + 2] = local_3324[iVar12 * 3 + 2] - local_1e8c;
-      sVar5 = sVar5 + 1;
-    } while (sVar5 < *(short *)(iVar11 + 0x1e));
+      off_x = (int)i;
+      nrm = normals + off_x * 3;
+      off_z = off_x + *(short *)(tmpl + 0x1a);
+      *nrm = (&verts_x)[off_z * 3];
+      normals[off_x * 3 + 1] = (&verts_y)[off_z * 3];
+      normals[off_x * 3 + 2] = (&verts_z)[off_z * 3];
+      *nrm = *nrm - verts_x;
+      normals[off_x * 3 + 1] = normals[off_x * 3 + 1] - verts_y;
+      normals[off_x * 3 + 2] = normals[off_x * 3 + 2] - verts_z;
+      i = i + 1;
+    } while (i < *(short *)(tmpl + 0x1e));
   }
   /* Section check 0x15762..0x15866 (part 1) [PROVEN, matches the C; independent capstone
    * disassembly]: template T = world +0x8c + scene entry (byte +1, extension word 0x9e14);
@@ -26595,20 +26621,20 @@ undefined2 sink_object_shape_at_waterline /* Original: FUN_00015762 */ (char *pa
    * (in place); the word +0x1e normal points (after the +0x1a vertices) copied to frame
    * -0x3320 minus vertex 0, signed word loop. The rebase offsets that follow are
    * -(object x << s), -(p5 << s), -(object z << s), s = sext word +0x34. */
-  uVar17 = (uint)*(short *)(param_1 + 0x34);
-  iVar12 = *(int *)(param_1 + 0x18) << (uVar17 & 0x3f);
-  iVar18 = *(int *)(param_1 + 0x20) << (uVar17 & 0x3f);
-  sVar5 = *(short *)(iVar11 + 0x1a);
-  psVar9 = (short *)((int)&local_1e8c + 2);
-  psVar13 = (short *)((int)&local_1e90 + 2);
-  psVar8 = (short *)((int)&local_1e94 + 2);
-  while (sVar5 = sVar5 + -1, sVar5 != -1) {
-    *psVar8 = *psVar8 - (short)iVar12;
-    *psVar13 = *psVar13 - (short)((int)param_5 << (uVar17 & 0x3f));
-    *psVar9 = *psVar9 - (short)iVar18;
-    psVar9 = psVar9 + 6;
-    psVar13 = psVar13 + 6;
-    psVar8 = psVar8 + 6;
+  n = (uint)*(short *)(obj + 0x34);
+  off_x = *(int *)(obj + 0x18) << (n & 0x3f);
+  off_z = *(int *)(obj + 0x20) << (n & 0x3f);
+  i = *(short *)(tmpl + 0x1a);
+  vz_lo = (short *)((int)&verts_z + 2);
+  vy_lo = (short *)((int)&verts_y + 2);
+  vx_lo = (short *)((int)&verts_x + 2);
+  while (i = i + -1, i != -1) {
+    *vx_lo = *vx_lo - (short)off_x;
+    *vy_lo = *vy_lo - (short)((int)drop << (n & 0x3f));
+    *vz_lo = *vz_lo - (short)off_z;
+    vz_lo = vz_lo + 6;
+    vy_lo = vy_lo + 6;
+    vx_lo = vx_lo + 6;
   }
   /* Section check 0x15868..0x15a4c (part 2) [PROVEN, matches the C; independent capstone
    * disassembly]: the rebase adds only the LOW WORDS (+2 / +6 / +10 of each 12-byte vertex,
@@ -26622,104 +26648,104 @@ undefined2 sink_object_shape_at_waterline /* Original: FUN_00015762 */ (char *pa
    * z) >> 2 & 0xff, linear probing while the bucket word is >= 0; an equal point reuses its
    * vertex id, otherwise the point is stored (frame -0x1800 + 12 h), the bucket gets the
    * next id, the id's bucket is recorded (-0x2d20) and the face index list gets the id. */
-  sVar20 = 0;
-  sVar5 = 0x100;
-  psVar9 = asStack_2924;
-  while (sVar5 = sVar5 + -1, sVar5 != -1) {
-    psVar9[0] = -1;
-    psVar9[1] = -1;
-    psVar9 = psVar9 + 2;
+  uniq = 0;
+  i = 0x100;
+  vz_lo = bucket_ids;
+  while (i = i + -1, i != -1) {
+    vz_lo[0] = -1;
+    vz_lo[1] = -1;
+    vz_lo = vz_lo + 2;
   }
-  sVar5 = 0;
-  if (0 < *(short *)(iVar11 + 0x1e)) {
+  i = 0;
+  if (0 < *(short *)(tmpl + 0x1e)) {
     do {
-      local_3338 = (ushort)*(byte *)(local_3342 + 4);
-      clip_polygon_y_nonneg((short *)&local_3338,(int)&local_1e94,local_3342 + 7,(int)auStack_2524);
-      iVar19 = *(int *)(param_1 + 0x48) + sVar5 * 0x20;
-      if (local_3338 == 0) {
-        *(byte *)(iVar19 + 0x13) = *(byte *)(iVar19 + 0x13) | 2;
+      clip_count = (ushort)*(byte *)(packed_face + 4);
+      clip_polygon_y_nonneg((short *)&clip_count,(int)&verts_x,packed_face + 7,(int)clip_out);
+      face = *(int *)(obj + 0x48) + i * 0x20;
+      if (clip_count == 0) {
+        *(byte *)(face + 0x13) = *(byte *)(face + 0x13) | 2;
       }
       else {
-        uStack_333a = 1;
-        *(ushort *)(iVar19 + 0x14) = local_3338;
-        if ((*(byte *)((int)local_3342 + 7) & 2) == 0) {
-          *(byte *)(iVar19 + 0x13) = *(byte *)(iVar19 + 0x13) & 0xfd;
+        any_face = 1;
+        *(ushort *)(face + 0x14) = clip_count;
+        if ((*(byte *)((int)packed_face + 7) & 2) == 0) {
+          *(byte *)(face + 0x13) = *(byte *)(face + 0x13) & 0xfd;
         }
-        puVar1 = heap_realloc_grow_only( /* Original: FUN_00001ba8 */*(uint **)(iVar19 + 0x18),(undefined4 *)((int)(short)local_3338 << 1))
+        nrm = heap_realloc_grow_only( /* Original: FUN_00001ba8 */*(uint **)(face + 0x18),(undefined4 *)((int)(short)clip_count << 1))
         ;
-        *(uint **)(iVar19 + 0x18) = puVar1;
-        sVar6 = 0;
-        if (0 < (short)local_3338) {
+        *(uint **)(face + 0x18) = nrm;
+        k = 0;
+        if (0 < (short)clip_count) {
           do {
-            iVar10 = (int)sVar6;
-            iVar14 = local_2522[iVar10 * 6] + iVar12;
-            iVar7 = (int)local_2522[iVar10 * 6 + 2];
-            iVar10 = local_2522[iVar10 * 6 + 4] + iVar18;
-            uVar4 = (ushort)(iVar10 + iVar14 + (iVar7 >> 1) >> 2) & 0xff;
-            piVar15 = aiStack_1804 + (short)uVar4 * 3;
-            for (; iVar3 = (int)(short)uVar4, -1 < asStack_2924[iVar3]; uVar4 = uVar4 + 1) {
-              if (((*piVar15 == iVar14) && (iVar7 == piVar15[1])) && (iVar10 == piVar15[2])) {
-                *(short *)(*(int *)(iVar19 + 0x18) + sVar6 * 2) = asStack_2924[(short)uVar4];
+            pz = (int)k;
+            px = clip_out_lo[pz * 6] + off_x;
+            py = (int)clip_out_lo[pz * 6 + 2];
+            pz = clip_out_lo[pz * 6 + 4] + off_z;
+            bucket = (ushort)(pz + px + (py >> 1) >> 2) & 0xff;
+            pt = bucket_pts + (short)bucket * 3;
+            for (; slot = (int)(short)bucket, -1 < bucket_ids[slot]; bucket = bucket + 1) {
+              if (((*pt == px) && (py == pt[1])) && (pz == pt[2])) {
+                *(short *)(*(int *)(face + 0x18) + k * 2) = bucket_ids[(short)bucket];
                 goto LAB_00015a4a;
               }
-              piVar15 = piVar15 + 3;
+              pt = pt + 3;
             }
-            aiStack_1804[iVar3 * 3] = iVar14;
-            aiStack_1804[iVar3 * 3 + 1] = iVar7;
-            aiStack_1804[iVar3 * 3 + 2] = iVar10;
-            asStack_2924[iVar3] = sVar20;
-            local_2d24[sVar20] = uVar4;
-            *(short *)(*(int *)(iVar19 + 0x18) + sVar6 * 2) = sVar20;
-            sVar20 = sVar20 + 1;
+            bucket_pts[slot * 3] = px;
+            bucket_pts[slot * 3 + 1] = py;
+            bucket_pts[slot * 3 + 2] = pz;
+            bucket_ids[slot] = uniq;
+            id_bucket[uniq] = bucket;
+            *(short *)(*(int *)(face + 0x18) + k * 2) = uniq;
+            uniq = uniq + 1;
 LAB_00015a4a:
-            sVar6 = sVar6 + 1;
-          } while (sVar6 < (short)local_3338);
+            k = k + 1;
+          } while (k < (short)clip_count);
         }
       }
-      local_3342 = local_3342 + 7 + *(byte *)(local_3342 + 4);
-      sVar5 = sVar5 + 1;
-    } while (sVar5 < *(short *)(iVar11 + 0x1e));
+      packed_face = packed_face + 7 + *(byte *)(packed_face + 4);
+      i = i + 1;
+    } while (i < *(short *)(tmpl + 0x1e));
   }
-  if (sVar20 == 0) {
-    *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x40;
+  if (uniq == 0) {
+    *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x40;
   }
   else {
-    *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) & 0xffffffbf;
-    *(short *)(param_1 + 0x36) = sVar20;
-    iVar11 = (short)(*(short *)(param_1 + 0x3a) + sVar20) * 0xc;
+    *(uint *)(obj + 4) = *(uint *)(obj + 4) & 0xffffffbf;
+    *(short *)(obj + 0x36) = uniq;
+    tmpl = (short)(*(short *)(obj + 0x3a) + uniq) * 0xc;
     /* LAB_00001b86_2 = heap_realloc_grow_only (lea.l $1b88.l is a RUNTIME address = file
      * 0x1ba8) [PROVEN, 0x15ab2 / 0x15ab8 / 0x15ac4]: both buffers grow to (count + faces) * 12. */
-    uVar2 = (*(code *)&LAB_00001b86_2)(*(undefined4 *)(param_1 + 0x4c),iVar11);
-    *(undefined4 *)(param_1 + 0x4c) = uVar2;
-    uVar2 = (*(code *)&LAB_00001b86_2)(*(undefined4 *)(param_1 + 0x44),iVar11);
-    *(undefined4 *)(param_1 + 0x44) = uVar2;
-    sVar5 = 0;
-    if (0 < sVar20) {
+    grown_buf = (*(code *)&LAB_00001b86_2)(*(undefined4 *)(obj + 0x4c),tmpl);
+    *(undefined4 *)(obj + 0x4c) = grown_buf;
+    grown_buf = (*(code *)&LAB_00001b86_2)(*(undefined4 *)(obj + 0x44),tmpl);
+    *(undefined4 *)(obj + 0x44) = grown_buf;
+    i = 0;
+    if (0 < uniq) {
       do {
-        iVar11 = (int)(short)local_2d24[sVar5];
-        piVar15 = (int *)(sVar5 * 0xc + *(int *)(param_1 + 0x44));
-        *piVar15 = aiStack_1804[iVar11 * 3];
-        piVar15[1] = aiStack_1804[iVar11 * 3 + 1];
-        piVar15[2] = aiStack_1804[iVar11 * 3 + 2];
-        sVar5 = sVar5 + 1;
-      } while (sVar5 < sVar20);
+        tmpl = (int)(short)id_bucket[i];
+        pt = (int *)(i * 0xc + *(int *)(obj + 0x44));
+        *pt = bucket_pts[tmpl * 3];
+        pt[1] = bucket_pts[tmpl * 3 + 1];
+        pt[2] = bucket_pts[tmpl * 3 + 2];
+        i = i + 1;
+      } while (i < uniq);
     }
-    sVar5 = 0;
-    if (0 < *(short *)(param_1 + 0x3a)) {
+    i = 0;
+    if (0 < *(short *)(obj + 0x3a)) {
       do {
-        iVar11 = (int)sVar5;
-        puVar1 = local_3324 + iVar11 * 3;
-        *puVar1 = **(int **)(param_1 + 0x44) + *puVar1;
-        local_3324[iVar11 * 3 + 1] =
-             *(int *)(*(int *)(param_1 + 0x44) + 4) + local_3324[iVar11 * 3 + 1];
-        local_3324[iVar11 * 3 + 2] =
-             *(int *)(*(int *)(param_1 + 0x44) + 8) + local_3324[iVar11 * 3 + 2];
-        puVar16 = (uint *)((iVar11 + *(short *)(param_1 + 0x36)) * 0xc + *(int *)(param_1 + 0x44));
-        *puVar16 = *puVar1;
-        puVar16[1] = local_3324[iVar11 * 3 + 1];
-        puVar16[2] = local_3324[iVar11 * 3 + 2];
-        sVar5 = sVar5 + 1;
-      } while (sVar5 < *(short *)(param_1 + 0x3a));
+        tmpl = (int)i;
+        nrm = normals + tmpl * 3;
+        *nrm = **(int **)(obj + 0x44) + *nrm;
+        normals[tmpl * 3 + 1] =
+             *(int *)(*(int *)(obj + 0x44) + 4) + normals[tmpl * 3 + 1];
+        normals[tmpl * 3 + 2] =
+             *(int *)(*(int *)(obj + 0x44) + 8) + normals[tmpl * 3 + 2];
+        dst = (uint *)((tmpl + *(short *)(obj + 0x36)) * 0xc + *(int *)(obj + 0x44));
+        *dst = *nrm;
+        dst[1] = normals[tmpl * 3 + 1];
+        dst[2] = normals[tmpl * 3 + 2];
+        i = i + 1;
+      } while (i < *(short *)(obj + 0x3a));
     }
   }
   /* Section check 0x15a4a..0x15b8e (part 3) [PROVEN, matches the C]: packed face advance
@@ -26728,8 +26754,8 @@ LAB_00015a4a:
    * of (count + word +0x3a) * 12), unique vertices copied from their buckets (-0x2d20 map,
    * -0x1800 entries), normal points re-based on the new vertex 0 and stored after them;
    * shade_object_faces(object); returns the sign-extended any-face flag. */
-  shade_object_faces(param_1);
-  return uStack_333a;
+  shade_object_faces(obj);
+  return any_face;
 }
 
 
@@ -26744,18 +26770,18 @@ LAB_00015a4a:
  * 0x122000, object long +0x14 = 0x9c4 (index scale *4 decoded by
  * hand).
  */
-uint * create_bullet_controller /* Original: FUN_00015b92 */ (uint param_1,int param_2)
+uint * create_bullet_controller /* Original: FUN_00015b92 */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x52-byte bullet controller */
   
-  puVar1 = heap_alloc_cleared(0x52);
-  *puVar1 = param_1;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x122000;
-  *(undefined4 *)(param_1 + 0x14) = 0x9c4;
+  ctl = heap_alloc_cleared(0x52);
+  *ctl = obj;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x122000;
+  *(undefined4 *)(obj + 0x14) = 0x9c4;
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -26765,11 +26791,11 @@ uint * create_bullet_controller /* Original: FUN_00015b92 */ (uint param_1,int p
  * Ghidra C reviewed (function at overlay offset 0x15bd4).
  * DAT_0002664a = template; create handler -> 0x15b72 (Ghidra 0x15b92). Bullet definition key 0xe (file 0x1a9e2): +2 tick_bullet, +6 register_bullet_template -> create_bullet_controller, +0xe bullet_pre_render [PROVEN bytes]; the bullet template DAT_0002664a is the one spawn_ordnance_scattered uses. Ghidra C.
  */
-undefined4 register_bullet_template /* Original: FUN_00015bd4 */ (undefined4 param_1,int param_2)
+undefined4 register_bullet_template /* Original: FUN_00015bd4 */ (undefined4 tmpl /* bullet template stored in bullet_template */,int def_key)
 
 {
-  DAT_0002664a = param_1;
-  *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x15b72;
+  bullet_template = tmpl;
+  *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x15b72;
   return 0;
 }
 
@@ -26795,47 +26821,47 @@ undefined4 register_bullet_template /* Original: FUN_00015bd4 */ (undefined4 par
  * (asr.w #2, sign-extended)); ctl +0x32 = sext y << 4, velocity +8 / +0xc / +0x10 = x / 4, y / 4,
  * z / 4, word +0x38 = 0, word +0x3a = 2 when p2 else 1; bsr.l 0x1a63e memmove_block(matrix, ctl
  * + 0x40, 0x12) (pea $12.w: Ghidra's &DAT_00000012 is the byte count of the 9-word matrix). */
-int spawn_ordnance_scattered(int param_1,int param_2,int param_3,int param_4,int param_5,
-                 short *param_6) /* Original: FUN_00015bf6 */
+int spawn_ordnance_scattered(int speed /* seeds vel_z = (speed >> 4) + 0x2015 */,int mode /* 0 -> +0x3a = 1, else 2 */,int x,int y,int z,
+                 short *matrix /* 3x3 attitude, 0x12 bytes copied to +0x40 */) /* Original: FUN_00015bf6 */
 {
-  ushort uVar2;
-  int iVar1;
-  undefined1 auStack_10 [2];
-  short local_e;
-  short local_a;
-  short local_6;
+  ushort rnd; /* overlay_rng_next result */
+  int obj; /* spawned object, then its controller (+8) */
+  undefined1 vel [2]; /* velocity vector (-0x10(A6)) */
+  short vel_x;
+  short vel_y;
+  short vel_z;
   
-  local_a = 0;
-  local_e = 0;
-  local_6 = (short)(param_1 >> 4) + 0x2015;
-  transform_vecs12_by_matrix3(1,(int)auStack_10,(int)auStack_10,param_6);
-  uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-  local_e = (uVar2 & 0x3f) + local_e + -0x20;
-  uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-  local_a = (uVar2 & 0x3f) + local_a + -0x20;
-  uVar2 = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
-  local_6 = (uVar2 & 0x3f) + local_6 + -0x20;
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */DAT_0002664a,param_3 + (local_e >> 2),param_4 + (local_a >> 2),
-                       param_5 + (local_6 >> 2),0,0,0,0);
-  if (iVar1 == 0) {
-    iVar1 = 0;
+  vel_y = 0;
+  vel_x = 0;
+  vel_z = (short)(speed >> 4) + 0x2015;
+  transform_vecs12_by_matrix3(1,(int)vel,(int)vel,matrix);
+  rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+  vel_x = (rnd & 0x3f) + vel_x + -0x20;
+  rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+  vel_y = (rnd & 0x3f) + vel_y + -0x20;
+  rnd = overlay_rng_next( /* Ghidra FUN_00011544 callsite = overlay_rng_next [PROVEN: lea.l $11544.l = runtime -> file 0x11564] */);
+  vel_z = (rnd & 0x3f) + vel_z + -0x20;
+  obj = spawn_mission_pool_object( /* Original: FUN_00005116 */bullet_template,x + (vel_x >> 2),y + (vel_y >> 2),
+                       z + (vel_z >> 2),0,0,0,0);
+  if (obj == 0) {
+    obj = 0;
   }
   else {
-    iVar1 = *(int *)(iVar1 + 8);
-    *(int *)(iVar1 + 0x32) = (int)local_a << 4;
-    *(int *)(iVar1 + 8) = (int)(local_e >> 2);
-    *(int *)(iVar1 + 0xc) = (int)(local_a >> 2);
-    *(int *)(iVar1 + 0x10) = (int)(local_6 >> 2);
-    *(undefined2 *)(iVar1 + 0x38) = 0;
-    if (param_2 == 0) {
-      *(undefined2 *)(iVar1 + 0x3a) = 1;
+    obj = *(int *)(obj + 8);
+    *(int *)(obj + 0x32) = (int)vel_y << 4;
+    *(int *)(obj + 8) = (int)(vel_x >> 2);
+    *(int *)(obj + 0xc) = (int)(vel_y >> 2);
+    *(int *)(obj + 0x10) = (int)(vel_z >> 2);
+    *(undefined2 *)(obj + 0x38) = 0;
+    if (mode == 0) {
+      *(undefined2 *)(obj + 0x3a) = 1;
     }
     else {
-      *(undefined2 *)(iVar1 + 0x3a) = 2;
+      *(undefined2 *)(obj + 0x3a) = 2;
     }
-    memmove_block( /* Original: FUN_0001a63e */(undefined4 *)param_6,(undefined4 *)(iVar1 + 0x40),&DAT_00000012);
+    memmove_block( /* Original: FUN_0001a63e */(undefined4 *)matrix,(undefined4 *)(obj + 0x40),&DAT_00000012);
   }
-  return iVar1;
+  return obj;
 }
 
 
@@ -26853,13 +26879,13 @@ int spawn_ordnance_scattered(int param_1,int param_2,int param_3,int param_4,int
  * found identical to the C: bsr.l 0x262e build_attitude_matrix_x(sext p9, sext p6, sext p7, sext
  * p8, a6 - 0x12) (each short read as the low word of its stack long), then bsr.w 0x15bf6
  * spawn_ordnance_scattered(p1..p5, matrix). */
-void spawn_ordnance_oriented(int param_1,int param_2,int param_3,int param_4,int param_5,short param_6,
-                 short param_7,short param_8,short param_9) /* Original: FUN_00015d20 */
+void spawn_ordnance_oriented(int speed,int mode,int x,int y,int z,short att_b /* build_attitude_matrix_x arg 2 */,
+                 short att_c /* build_attitude_matrix_x arg 3 */,short att_d /* build_attitude_matrix_x arg 4 */,short att_a /* build_attitude_matrix_x arg 1 */) /* Original: FUN_00015d20 */
 {
-  short asStack_16 [9];
+  short matrix [9]; /* 3x3 attitude, -0x12(A6) */
   
-  build_attitude_matrix_x((int)param_9,(int)param_6,(int)param_7,(int)param_8,(int)asStack_16); /* Original: FUN_0000262e */
-  spawn_ordnance_scattered(param_1,param_2,param_3,param_4,param_5,asStack_16); /* Original: FUN_00015bf6 */
+  build_attitude_matrix_x((int)att_a,(int)att_b,(int)att_c,(int)att_d,(int)matrix); /* Original: FUN_0000262e */
+  spawn_ordnance_scattered(speed,mode,x,y,z,matrix); /* Original: FUN_00015bf6 */
   return;
 }
 
@@ -26872,14 +26898,14 @@ void spawn_ordnance_oriented(int param_1,int param_2,int param_3,int param_4,int
 /* VERIFIED (FUN_00015d78): 0x15d78..0x15dc6 checked against an independent capstone disassembly and
  * found identical to the C: bsr.l 0x253e build_attitude_matrix_3ang(sext p6, sext p7, sext p8,
  * a6 - 0x12), then bsr.w 0x15bf6 spawn_ordnance_scattered(p1..p5, matrix). */
-void spawn_ordnance_oriented_3ang /* Original: FUN_00015d78 */ (int param_1,int param_2,int param_3,int param_4,int param_5,short param_6,
-                 short param_7,short param_8)
+void spawn_ordnance_oriented_3ang /* Original: FUN_00015d78 */ (int speed,int mode,int x,int y,int z,short ang1,
+                 short ang2,short ang3)
 
 {
-  short asStack_16 [9];
+  short matrix [9]; /* 3x3 attitude, -0x12(A6) */
   
-  build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)param_6,(int)param_7,(int)param_8,(int)asStack_16);
-  spawn_ordnance_scattered( /* Original: FUN_00015bf6 */param_1,param_2,param_3,param_4,param_5,asStack_16);
+  build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)ang1,(int)ang2,(int)ang3,(int)matrix);
+  spawn_ordnance_scattered( /* Original: FUN_00015bf6 */speed,mode,x,y,z,matrix);
   return;
 }
 
@@ -26897,48 +26923,48 @@ void spawn_ordnance_oriented_3ang /* Original: FUN_00015d78 */ (int param_1,int 
  * 1/64 units) gains -0x5b per frame (gravity) and +0xc = it >> 6; retired once the
  * object y +0x1c <= controller +0x2e (signed cmp.l / bgt).
  */
-void tick_bullet /* Original: FUN_00015dc8 */ (int *param_1)
+void tick_bullet /* Original: FUN_00015dc8 */ (int *ctl /* bullet controller */)
 
 {
-  int iVar1;
-  char *pcVar2;
-  int iVar3;
+  int obj; /* bullet object (ctl +0) */
+  char *hit_obj; /* object hit (ctl +0x3c), set by bullet_hits_shape */
+  int effect_range; /* hit object +0x14 / 8, or / 4 when +0x1c set */
   
-  iVar1 = *param_1;
-  pcVar2 = (char *)param_1[0xf];
-  if (pcVar2 != (char *)0x0) {
-    if (*(int *)(pcVar2 + 0x1c) == 0) {
-      iVar3 = *(int *)(pcVar2 + 0x14);
-      if (iVar3 < 0) {
-        iVar3 = iVar3 + 7;
+  obj = *ctl;
+  hit_obj = (char *)ctl[0xf];
+  if (hit_obj != (char *)0x0) {
+    if (*(int *)(hit_obj + 0x1c) == 0) {
+      effect_range = *(int *)(hit_obj + 0x14);
+      if (effect_range < 0) {
+        effect_range = effect_range + 7;
       }
-      iVar3 = iVar3 >> 3;
+      effect_range = effect_range >> 3;
     }
     else {
-      iVar3 = *(int *)(pcVar2 + 0x14);
-      if (iVar3 < 0) {
-        iVar3 = iVar3 + 3;
+      effect_range = *(int *)(hit_obj + 0x14);
+      if (effect_range < 0) {
+        effect_range = effect_range + 3;
       }
-      iVar3 = iVar3 >> 2;
+      effect_range = effect_range >> 2;
     }
-    spawn_destruction_effect((int)pcVar2,iVar3);
-    if (*(short *)((int)param_1 + 0x36) != 0) {
-      tally_destroyed_entity((int)pcVar2);
+    spawn_destruction_effect((int)hit_obj,effect_range);
+    if (*(short *)((int)ctl + 0x36) != 0) {
+      tally_destroyed_entity((int)hit_obj);
     }
-    dispatch_entity_cleanup( /* Original: FUN_0000528a */pcVar2);
-    retire_entity( /* Original: FUN_000051ec */iVar1);
+    dispatch_entity_cleanup( /* Original: FUN_0000528a */hit_obj);
+    retire_entity( /* Original: FUN_000051ec */obj);
   }
-  *(short *)(param_1 + 0xe) = *(short *)(param_1 + 0xe) + 1;
-  if (*(short *)(param_1 + 0xe) != 0x1f) {
-    if (3 < *(short *)(param_1 + 0xe)) {
-      *(int *)((int)param_1 + 0x32) = *(int *)((int)param_1 + 0x32) + -0x5b;
+  *(short *)(ctl + 0xe) = *(short *)(ctl + 0xe) + 1;
+  if (*(short *)(ctl + 0xe) != 0x1f) {
+    if (3 < *(short *)(ctl + 0xe)) {
+      *(int *)((int)ctl + 0x32) = *(int *)((int)ctl + 0x32) + -0x5b;
     }
-    param_1[3] = *(int *)((int)param_1 + 0x32) >> 6;
-    if (*(int *)((int)param_1 + 0x2e) < *(int *)(iVar1 + 0x1c)) {
+    ctl[3] = *(int *)((int)ctl + 0x32) >> 6;
+    if (*(int *)((int)ctl + 0x2e) < *(int *)(obj + 0x1c)) {
       return;
     }
   }
-  retire_entity( /* Original: FUN_000051ec */iVar1);
+  retire_entity( /* Original: FUN_000051ec */obj);
   return;
 }
 
@@ -26953,19 +26979,19 @@ void tick_bullet /* Original: FUN_00015dc8 */ (int *param_1)
  * transform_vecs12_to_int3_by_matrix3(2, (*ctl) +0x44 in place, ctl + 0x40)) word +0x3a += 8;
  * then DAT_000265d2[sext word count++] = object (scale *4 decoded by hand); returns 4. The
  * in-place transform is safe because vector 1 is read before its slot is written. */
-undefined4 bullet_pre_render /* Original: FUN_00015e62 */ (int *param_1)
+undefined4 bullet_pre_render /* Original: FUN_00015e62 */ (int *ctl /* bullet controller */)
 
 {
-  if (DAT_000265d0 < 0x1e) {
-    if (*(short *)((int)param_1 + 0x3a) < 8) {
-      if (*(short *)((int)param_1 + 0x3a) == 2) {
-        transform_vecs12_to_int3_by_matrix3( /* Original: FUN_00002976 */2,*(int *)(*param_1 + 0x44),*(int **)(*param_1 + 0x44),
-                     (short *)(param_1 + 0x10));
+  if (dot_object_count < 0x1e) {
+    if (*(short *)((int)ctl + 0x3a) < 8) {
+      if (*(short *)((int)ctl + 0x3a) == 2) {
+        transform_vecs12_to_int3_by_matrix3( /* Original: FUN_00002976 */2,*(int *)(*ctl + 0x44),*(int **)(*ctl + 0x44),
+                     (short *)(ctl + 0x10));
       }
-      *(short *)((int)param_1 + 0x3a) = *(short *)((int)param_1 + 0x3a) + 8;
+      *(short *)((int)ctl + 0x3a) = *(short *)((int)ctl + 0x3a) + 8;
     }
-    (&DAT_000265d2)[DAT_000265d0] = *param_1;
-    DAT_000265d0 = DAT_000265d0 + 1;
+    (&dot_object_list)[dot_object_count] = *ctl;
+    dot_object_count = dot_object_count + 1;
   }
   return 4;
 }
@@ -26986,33 +27012,33 @@ undefined4 bullet_pre_render /* Original: FUN_00015e62 */ (int *param_1)
 void erase_dots_depth8 /* Original: FUN_00015ebe */ (void)
 
 {
-  short sVar1;
-  short sVar2;
-  char cVar3;
-  int iVar4;
-  char *pcVar5;
+  short row_bytes; /* host_world +0x10 */
+  short size;
+  char colour;
+  int rec_off; /* record index * 14 */
+  char *pix;
   
-  sVar1 = *(short *)(DAT_0001b5a0 + 0x10);
-  while (DAT_0001da8c = DAT_0001da8c + -1, DAT_0001da8c != -1) {
-    iVar4 = DAT_0001da8c * 0xe;
-    pcVar5 = *(char **)(&DAT_00026288 + iVar4);
-    cVar3 = (&DAT_00026290)[iVar4];
-    sVar2 = (&DAT_0002628e)[DAT_0001da8c * 7];
-    if (cVar3 == *pcVar5) {
-      *pcVar5 = (&DAT_00026291)[iVar4];
+  row_bytes = *(short *)(host_world + 0x10);
+  while (flag_da8c = flag_da8c + -1, flag_da8c != -1) {
+    rec_off = flag_da8c * 0xe;
+    pix = *(char **)(&dot_records + rec_off);
+    colour = (&dot_rec_colour)[rec_off];
+    size = (&dot_rec_size)[flag_da8c * 7];
+    if (colour == *pix) {
+      *pix = (&dot_rec_saved0)[rec_off];
     }
-    if ((2 < sVar2) && (cVar3 == pcVar5[1])) {
-      pcVar5[1] = (&DAT_00026292)[iVar4];
+    if ((2 < size) && (colour == pix[1])) {
+      pix[1] = (&dot_rec_saved1)[rec_off];
     }
-    pcVar5 = pcVar5 + sVar1;
-    if ((1 < sVar2) && (cVar3 == *pcVar5)) {
-      *pcVar5 = (&DAT_00026293)[iVar4];
+    pix = pix + row_bytes;
+    if ((1 < size) && (colour == *pix)) {
+      *pix = (&dot_rec_saved2)[rec_off];
     }
-    if ((3 < sVar2) && (cVar3 == pcVar5[1])) {
-      pcVar5[1] = (&DAT_00026294)[iVar4];
+    if ((3 < size) && (colour == pix[1])) {
+      pix[1] = (&dot_rec_saved3)[rec_off];
     }
   }
-  DAT_0001da8c = 0;
+  flag_da8c = 0;
   return;
 }
 
@@ -27027,35 +27053,35 @@ void erase_dots_depth8 /* Original: FUN_00015ebe */ (void)
  * stride (add.w, muls.w) + x + sext word DAT_00020b2a; record +0 = pixel, +9..+0xc = the old
  * bytes of the 2x2 dot (size > 2 / > 1 / > 3 gate the others, size = low word $1a), each set
  * to the colour byte of DAT_0001da88 - the layout erase_dots_depth8 restores. */
-void plot_dot_depth8 /* Original: FUN_00015f3e */ (int *param_1,int param_2,short param_3,short param_4)
+void plot_dot_depth8 /* Original: FUN_00015f3e */ (int *rec /* 14-byte dot record */,int sx /* screen x from view origin */,short sy /* screen y from view origin */,short size /* 1..4 pixels */)
 
 {
-  short sVar1;
-  undefined2 uVar2;
-  undefined1 uVar3;
-  undefined1 *puVar4;
-  
-  uVar2 = DAT_0001da88;
-  sVar1 = *(short *)(DAT_0001b5a0 + 0x10);
-  puVar4 = (undefined1 *)
-           (DAT_00020b2a + param_2 +
-           *(int *)(DAT_0001b5a0 + 6) + (int)(short)(DAT_00020b2c + param_3) * (int)sVar1);
-  *param_1 = (int)puVar4;
-  *(undefined1 *)((int)param_1 + 9) = *puVar4;
-  uVar3 = (undefined1)uVar2;
-  *puVar4 = uVar3;
-  if (2 < param_4) {
-    *(undefined1 *)((int)param_1 + 10) = puVar4[1];
-    puVar4[1] = uVar3;
+  short row_bytes; /* host_world +0x10 */
+  undefined2 colour_w;
+  undefined1 colour;
+  undefined1 *pix;
+
+  colour_w = bw_pattern_first;
+  row_bytes = *(short *)(host_world + 0x10);
+  pix = (undefined1 *)
+           (view_half_width + sx +
+           *(int *)(host_world + 6) + (int)(short)(view_half_rows + sy) * (int)row_bytes);
+  *rec = (int)pix;
+  *(undefined1 *)((int)rec + 9) = *pix;
+  colour = (undefined1)colour_w;
+  *pix = colour;
+  if (2 < size) {
+    *(undefined1 *)((int)rec + 10) = pix[1];
+    pix[1] = colour;
   }
-  puVar4 = puVar4 + sVar1;
-  if (1 < param_4) {
-    *(undefined1 *)((int)param_1 + 0xb) = *puVar4;
-    *puVar4 = uVar3;
+  pix = pix + row_bytes;
+  if (1 < size) {
+    *(undefined1 *)((int)rec + 0xb) = *pix;
+    *pix = colour;
   }
-  if (3 < param_4) {
-    *(undefined1 *)(param_1 + 3) = puVar4[1];
-    puVar4[1] = uVar3;
+  if (3 < size) {
+    *(undefined1 *)(rec + 3) = pix[1];
+    pix[1] = colour;
   }
   return;
 }
@@ -27077,52 +27103,52 @@ void plot_dot_depth8 /* Original: FUN_00015f3e */ (int *param_1,int param_2,shor
 void erase_dots_depth4 /* Original: FUN_00015fb8 */ (void)
 
 {
-  short sVar1;
-  short sVar2;
-  byte bVar3;
-  byte *pbVar4;
-  int iVar5;
-  byte *pbVar6;
+  short row_bytes; /* host_world +0x10 */
+  short size;
+  byte colour;
+  byte *saved;
+  int rec_off; /* record index * 14 */
+  byte *pix;
   
-  sVar1 = *(short *)(DAT_0001b5a0 + 0x10);
-  while (DAT_0001da8c = DAT_0001da8c + -1, DAT_0001da8c != -1) {
-    iVar5 = DAT_0001da8c * 0xe;
-    pbVar6 = *(byte **)(&DAT_00026288 + iVar5);
-    pbVar4 = &DAT_00026291 + iVar5;
-    bVar3 = (&DAT_00026290)[iVar5];
-    sVar2 = (&DAT_0002628e)[DAT_0001da8c * 7];
-    if (*(short *)(&DAT_0002628c + iVar5) == 0) {
-      if (((bVar3 ^ *pbVar6) & 0xf0) == 0) {
-        *pbVar6 = *pbVar4 ^ (*pbVar4 ^ *pbVar6) & 0xf;
+  row_bytes = *(short *)(host_world + 0x10);
+  while (flag_da8c = flag_da8c + -1, flag_da8c != -1) {
+    rec_off = flag_da8c * 0xe;
+    pix = *(byte **)(&dot_records + rec_off);
+    saved = &dot_rec_saved0 + rec_off;
+    colour = (&dot_rec_colour)[rec_off];
+    size = (&dot_rec_size)[flag_da8c * 7];
+    if (*(short *)(&dot_rec_phase + rec_off) == 0) {
+      if (((colour ^ *pix) & 0xf0) == 0) {
+        *pix = *saved ^ (*saved ^ *pix) & 0xf;
       }
-      if ((2 < sVar2) && (((bVar3 ^ *pbVar6) & 0xf) == 0)) {
-        *pbVar6 = *pbVar4 ^ (*pbVar4 ^ *pbVar6) & 0xf0;
+      if ((2 < size) && (((colour ^ *pix) & 0xf) == 0)) {
+        *pix = *saved ^ (*saved ^ *pix) & 0xf0;
       }
-      pbVar6 = pbVar6 + sVar1;
-      if ((1 < sVar2) && (((bVar3 ^ *pbVar6) & 0xf0) == 0)) {
-        *pbVar6 = (&DAT_00026293)[iVar5] ^ ((&DAT_00026293)[iVar5] ^ *pbVar6) & 0xf;
+      pix = pix + row_bytes;
+      if ((1 < size) && (((colour ^ *pix) & 0xf0) == 0)) {
+        *pix = (&dot_rec_saved2)[rec_off] ^ ((&dot_rec_saved2)[rec_off] ^ *pix) & 0xf;
       }
-      if ((3 < sVar2) && (((bVar3 ^ *pbVar6) & 0xf) == 0)) {
-        *pbVar6 = (&DAT_00026293)[iVar5] ^ ((&DAT_00026293)[iVar5] ^ *pbVar6) & 0xf0;
+      if ((3 < size) && (((colour ^ *pix) & 0xf) == 0)) {
+        *pix = (&dot_rec_saved2)[rec_off] ^ ((&dot_rec_saved2)[rec_off] ^ *pix) & 0xf0;
       }
     }
     else {
-      if (((bVar3 ^ *pbVar6) & 0xf) == 0) {
-        *pbVar6 = *pbVar4 ^ (*pbVar4 ^ *pbVar6) & 0xf0;
+      if (((colour ^ *pix) & 0xf) == 0) {
+        *pix = *saved ^ (*saved ^ *pix) & 0xf0;
       }
-      if ((2 < sVar2) && (((bVar3 ^ pbVar6[1]) & 0xf0) == 0)) {
-        pbVar6[1] = (&DAT_00026292)[iVar5] ^ ((&DAT_00026292)[iVar5] ^ pbVar6[1]) & 0xf;
+      if ((2 < size) && (((colour ^ pix[1]) & 0xf0) == 0)) {
+        pix[1] = (&dot_rec_saved1)[rec_off] ^ ((&dot_rec_saved1)[rec_off] ^ pix[1]) & 0xf;
       }
-      pbVar6 = pbVar6 + sVar1;
-      if ((1 < sVar2) && (((bVar3 ^ *pbVar6) & 0xf) == 0)) {
-        *pbVar6 = (&DAT_00026293)[iVar5] ^ ((&DAT_00026293)[iVar5] ^ *pbVar6) & 0xf0;
+      pix = pix + row_bytes;
+      if ((1 < size) && (((colour ^ *pix) & 0xf) == 0)) {
+        *pix = (&dot_rec_saved2)[rec_off] ^ ((&dot_rec_saved2)[rec_off] ^ *pix) & 0xf0;
       }
-      if ((3 < sVar2) && (((bVar3 ^ pbVar6[1]) & 0xf0) == 0)) {
-        pbVar6[1] = (&DAT_00026294)[iVar5] ^ ((&DAT_00026294)[iVar5] ^ pbVar6[1]) & 0xf;
+      if ((3 < size) && (((colour ^ pix[1]) & 0xf0) == 0)) {
+        pix[1] = (&dot_rec_saved3)[rec_off] ^ ((&dot_rec_saved3)[rec_off] ^ pix[1]) & 0xf;
       }
     }
   }
-  DAT_0001da8c = 0;
+  flag_da8c = 0;
   return;
 }
 
@@ -27139,62 +27165,62 @@ void erase_dots_depth4 /* Original: FUN_00015fb8 */ (void)
  * pointer, word +4 = x' % 2 (phase); colour = low byte of DAT_0001da88; phase 0 saves +9 / +0xb
  * and writes a full byte (size > 2, > 3) or only the high nibble (size <= 2, > 1); phase 1 saves
  * +9..+0xc and writes low nibble / next byte high nibble pairs gated by size > 2 / > 1 / > 3. */
-void plot_dot_depth4 /* Original: FUN_00016128 */ (undefined4 *param_1,short param_2,short param_3,short param_4)
+void plot_dot_depth4 /* Original: FUN_00016128 */ (undefined4 *rec /* 14-byte dot record */,short sx /* screen x from view origin */,short sy /* screen y from view origin */,short size /* 1..4 pixels */)
 
 {
-  short sVar1;
-  short sVar2;
-  undefined2 uVar3;
-  short sVar4;
-  byte bVar5;
-  byte *pbVar6;
-  
-  uVar3 = DAT_0001da88;
-  sVar1 = *(short *)(DAT_0001b5a0 + 0x10);
-  sVar2 = DAT_00020b2a + param_2;
-  sVar4 = sVar2;
-  if (sVar2 < 0) {
-    sVar4 = sVar2 + 1;
+  short row_bytes; /* host_world +0x10 */
+  short px; /* absolute pixel x */
+  undefined2 colour_w;
+  short px_round; /* px rounded toward zero for >> 1 */
+  byte colour;
+  byte *pix;
+
+  colour_w = bw_pattern_first;
+  row_bytes = *(short *)(host_world + 0x10);
+  px = view_half_width + sx;
+  px_round = px;
+  if (px < 0) {
+    px_round = px + 1;
   }
-  pbVar6 = (byte *)((int)(sVar4 >> 1) +
-                   (int)(short)(DAT_00020b2c + param_3) * (int)sVar1 + *(int *)(DAT_0001b5a0 + 6));
-  *(short *)(param_1 + 1) = sVar2 % 2;
-  *param_1 = pbVar6;
-  bVar5 = (byte)uVar3;
-  if (*(short *)(param_1 + 1) == 0) {
-    *(byte *)((int)param_1 + 9) = *pbVar6;
-    if (param_4 < 3) {
-      *pbVar6 = bVar5 ^ (bVar5 ^ *pbVar6) & 0xf;
+  pix = (byte *)((int)(px_round >> 1) +
+                   (int)(short)(view_half_rows + sy) * (int)row_bytes + *(int *)(host_world + 6));
+  *(short *)(rec + 1) = px % 2;
+  *rec = pix;
+  colour = (byte)colour_w;
+  if (*(short *)(rec + 1) == 0) {
+    *(byte *)((int)rec + 9) = *pix;
+    if (size < 3) {
+      *pix = colour ^ (colour ^ *pix) & 0xf;
     }
     else {
-      *pbVar6 = bVar5;
+      *pix = colour;
     }
-    pbVar6 = pbVar6 + sVar1;
-    *(byte *)((int)param_1 + 0xb) = *pbVar6;
-    if (param_4 < 4) {
-      if (1 < param_4) {
-        *pbVar6 = bVar5 ^ (bVar5 ^ *pbVar6) & 0xf;
+    pix = pix + row_bytes;
+    *(byte *)((int)rec + 0xb) = *pix;
+    if (size < 4) {
+      if (1 < size) {
+        *pix = colour ^ (colour ^ *pix) & 0xf;
       }
     }
     else {
-      *pbVar6 = bVar5;
+      *pix = colour;
     }
   }
   else {
-    *(byte *)((int)param_1 + 9) = *pbVar6;
-    *pbVar6 = bVar5 ^ (bVar5 ^ *pbVar6) & 0xf0;
-    if (2 < param_4) {
-      *(byte *)((int)param_1 + 10) = pbVar6[1];
-      pbVar6[1] = bVar5 ^ (bVar5 ^ pbVar6[1]) & 0xf;
+    *(byte *)((int)rec + 9) = *pix;
+    *pix = colour ^ (colour ^ *pix) & 0xf0;
+    if (2 < size) {
+      *(byte *)((int)rec + 10) = pix[1];
+      pix[1] = colour ^ (colour ^ pix[1]) & 0xf;
     }
-    pbVar6 = pbVar6 + sVar1;
-    if (1 < param_4) {
-      *(byte *)((int)param_1 + 0xb) = *pbVar6;
-      *pbVar6 = bVar5 ^ (bVar5 ^ *pbVar6) & 0xf0;
+    pix = pix + row_bytes;
+    if (1 < size) {
+      *(byte *)((int)rec + 0xb) = *pix;
+      *pix = colour ^ (colour ^ *pix) & 0xf0;
     }
-    if (3 < param_4) {
-      *(byte *)(param_1 + 3) = pbVar6[1];
-      pbVar6[1] = bVar5 ^ (bVar5 ^ pbVar6[1]) & 0xf;
+    if (3 < size) {
+      *(byte *)(rec + 3) = pix[1];
+      pix[1] = colour ^ (colour ^ pix[1]) & 0xf;
     }
   }
   return;
@@ -27210,25 +27236,25 @@ void plot_dot_depth4 /* Original: FUN_00016128 */ (undefined4 *param_1,short par
  * found identical to the C: for k = 0..3 the corner (long DAT_0001b48c[16k + 4 (size - 1)] + x,
  * long DAT_0001b4cc[...] + y) into local_24 (a6 - 0x20, -$20(a6,d0.l*8), scale decoded by
  * hand); host hook +0x7c(4, sext word DAT_0001da88, sext word DAT_0001c1be++, corners). */
-void plot_dot_bw /* Original: FUN_00016230 */ (undefined4 param_1,int param_2,int param_3,short param_4)
+void plot_dot_bw /* Original: FUN_00016230 */ (undefined4 rec /* dot record (unused at depth 1) */,int sx,int sy,short size /* 1..4 */)
 
 {
-  int iVar1;
-  short sVar2;
-  int iVar3;
-  int local_24 [8];
+  int corner_i;
+  short corner;
+  int size_off; /* (size - 1) * 4; reused as draw order */
+  int poly [8]; /* 4 (x, y) points, -0x20(A6) */
   
-  sVar2 = 0;
-  iVar3 = (short)(param_4 + -1) * 4;
+  corner = 0;
+  size_off = (short)(size + -1) * 4;
   do {
-    iVar1 = (int)sVar2;
-    local_24[iVar1 * 2] = *(int *)(&DAT_0001b48c + iVar3 + iVar1 * 0x10) + param_2;
-    local_24[iVar1 * 2 + 1] = *(int *)(&DAT_0001b4cc + iVar3 + iVar1 * 0x10) + param_3;
-    sVar2 = sVar2 + 1;
-  } while (sVar2 < 4);
-  iVar3 = (int)DAT_0001c1be;
-  DAT_0001c1be = DAT_0001c1be + 1;
-  (**(code **)(DAT_0001b5a0 + 0x7c))(4,(int)DAT_0001da88,iVar3,local_24);
+    corner_i = (int)corner;
+    poly[corner_i * 2] = *(int *)(&dot_corner_dx + size_off + corner_i * 0x10) + sx;
+    poly[corner_i * 2 + 1] = *(int *)(&dot_corner_dy + size_off + corner_i * 0x10) + sy;
+    corner = corner + 1;
+  } while (corner < 4);
+  size_off = (int)draw_order_next;
+  draw_order_next = draw_order_next + 1;
+  (**(code **)(host_world + 0x7c))(4,(int)bw_pattern_first,size_off,poly);
   return;
 }
 
@@ -27251,162 +27277,162 @@ void plot_dot_bw /* Original: FUN_00016230 */ (undefined4 param_1,int param_2,in
 void draw_distant_object_dots /* Original: FUN_000162ba */ (void)
 
 {
-  ushort uVar1;
-  short sVar2;
-  short sVar3;
-  int iVar4;
-  undefined2 uVar5;
-  short sVar6;
-  int iVar7;
-  int iVar8;
-  short sVar9;
-  short sVar10;
-  uint uVar11;
-  int iVar12;
-  int *piVar13;
-  int *piVar14;
-  undefined1 *puVar15;
-  bool bVar16;
-  undefined *local_32;
-  short sStack_2c;
-  int local_2a;
-  int *local_26;
-  short sStack_20;
-  short local_1e;
-  undefined1 auStack_1c [2];
-  undefined2 local_1a;
-  undefined2 local_16;
-  undefined2 local_12;
-  
-  if (*(short *)(DAT_0001b5a0 + 0x9e) != 0) {
-    DAT_000265d0 = 0;
-    DAT_0001da8c = 0;
+  ushort shift_delta; /* object +0x34 minus shift +0x32 */
+  short dy;
+  short dz;
+  int tmp; /* assign_face_colour result; then rounded near_dist */
+  undefined2 dot_size; /* 1..4, larger when nearer */
+  short rel_y;
+  int obj; /* listed object; reused as projected depth */
+  int ctl; /* object +8; reused as screen y */
+  short rel_z; /* also the 2-vertex loop counter */
+  short shift; /* object +0x32; reused as rel_x and point count */
+  uint sh;
+  int face; /* object +0x48 face record; reused as screen x */
+  int *vert; /* object +0x44 vertex list */
+  int *next_entry;
+  undefined1 *pt; /* camera-space point cursor */
+  bool list_done;
+  undefined *rec; /* dot record cursor (dot_records) */
+  short cam_dz;
+  int near_dist; /* 5000 scaled by the shift */
+  int *list_cursor; /* dot_object_list cursor */
+  short cam_dx;
+  short remaining;
+  undefined1 cam_pts [2]; /* up to 2 camera-space points, 12 bytes each */
+  undefined2 cam_x;
+  undefined2 cam_y;
+  undefined2 cam_z;
+
+  if (*(short *)(host_world + 0x9e) != 0) {
+    dot_object_count = 0;
+    flag_da8c = 0;
   }
-  (*DAT_0001da84)();
-  local_26 = &DAT_000265d2;
-  local_32 = &DAT_00026288;
-  local_1e = DAT_000265d0;
+  (*depth_routine_da84)();
+  list_cursor = &dot_object_list;
+  rec = &dot_records;
+  remaining = dot_object_count;
   do {
-    bVar16 = local_1e == 0;
-    local_1e = local_1e + -1;
-    if (bVar16) {
-      DAT_000265d0 = 0;
-      DAT_0001da8c = (short)((int)(local_32 + -0x26288) / 0xe);
+    list_done = remaining == 0;
+    remaining = remaining + -1;
+    if (list_done) {
+      dot_object_count = 0;
+      flag_da8c = (short)((int)(rec + -0x26288) / 0xe);
       return;
     }
-    piVar14 = local_26 + 1;
-    iVar7 = *local_26;
-    iVar8 = *(int *)(iVar7 + 8);
-    iVar12 = *(int *)(iVar7 + 0x48);
-    sVar10 = *(short *)(iVar7 + 0x32);
-    if (*(char *)(iVar12 + 0xf) == -1) {
+    next_entry = list_cursor + 1;
+    obj = *list_cursor;
+    ctl = *(int *)(obj + 8);
+    face = *(int *)(obj + 0x48);
+    shift = *(short *)(obj + 0x32);
+    if (*(char *)(face + 0xf) == -1) {
 LAB_00016358:
-      DAT_0001da88 = *(undefined2 *)(iVar12 + 6);
+      bw_pattern_first = *(undefined2 *)(face + 6);
     }
     else {
-      if (DAT_0001da8a == 0) {
-        iVar4 = assign_face_colour(iVar12);
-        if (iVar4 != 0) {
+      if (colour_tally_index == 0) {
+        tmp = assign_face_colour(face);
+        if (tmp != 0) {
           return;
         }
-        DAT_0001da8a = (ushort)*(byte *)(iVar12 + 0xf);
+        colour_tally_index = (ushort)*(byte *)(face + 0xf);
         goto LAB_00016358;
       }
-      *(undefined1 *)(iVar12 + 0xf) = (undefined1)DAT_0001da8a;
+      *(undefined1 *)(face + 0xf) = (undefined1)colour_tally_index;
     }
-    if ((*(byte *)(iVar8 + 0x3b) & 2) == 0) {
-      uVar11 = (uint)sVar10;
-      sVar10 = (short)(*(int *)(iVar7 + 0x18) - DAT_0001d838 >> (uVar11 & 0x3f));
-      sVar6 = (short)(*(int *)(iVar7 + 0x1c) - DAT_0001d834 >> (uVar11 & 0x3f));
-      sVar9 = (short)(*(int *)(iVar7 + 0x20) - DAT_0001d830 >> (uVar11 & 0x3f));
-      local_2a = 5000 >> (uVar11 & 0x3f);
-      local_1a = (short)((int)sVar9 * (int)DAT_0001d750 +
-                         (int)sVar6 * (int)DAT_0001d74a + (int)sVar10 * (int)DAT_0001d744 + 0x800 >>
+    if ((*(byte *)(ctl + 0x3b) & 2) == 0) {
+      sh = (uint)shift;
+      shift = (short)(*(int *)(obj + 0x18) - camera_x >> (sh & 0x3f));
+      rel_y = (short)(*(int *)(obj + 0x1c) - camera_y >> (sh & 0x3f));
+      rel_z = (short)(*(int *)(obj + 0x20) - camera_z >> (sh & 0x3f));
+      near_dist = 5000 >> (sh & 0x3f);
+      cam_x = (short)((int)rel_z * (int)camera_m20 +
+                         (int)rel_y * (int)camera_m10 + (int)shift * (int)camera_m00 + 0x800 >>
                         0xc);
-      local_16 = (short)((int)sVar9 * (int)DAT_0001d752 +
-                         (int)sVar6 * (int)DAT_0001d74c + (int)sVar10 * (int)DAT_0001d746 + 0x800 >>
+      cam_y = (short)((int)rel_z * (int)camera_m21 +
+                         (int)rel_y * (int)camera_m11 + (int)shift * (int)camera_m01 + 0x800 >>
                         0xc);
-      local_12 = (short)((int)sVar9 * (int)DAT_0001d754 +
-                         (int)sVar6 * (int)DAT_0001d74e + (int)sVar10 * (int)DAT_0001d748 + 0x800 >>
+      cam_z = (short)((int)rel_z * (int)camera_m22 +
+                         (int)rel_y * (int)camera_m12 + (int)shift * (int)camera_m02 + 0x800 >>
                         0xc);
-      sVar10 = 1;
+      shift = 1;
     }
     else {
-      uVar1 = *(short *)(iVar7 + 0x34) - sVar10;
-      if ((int)((uint)uVar1 << 0x10) < 0) {
-        uVar11 = -(int)(short)uVar1;
-        sStack_20 = (short)(DAT_0001d838 - *(int *)(iVar7 + 0x18) >> (uVar11 & 0x3f));
-        sVar6 = (short)(DAT_0001d834 - *(int *)(iVar7 + 0x1c) >> (uVar11 & 0x3f));
-        sStack_2c = (short)(DAT_0001d830 - *(int *)(iVar7 + 0x20) >> (uVar11 & 0x3f));
-        local_2a = 5000 >> (uVar11 & 0x3f);
+      shift_delta = *(short *)(obj + 0x34) - shift;
+      if ((int)((uint)shift_delta << 0x10) < 0) {
+        sh = -(int)(short)shift_delta;
+        cam_dx = (short)(camera_x - *(int *)(obj + 0x18) >> (sh & 0x3f));
+        rel_y = (short)(camera_y - *(int *)(obj + 0x1c) >> (sh & 0x3f));
+        cam_dz = (short)(camera_z - *(int *)(obj + 0x20) >> (sh & 0x3f));
+        near_dist = 5000 >> (sh & 0x3f);
       }
       else {
-        uVar11 = (uint)(short)uVar1;
-        sStack_20 = (short)(DAT_0001d838 - *(int *)(iVar7 + 0x18) << (uVar11 & 0x3f));
-        sVar6 = (short)(DAT_0001d834 - *(int *)(iVar7 + 0x1c) << (uVar11 & 0x3f));
-        sStack_2c = (short)(DAT_0001d830 - *(int *)(iVar7 + 0x20) << (uVar11 & 0x3f));
-        local_2a = 5000 << (uVar11 & 0x3f);
+        sh = (uint)(short)shift_delta;
+        cam_dx = (short)(camera_x - *(int *)(obj + 0x18) << (sh & 0x3f));
+        rel_y = (short)(camera_y - *(int *)(obj + 0x1c) << (sh & 0x3f));
+        cam_dz = (short)(camera_z - *(int *)(obj + 0x20) << (sh & 0x3f));
+        near_dist = 5000 << (sh & 0x3f);
       }
-      piVar13 = *(int **)(iVar7 + 0x44);
-      puVar15 = auStack_1c;
-      sVar9 = 2;
-      uVar11 = (uint)sVar10;
-      while (sVar9 = sVar9 + -1, sVar9 != -1) {
-        sVar10 = (short)(*piVar13 >> (uVar11 & 0x3f)) - sStack_20;
-        sVar2 = (short)(piVar13[1] >> (uVar11 & 0x3f)) - sVar6;
-        sVar3 = (short)(piVar13[2] >> (uVar11 & 0x3f)) - sStack_2c;
-        *(short *)(puVar15 + 2) =
-             (short)((int)sVar3 * (int)DAT_0001d750 +
-                     (int)sVar2 * (int)DAT_0001d74a + (int)sVar10 * (int)DAT_0001d744 + 0x800 >> 0xc
+      vert = *(int **)(obj + 0x44);
+      pt = cam_pts;
+      rel_z = 2;
+      sh = (uint)shift;
+      while (rel_z = rel_z + -1, rel_z != -1) {
+        shift = (short)(*vert >> (sh & 0x3f)) - cam_dx;
+        dy = (short)(vert[1] >> (sh & 0x3f)) - rel_y;
+        dz = (short)(vert[2] >> (sh & 0x3f)) - cam_dz;
+        *(short *)(pt + 2) =
+             (short)((int)dz * (int)camera_m20 +
+                     (int)dy * (int)camera_m10 + (int)shift * (int)camera_m00 + 0x800 >> 0xc
                     );
-        *(short *)(puVar15 + 6) =
-             (short)((int)sVar3 * (int)DAT_0001d752 +
-                     (int)sVar2 * (int)DAT_0001d74c + (int)sVar10 * (int)DAT_0001d746 + 0x800 >> 0xc
+        *(short *)(pt + 6) =
+             (short)((int)dz * (int)camera_m21 +
+                     (int)dy * (int)camera_m11 + (int)shift * (int)camera_m01 + 0x800 >> 0xc
                     );
-        *(short *)(puVar15 + 10) =
-             (short)((int)sVar3 * (int)DAT_0001d754 +
-                     (int)sVar2 * (int)DAT_0001d74e + (int)sVar10 * (int)DAT_0001d748 + 0x800 >> 0xc
+        *(short *)(pt + 10) =
+             (short)((int)dz * (int)camera_m22 +
+                     (int)dy * (int)camera_m12 + (int)shift * (int)camera_m02 + 0x800 >> 0xc
                     );
-        piVar13 = piVar13 + 3;
-        puVar15 = puVar15 + 0xc;
+        vert = vert + 3;
+        pt = pt + 0xc;
       }
-      sVar10 = 2;
+      shift = 2;
     }
-    puVar15 = auStack_1c;
-    while (sVar10 = sVar10 + -1, local_26 = piVar14, sVar10 != -1) {
-      if (4 < *(short *)(puVar15 + 10)) {
-        iVar7 = (int)*(short *)(puVar15 + 10);
-        iVar12 = ((int)*(short *)(puVar15 + 2) * (int)DAT_00020b28) / iVar7;
-        iVar8 = ((int)DAT_00020b26 * -(int)*(short *)(puVar15 + 6)) / iVar7;
-        if ((((DAT_00020aee <= iVar12) && (iVar12 <= DAT_00020aec + -1)) && (DAT_00020aea <= iVar8))
-           && (iVar8 <= DAT_00020ae8 + -1)) {
-          if (local_2a < iVar7) {
-            iVar4 = local_2a;
-            if (local_2a < 0) {
-              iVar4 = local_2a + 1;
+    pt = cam_pts;
+    while (shift = shift + -1, list_cursor = next_entry, shift != -1) {
+      if (4 < *(short *)(pt + 10)) {
+        obj = (int)*(short *)(pt + 10);
+        face = ((int)*(short *)(pt + 2) * (int)proj_scale_x) / obj;
+        ctl = ((int)proj_scale_y * -(int)*(short *)(pt + 6)) / obj;
+        if ((((clip_x_min <= face) && (face <= clip_x_max + -1)) && (clip_y_min <= ctl))
+           && (ctl <= view_half_height + -1)) {
+          if (near_dist < obj) {
+            tmp = near_dist;
+            if (near_dist < 0) {
+              tmp = near_dist + 1;
             }
-            if (local_2a + (iVar4 >> 1) < iVar7) {
-              if (local_2a * 2 < (int)*(short *)(puVar15 + 10)) {
-                uVar5 = 1;
+            if (near_dist + (tmp >> 1) < obj) {
+              if (near_dist * 2 < (int)*(short *)(pt + 10)) {
+                dot_size = 1;
               }
               else {
-                uVar5 = 2;
+                dot_size = 2;
               }
             }
             else {
-              uVar5 = 3;
+              dot_size = 3;
             }
           }
           else {
-            uVar5 = 4;
+            dot_size = 4;
           }
-          *(undefined2 *)(local_32 + 6) = uVar5;
-          local_32[8] = (undefined1)DAT_0001da88;
-          (*DAT_0001da80)(local_32,iVar12,iVar8,uVar5);
-          local_32 = local_32 + 0xe;
+          *(undefined2 *)(rec + 6) = dot_size;
+          rec[8] = (undefined1)bw_pattern_first;
+          (*depth_routine_da80)(rec,face,ctl,dot_size);
+          rec = rec + 0xe;
         }
       }
-      puVar15 = puVar15 + 0xc;
+      pt = pt + 0xc;
     }
   } while( true );
 }
@@ -27429,38 +27455,38 @@ LAB_00016358:
  * VERIFIED (, user policy): the body matches the bytes and the call
  * arguments Ghidra dropped are documented above as a call-argument correction.
  */
-uint bullet_hits_shape /* Original: FUN_0001665a */ (int param_1,int param_2)
+uint bullet_hits_shape /* Original: FUN_0001665a */ (int bullet /* bullet object (template type 0xe) */,int shape /* object b */)
 
 {
-  int iVar1;
-  short sVar2;
-  uint uVar3;
-  uint uVar4;
+  int bullet_ctl; /* bullet +8 */
+  short b_type; /* b controller template type */
+  uint result; /* distance, then rng / retire result */
+  uint rnd;
   
-  iVar1 = *(int *)(param_1 + 8);
-  uVar3 = segment_point_min_distance();
-  if ((int)uVar3 <= *(int *)(param_2 + 0x14)) {
-    if ((*(byte *)(param_2 + 6) & 4) == 0) {
-      if (*(int *)(param_2 + 8) != 0) {
-        sVar2 = **(short **)(*(int *)(param_2 + 8) + 4);
-        if (sVar2 == 0xe) {
-          return CONCAT22((short)(uVar3 >> 0x10),sVar2);
+  bullet_ctl = *(int *)(bullet + 8);
+  result = segment_point_min_distance();
+  if ((int)result <= *(int *)(shape + 0x14)) {
+    if ((*(byte *)(shape + 6) & 4) == 0) {
+      if (*(int *)(shape + 8) != 0) {
+        b_type = **(short **)(*(int *)(shape + 8) + 4);
+        if (b_type == 0xe) {
+          return CONCAT22((short)(result >> 0x10),b_type);
         }
-        if ((sVar2 == 0x1b) && (uVar3 = overlay_rng_next( /* Original: FUN_00011564 */), (uVar3 & 0xf) == 0)) {
-          *(undefined2 *)(*(int *)(param_2 + 8) + 0x46) = 1;
+        if ((b_type == 0x1b) && (result = overlay_rng_next( /* Original: FUN_00011564 */), (result & 0xf) == 0)) {
+          *(undefined2 *)(*(int *)(shape + 8) + 0x46) = 1;
         }
       }
-      uVar3 = retire_entity( /* Original: FUN_000051ec */param_1);
+      result = retire_entity( /* Original: FUN_000051ec */bullet);
     }
     else {
-      uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-      uVar3 = uVar4 & 0xffff0007;
-      if ((uVar4 & 7) == 0) {
-        *(int *)(iVar1 + 0x3c) = param_2;
+      rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+      result = rnd & 0xffff0007;
+      if ((rnd & 7) == 0) {
+        *(int *)(bullet_ctl + 0x3c) = shape;
       }
     }
   }
-  return uVar3;
+  return result;
 }
 
 
@@ -27480,59 +27506,59 @@ uint bullet_hits_shape /* Original: FUN_0001665a */ (int param_1,int param_2)
  * Note [PROVEN]: this function never sets bit 7 (0x80); it comes from elsewhere
  * (update_aircraft_damage_state).
  */
-uint apply_random_aircraft_damage /* Original: FUN_00016724 */ (int param_1,int param_2)
+uint apply_random_aircraft_damage /* Original: FUN_00016724 */ (int ctl /* aircraft controller */,int by_player /* bullet controller word +0x36; sets +0x684 bit 15 */)
 
 {
-  uint uVar1;
-  ushort uVar2;
+  uint rnd; /* rng roll; also the return value */
+  ushort roll; /* low byte of rnd */
   
-  if (**(short **)(param_1 + 4) == 1) {
-    _DAT_0001b842 = 1;
+  if (**(short **)(ctl + 4) == 1) {
+    snd_hit = 1;
   }
-  else if (**(short **)(param_1 + 4) != 3) goto LAB_00016758;
-  uVar1 = overlay_rng_next( /* Original: FUN_00011564 */);
-  if ((uVar1 & 3) != 0) {
-    return uVar1 & 0xffff0003;
+  else if (**(short **)(ctl + 4) != 3) goto LAB_00016758;
+  rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+  if ((rnd & 3) != 0) {
+    return rnd & 0xffff0003;
   }
 LAB_00016758:
-  uVar1 = overlay_rng_next( /* Original: FUN_00011564 */);
-  uVar1 = uVar1 & 0xffff00ff;
-  uVar2 = (ushort)uVar1;
-  if (uVar2 < 6) {
-    *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 1;
+  rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+  rnd = rnd & 0xffff00ff;
+  roll = (ushort)rnd;
+  if (roll < 6) {
+    *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 1;
   }
-  else if (uVar2 < 0x2b) {
-    *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 2;
+  else if (roll < 0x2b) {
+    *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 2;
   }
-  else if (uVar2 < 0x38) {
-    *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 4;
+  else if (roll < 0x38) {
+    *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 4;
   }
-  else if (uVar2 < 0x45) {
-    *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 8;
+  else if (roll < 0x45) {
+    *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 8;
   }
-  else if (uVar2 < 0x51) {
-    *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 0x10;
+  else if (roll < 0x51) {
+    *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 0x10;
   }
-  else if (uVar2 < 0x5e) {
-    *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 0x20;
+  else if (roll < 0x5e) {
+    *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 0x20;
   }
   else {
-    uVar1 = CONCAT22((short)(uVar1 >> 0x10),*(ushort *)(param_1 + 0x684)) & 0xffff03c0;
-    if ((*(ushort *)(param_1 + 0x684) & 0x3c0) == 0) {
-      *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 0x40;
+    rnd = CONCAT22((short)(rnd >> 0x10),*(ushort *)(ctl + 0x684)) & 0xffff03c0;
+    if ((*(ushort *)(ctl + 0x684) & 0x3c0) == 0) {
+      *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 0x40;
     }
     else {
-      if ((*(byte *)(param_1 + 0x684) & 2) != 0) {
-        *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) & 0xfdff;
-        *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 0x100;
+      if ((*(byte *)(ctl + 0x684) & 2) != 0) {
+        *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) & 0xfdff;
+        *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 0x100;
       }
-      *(undefined2 *)(param_1 + 0x688) = 0;
+      *(undefined2 *)(ctl + 0x688) = 0;
     }
   }
-  if (param_2 != 0) {
-    *(ushort *)(param_1 + 0x684) = *(ushort *)(param_1 + 0x684) | 0x8000;
+  if (by_player != 0) {
+    *(ushort *)(ctl + 0x684) = *(ushort *)(ctl + 0x684) | 0x8000;
   }
-  return uVar1;
+  return rnd;
 }
 
 
@@ -27557,29 +27583,29 @@ LAB_00016758:
  * VERIFIED (, user policy): the body matches the bytes and the call
  * arguments Ghidra dropped are documented above as a call-argument correction.
  */
-uint bullet_hits_aircraft /* Original: FUN_000167f4 */ (int param_1,int param_2)
+uint bullet_hits_aircraft /* Original: FUN_000167f4 */ (int bullet /* bullet object (template type 0xe) */,int aircraft /* object b (types 1..4) */)
 
 {
-  int iVar1;
-  int iVar2;
-  uint uVar3;
-  uint uVar4;
+  int bullet_ctl; /* bullet +8 */
+  int air_ctl; /* aircraft +8 */
+  uint result; /* distance, then rng / retire result */
+  uint rnd;
   
-  iVar1 = *(int *)(param_1 + 8);
-  uVar3 = segment_point_min_distance();
-  if ((int)uVar3 <= *(int *)(param_2 + 0x14)) {
-    iVar2 = *(int *)(param_2 + 8);
-    uVar4 = overlay_rng_next( /* Original: FUN_00011564 */);
-    uVar3 = uVar4 & 0xffff0007;
-    if ((uVar4 & 7) == 0) {
-      apply_random_aircraft_damage(iVar2,(int)*(short *)(iVar1 + 0x36));
-      uVar3 = retire_entity( /* Original: FUN_000051ec */param_1);
+  bullet_ctl = *(int *)(bullet + 8);
+  result = segment_point_min_distance();
+  if ((int)result <= *(int *)(aircraft + 0x14)) {
+    air_ctl = *(int *)(aircraft + 8);
+    rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+    result = rnd & 0xffff0007;
+    if ((rnd & 7) == 0) {
+      apply_random_aircraft_damage(air_ctl,(int)*(short *)(bullet_ctl + 0x36));
+      result = retire_entity( /* Original: FUN_000051ec */bullet);
     }
-    else if ((iVar2 == DAT_0001b738) && (uVar3 = overlay_rng_next( /* Original: FUN_00011564 */), (uVar3 & 1) != 0)) {
-      _DAT_0001b842 = 1;
+    else if ((air_ctl == player_object) && (result = overlay_rng_next( /* Original: FUN_00011564 */), (result & 1) != 0)) {
+      snd_hit = 1;
     }
   }
-  return uVar3;
+  return result;
 }
 
 
@@ -27592,18 +27618,18 @@ uint bullet_hits_aircraft /* Original: FUN_000167f4 */ (int param_1,int param_2)
  * found identical to the C: r = overlay_rng_next; andi.w #$f changes only the low word, so the
  * non-zero path returns r & 0xffff000f exactly as the C; when (r & 0xf) == 0, bsr.l 0x12f52
  * ordnance_collision(param_2, param_1) and its D0 is returned. */
-uint impact_one_time_in_16 /* Original: FUN_000168ae */ (int param_1,int param_2)
+uint impact_one_time_in_16 /* Original: FUN_000168ae */ (int self,int other /* other ordnance object */)
 
 {
-  uint uVar1;
-  uint uVar2;
+  uint rnd;
+  uint result;
   
-  uVar1 = overlay_rng_next( /* Original: FUN_00011564 */);
-  uVar2 = uVar1 & 0xffff000f;
-  if ((uVar1 & 0xf) == 0) {
-    uVar2 = ordnance_collision(param_2,param_1);
+  rnd = overlay_rng_next( /* Original: FUN_00011564 */);
+  result = rnd & 0xffff000f;
+  if ((rnd & 0xf) == 0) {
+    result = ordnance_collision(other,self);
   }
-  return uVar2;
+  return result;
 }
 
 
@@ -27613,15 +27639,15 @@ uint impact_one_time_in_16 /* Original: FUN_000168ae */ (int param_1,int param_2
  * Ghidra C reviewed (function at overlay offset 0x168d2).
  * Args: object, header size, vertex count, source vertices. Allocates header + 12 * count bytes (cleared), stores the count in the word just before the vertex area and fills it through apply_template_chain_xform_always. Returns the block. Used by the AI script set-up (ensure_ai_script_*). Ghidra C.
  */
-uint * alloc_transformed_vertex_block /* Original: FUN_000168d2 */ (int param_1,int param_2,short param_3,uint *param_4)
+uint * alloc_transformed_vertex_block /* Original: FUN_000168d2 */ (int obj /* object for the template chain transform */,int header_size /* bytes before the vertices; count word at -2 */,short count /* vertex count */,uint *src /* 12-byte source vertices */)
 
 {
-  uint *puVar1;
+  uint *block;
   
-  puVar1 = heap_alloc_cleared(param_2 + param_3 * 0xc);
-  *(short *)(param_2 + -2 + (int)puVar1) = param_3;
-  apply_template_chain_xform_always( /* Original: FUN_00002d10 */param_1,(int)param_3,param_4,(uint *)(param_2 + (int)puVar1));
-  return puVar1;
+  block = heap_alloc_cleared(header_size + count * 0xc);
+  *(short *)(header_size + -2 + (int)block) = count;
+  apply_template_chain_xform_always( /* Original: FUN_00002d10 */obj,(int)count,src,(uint *)(header_size + (int)block));
+  return block;
 }
 
 
@@ -27631,15 +27657,15 @@ uint * alloc_transformed_vertex_block /* Original: FUN_000168d2 */ (int param_1,
  * Ghidra C reviewed (function at overlay offset 0x1691c).
  * Same layout as alloc_transformed_vertex_block but copies the 12-byte points unchanged (memmove_block). Ghidra C.
  */
-uint * alloc_copied_vertex_block /* Original: FUN_0001691c */ (undefined4 param_1,int param_2,short param_3,undefined4 *param_4)
+uint * alloc_copied_vertex_block /* Original: FUN_0001691c */ (undefined4 obj /* unused */,int header_size /* bytes before the vertices; count word at -2 */,short count /* vertex count */,undefined4 *src /* 12-byte source vertices */)
 
 {
-  uint *puVar1;
+  uint *block;
   
-  puVar1 = heap_alloc_cleared(param_2 + param_3 * 0xc);
-  *(short *)(param_2 + -2 + (int)puVar1) = param_3;
-  memmove_block( /* Original: FUN_0001a63e */param_4,(undefined4 *)(param_2 + (int)puVar1),(undefined4 *)(param_3 * 0xc));
-  return puVar1;
+  block = heap_alloc_cleared(header_size + count * 0xc);
+  *(short *)(header_size + -2 + (int)block) = count;
+  memmove_block( /* Original: FUN_0001a63e */src,(undefined4 *)(header_size + (int)block),(undefined4 *)(count * 0xc));
+  return block;
 }
 
 
@@ -27664,38 +27690,38 @@ uint * alloc_copied_vertex_block /* Original: FUN_0001691c */ (undefined4 param_
  * VERIFIED: checked against an independent capstone disassembly of the bytes; identical
  * to the C with the call-argument correction.
  */
-int * advance_route_waypoint /* Original: FUN_00016966 */ (int param_1,short *param_2)
+int * advance_route_waypoint /* Original: FUN_00016966 */ (int obj /* aircraft object */,short *route /* word index, word count, 12-byte points */)
 
 {
-  int iVar1;
-  uint uVar2;
-  uint uVar3;
-  short sVar4;
-  int *piVar5;
-  
-  piVar5 = (int *)(param_2 + *param_2 * 6 + 2);
-  iVar1 = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, point x, 0, point z): horizontal [PROVEN, pushes 0x1697c..0x1698a] */);
-  if (iVar1 < 5000) {
-    *param_2 = *param_2 + 1;
-    if (param_2[1] <= *param_2) {
-      *param_2 = 0;
+  int dist; /* distance to point; then normalised distance */
+  uint dist3; /* 3D distance to the new point */
+  uint sh;
+  short shift; /* normalisation shift to 15 bits */
+  int *point; /* current route point */
+
+  point = (int *)(route + *route * 6 + 2);
+  dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, point x, 0, point z): horizontal [PROVEN, pushes 0x1697c..0x1698a] */);
+  if (dist < 5000) {
+    *route = *route + 1;
+    if (route[1] <= *route) {
+      *route = 0;
     }
-    piVar5 = (int *)(param_2 + *param_2 * 6 + 2);
-    uVar2 = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, new point) in 3D [PROVEN, pushes 0x169b8..0x169ca] */);
-    sVar4 = 0;
-    for (; (uVar2 & 0xffff8000) != 0; uVar2 = (int)uVar2 >> 1) {
-      sVar4 = sVar4 + 1;
+    point = (int *)(route + *route * 6 + 2);
+    dist3 = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, new point) in 3D [PROVEN, pushes 0x169b8..0x169ca] */);
+    shift = 0;
+    for (; (dist3 & 0xffff8000) != 0; dist3 = (int)dist3 >> 1) {
+      shift = shift + 1;
     }
-    uVar3 = (uint)sVar4;
-    iVar1 = (int)(short)((int)uVar2 >> (uVar3 & 0x3f));
-    *piVar5 = ((short)(*piVar5 - *(int *)(param_1 + 0x18) >> (uVar3 & 0x3f)) * 5000) / iVar1 +
-              *piVar5;
-    piVar5[1] = ((short)(piVar5[1] - *(int *)(param_1 + 0x1c) >> (uVar3 & 0x3f)) * 5000) / iVar1 +
-                piVar5[1];
-    piVar5[2] = ((short)(piVar5[2] - *(int *)(param_1 + 0x20) >> (uVar3 & 0x3f)) * 5000) / iVar1 +
-                piVar5[2];
+    sh = (uint)shift;
+    dist = (int)(short)((int)dist3 >> (sh & 0x3f));
+    *point = ((short)(*point - *(int *)(obj + 0x18) >> (sh & 0x3f)) * 5000) / dist +
+              *point;
+    point[1] = ((short)(point[1] - *(int *)(obj + 0x1c) >> (sh & 0x3f)) * 5000) / dist +
+                point[1];
+    point[2] = ((short)(point[2] - *(int *)(obj + 0x20) >> (sh & 0x3f)) * 5000) / dist +
+                point[2];
   }
-  return piVar5;
+  return point;
 }
 
 
@@ -27710,18 +27736,18 @@ int * advance_route_waypoint /* Original: FUN_00016966 */ (int param_1,short *pa
  * +4 = DAT_0001b524[class] (index scale *4 decoded by
  * hand).
  */
-uint * create_trail_controller /* Original: FUN_00016a3a */ (uint param_1,int param_2)
+uint * create_trail_controller /* Original: FUN_00016a3a */ (uint obj,int def_key /* definition key into template_ptr_table_base */)
 
 {
-  uint *puVar1;
+  uint *ctl; /* new 0x58-byte trail controller */
   
-  puVar1 = heap_alloc_cleared(0x58);
-  *puVar1 = param_1;
-  *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x12000;
-  *(undefined2 *)(param_1 + 0x34) = 0;
-  puVar1[1] = *(uint *)(&DAT_0001b524 + param_2 * 4);
+  ctl = heap_alloc_cleared(0x58);
+  *ctl = obj;
+  *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x12000;
+  *(undefined2 *)(obj + 0x34) = 0;
+  ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
-  return puVar1;
+  return ctl;
 }
 
 
@@ -27731,21 +27757,21 @@ uint * create_trail_controller /* Original: FUN_00016a3a */ (uint param_1,int pa
  * Ghidra C reviewed (function at overlay offset 0x16a78).
  * Stores the trail template objects in DAT_00026650[0..1] (spawn_trail) and, once the first is taken, redirects the create handler to 0x16a1a (Ghidra 0x16a3a, create_trail_controller). Template / create / tick pattern of the effect families [PROVEN by the + 0x20 create pointers]: each register_*_template is the first create handler (definition +6, via instantiate_object_from_desc) and redirects later creates to the matching create_*_controller. Ghidra C.
  */
-undefined4 register_trail_templates /* Original: FUN_00016a78 */ (undefined4 param_1,int param_2)
+undefined4 register_trail_templates /* Original: FUN_00016a78 */ (undefined4 tmpl /* trail template */,int def_key)
 
 {
-  ushort uVar1;
+  ushort kind; /* first free trail_templates slot */
   
-  uVar1 = 0;
+  kind = 0;
   do {
-    if ((&DAT_00026650)[(short)uVar1] == 0) {
-      (&DAT_00026650)[(short)uVar1] = param_1;
+    if ((&trail_templates)[(short)kind] == 0) {
+      (&trail_templates)[(short)kind] = tmpl;
       break;
     }
-    uVar1 = uVar1 + 1;
-  } while (uVar1 < 2);
-  if (uVar1 != 0) {
-    *(undefined4 *)(*(int *)(&DAT_0001b524 + param_2 * 4) + 6) = 0x16a1a;
+    kind = kind + 1;
+  } while (kind < 2);
+  if (kind != 0) {
+    *(undefined4 *)(*(int *)(&template_ptr_table_base + def_key * 4) + 6) = 0x16a1a;
   }
   return 0;
 }
@@ -27757,11 +27783,11 @@ undefined4 register_trail_templates /* Original: FUN_00016a78 */ (undefined4 par
  * Ghidra C reviewed (function at overlay offset 0x16ac4).
  * Lifetime +0x34 = 0x4b (75 frames), state +0x36 = 1. Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Complete Ghidra C.
  */
-void init_trail_kind0 /* Original: FUN_00016ac4 */ (undefined4 param_1,int param_2)
+void init_trail_kind0 /* Original: FUN_00016ac4 */ (undefined4 obj /* unused */,int ctl /* trail controller */)
 
 {
-  *(undefined2 *)(param_2 + 0x34) = 0x4b;
-  *(undefined2 *)(param_2 + 0x36) = 1;
+  *(undefined2 *)(ctl + 0x34) = 0x4b;
+  *(undefined2 *)(ctl + 0x36) = 1;
   return;
 }
 
@@ -27772,11 +27798,11 @@ void init_trail_kind0 /* Original: FUN_00016ac4 */ (undefined4 param_1,int param
  * Ghidra C reviewed (function at overlay offset 0x16ad6).
  * Same as init_trail_kind0 (lifetime 0x4b, state 1). Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Complete Ghidra C.
  */
-void init_trail_kind1 /* Original: FUN_00016ad6 */ (undefined4 param_1,int param_2)
+void init_trail_kind1 /* Original: FUN_00016ad6 */ (undefined4 obj /* unused */,int ctl /* trail controller */)
 
 {
-  *(undefined2 *)(param_2 + 0x34) = 0x4b;
-  *(undefined2 *)(param_2 + 0x36) = 1;
+  *(undefined2 *)(ctl + 0x34) = 0x4b;
+  *(undefined2 *)(ctl + 0x36) = 1;
   return;
 }
 
@@ -27790,22 +27816,22 @@ void init_trail_kind1 /* Original: FUN_00016ad6 */ (undefined4 param_1,int param
  * found identical to the C: bsr.l 0x5116 spawn_mission_pool_object(DAT_00026650[kind], x, y, z, 0,
  * 0, 0, 0); null -> 0; else ctl = object +8, word ctl +0x32 = kind, init handler
  * DAT_0001b50c[kind](object, ctl) (both tables scale *4 decoded by hand); returns ctl. */
-int spawn_trail /* Original: FUN_00016ae8 */ (int param_1,uint param_2,uint param_3,uint param_4)
+int spawn_trail /* Original: FUN_00016ae8 */ (int kind /* trail kind 0 / 1 */,uint x,uint y,uint z)
 
 {
-  int iVar1;
-  int iVar2;
+  int obj; /* spawned object */
+  int ctl; /* its controller (+8); returned */
   
-  iVar1 = spawn_mission_pool_object( /* Original: FUN_00005116 */(&DAT_00026650)[param_1],param_2,param_3,param_4,0,0,0,0);
-  if (iVar1 == 0) {
-    iVar2 = 0;
+  obj = spawn_mission_pool_object( /* Original: FUN_00005116 */(&trail_templates)[kind],x,y,z,0,0,0,0);
+  if (obj == 0) {
+    ctl = 0;
   }
   else {
-    iVar2 = *(int *)(iVar1 + 8);
-    *(short *)(iVar2 + 0x32) = (short)param_1;
-    (**(code **)(&DAT_0001b50c + param_1 * 4))(iVar1,iVar2);
+    ctl = *(int *)(obj + 8);
+    *(short *)(ctl + 0x32) = (short)kind;
+    (**(code **)(&trail_init_table + kind * 4))(obj,ctl);
   }
-  return iVar2;
+  return ctl;
 }
 
 
