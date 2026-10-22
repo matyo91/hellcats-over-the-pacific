@@ -1090,14 +1090,14 @@ void add_rect_polygon /* Original: FUN_00000d02 */ (undefined4 colour_x0 /* para
 {
   undefined4 map_word; /* uVar1: lookup_colour_map result */
   undefined4 a4_in; /* caller A4 (register input); only its high word reaches lookup_colour_map */
-  int pt0_x; /* local_34, -$34(A6): pts[0] = (x0, y0); &pt0_x is the 4-point array */
-  int pt0_y; /* local_30, -$30(A6) */
-  int pt1_x; /* local_2c, -$2c(A6): pts[1] = (x1, y0) */
-  int pt1_y; /* local_28, -$28(A6) */
-  int pt2_x; /* local_24, -$24(A6): pts[2] = (x1, y1) */
-  int pt2_y; /* local_20, -$20(A6) */
-  int pt3_x; /* local_1c, -$1c(A6): pts[3] = (x0, y1) */
-  int pt3_y; /* local_18, -$18(A6) */
+  int pt0_x; /* local_34, -$30(A6): pts[0] = (x0, y0); &pt0_x is the 4-point array */
+  int pt0_y; /* local_30, -$2c(A6) */
+  int pt1_x; /* local_2c, -$28(A6): pts[1] = (x1, y0) */
+  int pt1_y; /* local_28, -$24(A6) */
+  int pt2_x; /* local_24, -$20(A6): pts[2] = (x1, y1) */
+  int pt2_y; /* local_20, -$1c(A6) */
+  int pt3_x; /* local_1c, -$18(A6): pts[3] = (x0, y1) */
+  int pt3_y; /* local_18, -$14(A6) */
   
   pt0_x = (int)colour_x0._2_2_;
   pt0_y = (int)y0_x1._0_2_;
@@ -1128,7 +1128,7 @@ void rebase_edge_rows_for_band /* Original: FUN_00000d84 */ (undefined4 band_off
 
 {
   int unaff_A5;
-  undefined4 node; /* local_8, -8(A6): 0x28-byte node cursor, pool +0x8a0 .. +0x8a4 */
+  undefined4 node; /* local_8, -4(A6): 0x28-byte node cursor, pool +0x8a0 .. +0x8a4 */
   
   for (node = *(uint *)(*(int *)(unaff_A5 + -0x1cd6) + 0x8a0);
       node < *(uint *)(*(int *)(unaff_A5 + -0x1cd6) + 0x8a4); node = node + 0x28) {
@@ -1154,7 +1154,7 @@ void restore_edge_rows_after_band /* Original: FUN_00000dca */ (undefined4 band_
 
 {
   int unaff_A5;
-  undefined4 node; /* local_8, -8(A6): 0x28-byte node cursor, pool +0x8a0 .. +0x8a4 */
+  undefined4 node; /* local_8, -4(A6): 0x28-byte node cursor, pool +0x8a0 .. +0x8a4 */
   
   for (node = *(uint *)(*(int *)(unaff_A5 + -0x1cd6) + 0x8a0);
       node < *(uint *)(*(int *)(unaff_A5 + -0x1cd6) + 0x8a4); node = node + 0x28) {
@@ -1199,9 +1199,9 @@ void rasterize_and_present /* Original: FUN_00000e10 */ (int dest /* param_1: of
   short band_offset; /* sVar6: active rows - rows still to draw after this band */
   undefined4 d2_in; /* caller D2 (register input); its high word becomes d2_residue */
   undefined2 d2_residue; /* uVar7: unaff_D2 high word, unread low half of the pushed long */
-  undefined4 rows_left; /* local_e, -$e(A6): rows still to render */
-  undefined2 continue_flag; /* local_8, -8(A6): 0 for the first band, then 1 */
-  undefined2 band; /* local_6, -6(A6): rows in this band, min(band_rows, rows_left) */
+  undefined4 rows_left; /* local_e, -$a(A6): rows still to render */
+  undefined2 continue_flag; /* local_8, -4(A6): 0 for the first band, then 1 */
+  undefined2 band; /* local_6, -2(A6): rows in this band, min(band_rows, rows_left) */
   
   a5 = CurrentA5;
   d2_residue = (undefined2)((uint)d2_in >> 0x10);

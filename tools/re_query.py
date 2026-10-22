@@ -278,14 +278,37 @@ def access_for(line: str, name: str) -> str:
     return "UNKNOWN_ACCESS"
 
 
+ALIAS_DEFINE_RE = re.compile(r"^#define\s+([A-Za-z_]\w*)\s+(_?DAT_[0-9A-Fa-f]+|PTR_\w+)\b", re.M)
+_ALIAS_CACHE: dict[Path, dict[str, str]] = {}
+
+
+def global_aliases(path: Path) -> dict[str, str]:
+    """Readable `#define alias DAT_xxxx` names of one source file, as {alias: symbol}."""
+    if path not in _ALIAS_CACHE:
+        text = path.read_text(encoding="utf-8", errors="replace") if path.exists() else ""
+        _ALIAS_CACHE[path] = {alias: symbol for alias, symbol in ALIAS_DEFINE_RE.findall(text)}
+    return _ALIAS_CACHE[path]
+
+
 def textual_globals(path: Path, body: list[str], start: int, access: str = "all") -> list[dict[str, Any]]:
     accesses: dict[str, set[str]] = {}
     evidence: dict[str, list[str]] = {}
+    aliases_seen: dict[str, set[str]] = {}
+    aliases = global_aliases(path)
+    alias_re = re.compile(r"\b(?:" + "|".join(sorted(map(re.escape, aliases), key=len, reverse=True)) + r")\b") if aliases else None
     masked = mask_comments("\n".join(body)).splitlines()
     for offset, line in enumerate(masked):
-        for name in set(GLOBAL_RE.findall(line)):
-            accesses.setdefault(name, set()).add(access_for(line, name))
-            evidence.setdefault(name, []).append(f"{relative(path)}:{start + offset}")
+        found = {name: name for name in GLOBAL_RE.findall(line)}
+        if alias_re:
+            for alias in alias_re.findall(line):
+                found.setdefault(alias, aliases[alias])
+        for token, name in found.items():
+            accesses.setdefault(name, set()).add(access_for(line, token))
+            location = f"{relative(path)}:{start + offset}"
+            if location not in evidence.setdefault(name, []):
+                evidence[name].append(location)
+            if token != name:
+                aliases_seen.setdefault(name, set()).add(token)
     selected = []
     for name in sorted(accesses):
         values = sorted(accesses[name])
@@ -293,7 +316,10 @@ def textual_globals(path: Path, body: list[str], start: int, access: str = "all"
             wanted = {"reads": {"READ", "READ_WRITE"}, "writes": {"WRITE", "READ_WRITE"}, "unknown": {"UNKNOWN_ACCESS"}}[access]
             if not wanted.intersection(values):
                 continue
-        selected.append({"name": name, "access": values, "evidence": evidence[name]})
+        entry: dict[str, Any] = {"name": name, "access": values, "evidence": evidence[name]}
+        if name in aliases_seen:
+            entry["alias"] = sorted(aliases_seen[name])
+        selected.append(entry)
     return selected
 
 
@@ -1136,7 +1162,7 @@ def cmd_evidence(args: argparse.Namespace) -> int:
         globals_source = textual_globals(ROOT / semantic["path"], semantic["all_lines"][sem_range[0] - 1:sem_range[1]], sem_range[0])
     else:
         globals_source = textual_globals(original_path, orig_lines, orig_range[0])
-    global_lines = [f"{g['name']} {'/'.join(g['access'])} @ {', '.join(e.rsplit(':', 1)[1] for e in g['evidence'])}" for g in globals_source]
+    global_lines = [f"{g['name']}{' (' + ', '.join(g['alias']) + ')' if g.get('alias') else ''} {'/'.join(g['access'])} @ {', '.join(e.rsplit(':', 1)[1] for e in g['evidence'])}" for g in globals_source]
     sections.append({"key": "globals", "required": False,
                      "title": "globals: source access (line numbers) | binary abs operands (R/W.width @addr)",
                      "lines": (global_lines or ["source: none"]) + (["binary:"] + window_globals if window_globals else ["binary: none"]),

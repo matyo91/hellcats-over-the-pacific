@@ -737,7 +737,7 @@ revalidated here.
 | `FUN_00000354` | `probe_nearest_facility_kind` | PROVEN | `@0x0354`: nearest pool entity kind 0x12/0x13 → flags 0x100/0x200 (stack entity arg; Ghidra void wrong). |
 | `FUN_00003c48` | `approx_dist3_from_abs` | PROVEN | `@0x3C48`: max+(a+b)>>2 on abs components in D0/D1/D3. |
 | `FUN_00003c68` | `approx_dist3_xyz` | PROVEN | `@0x3C68`: six stack XYZ; abs Δs then same combine. |
-| `$1A186` | *(false mid → `tick_landing_approach_glide`)* | BLOCKED | `0x1A1A6−0x20`; literal stored by `try_begin_landing_approach`. |
+| `$1A186` | *(false mid → `tick_landing_approach_glide`)* | bytes PROVEN (false entry); callsite PROVEN (only absolute lea / move.l #addr references, runtime = file + 0x20; no bsr/jsr reaches the offset) | `0x1A1A6−0x20`; literal stored by `try_begin_landing_approach`. |
 | `FUN_00001d02` | `matmul3x3_s16` | PROVEN | `@0x1D02`: 3×3 s16 `out=left×right`, each element 3×`MULS.W` then `ASR #12` (floor). Body VERIFIED vs bytes; attitude matrix = R4·Rz·Rx·Ry applied as v·M. |
 | `FUN_000020e6` | `fill_attitude_rotation_bases` | PROVEN layout | `@0x20E6`: expand sincos pairs 1–3 into bases at `DAT_0001d7d4` / `1d7bc` / `1d7a4` (≈Rx/Ry/Rz, `0x1000`=1). |
 | `FUN_000021a0` | `fill_attitude_rotation_basis_4` | PROVEN layout | `@0x21A0`: angle4 (`1d7ee/f0`) → `DAT_0001d78c` as ≈Ry `[[c,0,s],[0,1,0],[-s,0,c]]`. |
@@ -758,9 +758,9 @@ revalidated here.
 | `DAT_00020ce4` | `attitude_compose_tag` (code ptr) | PROVEN use | `$2468`/`$26e0` secondary entries; `$2408` literal mid-`0229e` but `≡ finalize_…_3ang_alt−0x20` — A890 A6 check favors +0x20 false-address reading. |
 | `FUN_00003b98` | `update_object_camera_metric` | PROVEN | `@0x3B98`: abs(`+0x18/1c/20` − `d838/834/830`); `metric=max+((a+b)>>2)` → `obj+0x10` and D0. |
 | `FUN_00003c00` | `compute_camera_abs_metric` | PROVEN | `@0x3C00`: abs(x/y/z − `d838/834/830`); same metric; returns D0 only (no `+0x10` store). |
-| `FUN_00003be0` | *(false mid-`update_object_camera_metric`)* | BLOCKED (bytes) | `@0x3BE0` = first axis-swap inside `@0x3B98`; not a real entry. Its only reference, `lea.l $3be0.l` at 0xbb8 (nearest_type80_centroid_visitor), is a RUNTIME address = file 0x3c00 = `compute_camera_abs_metric` [PROVEN]. |
-| `FUN_00001d56` | *(false mid-`matmul3x3_s16`)*; callsite→`sin_fixed14` | BLOCKED | `@0x1D56` = `$1D76−0x20` (ASR inside matmul). |
-| `FUN_00001db8` | *(false mid-`sin_fixed14`)*; callsite→`cos_fixed14` | BLOCKED | `@0x1DB8` = `$1DD8−0x20`. |
+| `FUN_00003be0` | *(false mid-`update_object_camera_metric`)* | bytes PROVEN (false entry); callsite PROVEN (only absolute lea / move.l #addr references, runtime = file + 0x20; no bsr/jsr reaches the offset) | `@0x3BE0` = first axis-swap inside `@0x3B98`; not a real entry. Its only reference, `lea.l $3be0.l` at 0xbb8 (nearest_type80_centroid_visitor), is a RUNTIME address = file 0x3c00 = `compute_camera_abs_metric` [PROVEN]. |
+| `FUN_00001d56` | *(false mid-`matmul3x3_s16`)*; callsite→`sin_fixed14` | bytes PROVEN (false entry); callsite PROVEN (only absolute lea / move.l #addr references, runtime = file + 0x20; no bsr/jsr reaches the offset) | `@0x1D56` = `$1D76−0x20` (ASR inside matmul). |
+| `FUN_00001db8` | *(false mid-`sin_fixed14`)*; callsite→`cos_fixed14` | bytes PROVEN (false entry); callsite PROVEN (only absolute lea / move.l #addr references, runtime = file + 0x20; no bsr/jsr reaches the offset) | `@0x1DB8` = `$1DD8−0x20`. |
 | `FUN_00006fb8` | `reset_distance_base_globals` | STRONG INFERENCE | `@0x6FB8`: six `MOVE.L #$05F5E100` to `DAT_0001d710/14/18/1c/20/24`. |
 | `FUN_0000e792` | `update_aircraft_entity` | STRONG INFERENCE | Blocks 0–7c; Block1 Capstone@E8A0 links avg4→662/666. Callers: climb/waypoint/AI ticks — not sim tick. |
 | `entity+0x662` | `ctrl_avg_pitchish` (from avg4 p3) | STRONG INFERENCE | Filled by `enqueue_control_inputs_avg4`; jittered if `flags_685` bit2. |
@@ -768,7 +768,7 @@ revalidated here.
 | `entity+0x685` | `flags_685` | PROVEN | bit0 gates avg4; bit2/3 RNG jitter; bit0 of +0x684 clears/forces controls. |
 | `FUN_0000e372` | `isqrt_floor` | PROVEN | `@0xE372`: binary-search floor sqrt on `[0,0x7FFF]`; signed input, result min(floor(sqrt(x)), 0x7FFE), 0 for x < 0. Body VERIFIED vs bytes. |
 | `FUN_0000e3b2` | `acos_scaled_dot3` | PROVEN | `@0xE3B2`: `(dot3>>4)/((p4*p8)>>16)` then `acos_fixed14`; 0 if denom 0. |
-| `$E352` / `LAB_0000e350_2` | *(false)*; callsite→`isqrt_floor` | BLOCKED | `@0xE352=$E372−0x20`; mid-BSR garbage; LEA @0x22CC + table `$32E` @0x11C4. |
+| `$E352` / `LAB_0000e350_2` | *(false)*; callsite→`isqrt_floor` | bytes PROVEN (false entry); callsite PROVEN (only absolute lea / move.l #addr references, runtime = file + 0x20; no bsr/jsr reaches the offset) | `@0xE352=$E372−0x20`; mid-BSR garbage; LEA @0x22CC + table `$32E` @0x11C4. |
 | `FUN_00001f22` | `attitude_from_velocity` | STRONG INFERENCE | `@0x1F22`: velocity → two 14-bit attitude outs via `01ebc`/`01e3a`. |
 | `FUN_00011564` | `overlay_rng_next` | PROVEN | `@0x11564`: additive table RNG: cursor `DAT_00026008`, ring of 55 longs `0x2600C…0x260E7`, x[n] = x[n-1] + x[n-32]; returns bits 31..16 zero-extended. VERIFIED vs bytes. |
 | `FUN_000114ca` | `overlay_rng_mul_mix` | PROVEN | `@0x114CA`: 32-bit product (a*b mod 2^32) built from 16-bit halves; table fill factor `0x1DF5E0D`. VERIFIED vs bytes. |
@@ -781,7 +781,7 @@ revalidated here.
 | `FUN_000028dc` | `transform_vecs12_by_matrix3` | PROVEN | `@0x28DC`: count× transform shorts at +2/+6/+10 by 3×3 (`+0x800>>12`). |
 | `FUN_00002976` | `transform_vecs12_to_int3_by_matrix3` | PROVEN | `@0x2976`: same as `028dc` but MOVE.L int3 outs (`+0x800>>12`). |
 | `FUN_00002a0e` | `transform_listed_object_vecs12_by_1d744` | PROVEN | `@0x2A0E`: walk `1c9dc` objs; ASR `+0x32`; ×`1d744`; store vecs12 at `+0x4c`. |
-| `FUN_00002aba` | *(false mid-`transform_listed_object_vecs12_by_1d744`)* | BLOCKED (bytes) | `@0x2ABA` = `move.w d0,$a(a1)` inside @0x2A0E loop. Its call sites use `lea.l $2aba.l`, a RUNTIME address = file 0x2ada = `transform_int3_vecs_by_matrix3` [PROVEN, e.g. transform_through_node_chain 0x566]. |
+| `FUN_00002aba` | *(false mid-`transform_listed_object_vecs12_by_1d744`)* | bytes PROVEN (false entry); callsite PROVEN (only absolute lea / move.l #addr references, runtime = file + 0x20; no bsr/jsr reaches the offset) | `@0x2ABA` = `move.w d0,$a(a1)` inside @0x2A0E loop. Its call sites use `lea.l $2aba.l`, a RUNTIME address = file 0x2ada = `transform_int3_vecs_by_matrix3` [PROVEN, e.g. transform_through_node_chain 0x566]. |
 | `FUN_0000e42a` | `table_lerp_1b2c0` | PROVEN algo | `@0xE42A`: banded lerp on `DAT_0001b2c0`; input typically `*(world+0x1c)`. |
 | `FUN_0000e468` | `damp_short_if_below_0x200` | PROVEN | `@0xE468`: if delta&lt;`0x200`, subtract `((0x200−delta)*v)>>12` from short. |
 | `FUN_0000e570` | `scale_template_field_38` | PROVEN | `@0xE570`: `*out = template[+0x38] * (0x551a/((in+0x105)>>3)) >> 8`. |
@@ -983,6 +983,14 @@ checked against the runtime-address rule.
 ## Call-argument corrections
 
 Ghidra calls that lost their stack arguments; the bytes give the real list.
+
+Convention change (2026-10-22, user decision): lost arguments are now also RESTORED in the semantic
+C, one callee family at a time - the callee gets its real signature and body, every call site gets its
+arguments (marked `RESTORED [PROVEN, pushes before 0x...]`), and the rows below stay as the evidence.
+Restored so far: `approx_dist3_xyz` (FUN_00003c68; 38 call sites) and `segment_point_min_distance`
+(FUN_00003cca: 9-long signature, its start / far end / midpoint locals and three internal calls, and
+the two bullet callers) - including the two stores of the last emitted vertex that
+Ghidra dropped in `build_land_outline_at_detail` (0x4aee / 0x4af2).
 Under the verification policy, a function whose body matches the bytes is VERIFIED once
 its dropped arguments are listed here.
 
@@ -1093,6 +1101,7 @@ its dropped arguments are listed here.
 | `update_fuel_needles` (FUN_0000cec4) | Ghidra `FUN_00001db8()` / `FUN_00001d56()` = runtime lea $1db8 / $1d56 = `cos_fixed14` (0x1dd8) / `sin_fixed14` (0x1d76), applied in the semantic C | angle ((fuel * 0x1555) / (capacity / 2) - 0xaab) & 0x3fff | bytes 0xcf12..0xd000 |
 | `update_altimeter_needles` (FUN_0000c664) | same runtime cos_fixed14 / sin_fixed14 pair, applied | long hand (((y % 10000) << 14) / 10000 - 0x1000) & 0x3fff, short hand the same with 100000 (DIVSL remainder) | bytes 0xc668..0xc716 |
 | `update_gear_needles` (FUN_0000ccca) | same runtime cos_fixed14 / sin_fixed14 pair, applied; abs_int result restored | angle ((abs_int(gear) << 12) / 45) & 0x3fff, one for all three needles | bytes 0xcd02..0xcd4e |
+| `draw_sky_and_ground` (FUN_0000b4b6) | `heap_alloc` (FUN_00001a68, via runtime `$1a48`) ×2 | 1 long: sext word 0x25f3a (bg_cache_size row count) * 20 (movea.w, lea (a0,a0.l*4), asl.l #2) for background_rows_next, then the same for background_rows | bytes 0xb566..0xb594 |
 
 ## Code entries missing from Ghidra's function list (Pacific Conflict)
 

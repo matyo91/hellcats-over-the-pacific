@@ -53,6 +53,8 @@ def main() -> int:
     named_block = run("excerpt", "--segment", "Pacific Conflict", "FUN_0000e792", "--block", "Block 6c", "--limit", "8")
     assert "Block 6c" in named_block and len(named_block.splitlines()) <= 10
     assert "DAT_0001b2c0" in run("globals", "table_lerp_1b2c0", "--access", "unknown")
+    radar = run("globals", "--segment", "Pacific Conflict", "update_radar_scope")
+    assert '"DAT_0001b51c"' in radar and '"radar_tracks"' in radar
     assert "update_aircraft_entity" in run("callers", "table_lerp_1b2c0")
     assert "Pacific Conflict::FUN_0000e42a" in run("callees", "--segment", "Pacific Conflict", "FUN_0000e792")
     status = run("status", "--segment", "Pacific Conflict", "FUN_0000e42a", "--detail")

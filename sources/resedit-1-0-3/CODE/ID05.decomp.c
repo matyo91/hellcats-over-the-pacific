@@ -585,7 +585,7 @@ int encode_base26_6chars /* Original: FUN_00000754 */ (char *dst /* param_1: out
 
 {
   int quotient; /* iVar1: value / 26, returned */
-  short i; /* local_a, -$a(A6): letter counter 0..5 */
+  short i; /* local_a, -$6(A6): letter counter 0..5 */
   
   dst = dst + 6;
   quotient = 0;
@@ -618,8 +618,8 @@ int decode_base26_6chars /* Original: FUN_000007a8 */ (int src /* param_1: 6-let
 
 {
   int digit; /* iVar1: (short)(c - 'A'), returned */
-  undefined2 i; /* local_a, -$a(A6): letter index 0..5 */
-  undefined4 acc; /* local_8, -8(A6): base-26 accumulator */
+  undefined2 i; /* local_a, -$6(A6): letter index 0..5 */
+  undefined4 acc; /* local_8, -4(A6): base-26 accumulator */
   
   acc = 0;
   digit = 0;
@@ -659,7 +659,7 @@ void poison_overlay_bytes /* Original: FUN_000007f6 */ (int base /* param_1: ove
   undefined1 *target; /* puVar1: byte chosen for poisoning */
   uint rnd; /* uVar2: ansi_rand result */
   int unaff_A5;
-  undefined2 i; /* local_6, -6(A6): table entry 0..11 */
+  undefined2 i; /* local_6, -2(A6): table entry 0..11 */
   
   for (i = 0; (base != 0 && (i < 0xc)); i = i + 1) {
     rnd = ansi_rand(); /* Original: FUN_00000728 */
@@ -694,7 +694,7 @@ void restore_poisoned_overlay_bytes /* Original: FUN_0000085e */ (void)
   short entry; /* sVar1: decremented counter = table entry 11..0 */
   bool armed; /* bVar2: A5-0xbc word or A5-0xc0 long nonzero (restore gate) */
   int unaff_A5;
-  undefined2 count; /* local_6, -6(A6): entries left, starts at 12 */
+  undefined2 count; /* local_6, -2(A6): entries left, starts at 12 */
   
   if ((*(short *)(unaff_A5 + -0xbc) == 0) && (*(int *)(unaff_A5 + -0xc0) == 0)) {
     armed = false;
@@ -926,7 +926,7 @@ void unpack_fields_from_code /* Original: FUN_00000b10 */ (int code /* param_1: 
                  undefined2 *bits5_7 /* param_5: out, bits 5..7 << 2 */,ushort *bits0_4 /* param_6: out, bits 0..4 */)
 
 {
-  int value; /* local_8, -8(A6): decoded 28-bit value */
+  int value; /* local_8, -4(A6): decoded 28-bit value */
   
   decode_base26_6chars( /* Original: FUN_000007a8 */ code,&value);
   *bits16_31 = (short)((uint)value >> 0x10);
@@ -971,7 +971,7 @@ int encode_code28_to_buf54 /* Original: FUN_00000b84 */ (uint value /* param_1: 
 int decode_code_to_long_a /* Original: FUN_00000ba8 */ (int code /* param_1: 6-letter code */)
 
 {
-  int value; /* local_8, -8(A6): decoded value */
+  int value; /* local_8, -4(A6): decoded value */
   
   decode_base26_6chars( /* Original: FUN_000007a8 */ code,&value);
   return value;
@@ -1010,7 +1010,7 @@ int encode_long_to_buf40 /* Original: FUN_00000bc2 */ (int value /* param_1: val
 int decode_code_to_long_b /* Original: FUN_00000bde */ (int code /* param_1: 6-letter code */)
 
 {
-  int value; /* local_8, -8(A6): decoded value */
+  int value; /* local_8, -4(A6): decoded value */
   
   decode_base26_6chars( /* Original: FUN_000007a8 */ code,&value);
   return value;

@@ -59,7 +59,7 @@ int abs_long /* Original: FUN_0000001e */ (int value /* param_1 */)
 void ansi_div /* Original: FUN_00000038 */ (undefined4 *result /* param_1 */,undefined4 operands /* param_2: numerator word, denominator word */)
 
 {
-  undefined4 quot_rem; /* local_8, -8(A6): quotient word, remainder word */
+  undefined4 quot_rem; /* local_8, -4(A6): quotient word, remainder word */
   
   quot_rem = CONCAT22((short)operands._0_2_ / (short)operands._2_2_,(short)operands._0_2_ % (short)operands._2_2_);
                                                 /* DIVS.W: signed; undefined2 is unsigned in this file */
@@ -2449,8 +2449,8 @@ char * format_int_decimal_pstring /* Original: FUN_00001c8a */ (int v /* param_1
 {
   char *digit; /* pcVar1: next digit slot */
   bool negative; /* bVar2 */
-  char *out; /* local_e, -$e(A6): copy destination */
-  char *p; /* local_a, -$a(A6): first digit, then copy source */
+  char *out; /* local_e, -$a(A6): copy destination */
+  char *p; /* local_a, -$6(A6): first digit, then copy source */
   
   negative = v < 0;
   if (negative) {
@@ -4814,7 +4814,7 @@ play_sample_on_channel /* Original: FUN_00003f54 */ (int channel /* param_1: 0 o
 {
   int a5; /* iVar1: copy of CurrentA5 */
   undefined4 ok; /* uVar2: 1 = queued, 0 = sound off or bad channel */
-  undefined4 first_node; /* local_8, -8(A6): the node the channel starts on */
+  undefined4 first_node; /* local_8, -4(A6): the node the channel starts on */
   
   a5 = CurrentA5;
   /* A5 = CurrentA5 ($904) inside; flag words: 1 = continue to the next node, 0 = loop on itself */

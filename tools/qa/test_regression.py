@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -262,6 +263,32 @@ def check_01a48_kind2_jsr_bytes() -> None:
         fail(f"$1A68 size slot drifted: {data[0x1A6C:0x1A70].hex()}")
 
 
+def check_global_alias_docs() -> None:
+    """Every `#define alias DAT_xxxx` in a *.decomp.c has one matching DECOMPILATION_SYMBOLS.md row, and back."""
+    define_re = re.compile(r"^#define\s+(\w+)\s+(_?DAT_[0-9A-Fa-f]+|PTR_\w+)\b", re.M)
+    row_re = re.compile(r"\|\s*([^|]+?)\s*\|\s*`(\w+)`\s*\|\s*`(_?DAT_[0-9A-Fa-f]+|PTR_\w+)`\s*\|")
+    rows: dict[str, dict[str, str]] = {}
+    for line in (REPO_ROOT / "docs" / "DECOMPILATION_SYMBOLS.md").read_text(encoding="utf-8").splitlines():
+        match = row_re.match(line)
+        if match:
+            rows.setdefault(match.group(1), {})[match.group(2)] = match.group(3)
+    seen = set()
+    for path in sorted((REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE").glob("*.decomp.c")):
+        segment = path.name[: -len(".decomp.c")]
+        defines = dict(define_re.findall(path.read_text(encoding="utf-8")))
+        documented = rows.get(segment, {})
+        seen.add(segment)
+        missing = sorted(set(defines) - set(documented))
+        extra = sorted(set(documented) - set(defines))
+        wrong = sorted(a for a in defines if a in documented and documented[a] != defines[a])
+        if missing or extra or wrong:
+            fail(f"{segment} global aliases out of sync: undocumented {missing[:5]}, "
+                 f"no define {extra[:5]}, symbol mismatch {wrong[:5]}")
+    unknown = sorted(set(rows) - seen)
+    if unknown:
+        fail(f"DECOMPILATION_SYMBOLS.md alias rows for unknown segments: {unknown}")
+
+
 def check_optional_capstone() -> str:
     """Optional: Capstone m68k import. Returns PASS/SKIP message suffix."""
     try:
@@ -291,6 +318,7 @@ def main() -> int:
         ("replay-fixture", check_replay_fixture),
         ("mission-mvp-data", check_mission_mvp_data),
         ("01a48-kind2-jsr-bytes", check_01a48_kind2_jsr_bytes),
+        ("global-alias-docs", check_global_alias_docs),
     ]
     optional = [
         ("optional-capstone", check_optional_capstone),

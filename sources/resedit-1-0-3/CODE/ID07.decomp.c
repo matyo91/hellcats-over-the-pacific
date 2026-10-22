@@ -155,7 +155,7 @@ void init_string_pointer_groups /* Original: FUN_00000190 */ (void)
 
 {
   int unaff_A5;
-  undefined2 i; /* local_6, -6(A6): copy index within each group */
+  undefined2 i; /* local_6, -2(A6): copy index within each group */
 
   load_str129_string_table(); /* Original: FUN_00000006; binary JSR $6(PC) at file 0x194 */
   for (i = 0; i < 0x15; i = i + 1) {

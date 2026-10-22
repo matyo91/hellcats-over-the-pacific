@@ -1425,7 +1425,8 @@ undefined4 * copy_block_return_dst(undefined4 *dst, undefined4 *src, undefined4 
  *   Block B (fixed 0x1A/0x20 named slots) — annotated
  *   Block C (5 × 0x1C keyed clones) — annotated
  *   Block D (five 0x1A slots → DAT_0001b58c…59c) — annotated
- *   Remaining: record schemas; $1A48 dest ABI (BLOCKED)
+ *   Remaining: record schemas. $1A48 dest ABI: RESOLVED [PROVEN] - lea.l $1a48.l is the runtime
+ *   address of heap_alloc (file 0x1a68); see the VERIFIED note below
  */
 /* VERIFIED (FUN_00000054): 0x54..0x332 checked against an independent capstone disassembly: 4 keyed 0x4A
  * clones (keys 1 / 4 / 3 / 2), 16 fixed-slot clones into DAT_0001b524 + 0x14..0x50 (sizes 0x1A, one
@@ -1733,7 +1734,7 @@ undefined4 probe_nearest_facility_kind(int object /* param_1: object whose posit
     slot = next;
     if (((*(int *)(facility + 8) != 0) &&
         (((type_word = *(short **)(*(int *)(facility + 8) + 4), *type_word == 0x12 || (*type_word == 0x13)) &&
-         (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */), dist < *(int *)(facility + 0xc))))) && (dist < best_dist)) {
+         (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x3a6] */*(int *)(object + 0x18), *(int *)(object + 0x1c), *(int *)(object + 0x20), *(int *)(facility + 0x18), *(int *)(facility + 0x1c), *(int *)(facility + 0x20)), dist < *(int *)(facility + 0xc))))) && (dist < best_dist)) {
       best_dist = dist;
       best = facility;
     }
@@ -1847,11 +1848,11 @@ void transform_through_node_chain /* Original: FUN_000004f8 */ (int *path_top /*
   int vert_count; /* iVar4: object word +0x1a vertex count */
   int dst; /* iVar5: vertex destination */
   undefined1 *matrix_arg; /* puVar6: matrix argument */
-  int *path; /* local_26, -$26(A6): node-pointer stack cursor */
-  undefined1 matrix [18]; /* auStack_22, -$22(A6): 3x3 attitude matrix (18 bytes) */
-  undefined4 pos_x; /* local_10, -$10(A6): running position x */
-  undefined4 pos_y; /* local_c, -$c(A6) */
-  undefined4 pos_z; /* local_8, -8(A6) */
+  int *path; /* local_26, -$22(A6): node-pointer stack cursor */
+  undefined1 matrix [18]; /* auStack_22, -$1e(A6): 3x3 attitude matrix (18 bytes) */
+  undefined4 pos_x; /* local_10, -$c(A6): running position x */
+  undefined4 pos_y; /* local_c, -$8(A6) */
+  undefined4 pos_z; /* local_8, -4(A6) */
 
   path = path_top;
   pos_x = *(undefined4 *)(object + 2);
@@ -2082,12 +2083,12 @@ void plot_mission_map_symbols /* Original: FUN_00000954 */ (int scale /* param_1
   int aiStackY_60b5c [66161];
   int aiStackY_20198 [24551];
   char acStackY_81fc [30316];
-  int ctx_scale; /* local_b60, -$b60(A6): collect_map_features context, int[0] = scale */
-  int ctx_points [600]; /* local_b5c, -$b5c(A6): context +4: zone (x, y, z) triples, site triples from index 300 */
-  char site_kind [100]; /* local_1fc, -$1fc(A6): context +0x964 site kind bytes */
-  int site_range [100]; /* local_198, -$198(A6): context +0x9c8 site value +0xe, compared as the range */
-  short point_count; /* local_8, -8(A6): context +0xb58 zone point count */
-  short site_count; /* local_6, -6(A6): context +0xb5a site count */
+  int ctx_scale; /* local_b60, -$b5c(A6): collect_map_features context, int[0] = scale */
+  int ctx_points [600]; /* local_b5c, -$b58(A6): context +4: zone (x, y, z) triples, site triples from index 300 */
+  char site_kind [100]; /* local_1fc, -$1f8(A6): context +0x964 site kind bytes */
+  int site_range [100]; /* local_198, -$194(A6): context +0x9c8 site value +0xe, compared as the range */
+  short point_count; /* local_8, -4(A6): context +0xb58 zone point count */
+  short site_count; /* local_6, -2(A6): context +0xb5a site count */
 
   player = *player_object;
   ctx_scale = scale;
@@ -2102,7 +2103,7 @@ void plot_mission_map_symbols /* Original: FUN_00000954 */ (int scale /* param_1
       site = 0;
       if (0 < site_count) {
         do {
-          dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x9ba..0x9ce): local_b5c[iVar6 * 3 .. + 2] (object x, y, z) and local_b5c[300 + sVar3 * 3 .. + 2] (zone x, y, z at -$6a8(a6)) */);
+          dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x9ba..0x9ce): local_b5c[iVar6 * 3 .. + 2] (object x, y, z) and local_b5c[300 + sVar3 * 3 .. + 2] (zone x, y, z at -$6a8(a6)) */ /* RESTORED [PROVEN, pushes before 0x9ce] */ctx_points[work_x * 3], ctx_points[work_x * 3 + 1], ctx_points[work_x * 3 + 2], ctx_points[site * 3 + 300], ctx_points[site * 3 + 301], ctx_points[site * 3 + 302]);
           if (dist < site_range[site]) {
             if (0 < ctx_points[work_x * 3 + 1]) {
               symbol = 'C';
@@ -2172,10 +2173,10 @@ void nearest_type80_centroid_visitor /* Original: FUN_00000aba */ (int *best /* 
   undefined4 origin_z; /* uStack_6ac: node origin z (unused) */
   undefined4 origin_y; /* uStack_6a8: node origin y (unused) */
   undefined4 origin_x; /* uStack_6a4: node origin x (unused) */
-  int sum_x; /* local_6a0, -$6a0(A6): centroid x */
-  int sum_y; /* local_69c, -$69c(A6): centroid y (+100) */
-  int sum_z; /* local_698, -$698(A6): centroid z */
-  int verts [420]; /* aiStack_694, -$694(A6): transformed vertices (x, y, z) */
+  int sum_x; /* local_6a0, -$69c(A6): centroid x */
+  int sum_y; /* local_69c, -$698(A6): centroid y (+100) */
+  int sum_z; /* local_698, -$694(A6): centroid z */
+  int verts [420]; /* aiStack_694, -$690(A6): transformed vertices (x, y, z) */
 
   if ((*(byte *)(face + 9) & 0xf0) == 0x80) {
     transform_through_node_chain(path,depth,node,&origin_x,&origin_y,&origin_z,(int)verts);
@@ -2271,11 +2272,11 @@ void anchor_point_visitor /* Original: FUN_00000c4c */ (int *ctx /* param_1: fin
 {
   int work; /* iVar1: parent record path[-1], then the distance */
   int aiStackY_60690 [98285];
-  undefined4 pos_z; /* local_6ac, -$6ac(A6): node origin z */
-  undefined4 pos_y; /* local_6a8, -$6a8(A6): node origin y */
-  undefined4 pos_x [4]; /* local_6a4, -$6a4(A6): node origin x (array form is Ghidra's) */
-  undefined1 verts [4]; /* auStack_694, -$694(A6): transformed vertex buffer (x, y, z) */
-  int verts_y [419]; /* aiStack_690, -$690(A6): verts + 4, so [3 i] is vertex i's y */
+  undefined4 pos_z; /* local_6ac, -$6a8(A6): node origin z */
+  undefined4 pos_y; /* local_6a8, -$6a4(A6): node origin y */
+  undefined4 pos_x [4]; /* local_6a4, -$6a0(A6): node origin x (array form is Ghidra's) */
+  undefined1 verts [4]; /* auStack_694, -$690(A6): transformed vertex buffer (x, y, z) */
+  int verts_y [419]; /* aiStack_690, -$68c(A6): verts + 4, so [3 i] is vertex i's y */
 
   if (*(short *)((int)ctx + 0x1e) == 0) {
     if (*(char *)(node + 1) != '\x01') {
@@ -2304,7 +2305,7 @@ void anchor_point_visitor /* Original: FUN_00000c4c */ (int *ctx /* param_1: fin
     }
     /* Dropped call arguments [PROVEN, 0xcb4..0xccc]: approx_dist3_xyz(ctx +4, ctx +8, ctx
      * +0xc, local_6a4[0], local_6a8, local_6ac) (the reference point, then the found point). */
-    work = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+    work = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0xccc] */ctx[1], ctx[2], ctx[3], pos_x[0], pos_y, pos_z);
     if (ctx[8] <= work) {
       return;
     }
@@ -2331,16 +2332,16 @@ void anchor_point_visitor /* Original: FUN_00000c4c */ (int *ctx /* param_1: fin
 void find_anchor_point /* Original: FUN_00000d6a */ (undefined4 *result /* param_1: output record (x, y, z, three angles, found word +0x18) */,undefined2 mode /* param_2: 0 = kind-1 node, 1 = nearest type-0x70 ground point */)
 
 {
-  undefined4 *ctx_result; /* local_28, -$28(A6): context [0] = result pointer */
+  undefined4 *ctx_result; /* local_28, -$24(A6): context [0] = result pointer */
   undefined4 ref_x; /* uStack_24: copy of result[0], the reference x */
   undefined4 ref_y; /* uStack_20: copy of result[1] */
   undefined4 ref_z; /* uStack_1c: copy of result[2] */
   undefined4 ref_angle_a; /* uStack_18: copy of result[3] */
   undefined4 ref_angle_b; /* uStack_14: copy of result[4] */
   undefined4 ref_angle_c; /* uStack_10: copy of result[5] */
-  undefined2 ref_found; /* local_c, -$c(A6): copy of the found word +0x18 */
-  undefined2 ctx_mode; /* local_a, -$a(A6): context word +0x1e = mode */
-  undefined4 ctx_best; /* local_8, -8(A6): context [8] best key, 1000000000 */
+  undefined2 ref_found; /* local_c, -$8(A6): copy of the found word +0x18 */
+  undefined2 ctx_mode; /* local_a, -$6(A6): context word +0x1e = mode */
+  undefined4 ctx_best; /* local_8, -4(A6): context [8] best key, 1000000000 */
 
   ctx_mode = mode;
   ctx_best = 1000000000;
@@ -2796,7 +2797,7 @@ void init_depth4_colour_state /* Original: FUN_0000131c */ (void)
   int a; /* iVar5: outer level 0..4 */
   int entry; /* iVar6: table entry 0..124 */
   int slot; /* iVar7: device slot 1..3 */
-  uint a_gt3; /* local_8, -8(A6): (a > 3) flag for nibble 3 */
+  uint a_gt3; /* local_8, -4(A6): (a > 3) flag for nibble 3 */
   
   reset_palette_owner_tables();
   slot = 1;
@@ -3364,7 +3365,8 @@ void heap_free_coalesce(int payload /* param_1: payload pointer; header at paylo
  * Original: FUN_00001a48
  * Source: Pacific Conflict.c:2128 / binary @0x1A48
  * Proposed name: heap_roving_cursor_store
- * Confidence: [PROVEN] for the three-instruction body; [BLOCKED] for call-site ABI
+ * Confidence: [PROVEN] for the three-instruction body; call-site ABI RESOLVED [PROVEN] (resolution
+ * below; whole-binary scan: every reference is an absolute lea.l, none a bsr/jsr to the file offset: the 4 lea.l $1a48.l are heap_alloc at file 0x1a68)
  *
  *  resolution [PROVEN]: the "call-site ABI" problem was an address-space
  * mix-up. Every caller loads `lea.l $1a48.l` (at 0x76 / 0x278 in overlay_main_entry, 0x4ed8,
@@ -3938,19 +3940,20 @@ int sin_fixed14(uint angle /* param_1: angle 0..0x3fff (0x4000 = full turn) */) 
  * Original: FUN_00001db8
  * Bytes: mid-body / tail of sin_fixed14 — NOT cos
  * Call-site alias: cos_fixed14 [INFERRED] (LEA $1DB8; real cos @ $1DD8 = +0x20)
- * Status: BLOCKED
+ * Status: RESOLVED [PROVEN] - false entry (tail of sin_fixed14); whole-binary scan: every reference is an absolute lea.l, none a bsr/jsr to the file offset: its 3
+ * references are lea.l $1db8.l = the runtime address of cos_fixed14 (file 0x1dd8)
  */
 /* VERIFIED (FUN_00001db8): 0x1db8..0x1dd6 checked against an independent capstone disassembly and
  * found identical to the C: a code fragment with register inputs (see the header): v = D2 * (D1 -
  * ((D4 + D0) & ~0x3f)) (muls.l), +0x3f when negative, asr.l #6, add.w D3, ext.l. */
 int FUN_00001db8(void) /* Original: FUN_00001db8 — false entry; see header */
 {
-  int round_add; /* in_D0: added to unaff_D4 before & ~0x3f (D0) [HYPOTHESIS: 0 or 0x3f as in sin_fixed14] */
+  int round_add; /* in_D0: added to unaff_D4 before & ~0x3f (D0) [PROVEN: this fragment is only entered by falling through from sin_fixed14 (no bsr / jsr reaches 0x1db8), where 0x1db2 move.l d1,d0 makes D0 the angle] */
   int delta; /* iVar1: interpolation term */
   int angle; /* in_D1: angle (D1) */
   int table_step; /* unaff_D2: next - this table entry (D2) */
   short base_value; /* unaff_D3w: this table entry (D3.w) */
-  int angle_base; /* unaff_D4: angle term rounded with round_add (D4) [HYPOTHESIS] */
+  int angle_base; /* unaff_D4: (D4) [PROVEN: 0x3f, set by 0x1db6 moveq #$3f,d4 on sin_fixed14's negative-angle path just before this fragment; so the names are swapped in role - round_add holds the angle and angle_base the rounding constant, the sum being the angle rounded toward zero to a multiple of 64] */
   
   delta = table_step * -((angle_base + round_add & 0xffffffc0U) - angle);
   if (delta < 0) {
@@ -5436,13 +5439,13 @@ short * transform_int3_vecs_by_matrix3(int count /* param_1: vector count */,int
   int *m_dst; /* piVar6: int matrix cursor */
   int work2; /* iVar7: row index, then source x */
   bool more; /* bVar8: count was nonzero */
-  int left; /* local_2c, -$2c(A6): vectors left */
-  int m [4]; /* local_28, -$28(A6): int matrix [0][0], [0][1], [0][2], [1][0] */
-  int m11; /* local_18, -$18(A6): int matrix [1][1] */
-  int m12; /* local_14, -$14(A6): int matrix [1][2] */
-  int m20; /* local_10, -$10(A6): int matrix [2][0] */
-  int m21; /* local_c, -$c(A6): int matrix [2][1] */
-  int m22; /* local_8, -8(A6): int matrix [2][2] */
+  int left; /* local_2c, -$28(A6): vectors left */
+  int m [4]; /* local_28, -$24(A6): int matrix [0][0], [0][1], [0][2], [1][0] */
+  int m11; /* local_18, -$14(A6): int matrix [1][1] */
+  int m12; /* local_14, -$10(A6): int matrix [1][2] */
+  int m20; /* local_10, -$c(A6): int matrix [2][0] */
+  int m21; /* local_c, -$8(A6): int matrix [2][1] */
+  int m22; /* local_8, -4(A6): int matrix [2][2] */
   
   /* Expand 3×3 s16 matrix into int locals */
   left = count;
@@ -5528,9 +5531,9 @@ void apply_template_chain_xform(int obj /* param_1: object (+2 slot index, +0x18
   uint shift; /* uVar3: obj word +0x34 */
   int slot; /* iVar4: parent +0x30 + 0x18 * slot_index */
   int parent; /* iVar5: parent object, walked through +0x24 */
-  int pos_x; /* local_22, -$22(A6): copy of obj +0x18 */
-  undefined4 pos_y; /* local_1e, -$1e(A6): copy of obj +0x1c */
-  undefined4 pos_z; /* local_1a, -$1a(A6): copy of obj +0x20 */
+  int pos_x; /* local_22, -$1e(A6): copy of obj +0x18 */
+  undefined4 pos_y; /* local_1e, -$1a(A6): copy of obj +0x1c */
+  undefined4 pos_z; /* local_1a, -$16(A6): copy of obj +0x20 */
   undefined1 matrix [18]; /* auStack_16: slot attitude matrix */
 
   pos_x = *(int *)(obj + 0x18);
@@ -5620,9 +5623,9 @@ void apply_template_chain_xform_always(int obj /* param_1: object (+2 slot index
   uint *vecs; /* puVar5: vectors to translate */
   int off_y; /* iVar6: slot offset y (+0xc) */
   int off_z; /* iVar7: slot offset z (+0x10) */
-  uint pos_x; /* local_22, -$22(A6): copy of obj +0x18 */
-  undefined4 pos_y; /* local_1e, -$1e(A6): copy of obj +0x1c */
-  undefined4 pos_z; /* local_1a, -$1a(A6): copy of obj +0x20 */
+  uint pos_x; /* local_22, -$1e(A6): copy of obj +0x18 */
+  undefined4 pos_y; /* local_1e, -$1a(A6): copy of obj +0x1c */
+  undefined4 pos_z; /* local_1a, -$16(A6): copy of obj +0x20 */
   undefined1 matrix [18]; /* auStack_16: slot attitude matrix */
 
   pos_x = *(uint *)(obj + 0x18);
@@ -5673,7 +5676,8 @@ void apply_template_chain_xform_always(int obj /* param_1: object (+2 slot index
  * Bytes identity: epilogue tail of FUN_00002d10 (NOT a real entry)
  * Call-site alias: abs_int [INFERRED] — see below
  * Confidence: bytes [PROVEN]; call-site semantics [STRONG INFERENCE]
- * Status: BLOCKED (dual identity unresolved)
+ * Status: RESOLVED [PROVEN] - false entry (epilogue tail of FUN_00002d10); whole-binary scan: every reference is an absolute lea.l, none a bsr/jsr to the file offset:
+ * its 19 references are lea.l $2de8.l = the runtime address of abs_int (file 0x2e08)
  *
  * Binary @0x2DE8 (Pacific Conflict CODE resource):
  *   2DE2 TST.L D3 / BNE 2DFC
@@ -7157,7 +7161,7 @@ int compute_camera_abs_metric(void) /* Original: FUN_00003c00; args lost by Ghid
  *   (FUN_00003c00, link at 0x3c00, rts at 0x3c66) - between its `cmp.l d2,d3 / ble`
  *   (0x3c42) and the swap; it has no prologue. All six references are `lea.l $3c48.l`, a
  *   RUNTIME address = file 0x3c68 = approx_dist3_xyz, so every Ghidra call to "this"
- *   function is really approx_dist3_xyz (call sites corrected). Status BLOCKED like the
+ *   function is really approx_dist3_xyz (call sites corrected). Status RESOLVED [PROVEN] like the
  *   other false entries (FUN_00002de8, FUN_00001a48).
  * Confidence: [PROVEN] formula
  *
@@ -7204,16 +7208,16 @@ int FUN_00003c48(void) /* Original: FUN_00003c48 */
  * VERIFIED (, user policy): the body matches the bytes and the call
  * arguments Ghidra dropped are documented above as a call-argument correction.
  */
-int approx_dist3_xyz(void) /* Original: FUN_00003c68 */
+int approx_dist3_xyz(int ax /* 8(A6) */,int ay /* 0xc(A6) */,int az /* 0x10(A6) */,int bx /* 0x14(A6) */,int by /* 0x18(A6) */,int bz /* 0x1c(A6) */) /* Original: FUN_00003c68; signature restored [PROVEN, bytes 0x3c70..0x3c9c: each abs_int argument is arg 4 / 5 / 6 minus arg 1 / 2 / 3 (suba.l)] */
 {
   int d1; /* iVar1: |first component|, then the middle value */
   int d2; /* iVar2: |second component|, then the smallest */
   int d3; /* iVar3: |third component| */
   int dmax; /* iVar4: largest component */
   
-  d1 = FUN_00002de8();
-  d2 = FUN_00002de8();
-  d3 = FUN_00002de8();
+  d1 = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument restored [PROVEN] */bx - ax);
+  d2 = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument restored [PROVEN] */by - ay);
+  d3 = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument restored [PROVEN] */bz - az);
   dmax = d1;
   if (d1 < d2) {
     dmax = d2;
@@ -7247,21 +7251,38 @@ int approx_dist3_xyz(void) /* Original: FUN_00003c68 */
  *   - distances are kept and compared as signed WORDS (move.w d0, cmp.w, then ext.l
  *     at the end), so a distance above 0x7fff wraps negative and would always "hit".
  * In the bisection, when the end distance is below the start distance the start is
- * replaced, otherwise the end (blt at 0x3d74); 5 steps (dbra from 4).
+ * replaced, otherwise the end (blt at 0x3d74); 4 steps - dbra from 4, but the loop is entered
+ * at the dbra itself (bra.b $3d8e), so the body runs for counter values 3, 2, 1, 0 [PROVEN]
+ * (corrected: an earlier note said 5).
  */
-int segment_point_min_distance /* Original: FUN_00003cca */ (void)
+int segment_point_min_distance /* Original: FUN_00003cca; signature restored [PROVEN, bytes 0x3cd2..0x3d6a] */ (int x0 /* 8(A6): start x */,int y0 /* 0xc(A6): start y */,int z0 /* 0x10(A6): start z */,int dx /* 0x14(A6): delta x, only its low word ($16) is read */,int dy /* 0x18(A6): delta y (low word $1a) */,int dz /* 0x1c(A6): delta z (low word $1e) */,int px /* 0x20(A6): point x */,int py /* 0x24(A6): point y */,int pz /* 0x28(A6): point z */)
 
 {
   uint dist_start; /* uVar1: distance to the start end (word) */
   uint dist_end; /* uVar2: distance to the far end (word) */
   uint dist_mid; /* uVar3: distance to the midpoint */
-  short steps; /* sVar4: bisection countdown from 4 (5 steps) */
+  short steps; /* sVar4: bisection countdown from 4 (the body runs 4 times: dbra entered from below) */
   short end_w; /* sVar5: dist_end as a signed word */
   short start_w; /* sVar6: dist_start as a signed word */
+  int sx; /* -4(A6): start end x - restored, Ghidra dropped it with the call arguments */
+  int sy; /* -0xc(A6): start end y */
+  int sz; /* A4: start end z */
+  int ex; /* -8(A6): far end x */
+  int ey; /* A5: far end y */
+  int ez; /* A3: far end z */
+  int mx; /* D2: midpoint x */
+  int my; /* D3: midpoint y */
+  int mz; /* D4: midpoint z */
   
-  dist_start = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+  sx = x0; /* RESTORED [PROVEN, 0x3cd2..0x3d8c] */
+  sy = y0;
+  sz = z0;
+  ex = sx + (short)dx; /* adda.w: only the low word of the delta */
+  ey = sy + (short)dy;
+  ez = sz + (short)dz;
+  dist_start = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x3d16] */sx, sy, sz, px, py, pz);
   dist_start = dist_start & 0xffff;
-  dist_end = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+  dist_end = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x3d2e] */ex, ey, ez, px, py, pz);
   dist_end = dist_end & 0xffff;
   steps = 4;
   while( true ) {
@@ -7269,11 +7290,20 @@ int segment_point_min_distance /* Original: FUN_00003cca */ (void)
     end_w = (short)dist_end;
     steps = steps + -1;
     if (steps == -1) break;
-    dist_mid = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+    mx = sx + ex >> 1; /* RESTORED [PROVEN, 0x3d3a..0x3d56]: asr.l #1, no bias (floor) */
+    my = sy + ey >> 1;
+    mz = sz + ez >> 1;
+    dist_mid = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x3d6a] */mx, my, mz, px, py, pz);
     if (end_w < start_w) {
+      sx = mx; /* RESTORED [PROVEN, 0x3d82..0x3d8a] */
+      sy = my;
+      sz = mz;
       dist_start = dist_mid & 0xffff;
     }
     else {
+      ex = mx; /* RESTORED [PROVEN, 0x3d76..0x3d7c] */
+      ey = my;
+      ez = mz;
       dist_end = dist_mid & 0xffff;
     }
   }
@@ -7282,6 +7312,7 @@ int segment_point_min_distance /* Original: FUN_00003cca */ (void)
   }
   return (int)end_w;
 }
+
 
 
 
@@ -8066,7 +8097,7 @@ uint * instantiate_object_from_desc(char *desc) /* Original: FUN_00004690 */
  *   6) If (metric − obj+0xc) < 0x19C80 → FUN_00004e6e else queue on
  *      DAT_0001d0e4[DAT_0001c1dc++]
  * Note: +0x44 gate used by spawn_mission_pool_object is written in 04e6e
- * path (heap_roving_cursor_store still BLOCKED), not in this body.
+ * path (heap_roving_cursor_store is a resolved false entry; lea.l $1a48 = heap_alloc), not in this body.
  * Evidence: NOTES identity stores / 04e6e gate.
  */
 /* VERIFIED (FUN_000046da instantiate_mission_pool_slot): 0x46da..0x4806 checked against an
@@ -8276,6 +8307,8 @@ void build_land_outline_at_detail /* Original: FUN_00004958 */ (int obj /* param
 {
   uint vx; /* uVar1: vertex x */
   uint vz; /* uVar2: vertex z */
+  uint last_x; /* -0x1bf4(A6): x of the last emitted vertex; restored with the approx_dist3_xyz arguments [PROVEN, store at 0x4aee] */
+  uint last_z; /* -0x1bf8(A6): z of the last emitted vertex [PROVEN, store at 0x4af2] */
   int pz; /* iVar3: clipped point z, scaled back */
   undefined2 saved_bound; /* uVar4: clip bound saved around a clip */
   undefined2 saved_bound2; /* uVar5: clip bound saved around a clip */
@@ -8349,6 +8382,8 @@ void build_land_outline_at_detail /* Original: FUN_00004958 */ (int obj /* param
         vz = xf_verts[work2 * 3 + 2];
         if (count == 0) {
 LAB_00004aee:
+          last_x = vx; /* RESTORED [PROVEN, 0x4aee move.l d4,-0x1bf4(a6)] */
+          last_z = vz; /* RESTORED [PROVEN, 0x4af2 move.l d5,-0x1bf8(a6)] */
           work3 = 0;
           *cursor = (int)(vx - detail_ref_x) >> (shift_u & 0x3f);
           cursor[1] = (int)(vz - detail_ref_z) >> (shift_u & 0x3f);
@@ -8362,9 +8397,9 @@ LAB_00004aee:
            * kept vertex. The second is approx_dist3_xyz(DAT_0001d838, 0, DAT_0001d830, uVar1, 0,
            * uVar2): horizontal distance to the camera; the vertex is kept when
            * camera_distance / (sVar12 + 3) <= iVar19 (divs.l, signed). */
-          work2 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+          work2 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x4ac2] */last_x, 0, last_z, vx, 0, vz);
           work3 = work2 + work3;
-          work2 = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+          work2 = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x4ada] */camera_x, 0, camera_z, vx, 0, vz);
           if (work2 / (int)(short)(work + 3) <= work3) goto LAB_00004aee;
         }
       }
@@ -9134,10 +9169,10 @@ void collect_far_objects /* Original: FUN_0000555a */ (uint *list /* param_1: me
   uint *scan; /* puVar10: backward scan cursor */
   uint *keep; /* puVar11: write cursor of kept entries */
   int *point; /* piVar12: view_points write cursor */
-  short active_count; /* local_37e, -$37e(A6): entries in active */
-  uint *active_end; /* local_37c, -$37c(A6): end of active */
-  uint *read; /* local_378, -$378(A6): read cursor */
-  uint active [220]; /* local_374, -$374(A6): objects with flags 0x2800 kept for later collision tests */
+  short active_count; /* local_37e, -$37a(A6): entries in active */
+  uint *active_end; /* local_37c, -$378(A6): end of active */
+  uint *read; /* local_378, -$374(A6): read cursor */
+  uint active [220]; /* local_374, -$370(A6): objects with flags 0x2800 kept for later collision tests */
 
   read = list;
   point = &view_points + view_point_count * 3;
@@ -9385,7 +9420,7 @@ void build_visible_object_list /* Original: FUN_000058ec */ (void)
   int *keep; /* piVar9: write cursor of kept objects */
   int *next_keep; /* piVar10: keep after this candidate */
   int *point_z; /* piVar11: point z */
-  int *read; /* local_8, -8(A6): visible_list read cursor */
+  int *read; /* local_8, -4(A6): visible_list read cursor */
 
   transform_int3_vecs_asr_by_1d744( /* Original: FUN_00002802 */view_point_count,&view_points,&view_points,0);
   keep = &visible_list;
@@ -9746,7 +9781,7 @@ void clear_pending_entity_slots(void) /* Original: FUN_00005df8 */
 
 /* Original: FUN_00005e28; source: Pacific Conflict.c. Recovered name: update_ground_scatter_objects [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x5e28).
- * Called by overlay_frame_step after the camera matrix and object metrics are updated. Only when the host option DAT_0001b5a0 + 0xac is set [HYPOTHESIS: a ground-detail setting; when it is 0, run_simulation_tick calls clear_pending_entity_slots] and the camera is below 0x26ad above the ground (camera y DAT_0001d834, minus the player +0x2e when phase DAT_0001d858 < 6). Keeps 64 ground points DAT_0001b924 (x, 0, z; state bytes DAT_0001b8e4: 0x80 visible, 0x40 surface cached, low 6 bits = slot or 0x3f). A point is re-drawn when it is more than 0x4d58 from the camera: ahead within about +-0x600 of the player heading (sin_fixed14 / cos_fixed14) in flight, else uniformly in the 0x9ab0 square. Points are translated / rotated by the camera matrix DAT_0001d744 and projected; those inside the view bounds DAT_00020aee.. are visible. For up to 7 slots DAT_0001bc64 it takes a visible point, gets its surface type with surface_type_at_point (cached in DAT_0001b8a4), the template DAT_0001bc24[type >> 4] (none: skip), and either spawns the object (spawn_mission_pool_object, heading 0x540 for type 0x10 else random) or moves the existing one of the same template there (scene entry, template chain transform, metric, distance band, shading); otherwise it cleans it up and respawns. A reset (_DAT_0001d856, first use _DAT_00024cec) re-draws every point; above the height limit the slots are released once (clear_pending_entity_slots). [STRONG INFERENCE: scattered ground scenery near low-flying aircraft.] Ghidra C; four unreachable blocks removed by Ghidra.
+ * Called by overlay_frame_step after the camera matrix and object metrics are updated. Only when the host option DAT_0001b5a0 + 0xac is set [STRONG INFERENCE: the Ground Clutter scenery option - MENU 5 item 9 'Ground Clutter' toggles HEL1:127 byte +0x15 (low byte of word +0x14), which apply_settings_to_live_options (ID02 0x2a44) copies to A5-0x12dc, i.e. host world +0xac with the host world at A5-0x1388; when it is 0, run_simulation_tick calls clear_pending_entity_slots] and the camera is below 0x26ad above the ground (camera y DAT_0001d834, minus the player +0x2e when phase DAT_0001d858 < 6). Keeps 64 ground points DAT_0001b924 (x, 0, z; state bytes DAT_0001b8e4: 0x80 visible, 0x40 surface cached, low 6 bits = slot or 0x3f). A point is re-drawn when it is more than 0x4d58 from the camera: ahead within about +-0x600 of the player heading (sin_fixed14 / cos_fixed14) in flight, else uniformly in the 0x9ab0 square. Points are translated / rotated by the camera matrix DAT_0001d744 and projected; those inside the view bounds DAT_00020aee.. are visible. For up to 7 slots DAT_0001bc64 it takes a visible point, gets its surface type with surface_type_at_point (cached in DAT_0001b8a4), the template DAT_0001bc24[type >> 4] (none: skip), and either spawns the object (spawn_mission_pool_object, heading 0x540 for type 0x10 else random) or moves the existing one of the same template there (scene entry, template chain transform, metric, distance band, shading); otherwise it cleans it up and respawns. A reset (_DAT_0001d856, first use _DAT_00024cec) re-draws every point; above the height limit the slots are released once (clear_pending_entity_slots). [STRONG INFERENCE: scattered ground scenery near low-flying aircraft.] Ghidra C; four unreachable blocks removed by Ghidra.
   * VERIFIED: all three parts 0x5e28..0x640a were checked against an independent capstone
  * disassembly (section checks in the body); identical to the C with the reconstructed
  * abs_int arguments (FUN_00002de8 = runtime 0x2de8 = file 0x2e08).
@@ -9770,10 +9805,10 @@ void update_ground_scatter_objects /* Original: FUN_00005e28 */ (void)
   short i; /* sVar14: point index */
   ushort k; /* uVar15: scatter slot 0..6 */
   short asStackY_10384 [32726];
-  undefined4 *slot_ptr; /* local_388, -$388(A6): scatter_slots cursor */
-  short visible_points [64]; /* local_384, -$384(A6): newly visible point indices */
-  int view_buf [2]; /* aiStack_304, -$304(A6): camera-relative points */
-  short view_buf_z [379]; /* local_2fa, -$2fa(A6): view_buf + 0xa, the z words */
+  undefined4 *slot_ptr; /* local_388, -$384(A6): scatter_slots cursor */
+  short visible_points [64]; /* local_384, -$380(A6): newly visible point indices */
+  int view_buf [2]; /* aiStack_304, -$300(A6): camera-relative points */
+  short view_buf_z [379]; /* local_2fa, -$2f6(A6): view_buf + 0xa, the z words */
 
   if (*(short *)(host_world + 0xac) != 0) {
     work2 = camera_y;
@@ -10047,7 +10082,7 @@ void spawn_cloud_layer /* Original: FUN_0000640c */ (void)
   short bearing; /* sVar9: bearing (random byte << 6), then 0 for class 4 */
   short j; /* sVar10: earlier bearing index, then the class 0..4 */
   short asStackY_10018 [32738];
-  short bearings [10]; /* local_18, -$18(A6): bearings already placed */
+  short bearings [10]; /* local_18, -$14(A6): bearings already placed */
   
   if (*(short *)(host_world + 0xae) == 0) {
     for (n = 0; n < entity_array_1_count; n = n + 1) {
@@ -10159,13 +10194,13 @@ void overlay_frame_step /* Original: FUN_00006598 */ (int step_mode /* param_1: 
   int *scan; /* piVar13: insertion-sort scan */
   int work_d; /* iVar14: counters, fold result, x offset */
   bool keep_panels; /* bVar15: host +0x26a cleared panels_drawn */
-  undefined4 span_a; /* local_2a, -$2a(A6): session_cur_a for the span filler */
-  undefined4 span_b; /* local_26, -$26(A6): session_cur_b for the span filler */
+  undefined4 span_a; /* local_2a, -$26(A6): session_cur_a for the span filler */
+  undefined4 span_b; /* local_26, -$22(A6): session_cur_b for the span filler */
   short matrix [9]; /* asStack_22: mode-2 attitude matrix */
   undefined1 vec [2]; /* auStack_10: 12-byte vector (0, 0, 0x1000) */
-  undefined2 vec_x; /* local_e, -$e(A6): vec x word */
-  undefined2 vec_y; /* local_a, -$a(A6): vec y word */
-  undefined2 vec_z; /* local_6, -6(A6): vec z word */
+  undefined2 vec_x; /* local_e, -$a(A6): vec x word */
+  undefined2 vec_y; /* local_a, -$6(A6): vec y word */
+  undefined2 vec_z; /* local_6, -2(A6): vec z word */
 
   old_cur = slot_usage_cur;
   clear = slot_usage_prev;
@@ -10985,9 +11020,9 @@ uint process_flight_input_and_outcome /* Original: FUN_0000740a */ (int key /* p
   ushort seen_pitch; /* uStack_24: pitch from attitude_from_velocity */
   short matrix [9]; /* asStack_22: heading matrix */
   undefined1 vec [2]; /* auStack_10: 12-byte offset vector */
-  short vec_x; /* local_e, -$e(A6): vec x word (-0x2ee) */
-  short vec_y; /* local_a, -$a(A6): vec y word (0x183) */
-  short vec_z; /* local_6, -6(A6): vec z word (-0x513) */
+  short vec_x; /* local_e, -$a(A6): vec x word (-0x2ee) */
+  short vec_y; /* local_a, -$6(A6): vec y word (0x183) */
+  short vec_z; /* local_6, -2(A6): vec z word (-0x513) */
 
   old_view_mode = view_mode;
   player = player_object;
@@ -12072,7 +12107,7 @@ void place_camera_behind_object /* Original: FUN_000088a0 */ (int obj /* param_1
 
 /* Original: FUN_00008972; source: Pacific Conflict.c. Recovered name: update_bailout_view [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x8972).
- * Camera during a bail-out (mission state 9): while the parachute DAT_0001b87c exists and has not landed for long, keeps the camera between it and the abandoned aircraft (when within 0x9ab0) or on the parachute; once the parachute is gone or has been down for more than 0x5a0 frames, calls resolve_bailout_outcome. Ghidra C (partly read).
+ * Camera during a bail-out (mission state 9): while the parachute DAT_0001b87c exists and has not landed for long, keeps the camera between it and the abandoned aircraft (when within 0x9ab0) or on the parachute; once the parachute is gone or has been down for more than 0x5a0 frames, calls resolve_bailout_outcome. Ghidra C (read in full; byte-level VERIFIED note below).
  *
  * VERIFIED (, user policy): independent capstone disassembly of 0x8972..0x8abc
  * is identical to the C. CALL-ARGUMENT CORRECTION: approx_dist3_xyz(aircraft x, y, z,
@@ -12118,7 +12153,7 @@ uint update_bailout_view /* Original: FUN_00008972 */ (void)
      ((frame_counter + -0x4b <= *(int *)(chute + 0x40) ||
       (0x373 < *(int *)(chute + 0x1c) - *(int *)((int)parachute_object + 0x2e))))) {
     work_z = *player_object;
-    dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (player object pos, parachute object pos) [PROVEN, pushes 0x89de..0x89f2] */);
+    dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (player object pos, parachute object pos) [PROVEN, pushes 0x89de..0x89f2] */ /* RESTORED [PROVEN, pushes before 0x89f6] */*(int *)(work_z + 0x18), *(int *)(work_z + 0x1c), *(int *)(work_z + 0x20), *(int *)(chute + 0x18), *(int *)(chute + 0x1c), *(int *)(chute + 0x20));
     if ((int)dist < 0x9ab1) {
       tx = *(int *)(chute + 0x18) + *(int *)(work_z + 0x18);
       if (tx < 0) {
@@ -12189,8 +12224,8 @@ void turn_camera_toward_point /* Original: FUN_00008abe */ (int x /* param_1: po
   int dy; /* iVar4: (y - camera_y) >> shift, then |delta| */
   int work2; /* iVar6: squared distance, then the pitch delta */
   int dx; /* iVar7: (x - camera_x) >> shift, then the heading delta */
-  ushort new_heading; /* local_8, -8(A6): heading to the point */
-  ushort new_pitch; /* local_6, -6(A6): pitch to the point */
+  ushort new_heading; /* local_8, -4(A6): heading to the point */
+  ushort new_pitch; /* local_6, -2(A6): pitch to the point */
 
   work = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
   work_s = 0;
@@ -12268,13 +12303,13 @@ int update_tracking_camera /* Original: FUN_00008c30 */ (void)
   int ty; /* iVar7: look-at y */
   int work2; /* iVar8: weapon object, player object, then the glide frame count */
   int anchor; /* iVar9: object the camera is placed behind */
-  int tx; /* local_28, -$28(A6): look-at x */
-  short result; /* local_24, -$24(A6): result (-1, 1 or the bail-out outcome) */
+  int tx; /* local_28, -$24(A6): look-at x */
+  short result; /* local_24, -$20(A6): result (-1, 1 or the bail-out outcome) */
   undefined1 matrix [18]; /* auStack_22: attitude matrix */
   undefined1 vec [2]; /* auStack_10: 12-byte forward vector */
-  undefined2 vec_x; /* local_e, -$e(A6): vec x word */
-  undefined2 vec_y; /* local_a, -$a(A6): vec y word */
-  undefined2 vec_z; /* local_6, -6(A6): vec z word (0x4000) */
+  undefined2 vec_x; /* local_e, -$a(A6): vec x word */
+  undefined2 vec_y; /* local_a, -$6(A6): vec y word */
+  undefined2 vec_z; /* local_6, -2(A6): vec z word (0x4000) */
 
   result = 0;
   if ((player_shot_ctl == (int *)0x0) ||
@@ -12287,7 +12322,7 @@ int update_tracking_camera /* Original: FUN_00008c30 */ (void)
       if (view_follow_target != (int *)0x0) {
         work2 = *player_object;
         target = *view_follow_target;
-        if ((target != 0) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */), (int)dist < 0x9ab1)) {
+        if ((target != 0) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x8cd0] */*(int *)(work2 + 0x18), *(int *)(work2 + 0x1c), *(int *)(work2 + 0x20), *(int *)(target + 0x18), *(int *)(target + 0x1c), *(int *)(target + 0x20)), (int)dist < 0x9ab1)) {
           tx = *(int *)(work2 + 0x18) + *(int *)(target + 0x18);
           if (tx < 0) {
             tx = tx + 1;
@@ -12318,14 +12353,14 @@ int update_tracking_camera /* Original: FUN_00008c30 */ (void)
             build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)*(short *)(player_object + 8),(int)*(short *)((int)player_object + 0x22)
                          ,(int)*(short *)(player_object + 9),(int)matrix);
             (*(code *)&LAB_000028ba_2)(1,vec,vec,matrix);
-            work = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+            work = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */ /* RESTORED [PROVEN, pushes before 0x8e06] */*(int *)(work2 + 0x18) + (short)vec_x, *(int *)(work2 + 0x1c) + (short)vec_y, *(int *)(work2 + 0x20) + (short)vec_z, *(int *)(target + 0x18), *(int *)(target + 0x1c), *(int *)(target + 0x20));
             vec_x = 0;
             vec_y = 0;
             vec_z = 0x4000;
             build_attitude_matrix_3ang( /* Original: FUN_0000253e */(int)*(short *)(view_follow_target + 8),(int)*(short *)((int)view_follow_target + 0x22)
                          ,(int)*(short *)(view_follow_target + 9),(int)matrix);
             (*(code *)&LAB_000028ba_2)(1,vec,vec,matrix);
-            target_ahead = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+            target_ahead = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */ /* RESTORED [PROVEN, pushes before 0x8e78] */*(int *)(target + 0x18) + (short)vec_x, *(int *)(target + 0x1c) + (short)vec_y, *(int *)(target + 0x20) + (short)vec_z, *(int *)(work2 + 0x18), *(int *)(work2 + 0x1c), *(int *)(work2 + 0x20));
             anchor = target;
             if (work <= target_ahead) {
               anchor = work2;
@@ -12405,9 +12440,9 @@ void begin_replay_view /* Original: FUN_00008ff4 */ (void)
   int *pose; /* piVar4; player, then pose ring entry (+0x36, 0x14 stride) */
   short matrix [9]; /* asStack_22; attitude matrix */
   undefined1 vec [2]; /* auStack_10; offset vector transformed in place */
-  short vec_x; /* local_e, -0xe(A6) */
-  short vec_y; /* local_a, -0xa(A6) */
-  short vec_z; /* local_6, -6(A6) */
+  short vec_x; /* local_e, -0xa(A6) */
+  short vec_y; /* local_a, -0x6(A6) */
+  short vec_z; /* local_6, -2(A6) */
 
   pose = player_object;
   view_mode = 8;
@@ -13767,7 +13802,7 @@ void transform_face_vertices /* Original: FUN_0000a512 */ (int face /* param_1: 
   int *mv; /* piVar12; model vertex */
   int vi; /* iVar13; vertex index */
   int vv; /* iVar14; view vertex (12 bytes) */
-  short *vidx; /* local_16, -0x16(A6): face vertex index pointer */
+  short *vidx; /* local_16, -0x12(A6): face vertex index pointer */
 
   view_verts = view_vertices;
   m = object_matrix;
@@ -13916,15 +13951,15 @@ undefined4 transform_and_project_object /* Original: FUN_0000a75e */ (void)
   int faces_left; /* iVar21; faces left (+0x3a) */
   short *vx; /* psVar22; view vertex x word */
   int *ctl; /* piVar23; object controller (+8), later model vertex pointer */
-  short *vy; /* local_36, -0x36(A6): view vertex y word */
-  char *mark; /* local_30, -0x30(A6): vertex_done byte */
-  undefined1 cam_vec [2]; /* auStack_28, -0x28(A6): camera offset vector transformed in place */
-  short cam_x; /* local_26, -0x26(A6): camera x relative to the object */
-  short cam_y; /* local_22, -0x22(A6): camera y relative to the object */
-  short cam_z; /* local_1e, -0x1e(A6): camera z relative to the object */
-  undefined2 light_save_x; /* local_1a, -0x1a(A6): light_x saved around transform mode 2 */
-  undefined2 light_save_y; /* local_16, -0x16(A6): light_y saved around transform mode 2 */
-  undefined2 light_save_z; /* local_12, -0x12(A6): light_z saved around transform mode 2 */
+  short *vy; /* local_36, -0x32(A6): view vertex y word */
+  char *mark; /* local_30, -0x2c(A6): vertex_done byte */
+  undefined1 cam_vec [2]; /* auStack_28, -0x24(A6): camera offset vector transformed in place */
+  short cam_x; /* local_26, -0x22(A6): camera x relative to the object */
+  short cam_y; /* local_22, -0x1e(A6): camera y relative to the object */
+  short cam_z; /* local_1e, -0x1a(A6): camera z relative to the object */
+  undefined2 light_save_x; /* local_1a, -0x16(A6): light_x saved around transform mode 2 */
+  undefined2 light_save_y; /* local_16, -0x12(A6): light_y saved around transform mode 2 */
+  undefined2 light_save_z; /* local_12, -0xe(A6): light_z saved around transform mode 2 */
 
   object_matrix = &camera_m00;
   haze_opt = *(short *)(host_world + 0xaa);
@@ -14139,7 +14174,7 @@ void render_visible_objects /* Original: FUN_0000ac72 */ (void)
   int *deferred_end; /* piVar14; append pointer into deferred */
   bool flag_d856; /* bVar15; view_flag_d856 set (collision mode off) */
   bool not_mode1; /* bVar16; view_mode != 1 (collision mode off) */
-  int deferred [220]; /* aiStack_374, -0x374(A6): 220 deferred supported objects (+0x2c) */
+  int deferred [220]; /* aiStack_374, -0x370(A6): 220 deferred supported objects (+0x2c) */
   int count; /* iVar9; objects left (32-bit dbra counter) */
 
   flag_d856 = view_flag_d856 != 0;
@@ -14739,7 +14774,24 @@ void reset_overlay_display_state /* Original: FUN_0000b49e */ (void)
  * 0xb622 and the C restores it before any call, so the result is the same - identical to the C. */
 /* Original: FUN_0000b4b6; source: Pacific Conflict.c. Recovered name: draw_sky_and_ground [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xb4b6).
- * Called by overlay_frame_step (with the horizon row) and by FUN_0000d00c. (Re)allocates two row buffers DAT_00020ad8 / DAT_00020ad4 when the host view rectangle / buffer (+0x186.. +0x196) changed (not at depth 1) and resets them (reset_background_rows). Scales the horizon edge recorded by track_ground_plane_horizon (DAT_0001bda0 / 9c / 98 / 94, view units) to window rows / 16.16 columns and computes its slope; picks the two background colours from host words +0x18e and +400 (0x190) for the parts above and below it using the screen-corner bits DAT_0001bd90 (0xf: all ground, 0: all sky, else per side) [STRONG INFERENCE: sky colour / ground or sea colour], and fills the background rows of the frame, through the host services +0x2c2 / +0x27e at depth 1 or directly into the frame buffer (host +0xdc base, +0xe0 row bytes) otherwise. Ghidra C (only partly read; register variables unaff_* in the edge set-up).
+ * Called by overlay_frame_step (with the horizon row) and by FUN_0000d00c. (Re)allocates two row buffers DAT_00020ad8 / DAT_00020ad4 when the host view rectangle / buffer (+0x186.. +0x196) changed (not at depth 1) and resets them (reset_background_rows). Scales the horizon edge recorded by track_ground_plane_horizon (DAT_0001bda0 / 9c / 98 / 94, view units) to window rows / 16.16 columns and computes its slope; picks the two background colours from host words +0x18e and +400 (0x190) for the parts above and below it using the screen-corner bits DAT_0001bd90 (0xf: all ground, 0: all sky, else per side) [STRONG INFERENCE: sky colour / ground or sea colour], and fills the background rows of the frame, through the host services +0x2c2 / +0x27e at depth 1 or directly into the frame buffer (host +0xdc base, +0xe0 row bytes) otherwise. Ghidra C (read in full; the unaff_* register variables are real, see below).
+ * VERIFIED: checked against an independent capstone disassembly of 0xb4b6..0xba28: the cache
+ * compare (rows buffer, words +0x186 / +0x188 / +0x18a / +0x18c, long +0x196) and refresh (five
+ * longs copied from host +0x186, heap_free_coalesce of both buffers, heap_alloc(rows * 20) twice
+ * via lea $1a48 = runtime 0x1a68 unless depth 1, reset_background_rows); horizon ends scaled
+ * by size._2_2_ / view_rows (muls.l, divs.l quotients), x ends to 16.16 + 0x8000 with the
+ * origin x; edge set-up by comparing y0 / y1. UNINITIALISED REGISTERS [PROVEN]: when the
+ * horizon is flat (y0 == y1) the code at 0xb660 sets only d2 / d3, so cross_x (d4), slope (a4),
+ * end0_lower (d6.w) and x_end (-0xc(A6)) keep whatever the caller left - the C's unaff_D4 /
+ * unaff_A4 / unaff_D6w / unread local_10 are faithful, and a port must decide what a flat
+ * horizon draws. Colours by horizon_corners (0xf, 0, bits 0-1, bits 2-3), clamps to the row
+ * count, colour pair by end0_lower; depth 1: every other frame (parity word 0x25f48) jsr (host
+ * +0x27e)(top, end, rows, above, below, cross >> 16, x_end >> 16, colour_a, colour_b) with the
+ * optional +0x2c2 calls; else three span-record loops (above / crossing / below; the crossing
+ * split when (x0 << 16) < cross < (x1 << 16), cross += slope per row), jsr (*span_filler)(&next,
+ * &prev, rows, destination, skip) with the two panels_drawn layouts (skip = +0x10 - view_width /
+ * (8 / view_depth) via divs.w), buffers swapped; horizon_y1 / y0 / corners cleared - identical
+ * to the C. Local offsets in the declarations below are -(N - 4)(A6) (corrected).
  */
 uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_1: non-zero -> call host +0x2c2 around the depth-1 draw [INFERENCE: cursor hide / show] */)
 
@@ -14760,12 +14812,12 @@ uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_
   short *rec_next; /* psVar12; next span record */
   uint slope; /* unaff_A4: crossing x step per row (16.16, A4) */
   int extents; /* iVar13; bg_row_extents, then the blit destination */
-  short below_colour; /* local_16, -0x16(A6): colour of the rows below the horizon */
-  short colour_a; /* local_14, -0x14(A6): colour left of the crossing */
-  short above_colour; /* local_12, -0x12(A6): colour of the rows above the horizon */
-  uint x_end; /* local_10, -0x10(A6): x of the other horizon end (16.16) */
-  short *prev_buf; /* local_c, -0xc(A6): background_rows passed to span_filler */
-  short *next_buf; /* local_8, -8(A6): background_rows_next passed to span_filler */
+  short below_colour; /* local_16, -0x12(A6): colour of the rows below the horizon */
+  short colour_a; /* local_14, -0x10(A6): colour left of the crossing */
+  short above_colour; /* local_12, -0xe(A6): colour of the rows above the horizon */
+  uint x_end; /* local_10, -0xc(A6): x of the other horizon end (16.16) */
+  short *prev_buf; /* local_c, -0x8(A6): background_rows passed to span_filler */
+  short *next_buf; /* local_8, -4(A6): background_rows_next passed to span_filler */
 
   if (((((background_rows_next == (short *)0x0) || (*(short *)(host_world + 0x186) != bg_cache_origin._0_2_))
        || (*(short *)(host_world + 0x188) != bg_cache_origin._2_2_)) ||
@@ -14969,7 +15021,18 @@ uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_
  * the CONCAT22 while-loops - identical to the C. */
 /* Original: FUN_0000ba2a; source: Pacific Conflict.c. Recovered name: draw_panel_frame_lines [HYPOTHESIS].
  * Ghidra C reviewed (function at overlay offset 0xba2a).
- * Unless host option +0x9e: at depth 4 writes the colour byte host +0x25d (doubled into both nibbles) straight into the frame buffer along two vertical runs (rows +0x238..+0x23a and +0x23c..+0x23e from the pointers +0x24c / +0x250) and two double horizontal runs (+0x242..+0x244, +0x246..+0x248 from +0x254 / +0x258), with depth-8 / depth-1 variants after it [HYPOTHESIS: reticle or frame lines around a panel element; not identified]. Ghidra C (partly read).
+ * Unless host option +0x9e: at depth 4 writes the colour byte host +0x25d (doubled into both nibbles) straight into the frame buffer along two vertical runs (rows +0x238..+0x23a and +0x23c..+0x23e from the pointers +0x24c / +0x250) and two double horizontal runs (+0x242..+0x244, +0x246..+0x248 from +0x254 / +0x258), with depth-8 / depth-1 variants after it [HYPOTHESIS: reticle or frame lines around a panel element; not identified]. Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0xba2a..0xbca6: host
+ * word +0x9e != 0 -> unless view_depth == 1, four jsr (host +0x272)(+0x25c, a, b, c, d) with
+ * sign-extended words (+0x240, +0x238, +0x240, +0x23a - 2), (+0x240, +0x23c, +0x240, +0x23e
+ * - 2), (+0x242, +0x24a, +0x244 - 2, +0x24a), (+0x246, +0x24a, +0x248 - 2, +0x24a) (pea
+ * -2(aN)); else depth 4: stride = sext +0x10, colour = byte +0x25d | << 4, vertical runs at
+ * +0x24c (+0x23a - +0x238 rows) and +0x250 (+0x23e - +0x23c), horizontal double rows (p and
+ * p + stride) at +0x254 ((+0x244 - +0x242) / 2) and +0x258 ((+0x248 - +0x246) / 2), halves
+ * rounded toward zero; depth 8: the same with word stride (+0x10) / 2 (asr.w rounding), word
+ * colour (+0x25c << 8) | +0x25c and lea (a0, d3.l * 2) for the second row; every run uses the
+ * 32-bit dbra idiom (dbra, clr.w, subq.l #1, bcc) = the C's hi * 0x10000 - 1; other depths
+ * draw nothing - identical to the C.
  */
 void draw_panel_frame_lines /* Original: FUN_0000ba2a */ (void)
 
@@ -15142,7 +15205,18 @@ void draw_panel_frame_lines /* Original: FUN_0000ba2a */ (void)
  * result is just D0 - identical to the C. */
 /* Original: FUN_0000bca8; source: Pacific Conflict.c. Recovered name: copy_rect_depth4 [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xbca8).
- * Args: destination pixel address, source pixel address (both in nibbles), width, height, source / destination row bytes. Copies a rectangle of 4-bit pixels, handling the four nibble alignments (shifted / masked bytes at the edges, aligned longs in the middle). Referenced from code at 0xc480 (update_heading_tape, depth 4). Ghidra C (partly read).
+ * Args: destination pixel address, source pixel address (both in nibbles), width, height, source / destination row bytes. Copies a rectangle of 4-bit pixels, handling the four nibble alignments (shifted / masked bytes at the edges, aligned longs in the middle). Referenced from code at 0xc480 (update_heading_tape, depth 4). Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0xbca8..0xbfae (the
+ * jump table at 0xbe08 = {0xbe10, 0xbe5a, 0xbe2a, 0xbe86} and the tail were decoded too):
+ * strides = row sizes asr #1; leading columns while (dst & 3) != 0 and columns remain, one
+ * nibble per row chosen by the low bits of dst / src (lsr.l #1 byte addresses): odd / odd
+ * src ^ ((src ^ dst) & 0xf0), odd / even (dst & 0xf0) | src >> 4 (lsr.b), even / odd
+ * (dst & 0xf) | src << 4, even / even src ^ ((src ^ dst) & 0xf); middle = low word of the
+ * columns & 0xfffc, words - 1 = w / 4 - 1 (asr.w rounding), switch on src & 3: 0 word copy,
+ * 1 lsl.w #4 / lsr.w #12, 2 sign-extended first byte (ext.w) then words from src + 1 with
+ * asl/lsl.w #8 / lsr.w #8, 3 the same with #12 / #4; columns &= 3; trailing columns use the
+ * same four merges keyed on the low bytes of the stacked tail pointers; D0 tracks the last
+ * shifted word / merged byte as the C's result - identical to the C.
  */
 uint copy_rect_depth4 /* Original: FUN_0000bca8 */ (uint dst_px /* param_1: destination pixel (nibble) address */,uint src_px /* param_2: source pixel (nibble) address */,uint width /* param_3: width in pixels */,short height /* param_4: height in rows */,int src_row /* param_5: source row size (halved into bytes) */,int dst_row /* param_6: destination row size (halved into bytes) */)
 
@@ -15163,10 +15237,10 @@ uint copy_rect_depth4 /* Original: FUN_0000bca8 */ (uint dst_px /* param_1: dest
   byte *db; /* pbVar14; destination byte */
   ushort *sp; /* puVar15; source word pointer */
   ushort *dp; /* puVar16; destination word pointer */
-  uint src_tail; /* local_12, -0x12(A6): source pixel of the trailing columns */
-  ushort mid_px; /* local_e, -0xe(A6): aligned middle width in pixels (width & ~3) */
-  undefined4 cols; /* local_c, -0xc(A6): columns left */
-  uint dst_tail; /* local_8, -8(A6): destination pixel of the trailing columns */
+  uint src_tail; /* local_12, -0xe(A6): source pixel of the trailing columns */
+  ushort mid_px; /* local_e, -0xa(A6): aligned middle width in pixels (width & ~3) */
+  undefined4 cols; /* local_c, -0x8(A6): columns left */
+  uint dst_tail; /* local_8, -4(A6): destination pixel of the trailing columns */
 
   src_stride = src_row >> 1;
   dst_stride = dst_row >> 1;
@@ -15383,7 +15457,17 @@ uint copy_rect_depth4 /* Original: FUN_0000bca8 */ (uint dst_px /* param_1: dest
  * to the C. */
 /* Original: FUN_0000bfb0; source: Pacific Conflict.c. Recovered name: copy_rect_depth8 [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xbfb0).
- * 8-bit counterpart of copy_rect_depth4: copies the unaligned leading bytes, then longs, then the tail, row by row. Referenced from code at 0xc4a6 (update_heading_tape, depth 8). Ghidra C (partly read).
+ * 8-bit counterpart of copy_rect_depth4: copies the unaligned leading bytes, then longs, then the tail, row by row. Referenced from code at 0xc4a6 (update_heading_tape, depth 8). Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0xbfb0..0xc11c (the
+ * default evidence window stops at the jump table, so 0xc048..0xc11c was decoded too):
+ * leading loop while (dst & 3) != 0 and columns remain (move.w d5 / andi.w #3 / bne, then
+ * tst.l -0xa(a6)), one byte per row via dbra over height - 1; middle width = low word of
+ * the columns & 0xfffc (tst.w / beq skips to the tail), longs - 1 = (w / 4) - 1 with
+ * asr.w rounding; src aligned down by src & 3, jump table at 0xc048 = {0xc050 plain
+ * move.l copy, 0xc094 lsl #8 / lsr #24, 0xc068 lsl #16 / lsr #16, 0xc0be lsl #24 / lsr #8}
+ * (logical shifts, previous long carried) = cases 0 / 1 / 2 / 3 of the C; then columns &= 3
+ * and the trailing byte columns (subq.l #1 / bcc); D0 is left as the last misalignment /
+ * shifted value (the C's result) - identical to the C.
  */
 uint copy_rect_depth8 /* Original: FUN_0000bfb0 */ (uint *dst /* param_1: destination byte address (advanced along the row) */,undefined1 *src /* param_2: source byte address */,uint width /* param_3: width in pixels (bytes) */,short height /* param_4: height in rows */,int src_row /* param_5: source row bytes */,
                  int dst_row /* param_6: destination row bytes */)
@@ -15403,8 +15487,8 @@ uint copy_rect_depth8 /* Original: FUN_0000bfb0 */ (uint *dst /* param_1: destin
   uint *src_line; /* puVar11; leading-column destination, then the aligned source row start */
   undefined1 *src_col; /* puVar12; source column pointer */
   bool more; /* bVar13; columns remained before the decrement */
-  undefined4 cols; /* local_e, -0xe(A6): columns left */
-  undefined1 *dst_tail; /* local_a, -0xa(A6): destination of the trailing columns */
+  undefined4 cols; /* local_e, -0xa(A6): columns left */
+  undefined1 *dst_tail; /* local_a, -0x6(A6): destination of the trailing columns */
 
   for (cols = width;
       (result = CONCAT22((short)(result >> 0x10),(short)dst) & 0xffff0003,
@@ -15542,8 +15626,8 @@ uint copy_rect_depth8 /* Original: FUN_0000bfb0 */ (uint *dst /* param_1: destin
 undefined4 begin_offscreen_drawing /* Original: FUN_0000c11e */ (undefined4 *port /* param_1: 0x6c-byte port / pixmap record, cleared then set up */,undefined4 base_addr /* param_2: pixel base address passed to host +0x282 */,undefined4 row_bytes /* param_3: row bytes passed to host +0x282 */,short top /* param_4: first row of the bounds [INFERENCE] */)
 
 {
-  short bounds [3]; /* local_c, -0xc(A6): bounds words (top, 0, host +0x18 + top) [INFERENCE: rect top / left / bottom] */
-  undefined2 bounds_right; /* local_6, -6(A6): host +0x16, fourth bounds word [INFERENCE: right] */
+  short bounds [3]; /* local_c, -0x8(A6): bounds words (top, 0, host +0x18 + top) [INFERENCE: rect top / left / bottom] */
+  undefined2 bounds_right; /* local_6, -2(A6): host +0x16, fourth bounds word [INFERENCE: right] */
   
   memzero(port,0x6c);
   bounds[1] = 0;
@@ -15589,7 +15673,23 @@ void end_offscreen_drawing /* Original: FUN_0000c17e */ (undefined4 port /* para
  * copy_rect_depth8 calls replace Ghidra's mis-resolved LAB_0000bf8e_2 - otherwise identical to the C. */
 /* Original: FUN_0000c1aa; source: Pacific Conflict.c. Recovered name: update_heading_tape [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc1aa).
- * Called by update_view_readouts_and_overlays (unless host option +0x9e). Scrolls a horizontal strip bitmap (host +0x1b0 / +0x1b8, period +0x1a4, size +0x19e x +0x1a0, placed at +0x19a / +0x19c) by -heading DAT_0001d80e * period / 0x4000 and copies the visible window into the frame (directly, or via the host services +0x28e / +0x2c2 when _DAT_00020ae4 == 0, with FUN_0000c11e / FUN_0000c17e at depth 8); skips the copy when the offset is unchanged (DAT_00025ffe) [STRONG INFERENCE: compass heading tape]. Ghidra C (partly read).
+ * Called by update_view_readouts_and_overlays (unless host option +0x9e). Scrolls a horizontal strip bitmap (host +0x1b0 / +0x1b8, period +0x1a4, size +0x19e x +0x1a0, placed at +0x19a / +0x19c) by -heading DAT_0001d80e * period / 0x4000 and copies the visible window into the frame (directly, or via the host services +0x28e / +0x2c2 when _DAT_00020ae4 == 0, with FUN_0000c11e / FUN_0000c17e at depth 8); skips the copy when the offset is unchanged (DAT_00025ffe) [STRONG INFERENCE: compass heading tape]. Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0xc1aa..0xc570: panels_drawn
+ * == 0 -> base = host +0xdc, row = +0x19a - +0xe2, stride = +0xe0, optional jsr (host +0x2c2),
+ * begin_offscreen_drawing(port, stride, base, +0xe2), framed rect fill jsr (+0x28e)(&rect,
+ * +0x25c), end_offscreen_drawing at depth 8, jsr (+0x2c2) again; else base = host +6, row =
+ * +0x19a, stride = +0x10. Position = (period * -neg_camera_heading, +0x3fff when negative) >>
+ * 14 - width / 2 + sext +0x1a8, wrapped up by period; unchanged -> returns (panels drawn or
+ * depth 8) or ends the offscreen drawing. Changed, depth != 8: rects src (pos, 0, pos + width,
+ * +0x1a6) / dst (+0x19c, +0x19a, + width, + height) copied by jsr (host +0x29a)(+0x1bc, +0x1b0,
+ * &src, port or 0, &dst), split in two at the period wrap. Changed, depth 8: columns whose
+ * marking byte (old or new position) is set are copied in runs by copy_rect_depth8 (move.l
+ * #$bf90 = runtime address of file 0xbfb0) with the strip / frame wraps of the C. DEAD CODE
+ * [PROVEN]: that run path is only entered when view_depth == 8 (0xc328), yet 0xc43a tests
+ * view_depth == 4 and has a branch doubling the strides and calling #$bc88 (= runtime address
+ * of copy_rect_depth4, file 0xbca8); it can never run, and the C correctly omits it - a port
+ * must not restore it. Otherwise identical to the C. The local offsets in the declaration
+ * comments below follow Ghidra's local_N = -(N - 4)(A6) (corrected).
  */
 uint update_heading_tape /* Original: FUN_0000c1aa */ (int hide_cursor /* param_1: non-zero -> host +0x2c2 around the drawing [INFERENCE: cursor hide / show] */)
 
@@ -15615,21 +15715,21 @@ uint update_heading_tape /* Original: FUN_0000c1aa */ (int hide_cursor /* param_
   int src; /* iVar18; strip source of the run */
   byte *mark_new; /* pbVar19; marking byte at the new position */
   bool more; /* bVar20; columns remained before the decrement */
-  int cols_left; /* iStack_a0, -0xa0(A6): window columns left */
-  byte *mark_old; /* pbStack_9c, -0x9c(A6): marking byte at the old position */
-  short dst_top; /* local_88, -0x88(A6): destination rect top (+0x19a) */
-  short dst_left; /* local_86, -0x86(A6): destination rect left (+0x19c) */
-  short dst_bottom; /* local_84, -0x84(A6): destination rect bottom */
-  short dst_right; /* local_82, -0x82(A6): destination rect right */
-  undefined2 src_top; /* local_80, -0x80(A6): strip rect top (0) */
-  short src_left; /* local_7e, -0x7e(A6): strip rect left (tape position) */
-  undefined2 src_bottom; /* local_7c, -0x7c(A6): strip rect bottom (+0x1a6) */
-  short src_right; /* local_7a, -0x7a(A6): strip rect right */
-  short frame_top; /* local_78, -0x78(A6): framed rect top */
-  short frame_left; /* local_76, -0x76(A6): framed rect left */
-  short frame_bottom; /* local_74, -0x74(A6): framed rect bottom */
-  short frame_right; /* local_72, -0x72(A6): framed rect right */
-  undefined4 port [27]; /* auStack_70, -0x70(A6): 0x6c-byte offscreen port record */
+  int cols_left; /* iStack_a0, -0x9c(A6): window columns left */
+  byte *mark_old; /* pbStack_9c, -0x98(A6): marking byte at the old position */
+  short dst_top; /* local_88, -0x84(A6): destination rect top (+0x19a) */
+  short dst_left; /* local_86, -0x82(A6): destination rect left (+0x19c) */
+  short dst_bottom; /* local_84, -0x80(A6): destination rect bottom */
+  short dst_right; /* local_82, -0x7e(A6): destination rect right */
+  undefined2 src_top; /* local_80, -0x7c(A6): strip rect top (0) */
+  short src_left; /* local_7e, -0x7a(A6): strip rect left (tape position) */
+  undefined2 src_bottom; /* local_7c, -0x78(A6): strip rect bottom (+0x1a6) */
+  short src_right; /* local_7a, -0x76(A6): strip rect right */
+  short frame_top; /* local_78, -0x74(A6): framed rect top */
+  short frame_left; /* local_76, -0x72(A6): framed rect left */
+  short frame_bottom; /* local_74, -0x70(A6): framed rect bottom */
+  short frame_right; /* local_72, -0x6e(A6): framed rect right */
+  undefined4 port [27]; /* auStack_70, -0x6c(A6): 0x6c-byte offscreen port record */
 
   strip = *(int *)(host_world + 0x1b0);
   marks = *(byte **)(host_world + 0x1b8);
@@ -15837,7 +15937,7 @@ undefined4 draw_gauge_needle /* Original: FUN_0000c572 */ (int type /* param_1: 
 
 /* Original: FUN_0000c664; source: Pacific Conflict.c. Recovered name: update_altimeter_needles [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc664).
- * Type 0. Draws the long hand with draw_gauge_needle and, when it moved, a second hand of 2/3 length (directly with *DAT_0001da98 / *DAT_0001da9c or host +0x272; end cached in DAT_00025fda / DAT_00025fde); angles from FUN_00001db8 / FUN_00001d56 = cos_fixed14 / sin_fixed14 call-site aliases (BLOCKED false entries; register arguments not recovered by Ghidra) [STRONG INFERENCE: thousands / hundreds hands]. Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Ghidra C.
+ * Type 0. Draws the long hand with draw_gauge_needle and, when it moved, a second hand of 2/3 length (directly with *DAT_0001da98 / *DAT_0001da9c or host +0x272; end cached in DAT_00025fda / DAT_00025fde); angles from FUN_00001db8 / FUN_00001d56 = cos_fixed14 / sin_fixed14 (false entries whose lea.l $1db8 / $1d56 references are the runtime addresses of cos_fixed14 0x1dd8 / sin_fixed14 0x1d76 [PROVEN]; register arguments not recovered by Ghidra) [STRONG INFERENCE: thousands / hundreds hands]. Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Ghidra C.
  * VERIFIED: 0xc664..0xc80c checked against an independent capstone disassembly and found
  * identical to the C with the trig calls and angles reconstructed: long hand through
  * draw_gauge_needle(0, cx, cy, cx + cos r, cy + sin r) (centre DAT_0001b5a0 +0xf0 / +0xf2 - 1,
@@ -16123,8 +16223,8 @@ void update_throttle_gauge /* Original: FUN_0000cb62 */ (void)
 
 {
   short split_row; /* sVar1; row splitting the two bar parts: bottom - height * setting / 9 */
-  undefined4 rect_tl; /* local_c, -0xc(A6): fill rect top / left words */
-  undefined4 rect_br; /* local_8, -8(A6): fill rect bottom / right words */
+  undefined4 rect_tl; /* local_c, -0x8(A6): fill rect top / left words */
+  undefined4 rect_br; /* local_8, -4(A6): fill rect bottom / right words */
   
   if ((readouts_drawn == 0) || (*(char *)(player_object + 0x668) != throttle_shown)) {
     throttle_shown = (short)*(char *)(player_object + 0x668);
@@ -16364,9 +16464,9 @@ void update_view_readouts_and_overlays /* Original: FUN_0000d00c */ (int hide_cu
   int divisor; /* iVar10; readout divisor, then mode7 for the host call */
   int *obj; /* piVar11; object read: player_object or designated_entity_2 */
   undefined4 zero_arg; /* uVar12; 0 argument of host +0x27a */
-  char text [9]; /* acStack_68, -0x68(A6): decimal text buffer */
-  undefined1 text_suffix; /* local_5f, -0x5f(A6): text[9], degree sign 0xa1 for the heading */
-  undefined1 text_end; /* local_5e, -0x5e(A6): text terminator */
+  char text [9]; /* acStack_68, -0x64(A6): decimal text buffer */
+  undefined1 text_suffix; /* local_5f, -0x5b(A6): text[9], degree sign 0xa1 for the heading */
+  undefined1 text_end; /* local_5e, -0x5a(A6): text terminator */
 
   if (panels_drawn == 0) {
     obj = player_object;
@@ -18788,20 +18888,20 @@ short * update_aircraft_entity(int *ctl /* param_1: aircraft controller */) /* O
   int floor_y; /* iVar23; ground height +0x2e + template +0x40 / 2 */
   int delta; /* iVar24; engine power / manifold step, later |gear +0x679| */
   int speed; /* iVar25; speed accumulator a5 (+0x62a), also reused for temporaries (fold / isqrt results) */
-  short lin_drag_w; /* sStack_4e, -0x4e(A6): low word of the linear drag */
-  undefined4 gear_drag; /* local_4c, -0x4c(A6): |gear +0x679| * template +0x20 / 11 [INFERENCE: gear drag] */
-  ushort ctrl_664; /* local_48, -0x48(A6): scaled control word +0x664 (first build_attitude_matrix angle) */
-  int power_target; /* local_46, -0x46(A6): engine power target (0x5e50 / ((density + 0xa25) >> 5)) * throttle */
-  int windmill_term; /* local_42, -0x42(A6): (airspeed << 17) / 0x1c20, windmilling term */
-  int thrust; /* local_34, -0x34(A6): term added to speed as (thrust << 2) / sVar12 [INFERENCE: thrust] */
-  ushort att_22; /* local_2a, -0x2a(A6): attitude word +0x22 */
-  ushort pitch; /* local_28, -0x28(A6): attitude word +0x20 [STRONG INFERENCE: pitch, speed * sin(+0x20) feeds the climb rate] */
-  int field38_scaled; /* local_26, -0x26(A6): scale_template_field_38 output */
-  short matrix [9]; /* asStack_22, -0x22(A6): attitude matrix (build_attitude_matrix) */
-  undefined1 vel_vec [2]; /* auStack_10, -0x10(A6): body-frame velocity vector transformed in place */
-  short vel_x; /* local_e, -0xe(A6): velocity x (>> 6 into +8) */
-  short vel_y; /* local_a, -0xa(A6): velocity y (>> 6 into +0xc) */
-  short vel_z; /* local_6, -6(A6): velocity z (>> 6 into +0x10) */
+  short lin_drag_w; /* sStack_4e, -0x4a(A6): low word of the linear drag */
+  undefined4 gear_drag; /* local_4c, -0x48(A6): |gear +0x679| * template +0x20 / 11 [INFERENCE: gear drag] */
+  ushort ctrl_664; /* local_48, -0x44(A6): scaled control word +0x664 (first build_attitude_matrix angle) */
+  int power_target; /* local_46, -0x42(A6): engine power target (0x5e50 / ((density + 0xa25) >> 5)) * throttle */
+  int windmill_term; /* local_42, -0x3e(A6): (airspeed << 17) / 0x1c20, windmilling term */
+  int thrust; /* local_34, -0x30(A6): term added to speed as (thrust << 2) / sVar12 [INFERENCE: thrust] */
+  ushort att_22; /* local_2a, -0x26(A6): attitude word +0x22 */
+  ushort pitch; /* local_28, -0x24(A6): attitude word +0x20 [STRONG INFERENCE: pitch, speed * sin(+0x20) feeds the climb rate] */
+  int field38_scaled; /* local_26, -0x22(A6): scale_template_field_38 output */
+  short matrix [9]; /* asStack_22, -0x1e(A6): attitude matrix (build_attitude_matrix) */
+  undefined1 vel_vec [2]; /* auStack_10, -0xc(A6): body-frame velocity vector transformed in place */
+  short vel_x; /* local_e, -0xa(A6): velocity x (>> 6 into +8) */
+  short vel_y; /* local_a, -0x6(A6): velocity y (>> 6 into +0xc) */
+  short vel_z; /* local_6, -2(A6): velocity z (>> 6 into +0x10) */
   
   /*
    * ---- Block 0: prologue + contact early-out (binary @0xE792–0xE89E) ----
@@ -19962,10 +20062,10 @@ void player_slew_mode /* Original: FUN_0000f810 */ (int *ctl /* param_1: player 
   short half_in; /* sVar5; averaged control input +0x662 / +0x666, halved */
   int step; /* iVar4; speed step max(|speed| / 2, 1000), also |speed| temporaries */
   undefined4 min_speed; /* uVar6; 1000, or -1000 when the speed is non-negative */
-  undefined1 matrix [18]; /* auStack_22, -0x22(A6): attitude matrix (build_attitude_matrix_3ang) */
-  int vx; /* local_10, -0x10(A6): step vector x (axis 1) */
-  int vy; /* local_c, -0xc(A6): step vector y (axis 3) */
-  int vz; /* local_8, -8(A6): step vector z (axis 2) */
+  undefined1 matrix [18]; /* auStack_22, -0x1e(A6): attitude matrix (build_attitude_matrix_3ang) */
+  int vx; /* local_10, -0xc(A6): step vector x (axis 1) */
+  int vy; /* local_c, -0x8(A6): step vector y (axis 3) */
+  int vz; /* local_8, -4(A6): step vector z (axis 2) */
 
   obj = *ctl;
   min_speed = 1000;
@@ -20190,13 +20290,13 @@ undefined4 animate_landing_gear /* Original: FUN_0000fb2a */ (int *ctl /* param_
   int *dst_v; /* piVar13; destination vertex */
   short *vidx; /* psVar14; face vertex index list (+0x18) */
   bool gear_up; /* bVar15; gear position 0 (fully up) */
-  short neg_x_off; /* sStack_4a, -0x4a(A6): -0x46 << shift side offset */
-  short x_off; /* sStack_46, -0x46(A6): +-0x46 << shift side pivot x */
-  short matrix_neg [9]; /* asStack_34, -0x34(A6): rotation matrix for vertices with x < 1 */
-  short matrix_pos [9]; /* asStack_22, -0x22(A6): rotation matrix for vertices with x >= 1 */
-  int origin_x; /* local_10, -0x10(A6): template vertex 0 x */
-  int origin_y; /* local_c, -0xc(A6): template vertex 0 y */
-  int origin_z; /* local_8, -8(A6): template vertex 0 z */
+  short neg_x_off; /* sStack_4a, -0x46(A6): -0x46 << shift side offset */
+  short x_off; /* sStack_46, -0x42(A6): +-0x46 << shift side pivot x */
+  short matrix_neg [9]; /* asStack_34, -0x30(A6): rotation matrix for vertices with x < 1 */
+  short matrix_pos [9]; /* asStack_22, -0x1e(A6): rotation matrix for vertices with x >= 1 */
+  int origin_x; /* local_10, -0xc(A6): template vertex 0 x */
+  int origin_y; /* local_c, -0x8(A6): template vertex 0 y */
+  int origin_z; /* local_8, -4(A6): template vertex 0 z */
 
   obj = *ctl;
   if (((*(byte *)((int)ctl + 0x67a) & 2) != 0) ||
@@ -20402,7 +20502,7 @@ switchD_0000ff44_caseD_3:
   if ((*(int *)(self_ctl + 0x32) != 0x110d4) && (*(int *)(self_ctl + 0x32) != 0x11162)) {
     return;
   }
-  dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0xffa2..0xffb6): observer x, y, z (param_1), other x, y, z (param_2) */);
+  dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0xffa2..0xffb6): observer x, y, z (param_1), other x, y, z (param_2) */ /* RESTORED [PROVEN, pushes before 0xffba] */*(int *)(self_obj + 0x18), *(int *)(self_obj + 0x1c), *(int *)(self_obj + 0x20), *(int *)(other_obj + 0x18), *(int *)(other_obj + 0x1c), *(int *)(other_obj + 0x20));
   if (dist == 0) {
     chance = 0x7fffffff;
   }
@@ -20546,7 +20646,7 @@ uint enemy_fighter_notice_object /* Original: FUN_000100d4 */ (int self_obj /* p
       (*(int *)(self_ctl + 0x32) != 0x111ba)) && (*(int *)(self_ctl + 0x32) != 0x112c0)) {
     return dist;
   }
-  dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (object a +0x18 / +0x1c / +0x20, object b +0x18 / +0x1c / +0x20) of param_1 / param_2 [PROVEN, pushes 0x10176..0x1018a] */);
+  dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (object a +0x18 / +0x1c / +0x20, object b +0x18 / +0x1c / +0x20) of param_1 / param_2 [PROVEN, pushes 0x10176..0x1018a] */ /* RESTORED [PROVEN, pushes before 0x1018e] */*(int *)(self_obj + 0x18), *(int *)(self_obj + 0x1c), *(int *)(self_obj + 0x20), *(int *)(other_obj + 0x18), *(int *)(other_obj + 0x1c), *(int *)(other_obj + 0x20));
   if (dist == 0) {
     chance = 0x7fffffff;
   }
@@ -20721,9 +20821,9 @@ build_relative_steer_sample(int *ctl /* param_1: aircraft controller */,int x /*
   int obj; /* iVar7; aircraft object, then aircraft z, then the squared length */
   short shift_n; /* sVar8; shift count to fit 16 bits */
   undefined4 low; /* uVar9; 1 when below 4000 above the ground */
-  ushort heading_raw; /* local_1a, -0x1a(A6): attitude_from_velocity heading output */
-  ushort pitch_raw; /* local_18, -0x18(A6): attitude_from_velocity pitch output */
-  short matrix [9]; /* asStack_16, -0x16(A6): inverse attitude matrix */
+  ushort heading_raw; /* local_1a, -0x16(A6): attitude_from_velocity heading output */
+  ushort pitch_raw; /* local_18, -0x14(A6): attitude_from_velocity pitch output */
+  short matrix [9]; /* asStack_16, -0x12(A6): inverse attitude matrix */
   
   obj = *ctl;
   height = (*(int *)(obj + 0x1c) + ctl[3] * 0x2d) - *(int *)((int)ctl + 0x2e);
@@ -21248,10 +21348,10 @@ LAB_00010b0a:
  * apply_relative_heading_steer(aircraft, height, v, pitch_err, heading_err). */
 void steer_entity_toward_point(int *ctl /* param_1: aircraft controller */,int x /* param_2: target x */,int y /* param_3: target y */,int z /* param_4: target z */) /* Original: FUN_00010b2e */
 {
-  short heading_err; /* local_18, -0x18(A6): folded heading to the target */
-  short pitch_err; /* local_16, -0x16(A6): folded pitch to the target */
-  int height; /* local_14, -0x14(A6): height above ground */
-  undefined1 vec [12]; /* auStack_10, -0x10(A6): target vector in the aircraft frame */
+  short heading_err; /* local_18, -0x14(A6): folded heading to the target */
+  short pitch_err; /* local_16, -0x12(A6): folded pitch to the target */
+  int height; /* local_14, -0x10(A6): height above ground */
+  undefined1 vec [12]; /* auStack_10, -0xc(A6): target vector in the aircraft frame */
   
   build_relative_steer_sample( /* Original: FUN_00010360 */ctl,x,y,z,&height,(int)vec,&pitch_err,&heading_err);
   apply_relative_heading_steer( /* Original: FUN_000109ba */(int)ctl,height,(int)vec,pitch_err,heading_err);
@@ -21687,7 +21787,7 @@ void tick_ai_1b310_approach_fire(int *ctl /* param_1: aircraft controller */) /*
   ensure_ai_script_1b310_tick( /* Original: FUN_00010da8 */ctl);
   route = *(short **)((int)ctl + 0x616);
   if (*route == 1) {
-    dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, -0x40af3, 0, 0x2b246a) [PROVEN, pushes 0x10ef2..0x10f06] */);
+    dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, -0x40af3, 0, 0x2b246a) [PROVEN, pushes 0x10ef2..0x10f06] */ /* RESTORED [PROVEN, pushes before 0x10f0a] */*(int *)(obj + 0x18), 0, *(int *)(obj + 0x20), -0x40af3, 0, 0x2b246a);
     if (((dist < 50000) && (20000 < *(int *)(obj + 0x1c))) &&
        ((*(byte *)(ctl + 0x1a1) & 1) == 0)) {
       *route = 2;
@@ -21865,7 +21965,7 @@ void ai_attack_or_fly /* Original: FUN_000110f4 */ (int *ctl /* param_1: aircraf
       *(undefined4 *)((int)ctl + 0x692) = 0;
     }
     else {
-      target = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own object pos, target object pos) [PROVEN, pushes 0x11128..0x1113c] */);
+      target = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own object pos, target object pos) [PROVEN, pushes 0x11128..0x1113c] */ /* RESTORED [PROVEN, pushes before 0x11140] */*(int *)(*ctl + 0x18), *(int *)(*ctl + 0x1c), *(int *)(*ctl + 0x20), *(int *)(target + 0x18), *(int *)(target + 0x1c), *(int *)(target + 0x20));
       *(int *)((int)ctl + 0x696) = target;
       ai_pursue_target(ctl);
       attacking = true;
@@ -21961,7 +22061,7 @@ void ai_dive_at_target /* Original: FUN_000111da */ (int *ctl /* param_1: aircra
   else {
     target = *(int *)((int)ctl + 0x692);
     if (((*(byte *)(target + 7) & 2) == 0) && (*(int *)(target + 0x44) != 0)) {
-      aim_y = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, target x, 0, target z): horizontal distance [PROVEN, pushes 0x11204..0x11214] */);
+      aim_y = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, target x, 0, target z): horizontal distance [PROVEN, pushes 0x11204..0x11214] */ /* RESTORED [PROVEN, pushes before 0x11218] */*(int *)(*ctl + 0x18), 0, *(int *)(*ctl + 0x20), *(int *)(target + 0x18), 0, *(int *)(target + 0x20));
       *(int *)((int)ctl + 0x696) = aim_y;
       if (*(int *)((int)ctl + 0x696) < 0xafc9) {
         aim_y = *(int *)(target + 0x1c);
@@ -22045,7 +22145,7 @@ void ai_bombing_run /* Original: FUN_000112e0 */ (int *ctl /* param_1: aircraft 
   }
   else {
     obj = *ctl;
-    aim_x = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, target x, 0, target z): horizontal distance [PROVEN, pushes 0x11312..0x11322] */);
+    aim_x = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, target x, 0, target z): horizontal distance [PROVEN, pushes 0x11312..0x11322] */ /* RESTORED [PROVEN, pushes before 0x11326] */*(int *)(obj + 0x18), 0, *(int *)(obj + 0x20), *(int *)(aim_z + 0x18), 0, *(int *)(aim_z + 0x20));
     *(int *)((int)ctl + 0x696) = aim_x;
     aim_x = *(int *)(aim_z + 0x18);
     aim_y = *(int *)(aim_z + 0x1c);
@@ -22425,7 +22525,7 @@ void destroy_plume_controller /* Original: FUN_000116e8 */ (int plume /* param_1
 
 /* Original: FUN_000116fc; source: Pacific Conflict.c. Recovered name: tick_smoke_plume [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x116fc).
- * Free plume: does nothing until its end frame (+0x38) arrives. Trailing plume (+0x3c set): while the aircraft exists and still has damage bit 0 (outside a replay rewind) pushes the aircraft position into an 8-entry ring of trail points (+0x40, index +0xa0) and moves the plume object along; otherwise winds down. Ghidra C (partly read). Plume definition key 7 (file 0x1a90c): +2 tick_smoke_plume, +0xa destroy_plume_controller, +0xe plume_pre_render [PROVEN bytes]; created through register_smoke_template -> create_plume_controller.
+ * Free plume: does nothing until its end frame (+0x38) arrives. Trailing plume (+0x3c set): while the aircraft exists and still has damage bit 0 (outside a replay rewind) pushes the aircraft position into an 8-entry ring of trail points (+0x40, index +0xa0) and moves the plume object along; otherwise winds down. Ghidra C (read in full; byte-level VERIFIED note below). Plume definition key 7 (file 0x1a90c): +2 tick_smoke_plume, +0xa destroy_plume_controller, +0xe plume_pre_render [PROVEN bytes]; created through register_smoke_template -> create_plume_controller.
  *
  * VERIFIED: independent capstone disassembly of 0x116fc..0x11794 is
  * identical to the C. Correction: "damage bit 0" above is Ghidra's byte test
@@ -22479,7 +22579,16 @@ void tick_smoke_plume /* Original: FUN_000116fc */ (int *plume /* param_1: plume
  * cmpi.w #$2c) - identical to the C; returns 0. */
 /* Original: FUN_00011796; source: Pacific Conflict.c. Recovered name: shape_free_plume [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x11796).
- * Plume shaper for a free plume (plume_pre_render): turns it to the camera heading when +0x32 is set and sets its vertex offsets from the size words +0x36 / +0x34 (fractions 1/2, 3/8, 1/4...). Ghidra C (partly read).
+ * Plume shaper for a free plume (plume_pre_render): turns it to the camera heading when +0x32 is set and sets its vertex offsets from the size words +0x36 / +0x34 (fractions 1/2, 3/8, 1/4...). Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x11796..0x1193e:
+ * neg.w / andi.w #$3fff heading copy when word +0x32 is set; sext word +0x36 = a gives
+ * longs 0 / +0xc / +0x18 / +0x30 / +0x3c / +0x48 = -a/2, -3a/8, -a/4, a/4, 3a/8, a/2 (bpl/bge
+ * + addq rounding toward zero), then clr.w +0x36; when long +0x38 != frame_counter, four
+ * overlay_rng_next draws (andi.w #$fff, zero-extended) muls.l by sext word +0x34, +0x1fff
+ * when negative, asr #13 into +0x10 / +0x28 / +0x40 / +0x58 (+0x28 also adds the word
+ * +0x34 / 2 via asr.w and movea.w); abs_int(frame - object +0x40) <= 0x2c (cmpi.w / bgt)
+ * scales the four by age / 0x2d (muls.l, divs.l signed); returns 0 (clr.l d0) on every
+ * path - identical to the C.
  */
 undefined4 shape_free_plume /* Original: FUN_00011796 */ (int *plume /* param_1: plume controller (+0x32 face camera, +0x34 / +0x36 sizes, +0x38 end frame) */)
 
@@ -22574,7 +22683,7 @@ undefined4 shape_free_plume /* Original: FUN_00011796 */ (int *plume /* param_1:
 
 /* Original: FUN_00011940; source: Pacific Conflict.c. Recovered name: shape_trailing_plume [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x11940).
- * Plume shaper for a trailing plume (plume_pre_render): places the vertices on the eight recorded trail points (+0x40.., ring index +0xa0) with small random offsets and fixed vertical steps (-0x12, -0x1b, -0x24) - a smoke trail drawn behind the aircraft. Ghidra C (partly read).
+ * Plume shaper for a trailing plume (plume_pre_render): places the vertices on the eight recorded trail points (+0x40.., ring index +0xa0) with small random offsets and fixed vertical steps (-0x12, -0x1b, -0x24) - a smoke trail drawn behind the aircraft. Ghidra C (read in full; byte-level VERIFIED note below).
  */
 /* VERIFIED (FUN_00011940): 0x11940..0x11a8e checked against an independent capstone disassembly and
  * found identical to the C: ring of 8 positions at ctl + 0x40 (12 bytes each, head index word
@@ -23744,13 +23853,13 @@ void ordnance_ballistic_step /* Original: FUN_000128b6 */ (int *ctl /* param_1: 
   int speed; /* iVar3; isqrt_floor of the squared velocity (kept in +0x610) */
   int tmp; /* iVar4; squared velocity, then sin_fixed14(pitch) */
   short heading_delta; /* sVar5; change of word +0x22, folded into -0x2000..0x2000 */
-  ushort att_22; /* local_26, -0x26(A6): attitude word +0x22, updated by attitude_from_velocity */
-  ushort pitch; /* local_24, -0x24(A6): attitude word +0x20 [STRONG INFERENCE: pitch], updated by attitude_from_velocity */
-  short matrix [9]; /* asStack_22, -0x22(A6): attitude matrix */
-  undefined1 vel_vec [2]; /* auStack_10, -0x10(A6): velocity vector transformed in place */
-  short vel_x; /* local_e, -0xe(A6): velocity x */
-  short vel_y; /* local_a, -0xa(A6): velocity y (gravity -0x5b added) */
-  short vel_z; /* local_6, -6(A6): velocity z (starts as the speed word +0x610) */
+  ushort att_22; /* local_26, -0x22(A6): attitude word +0x22, updated by attitude_from_velocity */
+  ushort pitch; /* local_24, -0x20(A6): attitude word +0x20 [STRONG INFERENCE: pitch], updated by attitude_from_velocity */
+  short matrix [9]; /* asStack_22, -0x1e(A6): attitude matrix */
+  undefined1 vel_vec [2]; /* auStack_10, -0xc(A6): velocity vector transformed in place */
+  short vel_x; /* local_e, -0xa(A6): velocity x */
+  short vel_y; /* local_a, -0x6(A6): velocity y (gravity -0x5b added) */
+  short vel_z; /* local_6, -2(A6): velocity z (starts as the speed word +0x610) */
   
   obj = *ctl;
   pitch = *(ushort *)(ctl + 8);
@@ -23924,7 +24033,7 @@ LAB_00012d26:
         } while (((*(uint *)(obj + 4) & 0x10242) != 0) &&
                 ((*(int *)(obj + 8) == 0 || (*(int *)(obj + 8) != player_object))));
         if (radius < *(int *)(obj + 0x14)) goto LAB_00012cd4;
-        dist = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */);
+        dist = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */ /* RESTORED [PROVEN, pushes before 0x12bd4] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), x, y, z);
       } while (1999 < dist - *(int *)(obj + 0x14));
       if (dist < *(int *)(obj + 0x14)) {
 LAB_00012bf4:
@@ -23978,7 +24087,7 @@ LAB_00012cd4:
   if ((((hit_ships != 0) && (*(int *)(obj + 8) != 0)) &&
       (0x14 < **(short **)(*(int *)(obj + 8) + 4))) &&
      ((**(short **)(*(int *)(obj + 8) + 4) < 0x1a &&
-      (dist = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */), dist < *(int *)(obj + 0x14))))) {
+      (dist = approx_dist3_xyz( /* Original: FUN_00003c68; args (obj +0x18, +0x1c, +0x20, param_1, param_2, param_3) [PROVEN] */ /* RESTORED [PROVEN, pushes before 0x12d06] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), x, y, z), dist < *(int *)(obj + 0x14))))) {
     ctl = *(int **)(obj + 8);
 LAB_00012d1e:
     apply_hit_to_sinkable_object(ctl,credit);
@@ -24038,11 +24147,11 @@ void ordnance_detonation /* Original: FUN_00012d34 */ (int *ctl /* param_1: ordn
             if (replay_state == 0) {
               *(short *)(host_world + 0xcc) = *(short *)(host_world + 0xcc) + 1;
             }
-            if (((*(short *)(host_world + 0x90) == 3) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12e66..0x12e80): object x, y, z, -0x3bcd3, 0, 0x2b246a */), dist < 0xce40))
+            if (((*(short *)(host_world + 0x90) == 3) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12e66..0x12e80): object x, y, z, -0x3bcd3, 0, 0x2b246a */ /* RESTORED [PROVEN, pushes before 0x12e80] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), -0x3bcd3, 0, 0x2b246a), dist < 0xce40))
                && (*(short *)(host_world + 0xce) == 0)) {
               *(undefined2 *)(host_world + 0xce) = 1;
             }
-            if (((*(short *)(host_world + 0x90) == 4) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12eb2..0x12ecc): object x, y, z, -0xf29a61, 0, 0xb2584f */), dist < 0xce40))
+            if (((*(short *)(host_world + 0x90) == 4) && (dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x12eb2..0x12ecc): object x, y, z, -0xf29a61, 0, 0xb2584f */ /* RESTORED [PROVEN, pushes before 0x12ecc] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), -0xf29a61, 0, 0xb2584f), dist < 0xce40))
                && (*(short *)(host_world + 0xce) == 0)) {
               *(undefined2 *)(host_world + 0xce) = 1;
             }
@@ -24370,7 +24479,7 @@ int point_over_face_xz /* Original: FUN_000132c8 */ (int *rec /* param_1: record
   int obj; /* iVar1; object */
   short origin_x; /* sVar2; object x scaled by the position shift */
   short origin_z; /* sVar3; object z scaled by the position shift */
-  undefined1 projected [1680]; /* auStack_694, -0x694(A6): projected face vertices (1680 bytes) */
+  undefined1 projected [1680]; /* auStack_694, -0x690(A6): projected face vertices (1680 bytes) */
   
   obj = *rec;
   if (*(short *)(rec + 3) < 0) {
@@ -24446,7 +24555,7 @@ int surface_type_at_point /* Original: FUN_00013346 */ (int x /* param_1: point 
   short faces_left; /* sVar8; faces left (+0x3a) */
   short left; /* sVar9; objects left */
   int *slot; /* piVar10; entity_array_1 slot (walked from the end) */
-  undefined1 projected [1680]; /* auStack_694, -0x694(A6): projected face vertices (1680 bytes) */
+  undefined1 projected [1680]; /* auStack_694, -0x690(A6): projected face vertices (1680 bytes) */
   
   left = entity_array_1_count._2_2_;
   slot = &entity_array_1 + entity_array_1_count._2_2_;
@@ -24466,7 +24575,7 @@ LAB_00013446:
       obj = *slot;
       face = abs_int( /* Original: FUN_00002e08 */*(int *)(obj + 0x10) - metric);
     } while (((*(int *)(obj + 0x14) < face) || ((*(uint *)(obj + 4) & 0x42) != 0)) ||
-            (face = approx_dist3_xyz( /* Original: FUN_00003c68 */), *(int *)(obj + 0x14) < face));
+            (face = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x133c2] */x, y_unused, z, *(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20)), *(int *)(obj + 0x14) < face));
     faces_left = *(short *)(obj + 0x3a);
     face = *(int *)(obj + 0x48) + faces_left * 0x20;
     while( true ) {
@@ -24532,7 +24641,7 @@ undefined4 point_in_face_by_axis /* Original: FUN_0001346c */ (int rec /* param_
   short py; /* sVar4; object a y, scaled */
   short px; /* sVar5; object a x, scaled */
   short pz; /* sVar6; object a z, scaled */
-  undefined1 projected [1680]; /* auStack_694, -0x694(A6): projected face vertices (1680 bytes) */
+  undefined1 projected [1680]; /* auStack_694, -0x690(A6): projected face vertices (1680 bytes) */
   int result; /* iVar2; point-in-polygon result as an int */
 
   if (*(short *)(rec + 0xc) < 0) {
@@ -24907,8 +25016,8 @@ int fractal_height_at /* Original: FUN_00013980 */ (int rec /* param_1: contact 
   int centre_z; /* iVar10; cell centre z (shifted), then the model vertex longs */
   int centre; /* iVar12; face-centre entry, then the face centre vertex */
   int obj; /* iVar13; fractal object, then the height result */
-  int *centre_z_p; /* local_16, -0x16(A6): z long of the face-centre entry */
-  short cell_v; /* local_6, -6(A6): second cell coordinate (rotated z) */
+  int *centre_z_p; /* local_16, -0x12(A6): z long of the face-centre entry */
+  short cell_v; /* local_6, -2(A6): second cell coordinate (rotated z) */
 
   cell_v = z;
   obj = *(int *)(rec + 4);
@@ -25050,7 +25159,7 @@ void test_terrain_collision /* Original: FUN_00013cdc */ (uint obj_a /* param_1:
   short ground; /* sVar5; scaled z, then the ground height (fractal_height_at) */
   short rel_x; /* sVar6; scaled a x - b x */
   short height; /* sVar7; scaled a y (refined by lift_object_onto_terrain) */
-  short plane_changed; /* local_6, -6(A6): fractal_height_at out flag (plane changed) */
+  short plane_changed; /* local_6, -2(A6): fractal_height_at out flag (plane changed) */
   
   dz = *(int *)(obj_a + 0x20) - *(int *)(obj_b + 0x20);
   tmp = dz;
@@ -25134,7 +25243,7 @@ void test_proximity_collision /* Original: FUN_00013e4e */ (int obj_a /* param_1
   if ((*(uint *)(obj_b + 4) & *(uint *)(obj_a + 4) & 0x100000) != 0) {
     /* Dropped call arguments [PROVEN, 0x13e68..0x13e80]: approx_dist3_xyz(a +0x18, a +0x1c,
      * a +0x20, b +0x18, b +0x1c, b +0x20), the two object positions. */
-    dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+    dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x13e80] */*(int *)(obj_a + 0x18), *(int *)(obj_a + 0x1c), *(int *)(obj_a + 0x20), *(int *)(obj_b + 0x18), *(int *)(obj_b + 0x1c), *(int *)(obj_b + 0x20));
     dist = (dist >> 2) + (dist >> 1);
     if ((dist < *(int *)(obj_a + 0x14)) || (dist < *(int *)(obj_b + 0x14))) {
       dispatch_collision(obj_a,obj_b);
@@ -25196,17 +25305,17 @@ uint * test_object_collision /* Original: FUN_00013ee0 */ (uint obj_a /* param_1
   uint shift; /* uVar13; record shift, then the vertex shift (+0xe) */
   bool existed; /* bVar14; the contact record existed before this frame */
   bool more; /* bVar15; faces remained before the decrement */
-  ushort *side_p; /* local_30, -0x30(A6): stored side word of this face */
-  ushort *axis_p; /* local_c, -0xc(A6): axis word of this face */
+  ushort *side_p; /* local_30, -0x2c(A6): stored side word of this face */
+  ushort *axis_p; /* local_c, -0x8(A6): axis word of this face */
   int dot; /* iVar16; full dot product (a - face vertex) . normal */
-  uint *face_idx_p; /* local_2c, -0x2c(A6): face index word of this entry */
-  short ay; /* sStack_22, -0x22(A6): a y scaled by the record shift */
-  short ax; /* sStack_1e, -0x1e(A6): a x scaled by the record shift */
-  short left; /* local_6, -6(A6): faces left */
+  uint *face_idx_p; /* local_2c, -0x28(A6): face index word of this entry */
+  short ay; /* sStack_22, -0x1e(A6): a y scaled by the record shift */
+  short ax; /* sStack_1e, -0x1a(A6): a x scaled by the record shift */
+  short left; /* local_6, -2(A6): faces left */
   
   /* Dropped call arguments [PROVEN, 0x13ef0..0x13f08]: approx_dist3_xyz(a +0x18, a +0x1c,
    * a +0x20, b +0x18, b +0x1c, b +0x20). */
-  faces = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+  faces = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x13f08] */*(int *)(obj_a + 0x18), *(int *)(obj_a + 0x1c), *(int *)(obj_a + 0x20), *(int *)(obj_b + 0x18), *(int *)(obj_b + 0x1c), *(int *)(obj_b + 0x20));
   result = (uint *)(faces - (faces >> 2));
   if ((int)result <= *(int *)(obj_b + 0x14) + *(int *)(obj_a + 0x14)) {
     if ((*(byte *)(obj_b + 6) & 2) == 0) {
@@ -25316,7 +25425,7 @@ void handle_terrain_contact /* Original: FUN_00014198 */ (uint obj_a /* param_1:
   short rel_x; /* sVar3; scaled a x - b x */
   int height; /* iVar2; fractal_height_at result */
   short rel_z; /* sVar4; scaled a z - b z, then the ground height */
-  undefined2 plane_changed; /* local_6, -6(A6): fractal_height_at out flag */
+  undefined2 plane_changed; /* local_6, -2(A6): fractal_height_at out flag */
   
   rec = (uint *)find_contact_record(obj_a,obj_b);
   if (rec == (uint *)0x0) {
@@ -25380,7 +25489,7 @@ void handle_player_contact /* Original: FUN_0001429c */ (uint obj_a /* param_1: 
   if (*(int *)(obj_a + 8) == player_object) {
     /* Dropped call arguments [PROVEN, 0x142b6..0x142ce]: approx_dist3_xyz(a +0x18, a +0x1c,
      * a +0x20, b +0x18, b +0x1c, b +0x20). */
-    dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+    dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x142ce] */*(int *)(obj_a + 0x18), *(int *)(obj_a + 0x1c), *(int *)(obj_a + 0x20), *(int *)(obj_b + 0x18), *(int *)(obj_b + 0x1c), *(int *)(obj_b + 0x20));
     if (dist - (dist >> 2) <= *(int *)(obj_b + 0x14) + *(int *)(obj_a + 0x14)) {
       if ((*(byte *)(obj_b + 6) & 2) == 0) {
         rec = (uint *)find_contact_record(obj_a,obj_b);
@@ -25513,9 +25622,9 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param
   int *dst; /* piVar17; support list write cursor */
   short *idx_p; /* psVar18; part index cursor, then a support record */
   int dist; /* iVar19; distance being placed */
-  int *dist_p; /* local_426, -0x426(A6): cursor into dists */
-  short support_count; /* local_41e, -0x41e(A6): supports left */
-  int dists [256]; /* local_404, -0x404(A6): part distances (256 longs) */
+  int *dist_p; /* local_426, -0x422(A6): cursor into dists */
+  short support_count; /* local_41e, -0x41a(A6): supports left */
+  int dists [256]; /* local_404, -0x400(A6): part distances (256 longs) */
 
   saved_cam_x = camera_x;
   saved_cam_y = camera_y;
@@ -25708,7 +25817,24 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param
  * word +2 that the bytes compare and grow - identical to the C. */
 /* Original: FUN_00014830; source: Pacific Conflict.c. Recovered name: lift_object_onto_terrain [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x14830).
- * Called by test_terrain_collision when the height query reports it. When the object (arg 4) is below the ground height (arg 2, rescaled by the contact-record shift) and holds no fractal reference: raises its y (+0x1c) to the ground, moves its vertices up (translate_int3_vecs, unless +5 & 0x10), refreshes its distance metric and the face detail thresholds, and marks it settled (+5 | 8); then continues with the fractal data DAT_00020b48 (further down). Returns the new height. Ghidra C (partly read).
+ * Called by test_terrain_collision when the height query reports it. When the object (arg 4) is below the ground height (arg 2, rescaled by the contact-record shift) and holds no fractal reference: raises its y (+0x1c) to the ground, moves its vertices up (translate_int3_vecs, unless +5 & 0x10), refreshes its distance metric and the face detail thresholds, and marks it settled (+5 | 8); then continues with the fractal data DAT_00020b48 (further down). Returns the new height. Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x14830..0x14ab8:
+ * when height < sext ground and object +0x2c == 0: dy = ground << -s or >> s (s = sext word
+ * rec +0xa), object +0x1c += dy; unless object byte +5 bit 4, translate_int3_vecs(sext +0x36
+ * + sext +0x3a, +0x44, +0x44, 0, dy << sext +0x34, 0); unless bit 3, +0xc += metric - +0x10
+ * (update_object_camera_metric) and each face long +0x1c (stride 0x20, dbra over +0x3a) +=
+ * dy; then bit 3 set and height = ext ground. Support point: cell_plane word +4 != 0 ->
+ * the vertex at terrain +0x44 + (sext +0x36 - sext +0x38) * 12 indexed by sext word rec +0x22
+ * + 14 * rec +0x20 (x at +0, z at +8); else (2 * +0x18 + +0x1a, 2 * +0x1e + +0x1c) / 3 when
+ * rec +0x20 == 0 or (2 * +0x1a + +0x18, 2 * +0x1c + +0x1e) / 3 otherwise (divs.l quotient),
+ * u -= v / 2 (rounded toward zero) when rec words +0xe and +0x14 are both 0, then x =
+ * terrain +0x18 + (u << -s or >> s), z = terrain +0x20 + (v likewise). terrain +0x2c == 0 ->
+ * heap_alloc(0x1c) (bsr $1a68) with count 0 / capacity 5; old object support count - 1 and
+ * deferred_free_flag = 1; search the list (dbra) for x / z; if absent heap_alloc_cleared(0x10)
+ * (bsr $1b6c) with x / z, growing the list by 5 (heap_realloc_grow_only, capacity * 4 + 8)
+ * when capacity == count - the C's (short)*support_list is the low word of the long at +0,
+ * i.e. the capacity at +2 (big-endian) - and storing it at +4 + 4 * count (extension 0x8c04 =
+ * a0.l * 4); support count + 1, object +0x2c = it; returns ext.l height - identical to the C.
  */
 int lift_object_onto_terrain /* Original: FUN_00014830 */ (int rec /* param_1: fractal contact record */,short ground /* param_2: ground height (record scale) */,int height /* param_3: object height (record scale), returned */,int obj /* param_4: object lifted onto the terrain (+0x2c fractal reference) */,int terrain /* param_5: fractal / group object (+0x2c support list) */)
 
@@ -25949,11 +26075,11 @@ uint carry_attached_objects /* Original: FUN_00014bea */ (int carrier /* param_1
   short left; /* sVar10; objects left */
   undefined4 *next_slot; /* puVar11; next object_pool slot */
   undefined4 *slot; /* puVar12; object_pool slot */
-  undefined1 off_vec [2]; /* auStack_22, -0x22(A6): offset vector rotated in place */
-  short off_x; /* local_20, -0x20(A6): object x offset from the carrier */
-  short off_y; /* local_1c, -0x1c(A6): object y offset from the carrier */
-  short off_z; /* local_18, -0x18(A6): object z offset from the carrier */
-  short matrix [9]; /* asStack_16, -0x16(A6): rotation matrix built from the deltas */
+  undefined1 off_vec [2]; /* auStack_22, -0x1e(A6): offset vector rotated in place */
+  short off_x; /* local_20, -0x1c(A6): object x offset from the carrier */
+  short off_y; /* local_1c, -0x18(A6): object y offset from the carrier */
+  short off_z; /* local_18, -0x14(A6): object z offset from the carrier */
+  short matrix [9]; /* asStack_16, -0x12(A6): rotation matrix built from the deltas */
 
   cx = *(int *)(carrier + 0x18);
   cy = *(int *)(carrier + 0x1c);
@@ -25979,7 +26105,7 @@ LAB_00014d78:
       obj = (char *)*slot;
       result = *(uint *)(obj + 4) & 0x202;
       slot = next_slot;
-    } while (((result != 0) || (result = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14ca2..0x14cb0): object x, y, z, carrier x, y, z (iVar2, iVar3, iVar4) */), *(int *)(carrier + 0x14) <= (int)result)) ||
+    } while (((result != 0) || (result = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14ca2..0x14cb0): object x, y, z, carrier x, y, z (iVar2, iVar3, iVar4) */ /* RESTORED [PROVEN, pushes before 0x14cb4] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), cx, cy, cz), *(int *)(carrier + 0x14) <= (int)result)) ||
             (*(int *)(obj + 8) == 0));
     type = **(short **)(*(int *)(obj + 8) + 4);
     result = CONCAT22((short)(result >> 0x10),type);
@@ -26119,7 +26245,7 @@ void apply_hit_to_sinkable_object /* Original: FUN_00014f48 */ (int *ctl /* para
   short total_drop; /* unaff_D4w: total drop (rate +0x42) (D4.w) */
   
   if ((anchor_found != 0) &&
-     (tmp = *ctl, dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14f60..0x14f74): DAT_0001d83c, DAT_0001d840, DAT_0001d844 (anchor), object x, y, z */), dist <= *(int *)(tmp + 0x14))) {
+     (tmp = *ctl, dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x14f60..0x14f74): DAT_0001d83c, DAT_0001d840, DAT_0001d844 (anchor), object x, y, z */ /* RESTORED [PROVEN, pushes before 0x14f7a] */anchor_x, anchor_y, anchor_z, *(int *)(tmp + 0x18), *(int *)(tmp + 0x1c), *(int *)(tmp + 0x20)), dist <= *(int *)(tmp + 0x14))) {
     anchor_found = 0;
   }
   if (credit != 0) {
@@ -26327,10 +26453,10 @@ void tick_firing_ship_controller /* Original: FUN_00015356 */ (int *ctl /* param
   uint shot_z; /* uVar21; shot z */
   ushort shot_att_22; /* uVar22; shot attitude word +0x22 */
   undefined2 shot_bank; /* uVar23; shot bank (0) */
-  short left; /* local_10, -0x10(A6): face vertices left */
-  short guns; /* local_a, -0xa(A6): marked faces (guns) found */
-  ushort aim_22; /* local_8, -8(A6): aim attitude word +0x22 (attitude_from_velocity 2nd output) */
-  ushort aim_pitch; /* local_6, -6(A6): aim pitch (attitude_from_velocity 1st output) */
+  short left; /* local_10, -0xc(A6): face vertices left */
+  short guns; /* local_a, -0x6(A6): marked faces (guns) found */
+  ushort aim_22; /* local_8, -4(A6): aim attitude word +0x22 (attitude_from_velocity 2nd output) */
+  ushort aim_pitch; /* local_6, -2(A6): aim pitch (attitude_from_velocity 1st output) */
   
   obj = *ctl;
   if (*(short *)(ctl + 0x13) == 0) {
@@ -26944,7 +27070,7 @@ void spawn_ordnance_oriented_3ang /* Original: FUN_00015d78 */ (int speed,int mo
 
 /* Original: FUN_00015dc8; source: Pacific Conflict.c. Recovered name: tick_bullet [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x15dc8).
- * When the bullet has hit an object (+0x3c, set by bullet_hits_shape) spawns that object destruction effect (spawn_destruction_effect at range / 8, or / 4 when raised) and handles the kill (further down). Bullet definition key 0xe (file 0x1a9e2): +2 tick_bullet, +6 register_bullet_template -> create_bullet_controller, +0xe bullet_pre_render [PROVEN bytes]; the bullet template DAT_0002664a is the one spawn_ordnance_scattered uses. Ghidra C (partly read).
+ * When the bullet has hit an object (+0x3c, set by bullet_hits_shape) spawns that object destruction effect (spawn_destruction_effect at range / 8, or / 4 when raised) and handles the kill (further down). Bullet definition key 0xe (file 0x1a9e2): +2 tick_bullet, +6 register_bullet_template -> create_bullet_controller, +0xe bullet_pre_render [PROVEN bytes]; the bullet template DAT_0002664a is the one spawn_ordnance_scattered uses. Ghidra C (read in full; byte-level VERIFIED note below).
  *
  * VERIFIED: independent capstone disassembly of 0x15dc8..0x15e60 is
  * identical to the C. Facts [PROVEN]: hit object = controller +0x3c; effect size =
@@ -27303,7 +27429,23 @@ void plot_dot_bw /* Original: FUN_00016230 */ (undefined4 rec /* dot record (unu
  * through DAT_0001da80; DAT_0001da8c = records / 14 - identical to the C. */
 /* Original: FUN_000162ba; source: Pacific Conflict.c. Recovered name: draw_distant_object_dots [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x162ba).
- * Called by overlay_frame_step (not with host option +0x9e). Erases last frame dots (*DAT_0001da84), then for the far objects whose face colour slot is free (+0xf == -1) and not flagged (+0x3b & 2) transforms their centre into camera space, projects it and, when it falls inside the view (DAT_00020aee.. / DAT_00020aea..), plots a dot whose size depends on the distance with *DAT_0001da80, saving the covered pixels in the records DAT_00026288 (count DAT_000265d0). Per-depth dot plotter DAT_0001da80 (configure_renderer_for_display): depth 8 0x15f1e (Ghidra 0x15f3e), depth 4 0x16108 (Ghidra 0x16128), depth 1 0x16210 (Ghidra 0x16230) [PROVEN]. Ghidra C (partly read).
+ * Called by overlay_frame_step (not with host option +0x9e). Erases last frame dots (*DAT_0001da84), then for the far objects whose face colour slot is free (+0xf == -1) and not flagged (+0x3b & 2) transforms their centre into camera space, projects it and, when it falls inside the view (DAT_00020aee.. / DAT_00020aea..), plots a dot whose size depends on the distance with *DAT_0001da80, saving the covered pixels in the records DAT_00026288 (count DAT_000265d0). Per-depth dot plotter DAT_0001da80 (configure_renderer_for_display): depth 8 0x15f1e (Ghidra 0x15f3e), depth 4 0x16108 (Ghidra 0x16128), depth 1 0x16210 (Ghidra 0x16230) [PROVEN]. Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x162ba..0x16658:
+ * host +0x9e != 0 clears dot_object_count and flag_da8c; jsr (*0x1da84); walks
+ * dot_object_list for dot_object_count entries (subq.w / bcc), then count = 0 and
+ * flag_da8c = (record cursor - 0x26288) / 0xe (divs.l). Per object: face +0x48 colour byte
+ * +0xf == 0xff -> bw_pattern_first = face word +6; else colour_tally_index != 0 -> byte +0xf
+ * = its low byte (0x1da8b), else assign_face_colour(face) (bsr $159e) non-zero returns at
+ * once (no finalisation) and the tally takes byte +0xf, then word +6 as above. Controller
+ * byte +0x3b bit 1 clear: one point = (object - camera) >> sext +0x32; set: two vertices
+ * from +0x44 relative to (camera - object) shifted by word +0x34 - +0x32 (asl, or asr by the
+ * negated difference); near distance 5000 shifted the same way; camera space = rows of
+ * muls.w by camera_m00.. (0x1d744 + 0 / 6 / 0xc, +2 / 8 / 0xe, +4 / 0xa / 0x10), + 0x800,
+ * asr #12. Each point with z > 4: sx = x * proj_scale_x (muls.w) / z, sy = -y * proj_scale_y
+ * (muls.l) / z (divs.l quotients), kept when clip_x_min <= sx <= clip_x_max - 1 and
+ * clip_y_min <= sy <= view_half_height - 1; size 4 when z <= near, 3 when z <= near + near
+ * / 2, 2 when z <= 2 near, else 1; record word +6 = size, byte +8 = bw_pattern_first low
+ * byte, jsr (*0x1da80)(record, sx, sy, size), record += 0xe - identical to the C.
  */
 void draw_distant_object_dots /* Original: FUN_000162ba */ (void)
 
@@ -27472,7 +27614,7 @@ LAB_00016358:
 
 /* Original: FUN_0001665a; source: Pacific Conflict.c. Recovered name: bullet_hits_shape [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x1665a).
- * Called by test_object_collision when a bullet (template type 0xe) meets a shape b flagged +6 & 4. Within the b range (FUN_00003cca): if b is not flagged +6 & 4, a bullet b is ignored, a type 0x1b b gets controller word +0x46 = 1 with probability 1/16, and the bullet is retired; if b is flagged +6 & 4, with probability 1/8 the bullet controller +0x3c = b [UNKNOWN use]. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [HYPOTHESIS: hit sound]. Complete Ghidra C.
+ * Called by test_object_collision when a bullet (template type 0xe) meets a shape b flagged +6 & 4. Within the b range (FUN_00003cca): if b is not flagged +6 & 4, a bullet b is ignored, a type 0x1b b gets controller word +0x46 = 1 with probability 1/16, and the bullet is retired; if b is flagged +6 & 4, with probability 1/8 the bullet controller +0x3c = b [UNKNOWN use]. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [PROVEN: sound event slot 2 'Hit' - slot names from DATA 0, see DECOMPILATION_SYMBOLS.md]. Complete Ghidra C.
  *
  *  [PROVEN, bytes 0x1665a..0x16722; logic identical to the C]: the same
  * 9-long call as in bullet_hits_aircraft, which Ghidra dropped (bullet pos - vel / 2,
@@ -27495,7 +27637,7 @@ uint bullet_hits_shape /* Original: FUN_0001665a */ (int bullet /* bullet object
   uint rnd;
   
   bullet_ctl = *(int *)(bullet + 8);
-  result = segment_point_min_distance();
+  result = segment_point_min_distance( /* RESTORED [PROVEN, pushes before 0x166b8]: bullet position - velocity / 2 (truncating), velocity, shape position */*(int *)(bullet + 0x18) - *(int *)(bullet_ctl + 8) / 2, *(int *)(bullet + 0x1c) - *(int *)(bullet_ctl + 0xc) / 2, *(int *)(bullet + 0x20) - *(int *)(bullet_ctl + 0x10) / 2, *(int *)(bullet_ctl + 8), *(int *)(bullet_ctl + 0xc), *(int *)(bullet_ctl + 0x10), *(int *)(shape + 0x18), *(int *)(shape + 0x1c), *(int *)(shape + 0x20));
   if ((int)result <= *(int *)(shape + 0x14)) {
     if ((*(byte *)(shape + 6) & 4) == 0) {
       if (*(int *)(shape + 8) != 0) {
@@ -27598,7 +27740,7 @@ LAB_00016758:
 
 /* Original: FUN_000167f4; source: Pacific Conflict.c. Recovered name: bullet_hits_aircraft [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x167f4).
- * Pair handler of dispatch_collision for template type 0xe against types 1..4 (table DAT_0001b43c). Args: bullet a, aircraft b. When the bullet is within the b range (FUN_00003cca distance <= b +0x14): with probability 1/8 applies apply_random_aircraft_damage(b controller, bullet controller word +0x36) and retires the bullet (retire_entity); otherwise, when b is the player (DAT_0001b738), with probability 1/2 sets _DAT_0001b842. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [HYPOTHESIS: hit sound]. Complete Ghidra C.
+ * Pair handler of dispatch_collision for template type 0xe against types 1..4 (table DAT_0001b43c). Args: bullet a, aircraft b. When the bullet is within the b range (FUN_00003cca distance <= b +0x14): with probability 1/8 applies apply_random_aircraft_damage(b controller, bullet controller word +0x36) and retires the bullet (retire_entity); otherwise, when b is the player (DAT_0001b738), with probability 1/2 sets _DAT_0001b842. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [PROVEN: sound event slot 2 'Hit' - slot names from DATA 0, see DECOMPILATION_SYMBOLS.md]. Complete Ghidra C.
  *
  * CALL-ARGUMENT CORRECTION [PROVEN, bytes 0x167f4..0x168ac]: Ghidra's
  * segment_point_min_distance has no arguments, but the bytes push nine longs
@@ -27623,7 +27765,7 @@ uint bullet_hits_aircraft /* Original: FUN_000167f4 */ (int bullet /* bullet obj
   uint rnd;
   
   bullet_ctl = *(int *)(bullet + 8);
-  result = segment_point_min_distance();
+  result = segment_point_min_distance( /* RESTORED [PROVEN, pushes before 0x16852]: bullet position - velocity / 2 (truncating), velocity, aircraft position */*(int *)(bullet + 0x18) - *(int *)(bullet_ctl + 8) / 2, *(int *)(bullet + 0x1c) - *(int *)(bullet_ctl + 0xc) / 2, *(int *)(bullet + 0x20) - *(int *)(bullet_ctl + 0x10) / 2, *(int *)(bullet_ctl + 8), *(int *)(bullet_ctl + 0xc), *(int *)(bullet_ctl + 0x10), *(int *)(aircraft + 0x18), *(int *)(aircraft + 0x1c), *(int *)(aircraft + 0x20));
   if ((int)result <= *(int *)(aircraft + 0x14)) {
     air_ctl = *(int *)(aircraft + 8);
     rnd = overlay_rng_next( /* Original: FUN_00011564 */);
@@ -27731,14 +27873,14 @@ int * advance_route_waypoint /* Original: FUN_00016966 */ (int obj /* aircraft o
   int *point; /* current route point */
 
   point = (int *)(route + *route * 6 + 2);
-  dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, point x, 0, point z): horizontal [PROVEN, pushes 0x1697c..0x1698a] */);
+  dist = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own x, 0, own z, point x, 0, point z): horizontal [PROVEN, pushes 0x1697c..0x1698a] */ /* RESTORED [PROVEN, pushes before 0x1698e] */*(int *)(obj + 0x18), 0, *(int *)(obj + 0x20), point[0], 0, point[2]);
   if (dist < 5000) {
     *route = *route + 1;
     if (route[1] <= *route) {
       *route = 0;
     }
     point = (int *)(route + *route * 6 + 2);
-    dist3 = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, new point) in 3D [PROVEN, pushes 0x169b8..0x169ca] */);
+    dist3 = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, new point) in 3D [PROVEN, pushes 0x169b8..0x169ca] */ /* RESTORED [PROVEN, pushes before 0x169ce] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), point[0], point[1], point[2]);
     shift = 0;
     for (; (dist3 & 0xffff8000) != 0; dist3 = (int)dist3 >> 1) {
       shift = shift + 1;
@@ -27978,7 +28120,19 @@ void destroy_trail_controller /* Original: FUN_00016c24 */ (int ctl /* trail con
  * identical to the C. */
 /* Original: FUN_00016c6a; source: Pacific Conflict.c. Recovered name: animate_smoke_trail [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x16c6a).
- * Kind 0 (attach_smoke_trail): while the owner aircraft still has a damage stage (+0x684 & 0x3c0) and exists, places the free head vertices of the four-vertex ribbon at the owner position +-0x22 in y, shifting the older ones back; otherwise fades out (state 4). Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Ghidra C (partly read).
+ * Kind 0 (attach_smoke_trail): while the owner aircraft still has a damage stage (+0x684 & 0x3c0) and exists, places the free head vertices of the four-vertex ribbon at the owner position +-0x22 in y, shifting the older ones back; otherwise fades out (state 4). Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x16c6a..0x16e04 (the
+ * default evidence window stops at the jump table, so the cases were decoded too): release
+ * when owner +7 & 2 or owner controller word +0x684 & 0x3c0 == 0 (state 1 also clears word
+ * +0x34), and when replay_state == 1 with state != 1; state word +0x36 - 1 indexes the
+ * table at 0x16cd8 = {0x16ce0 state 1 -> 2 falling into 0x16ce6, 0x16d98 state 3, 0x16dde
+ * state 4}; state 2 places vertices 0..3 whose +0x50 bit is clear at the owner position with
+ * y +0x22 (vertices 1, 2) or -0x22 (moveq #$de), asr.w #1 per vertex; detach bits: rng & 3 ==
+ * 0 (or mask 0) then rng bit 0 picks 4 / 8 when bits 0-1 are both set, else 1 / 2; mask 0xf or
+ * word +0x34 == 0 -> release, state 3; state 3: rng & 0x1f (owner byte +0x685 < 0) or & 3,
+ * zero -> attach_smoke_trail(owner x, y, z, owner controller) and state 4; state 4 finishes
+ * when word +0x34 == 0 or replay_state == 1; release decrements owner word +0x68c and clears
+ * +0x56; returns ext.l of the finished flag - identical to the C.
  */
 undefined2 animate_smoke_trail /* Original: FUN_00016c6a */ (int *ctl /* trail controller */)
 
@@ -28097,7 +28251,20 @@ undefined2 animate_smoke_trail /* Original: FUN_00016c6a */ (int *ctl /* trail c
  * leaving clears +0x56 - identical to the C. */
 /* Original: FUN_00016e06; source: Pacific Conflict.c. Recovered name: animate_burning_trail [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x16e06).
- * Kind 1 (attach_burning_trail): the same ribbon with a half-height of 100 instead of 0x22 and no damage-stage condition (only the owner existence) [HYPOTHESIS: thicker fire / smoke column]. Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Ghidra C (partly read).
+ * Kind 1 (attach_burning_trail): the same ribbon with a half-height of 100 instead of 0x22 and no damage-stage condition (only the owner existence) [HYPOTHESIS: thicker fire / smoke column]. Trail tables [PROVEN bytes, + 0x20 rule]: templates DAT_00026650[kind], init DAT_0001b50c (kind 0 -> 0x16ac4, kind 1 -> 0x16ad6), animate DAT_0001b514 (kind 0 -> 0x16c6a, kind 1 -> 0x16e06) - the same layout as the effect tables of spawn_effect / tick_effect. A trail is a ribbon whose head vertices follow the owner (+0x52) and whose state word +0x36 goes 1 (start) -> 2 (following) -> 4 (owner gone or replay rewind: fade, then finished). Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x16e06..0x17028:
+ * release (+0x56 cleared at exit) when owner +7 & 2 (state 1 also clears word +0x34) or
+ * replay_state == 1 with state != 1, both setting state 4; dispatch by compares (1 -> 2
+ * falling into 2, 4 -> finished when word +0x34 == 0 or replay_state == 1, others skip);
+ * state 2 places vertices whose +0x50 bit is clear at the owner position, y +100 for
+ * vertices 1, 2 (moveq #$64) else -100 (moveq #$9c); detach: mask 0 or rng bit 0 clear,
+ * then rng bit 0 picks 4 / 8 (bits 0-1 both set) or 1 / 2; mask 0xf or word +0x34 == 0 ->
+ * release, state 4. Then every detached vertex drifts y +4 (vertices 1, 2) or -4 - the
+ * operand prints as $4(a2, a0.l) but its extension word 0x8c04 is a0.l * 4 with a0 = 3 v,
+ * i.e. +4 + 12 v (capstone omits the scale in this form); word +0x34 <= 0x3b sets bit 2 of
+ * face byte +0x33 (hidden), else the vertex sums >> 2 give the centre and vertices 4..7
+ * (+0x30 + 12 v) = centre + (vertex - centre) / 2 truncating (bpl / addq / asr.l #1); no
+ * +0x68c count for this kind; returns ext.l of the finished flag - identical to the C.
  */
 undefined2 animate_burning_trail /* Original: FUN_00016e06 */ (int *ctl /* trail controller */)
 
@@ -28391,7 +28558,19 @@ void destroy_ground_fire_controller /* Original: FUN_0001713c */ (int ctl /* gro
  * counts +0x32 down and finishes (returns 1) at 0 or in replay mode 1 - identical to the C. */
 /* Original: FUN_00017150; source: Pacific Conflict.c. Recovered name: animate_ground_fire [HYPOTHESIS].
  * Ghidra C reviewed (function at overlay offset 0x17150).
- * State machine in +0x34 (1 start, 2 burning, 3 dying with countdown +0x32) following the owner (+0x50); goes to state 3 when the owner is gone or on replay rewind; returns 1 when finished. [HYPOTHESIS: the ground fire under a damaged aircraft] Ghidra C (partly read).
+ * State machine in +0x34 (1 start, 2 burning, 3 dying with countdown +0x32) following the owner (+0x50); goes to state 3 when the owner is gone or on replay rewind; returns 1 when finished. [HYPOTHESIS: the ground fire under a damaged aircraft] Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x17150..0x1737e:
+ * speed = abs_int(owner controller +8) + abs_int(+0x10) (lea $2de8 runtime = abs_int, one
+ * push each); owner +7 & 2 or speed 0 -> state word +0x34 = 3 (state 1 also clears +0x32);
+ * replay_state == 1 with state != 1 -> 3; dispatch by compares: 1 -> 2 and fire object
+ * flags &= ~0x40 (moveq #$bf), then 2; 3 counts +0x32 down and finishes at 0 or on
+ * replay; others return 0. State 2: vertices 0..3 with their +0x4e bit clear go to owner x
+ * / z + (+-(vz << 5) / speed, +-(vx << 5) / speed) (divs.l quotient only; signs swap for
+ * vertices 2, 3), y 0, and the offsets / 8 (addq #7 when negative, asr.w #3) are stored as
+ * words +0x36 / +0x46 + 2 v (extension 0x8a36 = a0.l * 2); set bits instead add those words
+ * to x / z; centre (+0x30 / +0x38) = sums / 4 truncating, +0x34 = 0; mask: owner controller
+ * word +0x684 & 0x1800 == 0 -> | 0xf, else unless bits 0 and 3 are both set rng bit 0 picks
+ * 1 / 8; mask 0xf -> state 3; returns ext.l of the finished word - identical to the C.
  */
 undefined2 animate_ground_fire /* Original: FUN_00017150 */ (int *ctl /* ground fire controller */)
 
@@ -29284,7 +29463,20 @@ void destroy_aircraft_spawner_controller /* Original: FUN_00017db8 */ (int ctl /
  * next free slot (count +0x32 decremented, refcount incremented) - identical to the C. */
 /* Original: FUN_00017dd4; source: Pacific Conflict.c. Recovered name: tick_aircraft_spawner [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x17dd4).
- * Definition +2 of key 0x12. While aircraft remain to launch (+0x32) in live play: checks its up to five launched aircraft (+0x34..+0x44; drops gone ones); when none is alive and undamaged (damage mask 0x3fe), with probability 1/512 launches a group of 1..min(3, left) aircraft at a point around the player (distance 2/3 of the spawner range, bearing from the spawner towards the player +- random) heading roughly at the player, through spawn calls further down. [STRONG INFERENCE: wave spawner for enemy aircraft] Ghidra C (partly read).
+ * Definition +2 of key 0x12. While aircraft remain to launch (+0x32) in live play: checks its up to five launched aircraft (+0x34..+0x44; drops gone ones); when none is alive and undamaged (damage mask 0x3fe), with probability 1/512 launches a group of 1..min(3, left) aircraft at a point around the player (distance 2/3 of the spawner range, bearing from the spawner towards the player +- random) heading roughly at the player, through spawn calls further down. [STRONG INFERENCE: wave spawner for enemy aircraft] Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x17dd4..0x17ffc: runs
+ * only when word +0x32 != 0 and replay_state == 0; slots +0x34 + 4 i (extension 0x2434 =
+ * d2.w * 4), i = 0..4: an object gone (+7 & 2) or with a null controller is released (+3
+ * reference byte - 1, slot cleared), else counted when its controller word +0x684 & 0x3fe
+ * == 0; none counted and rng & 0x1ff == 0 -> group = rnd % min(+0x32, 3) + 1 (divs.l
+ * remainder in d0); k = number of asr #1 bringing |dx| + |dz| (abs_int via lea $2de8)
+ * below 0x8000, no +1; attitude_from_velocity(dx >> k, 0, dz >> k, 0, 0, NULL, &heading);
+ * heading += ((rng & 0x1f) - 0x10) << 6; r = ((object +0xc) << 1) / 3 >> 5 (divs.l
+ * quotient); x = player x - (sin(heading) * r muls.w >> 7), altitude = (rng & 0xfff) * 10
+ * + 30000 (mulu.w), z = player z + (cos * r >> 7); heading += ((rng & 0x1f) - 0x10) << 6 +
+ * 0x2000; per aircraft: next free slot (not reset between aircraft; extension 0xbc34 =
+ * a3.l * 4), x / z += (rng & 0xfff) - 0x800, spawn_enemy_fighter(x, altitude, z, 0, heading,
+ * 0, 1); on success +0x32 - 1, slot = its object, reference byte + 1 - identical to the C.
  */
 void tick_aircraft_spawner /* Original: FUN_00017dd4 */ (int *ctl /* spawner controller */)
 
@@ -29643,7 +29835,7 @@ LAB_000185d4:
             target = 1;
           }
           else {
-            target = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+            target = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x1860e] */*(int *)(own_obj + 0x18), *(int *)(own_obj + 0x1c), *(int *)(own_obj + 0x20), ctl[0x1a7], ctl[0x1a8], ctl[0x1a9]);
           }
           if ((target < 2000) && ((ctl[0x1aa] < target || (target < 400)))) {
             manoeuvre = *(char *)((int)ctl + 0x69a);
@@ -29883,7 +30075,7 @@ void destroy_shadow_controller /* Original: FUN_00018942 */ (int ctl /* shadow c
 
 /* Original: FUN_00018956; source: Pacific Conflict.c. Recovered name: spawn_object_shadow [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x18956).
- * Args: x, y, z, kind, owner object. Spawns the pool template DAT_00026768[kind] at the position, links its controller (+0x32 = owner, owner reference count +3), never culls it for the player (range 1e9) and hides it (flag 0x40) when the host option +0xb0 is 0. Called by aircraft_create with y = 0 and kind 1 for every aircraft [STRONG INFERENCE: ground shadow; +0xb0 the shadows option]. Complete Ghidra C.
+ * Args: x, y, z, kind, owner object. Spawns the pool template DAT_00026768[kind] at the position, links its controller (+0x32 = owner, owner reference count +3), never culls it for the player (range 1e9) and hides it (flag 0x40) when the host option +0xb0 is 0. Called by aircraft_create with y = 0 and kind 1 for every aircraft [STRONG INFERENCE: ground shadow; +0xb0 is the Shadows scenery option - MENU 5 item 10 'Shadows' toggles HEL1:127 byte +0x19 (low byte of word +0x18), which apply_settings_to_live_options (ID02 0x2a44) copies to A5-0x12d8, i.e. host world +0xb0 with the host world at A5-0x1388]. Complete Ghidra C.
  */
 /* VERIFIED (FUN_00018956): 0x18956..0x189ce checked against an independent capstone disassembly and
  * found identical to the C: bsr.l 0x5116 spawn_mission_pool_object(DAT_00026768[kind] (scale *4
@@ -29952,7 +30144,7 @@ void tick_shadow /* Original: FUN_000189d0 */ (int *ctl /* shadow controller */)
 
 /* Original: FUN_00018a34; source: Pacific Conflict.c. Recovered name: shadow_pre_render [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x18a34).
- * Definition +0xe of key 5 (shadow; file 0x1a8d8: +2 tick_shadow, +6 register_shadow_templates, +0xa destroy_shadow_controller, +0xe this) [PROVEN bytes]: for an aircraft owner (type < 5) shapes the flat shadow from the template vertices, stretched by |cos| of the owner roll / pitch (+0x24) beyond 0x32 << shift, so the shadow follows the aircraft attitude. Ghidra C (partly read).
+ * Definition +0xe of key 5 (shadow; file 0x1a8d8: +2 tick_shadow, +6 register_shadow_templates, +0xa destroy_shadow_controller, +0xe this) [PROVEN bytes]: for an aircraft owner (type < 5) shapes the flat shadow from the template vertices, stretched by |cos| of the owner roll / pitch (+0x24) beyond 0x32 << shift, so the shadow follows the aircraft attitude. Ghidra C (read in full; byte-level VERIFIED note below).
  */
 /* VERIFIED (FUN_00018a34): checked against an independent capstone disassembly; the two
  * FUN_00002de8 calls are runtime lea $2de8.l = abs_int (file 0x2e08) on the template vertex and
@@ -30114,7 +30306,7 @@ uint flak_notice_object /* Original: FUN_00018bba */ (int gun /* flak gun object
     rnd = overlay_rng_next( /* Original: FUN_00011564 */);
     result = rnd & 0xffff003f;
     if ((rnd & 0x3f) == 0) {
-      dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+      dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x18c28] */*(int *)(gun + 0x18), *(int *)(gun + 0x1c), *(int *)(gun + 0x20), *(int *)(other + 0x18), *(int *)(other + 0x1c), *(int *)(other + 0x20));
       if (dist == 0) {
         chance = 0x7fffffff;
       }
@@ -30162,7 +30354,23 @@ uint flak_notice_object /* Original: FUN_00018bba */ (int gun /* flak gun object
  * identical to the C. */
 /* Original: FUN_00018c96; source: Pacific Conflict.c. Recovered name: tick_flak_gun [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x18c96).
- * Definition +2 of type 0x1a (record after the five ship records, runtime 0x1aaea / file 0x1ab0a: +2 this, +6 0x18b52, +0xa 0x18b98) [PROVEN bytes]. First call: finds the gun face (+0x17 == 1), stores its centre and aim direction, and the nearby facility kind (+0x3e). Then, outside replay, explodes due shells: for each scheduled burst whose time (+0xd2[i]) has come, spawn_effect(2, 100, 0x1e,...) at its position (+0x5a + 12 i) and apply_blast_damage there; with a target (+0x36) it schedules new bursts at random delays around the predicted target position. Type 0x1a is one of the types carried on ships (carry_attached_objects) [STRONG INFERENCE: anti-aircraft flak gun]. Ghidra C (partly read).
+ * Definition +2 of type 0x1a (record after the five ship records, runtime 0x1aaea / file 0x1ab0a: +2 this, +6 0x18b52, +0xa 0x18b98) [PROVEN bytes]. First call: finds the gun face (+0x17 == 1), stores its centre and aim direction, and the nearby facility kind (+0x3e). Then, outside replay, explodes due shells: for each scheduled burst whose time (+0xd2[i]) has come, spawn_effect(2, 100, 0x1e,...) at its position (+0x5a + 12 i) and apply_blast_damage there; with a target (+0x36) it schedules new bursts at random delays around the predicted target position. Type 0x1a is one of the types carried on ships (carry_attached_objects) [STRONG INFERENCE: anti-aircraft flak gun]. Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x18c96..0x190be: gun gone
+ * (+7 & 2) -> target reference byte - 1 and +0x36 = 0; first call (word +0x40 == 0): the first
+ * face (+0x48, stride 0x20, count +0x3a) whose byte +0x17 == 1 gives longs +0x48 / +0x4c /
+ * +0x50 = sums of its vertices >> sext +0x34 / vertex count (divs.l quotients) and words
+ * +0x54 / +0x56 = attitude_from_velocity(normal[face] - vertex 0, 0x4000, 0x10000000), +0x58 =
+ * 0; then +0x3e = probe_nearest_facility_kind(object), +0x40 = 1. With a target and
+ * replay_state == 0: slots i = 0..9 (bls) with 0 < long +0xd2 + 4 i <= frame_counter are
+ * cleared and fire spawn_effect(2, 100, 0x1e, 0, 0, burst) and apply_blast_damage(burst, 500,
+ * 0, 1, 0) at +0x5a + 12 i; target released when word +0x46 == 0, gone or without vertices;
+ * else rng & 0x3f == 0x15 -> +0x3a = approx_dist3_xyz(gun, target) and, within long +0x42, k
+ * = 1 + shifts below 0x8000, attitude_from_velocity((target - gun) >> k, ext.l isqrt_floor,
+ * sum, &pitch, &heading); pitch > 0x3f and abs_int(fold_angle_pm_0x2000(heading - +0x56)) <=
+ * 0x1000 -> first free slot (none -> nothing), +0x46 - 1, fuse = +0x3a / 1024 (rounded toward
+ * zero), slot time = frame + fuse, lead = fuse + (rng & 0x3f), burst = target position + lead
+ * * target controller velocity (+8 / +0xc / +0x10, muls.l) + (rng & 0xfff) - 0x800 per axis, y
+ * floored at target controller long +0x2e + 500 - identical to the C.
  */
 void tick_flak_gun /* Original: FUN_00018c96 */ (int *ctl /* flak gun controller */)
 
@@ -30259,7 +30467,7 @@ LAB_00018df2:
       else {
         shift = overlay_rng_next( /* Original: FUN_00011564 */);
         if (((ushort)shift & 0x3f) == 0x15) {
-          shift = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x18ece..0x18ee6): gun x, y, z, target x, y, z */);
+          shift = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x18ece..0x18ee6): gun x, y, z, target x, y, z */ /* RESTORED [PROVEN, pushes before 0x18eea] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), *(int *)(face + 0x18), *(int *)(face + 0x1c), *(int *)(face + 0x20));
           *(uint *)((int)ctl + 0x3a) = shift;
           if ((int)shift <= *(int *)((int)ctl + 0x42)) {
             face_i = 0;
@@ -30414,7 +30622,7 @@ int spawn_turret_on_object /* Original: FUN_00019130 */ (int host_obj /* object 
  * identical to the C. */
 /* Original: FUN_0001917c; source: Pacific Conflict.c. Recovered name: tick_turret [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x1917c).
- * Definition +2 of key 0x1b. First call: side from the nearest facility (+0x3e). Follows its carrier (+0x32: bomber or ship) and is cleaned up when the carrier is gone or its guns are damaged (flags_685 bit 4); with a target (+0x36) within range (+0x42) and not knocked out (+0x46 == 0;  correction: not "reloading" - see turret_pre_render), computes the aim direction (isqrt_floor of the scaled offset) for turret_pre_render and fires (further down). Ghidra C (partly read).
+ * Definition +2 of key 0x1b. First call: side from the nearest facility (+0x3e). Follows its carrier (+0x32: bomber or ship) and is cleaned up when the carrier is gone or its guns are damaged (flags_685 bit 4); with a target (+0x36) within range (+0x42) and not knocked out (+0x46 == 0;  correction: not "reloading" - see turret_pre_render), computes the aim direction (isqrt_floor of the scaled offset) for turret_pre_render and fires (further down). Ghidra C (read in full).
  *
  *, firing path [PROVEN, bytes 0x192ca..0x1937a; the C matches]: only
  * when DAT_0001b870 == 0 (not replaying). Fields (Ghidra index × 4 on undefined4 *):
@@ -30429,6 +30637,19 @@ int spawn_turret_on_object /* Original: FUN_00019130 */ (int host_obj /* object 
  *     frame); --burst every frame.
  * Turret rounds never get bullet +0x36 = 1, so they give no kill credit. Turret aiming
  * and firing stop for good once +0x46 is set (knocked out, ).
+ * VERIFIED: checked against an independent capstone disassembly of 0x1917c..0x19392:
+ * word +0x40 == 0 -> +0x3e = probe_nearest_facility_kind(object), +0x40 = 1; carrier +0x32
+ * followed (x / y / z copied) unless gone (+7 & 2), without vertices (+0x44 == 0) or with a
+ * controller whose byte +0x685 bit 4 is set -> reference byte - 1, +0x32 = 0,
+ * dispatch_entity_cleanup(object); with the turret alive and a target +0x36: gone / no
+ * vertices -> released; else when word +0x46 == 0, +0x3a = approx_dist3_xyz(turret, target)
+ * (six pushes) and if <= long +0x42: k = 1 + number of asr #1 below 0x8000, offsets
+ * (target - turret) >> k, attitude_from_velocity(dx, dy, dz, ext.l isqrt_floor(sum of
+ * squares), sum, &+0x4c, &+0x4e); outside replay: word +0x4a == 0 -> 1 in 16 arms a burst
+ * (+0x4a = (rng & 7) + 7, spreads +0x50 / +0x52 = 0x80 - (rng & 0xff)); else +0x48 - 1 and
+ * at <= 0 spawn_ordnance_oriented_3ang(0, 0, x, y, z, (+0x4c + +0x50) & 0x3fff, (+0x4e +
+ * +0x52) & 0x3fff, 0), spreads * 7 / 8 (muls.w, truncating), +0x48 = 2; then +0x4a - 1 -
+ * identical to the C.
  */
 void tick_turret /* Original: FUN_0001917c */ (undefined4 *ctl /* turret controller */)
 
@@ -30468,7 +30689,7 @@ void tick_turret /* Original: FUN_0001917c */ (undefined4 *ctl /* turret control
     other = *(int *)((int)ctl + 0x36);
     if (((*(byte *)(other + 7) & 2) == 0) && (*(int *)(other + 0x44) != 0)) {
       if (*(short *)((int)ctl + 0x46) == 0) {
-        dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x19228..0x1923c): turret x, y, z, target x, y, z */);
+        dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* dropped args (0x19228..0x1923c): turret x, y, z, target x, y, z */ /* RESTORED [PROVEN, pushes before 0x19240] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), *(int *)(other + 0x18), *(int *)(other + 0x1c), *(int *)(other + 0x20));
         *(uint *)((int)ctl + 0x3a) = dist;
         if ((int)dist <= *(int *)((int)ctl + 0x42)) {
           shift = 0;
@@ -30687,7 +30908,24 @@ void destroy_parachute_controller /* Original: FUN_0001951a */ (int ctl /* parac
  * otherwise identical to the C. */
 /* Original: FUN_0001952e; source: Pacific Conflict.c. Recovered name: parachute_descend [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x1952e).
- * From 16 frames after the bail-out (+0x612 = frame) adds a shadow (spawn_object_shadow kind 3) and, until frame 30, unfolds the 13 canopy vertices with velocities * 3 / 4 per frame; then descends (further down). Type 0x1c = bailed-out pilot / parachute [STRONG INFERENCE]: spawn_bailout_parachute (named earlier) spawns it from update_aircraft_entity when an aircraft is abandoned (+0x677 = 2, damage bit 0); for the player it sets mission state 9 and DAT_0001b87c = the parachute, and update_aircraft_damage_state only declares the pilot Dead while DAT_0001b87c is 0. Definition key 0x1c (file 0x1ab3e): +2 parachute_tick, +0xa destroy_parachute_controller [PROVEN bytes]. Ghidra C (partly read).
+ * From 16 frames after the bail-out (+0x612 = frame) adds a shadow (spawn_object_shadow kind 3) and, until frame 30, unfolds the 13 canopy vertices with velocities * 3 / 4 per frame; then descends (further down). Type 0x1c = bailed-out pilot / parachute [STRONG INFERENCE]: spawn_bailout_parachute (named earlier) spawns it from update_aircraft_entity when an aircraft is abandoned (+0x677 = 2, damage bit 0); for the player it sets mission state 9 and DAT_0001b87c = the parachute, and update_aircraft_damage_state only declares the pilot Dead while DAT_0001b87c is 0. Definition key 0x1c (file 0x1ab3e): +2 parachute_tick, +0xa destroy_parachute_controller [PROVEN bytes]. Ghidra C (read in full).
+ * VERIFIED: checked against an independent capstone disassembly of 0x1952e..0x19936: age =
+ * low word of frame_counter (0x1b83a) - word +0x612; age > 15: live play and age <= 30 ->
+ * spawn_object_shadow(x, 0, z, 3, object) at age 16, the 13 vertices += longs +0x622 /
+ * +0x656 / +0x68a [v] >> 8 (extension 0x8c00 = a0.l * 4), those *= 3 / 4, 3 / 4 (truncating)
+ * and 2 / 3 (divs.l), +0x618 += sext +0x61c, +0x61c *= 15 / 16; otherwise object byte +5 bit
+ * 0 -> long +4 &= ~0x10000 and drop_contact_records_for_object. Word +0x61e == 0: s = word
+ * +0x614, drag = sext +0x616 + (s / 4 * ((s / 4 * long +0x618) / ext.l table_lerp_1b2c0(y))
+ * * 2) / 0xa0 (divs.l quotients), +0x616 = that table value (see the CORRECTED note), z
+ * speed = s - drag / 10; velocity (0, 0, z) through build_attitude_matrix_3ang(+0x20, +0x22,
+ * +0x24) and transform_vecs12_by_matrix3, y -= 0x5b, +8 / +0xc / +0x10 = components asr.w #6
+ * (age > 15: x - 13, z - 7); attitude_from_velocity(v, isqrt_floor(|v|^2), |v|^2, &pitch,
+ * &heading), heading change folded to +-0x2000, +0x20 = pitch, +0x22 = heading & 0x3fff,
+ * +0x24 += sin(pitch) * change >> 12 (& 0x3fff), +0x614 = speed; landed when y + vy <= long
+ * +0x2e + 0x17f (velocity cleared, +0x61e = 1). Landed: k = object +0x34, a =
+ * fold_angle_pm_0x2000(0x588 - heading); vertices with long +8 < 0x17f << k: long +8 += 10 << k,
+ * x / z words moved by 15 cos / 15 sin << k >> 12, kept when isqrt_floor of the offset from
+ * height 0x15e is < 0x15e << k; none low -> dispatch_entity_cleanup(object) - identical to the C.
  */
 void parachute_descend /* Original: FUN_0001952e */ (undefined4 *ctl /* parachute controller */)
 
@@ -31177,7 +31415,7 @@ undefined4 find_nearest_runway_approach_ends(undefined4 own /* own aircraft (onl
       if (*cand == '\x02') {
         obj_dist = probe_nearest_facility_kind( /* Original: FUN_00000354 */(int)cand /* [PROVEN, move.l a5 at 0x19ccc] */);
         if (obj_dist == 0x200) {
-          obj_dist = approx_dist3_xyz( /* Original: FUN_00003c68 */);
+          obj_dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x19cf8] */*(int *)((int)own + 0x18), *(int *)((int)own + 0x1c), *(int *)((int)own + 0x20), *(int *)(cand + 0x18), *(int *)(cand + 0x1c), *(int *)(cand + 0x20));
           if (obj_dist < best_obj_dist) {
             face = *(int *)(cand + 0x48);
             nfaces = *(short *)(cand + 0x3a);
@@ -31194,8 +31432,8 @@ undefined4 find_nearest_runway_approach_ends(undefined4 own /* own aircraft (onl
                 store_xyz_asr( /* Original: FUN_00019c26 */*vert,vert[1],vert[2],(int)*(short *)(cand + 0x34));
                 vert = (int *)(m34_x + vidx[3] * 0xc);
                 store_xyz_asr( /* Original: FUN_00019c26 */*vert,vert[1],vert[2],(int)*(short *)(cand + 0x34));
-                m34_x = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
-                m34_y = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+                m34_x = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */ /* RESTORED [PROVEN, pushes before 0x19dee] */p1_x, 0, p1_z, p2_x, 0, p2_z);
+                m34_y = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */ /* RESTORED [PROVEN, pushes before 0x19e06] */p2_x, 0, p2_z, p3_x, 0, p3_z);
                 if (m34_y < m34_x) {
                   p1_x = p2_x;
                   p1_y = p2_y;
@@ -31234,8 +31472,8 @@ undefined4 find_nearest_runway_approach_ends(undefined4 own /* own aircraft (onl
                 if (m34_z < 0) {
                   m34_z = m34_z + 1;
                 }
-                near_dist = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
-                dist_m34 = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */);
+                near_dist = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */ /* RESTORED [PROVEN, pushes before 0x19ee0] */*(int *)((int)own + 0x18), *(int *)((int)own + 0x1c), *(int *)((int)own + 0x20), m12_x >> 1, m12_y >> 1, m12_z >> 1);
+                dist_m34 = approx_dist3_xyz( /* Original: FUN_00003c68; Ghidra showed FUN_00003c48 - lea.l $3c48.l is a runtime address = file 0x3c68 */ /* RESTORED [PROVEN, pushes before 0x19efc] */*(int *)((int)own + 0x18), *(int *)((int)own + 0x1c), *(int *)((int)own + 0x20), m34_x >> 1, m34_y >> 1, m34_z >> 1);
                 far_x = m34_x >> 1;
                 far_y = m34_y >> 1;
                 far_z = m34_z >> 1;
@@ -31326,7 +31564,7 @@ undefined4 try_begin_landing_approach(int *ctl /* aircraft controller */) /* Ori
 
   obj = *ctl;
   tmp = find_nearest_runway_approach_ends( /* Original: FUN_00019c5e */obj,&end_a_x,&end_b_x);
-  if (((tmp == 0) && (tmp = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, runway end A at local_10 / local_c / local_8) [PROVEN, pushes 0x19fe2..0x19ffa] */), 9999 < tmp)) && (tmp < 0x26ac1)) {
+  if (((tmp == 0) && (tmp = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, runway end A at local_10 / local_c / local_8) [PROVEN, pushes 0x19fe2..0x19ffa] */ /* RESTORED [PROVEN, pushes before 0x19ffe] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), end_a_x, end_a_y, end_a_z), 9999 < tmp)) && (tmp < 0x26ac1)) {
     tmp = (end_b_x - end_a_x) * 6;
     if (tmp < 0) {
       tmp = tmp + 0x3f;
@@ -31377,7 +31615,7 @@ undefined4 try_begin_landing_approach(int *ctl /* aircraft controller */) /* Ori
     }
     glide_saved_state = *(undefined4 *)((int)ctl + 0x32);
     /* Literal 0x1A186 = tick_landing_approach_glide @0x1A1A6 − 0x20
-     * [BLOCKED false mid-label family]; intended AI callback is 0x1A1A6.
+     * [false mid-label family, RESOLVED below]; intended AI callback is 0x1A1A6.
      * Resolved [PROVEN]: +0x32 holds RUNTIME addresses (file - 0x20), like the AI states
      * 0x110d4 / 0x11162 / 0x111ba / 0x112c0; 0x1a186 is tick_landing_approach_glide. */
     *(undefined4 *)((int)ctl + 0x32) = 0x1a186;
@@ -31396,7 +31634,7 @@ undefined4 try_begin_landing_approach(int *ctl /* aircraft controller */) /* Ori
  * Confidence: [STRONG INFERENCE]
  *
  * Per-frame landing glide (phases below). Installed via +0x32←0x1A186
- * (= this−0x20) [BLOCKED false mid-label].
+ * (= this−0x20) [runtime address; RESOLVED, see the note in the body].
  *
  * Evidence: Capstone @0x1A1A6; 267xx from try_begin_landing_approach.
   * VERIFIED: every part 0x1a1a6..0x1a63a was checked against an independent capstone
@@ -31428,7 +31666,7 @@ void tick_landing_approach_glide(int *ctl /* aircraft controller */) /* Original
   saved_2e = *(undefined4 *)((int)ctl + 0x2e);
   saved_gear = *(undefined1 *)((int)ctl + 0x679);
   obj = *ctl;
-  range = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, aim 0x267bc / c0 / c4) in 3D [PROVEN, pushes 0x1a1d4..0x1a1e2] */);
+  range = approx_dist3_xyz( /* Original: FUN_00003c68; args dropped by Ghidra = (own pos, aim 0x267bc / c0 / c4) in 3D [PROVEN, pushes 0x1a1d4..0x1a1e2] */ /* RESTORED [PROVEN, pushes before 0x1a1e6] */*(int *)(obj + 0x18), *(int *)(obj + 0x1c), *(int *)(obj + 0x20), tx, ty, tz);
   *(undefined4 *)((int)ctl + 0x2e) = 0xfffff060;
   /* iVar6 = along-track lead from range bands (10000 / 0x8e30 / 13000). */
   if (range < 0xae31) {
