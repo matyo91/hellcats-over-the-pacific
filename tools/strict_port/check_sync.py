@@ -27,7 +27,12 @@ def extract_function(source: str, name: str) -> str:
     # Fallback for parameter lists wrapped over several lines (tried only when the
     # one-line form finds no definition, so existing hashes are unchanged).
     wrapped = re.compile(rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\([^;{{}}]*?\)[^\n;{{}}]*$(?=\s*\{{)", re.MULTILINE)
-    for pattern in (signature, wrapped):
+    # Last resort: parameter comments that contain ';', '{' or '}' (comments matched whole).
+    commented = re.compile(
+        rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\((?:/\*.*?\*/|[^;{{}}/])*?\)[^\n;{{}}]*$(?=\s*\{{)",
+        re.MULTILINE | re.DOTALL,
+    )
+    for pattern in (signature, wrapped, commented):
         found = _extract_with(source, pattern)
         if found is not None:
             return found

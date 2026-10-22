@@ -8,10 +8,14 @@ const C68kScript := preload("res://strict_port/compat/c68k.gd")
 const DAT_0001ab6c: int = 0x1ab6c ## sin_table: 256 words (runtime address; file 0x1ab8c)
 const DAT_0001ad6c: int = 0x1ad6c ## cos_table: 256 words (runtime address; file 0x1ad8c)
 const DAT_0001b5a0: int = 0x1b5a0 ## host_world: pointer to the host A5 world
+const DAT_0001b5a4: int = 0x1b5a4 ## object_pool: near-list object pointers
+const DAT_0001b734: int = 0x1b734 ## object_count (long; its low word at 0x1b736 is the dbra count)
 const DAT_0001b738: int = 0x1b738 ## player_object: pointer to the player controller (+0 object)
 const DAT_0001b73e: int = 0x1b73e ## clip_y_max (word)
 const DAT_0001b740: int = 0x1b740 ## clip_y_max_alt (word)
+const DAT_0001b838: int = 0x1b838 ## frame_counter (long)
 const DAT_0001b842: int = 0x1b842 ## snd_hit (word): one-frame player-hit sound flag
+const DAT_0001b43c: int = 0x1b43c ## collision_pair_table: 10 x (type word, type word, handler long)
 const DAT_0001b880: int = 0x1b880 ## player_shot_ctl (long)
 const DAT_0001b88c: int = 0x1b88c ## child_window_hi (word)
 const DAT_0001b88e: int = 0x1b88e ## child_window_lo (word)
@@ -19,6 +23,7 @@ const DAT_0001bc64: int = 0x1bc64 ## scatter_slots: 7 object pointers
 const DAT_0001d6fc: int = 0x1d6fc ## scene_root (+0x30: child table, 0x18-byte records)
 const DAT_00024cf0: int = 0x24cf0 ## retire_count (long)
 const DAT_00026008: int = 0x26008 ## rng_cursor: pointer into the 55-long ring 0x2600c..0x260e7
+const DAT_00026284: int = 0x26284 ## collision_pair_cursor (long)
 const DAT_0002600c: int = 0x2600c ## rng_state: first ring long (the seed)
 const DAT_0001bdb8: int = 0x1bdb8 ## visible_list_split (long; its low word at 0x1bdba)
 const DAT_0001bdbc: int = 0x1bdbc
@@ -27,6 +32,7 @@ const DAT_00020aec: int = 0x20aec ## clip_x_max (word)
 const DAT_00020aee: int = 0x20aee ## clip_x_min (word)
 const DAT_0001c1d4: int = 0x1c1d4 ## visible_count (long; its low word at 0x1c1d6)
 const DAT_0001c9dc: int = 0x1c9dc ## visible_list: object pointers
+const DAT_0001d858: int = 0x1d858 ## view_mode (word)
 const DAT_0001d744: int = 0x1d744 ## camera_m00: 3x3 s16 camera matrix
 const DAT_00020ce4: int = 0x20ce4 ## attitude_compose_tag: composer runtime address ($2408 / $2468 / $26e0)
 const DAT_0001d75c: int = 0x1d75c ## basis6: 3x3 s16, element [r][c] at +2 * (3r + c)
@@ -59,16 +65,22 @@ var memory
 ## address). Only frame locals whose values flow into results are modelled (the
 ## finalize temp matrix); saved registers and register spills are not written.
 var a7: int = 0
-## Code addresses reached through pointers (jsr (an)) mapped to their ported Callables.
-## A call to an address with no entry is an error: the original target is not ported yet.
+## Code addresses reached through pointers (jsr (an)) mapped to their ported Callables. Keys are
+## RUNTIME addresses (file offset - 0x20): what the original pushes (pea x(pc) evaluates at
+## runtime) or stores in its tables. A call to an address with no entry is an error: the
+## original target is not ported yet.
 var code_table: Dictionary = {}
 
 func _init(param_memory = null) -> void:
 	memory = param_memory
-	## pea $aba(pc) in point_near_camera_or_type80_object (file address = runtime here).
-	code_table[0xaba] = Callable(self, "nearest_type80_centroid_visitor")
-	## pea $6ec(pc) in plot_mission_map_symbols.
-	code_table[0x6ec] = Callable(self, "collect_map_features")
+	## pea $aba(pc) in point_near_camera_or_type80_object: file 0xaba = runtime 0xa9a.
+	code_table[0xa9a] = Callable(self, "nearest_type80_centroid_visitor")
+	## pea $6ec(pc) in plot_mission_map_symbols: file 0x6ec = runtime 0x6cc.
+	code_table[0x6cc] = Callable(self, "collect_map_features")
+	## collision_pair_table handlers (file 0x1b45c): runtime 0x167d4 = file 0x167f4
+	## bullet_hits_aircraft, runtime 0x14326 = file 0x14346, a lone rts (pair ignored).
+	code_table[0x167d4] = func(a: int, b: int, _c: int) -> int: return bullet_hits_aircraft(a, b)
+
 
 ## move.l 4(a7),d0 / bge / neg.l: NEG.L leaves 0x80000000 unchanged, so abs_int(INT_MIN) is INT_MIN.
 static func abs_int(value: int) -> int:
@@ -860,7 +872,21 @@ func transform_through_node_chain(path_top: int, node_count: int, object: int, o
 	memory.write_u32(out_z, memory.read_u32(pos_x + 8))
 	return
 
-func _jsr(address: int, args: Array):
+## Runtime addresses of a lone rts: a jsr there returns with D0 unchanged.
+const RTS_ONLY := [0x14326] ## file 0x14346, just before dispatch_collision
+
+## Direct bsr / jsr to a function that is not ported yet: looked up in code_table under its
+## runtime address (file - 0x20), so a test or adapter must supply it explicitly; the
+## assertion keeps an unported callee from being skipped silently.
+func _bsr_unported(file_address: int, args: Array):
+	var address: int = file_address - 0x20
+	assert(code_table.has(address), "bsr to unported function at file 0x%x" % file_address)
+	return code_table[address].callv(args)
+
+## d0 is the caller's D0 at the jsr, returned as-is when the target is a lone rts.
+func _jsr(address: int, args: Array, d0: int = 0):
+	if RTS_ONLY.has(address):
+		return d0
 	assert(code_table.has(address), "jsr to unported code address 0x%x" % address)
 	return code_table[address].callv(args)
 
@@ -975,7 +1001,7 @@ func nearest_type80_centroid_visitor(best: int, node: int, face: int, path: int,
 	return
 
 ## 1 when the point's camera metric is below 0x33900; otherwise point x = 1000000000, the
-## mission scene is searched with nearest_type80_centroid_visitor (code 0xaba) and 1 is
+## mission scene is searched with nearest_type80_centroid_visitor (runtime 0xa9a) and 1 is
 ## returned when a centroid was found whose metric is below 0x40741, else 0. No frame
 ## (saved a2): for_each_mission_scene_object is entered 0x10 below.
 func point_near_camera_or_type80_object(point: int) -> int:
@@ -988,7 +1014,7 @@ func point_near_camera_or_type80_object(point: int) -> int:
 		return 1
 	memory.write_u32(point, 1000000000)
 	a7 = entry_a7 - 0x10
-	for_each_mission_scene_object(0xaba, point)
+	for_each_mission_scene_object(0xa9a, point)
 	a7 = entry_a7
 	if memory.read_s32(point) != 1000000000:
 		metric = compute_camera_abs_metric(memory.read_s32(point), memory.read_s32(point + 4), memory.read_s32(point + 8))
@@ -1245,7 +1271,7 @@ func collect_map_features(plot_ctx: int, node: int, face: int, path: int, depth:
 	a7 = entry_a7
 	return
 
-## Fills a map context through the mission scene (collect_map_features, code 0x6ec): zone
+## Fills a map context through the mission scene (collect_map_features, runtime 0x6cc): zone
 ## points at ctx + 4 (count word ctx +0xb58), sites at ctx + 0x4b4 with kind bytes at +0x964
 ## and ranges at +0x9c8 (count word +0xb5a). Each zone point gets symbol 'A', or - at the
 ## first site whose approx_dist3_xyz is below its range - 'C' when the point's y > 0, 'B'
@@ -1271,7 +1297,7 @@ func plot_mission_map_symbols(scale: int, plot_symbol: int) -> void:
 	memory.write_u16(ctx + 0xb5a, 0)
 	memory.write_u16(ctx + 0xb58, 0)
 	a7 = entry_a7 - 0xb94
-	for_each_mission_scene_object(0x6ec, ctx)
+	for_each_mission_scene_object(0x6cc, ctx)
 	a7 = entry_a7
 	i = 0
 	while i < memory.read_s16(ctx + 0xb58):
@@ -1557,6 +1583,207 @@ func bullet_hits_aircraft(bullet: int, aircraft: int) -> int:
 		if (d0 & 1) != 0:
 			memory.write_u16(DAT_0001b842, 1)
 	return d0
+
+## Calls the collision handler(s) at definition (controller +4) +0x12 of objects a and b,
+## unless view_mode == 8 or either byte +5 has bit 0. One handler: (owner, other, 0). Two: the
+## 10-entry pair table (cursor left at 0x26284 on the match) by definition type words in
+## either order, else a's handler when byte +6 of a has bit 5, else b's. Returns D0 (the
+## handler's, or the caller's d0_in when nothing is called).
+func dispatch_collision(obj_a: int, obj_b: int, d0_in: int = 0) -> int:
+	assert(memory != null, "dispatch_collision requires original global memory")
+	var def_a: int = 0
+	var def_b: int = 0
+	var handler_a: int = 0
+	var handler_b: int = 0
+	var left: int
+	var cursor: int
+
+	if memory.read_s16(DAT_0001d858) == 8:
+		return d0_in
+	if (memory.read_u8(obj_a + 5) & 1) != 0:
+		return d0_in
+	if (memory.read_u8(obj_b + 5) & 1) != 0:
+		return d0_in
+	if memory.read_u32(obj_a + 8) != 0:
+		def_a = memory.read_u32(memory.read_u32(obj_a + 8) + 4)
+		handler_a = memory.read_u32(def_a + 0x12)
+	if memory.read_u32(obj_b + 8) != 0:
+		def_b = memory.read_u32(memory.read_u32(obj_b + 8) + 4)
+		handler_b = memory.read_u32(def_b + 0x12)
+	if handler_a == 0 or handler_b == 0:
+		if handler_a != 0:
+			return _jsr(handler_a, [obj_a, obj_b, 0], d0_in)
+		if handler_b == 0:
+			return d0_in
+		return _jsr(handler_b, [obj_b, obj_a, 0], d0_in)
+	memory.write_u32(DAT_00026284, DAT_0001b43c)
+	left = 10
+	while true:
+		left = C68kScript.s16(left - 1)
+		if left == -1:
+			break
+		cursor = memory.read_u32(DAT_00026284)
+		if memory.read_s16(cursor) == memory.read_s16(def_a) and memory.read_s16(cursor + 2) == memory.read_s16(def_b):
+			return _jsr(memory.read_u32(cursor + 4), [obj_a, obj_b, 0], d0_in)
+		if memory.read_s16(cursor) == memory.read_s16(def_b) and memory.read_s16(cursor + 2) == memory.read_s16(def_a):
+			return _jsr(memory.read_u32(cursor + 4), [obj_b, obj_a, 0], d0_in)
+		memory.write_u32(DAT_00026284, C68kScript.u32(cursor + 8))
+	if (memory.read_u8(obj_a + 6) & 0x20) != 0:
+		return _jsr(handler_a, [obj_a, obj_b, 0], d0_in)
+	return _jsr(handler_b, [obj_b, obj_a, 0], d0_in)
+
+## Nearest object of the near list (low word of object_count, dbra) whose controller type word
+## is 0x12 or 0x13 and whose approx_dist3_xyz to obj is below its range +0xc and below the best
+## so far (signed cmp.l); returns 0x100 for type 0x12, 0x200 for 0x13, else 0.
+func probe_nearest_facility_kind(object: int) -> int:
+	assert(memory != null, "probe_nearest_facility_kind requires original global memory")
+	var best_dist: int = 0x7fffffff
+	var slot: int = DAT_0001b5a4
+	var best: int = 0
+	var left: int = memory.read_s16(DAT_0001b734 + 2)
+	var facility: int
+	var type_word: int
+	var dist: int
+
+	while true:
+		left = C68kScript.s16(left - 1)
+		if left == -1:
+			break
+		facility = memory.read_u32(slot)
+		slot = slot + 4
+		if memory.read_u32(facility + 8) == 0:
+			continue
+		type_word = memory.read_s16(memory.read_u32(memory.read_u32(facility + 8) + 4))
+		if type_word != 0x12 and type_word != 0x13:
+			continue
+		dist = approx_dist3_xyz(memory.read_s32(object + 0x18), memory.read_s32(object + 0x1c), memory.read_s32(object + 0x20),
+				memory.read_s32(facility + 0x18), memory.read_s32(facility + 0x1c), memory.read_s32(facility + 0x20))
+		if dist < memory.read_s32(facility + 0xc) and dist < best_dist:
+			best_dist = dist
+			best = facility
+	if best != 0:
+		if memory.read_s16(memory.read_u32(memory.read_u32(best + 8) + 4)) == 0x12:
+			return 0x100
+		if memory.read_s16(memory.read_u32(memory.read_u32(best + 8) + 4)) == 0x13:
+			return 0x200
+	return 0
+
+## Kill tally: word +0x50 < 0, or a friendly air base (0x200) nearest -> word host_world +0xd2
+## += 1; else type 0 does nothing and type t increments word host_world +0xb8 + 2t. Returns D0.
+func tally_destroyed_entity(entity: int, d0_in: int = 0) -> int:
+	assert(memory != null, "tally_destroyed_entity requires original global memory")
+	var d0: int = d0_in
+	var counter: int
+
+	if memory.read_s16(entity + 0x50) >= 0:
+		d0 = probe_nearest_facility_kind(entity)
+		if d0 != 0x200:
+			if memory.read_s16(entity + 0x50) == 0:
+				return d0
+			d0 = C68kScript.s32(memory.read_s16(entity + 0x50) << 1)
+			counter = memory.read_u32(DAT_0001b5a0) + d0 + 0xb8
+			memory.write_u16(counter, C68kScript.u16(memory.read_u16(counter) + 1))
+			return d0
+	counter = memory.read_u32(DAT_0001b5a0) + 0xd2
+	memory.write_u16(counter, C68kScript.u16(memory.read_u16(counter) + 1))
+	return d0
+
+## No-op when byte +7 bit 1 (long +4 bit 1, set by retire_entity) is set. Retires the entity when
+## it belongs to the scene root's published child window (+0x24 == scene_root, sext words
+## child_window_lo <= byte +1 <= child_window_hi) or is not a shape (byte +0 != 2); a shape
+## outside the window is stamped instead: long +4 |= 0x42, +0x3c = frame_counter. Returns D0.
+func dispatch_entity_cleanup(obj: int, d0_in: int = 0) -> int:
+	assert(memory != null, "dispatch_entity_cleanup requires original global memory")
+	var d0: int = d0_in
+	var in_window: bool = false
+
+	if (memory.read_u8(obj + 7) & 2) != 0:
+		return d0
+	if memory.read_u32(obj + 0x24) == memory.read_u32(DAT_0001d6fc):
+		d0 = memory.read_u8(obj + 1)
+		in_window = memory.read_s16(DAT_0001b88e) <= d0 and d0 <= memory.read_s16(DAT_0001b88c)
+	if in_window or memory.read_u8(obj) != 2:
+		return retire_entity(obj, d0)
+	memory.write_u32(obj + 4, memory.read_u32(obj + 4) | 0x42)
+	memory.write_u32(obj + 0x3c, memory.read_u32(DAT_0001b838))
+	return d0
+
+## Effect for a destroyed object at its position (+ controller velocity when it has a
+## controller). With a controller: near the surface when y - ground height (+0x2e) < 100
+## (signed); surface = sext byte +0x2c, or surface_type_under_object (0x13452) when the ground
+## height is 0; the effect y is the ground height on surfaces 0x30 / 0x60 / 0x70, else 0.
+## Without one: near, y = 0, surface from 0x13452. Airborne -> spawn_effect (0x11c58)(2, size,
+## 5, 0, 1); surface 0x10 -> (0, size, 0x4b, 0, 0); otherwise (3, 3 * size / 4 truncating, 0x2d,
+## 1, 0). Surface compares are signed words of D0. Returns the near flag (0 / 1).
+func spawn_destruction_effect(obj: int, size: int) -> int:
+	assert(memory != null, "spawn_destruction_effect requires original global memory")
+	var ctl: int = memory.read_u32(obj + 8)
+	var near: int
+	var surface: int
+	var x: int
+	var y: int
+	var z: int
+
+	if ctl != 0:
+		x = C68kScript.s32(memory.read_s32(obj + 0x18) + memory.read_s32(ctl + 8))
+		y = C68kScript.s32(memory.read_s32(obj + 0x1c) + memory.read_s32(ctl + 0xc))
+		z = C68kScript.s32(memory.read_s32(obj + 0x20) + memory.read_s32(ctl + 0x10))
+		near = 1 if C68kScript.s32(y - memory.read_s32(ctl + 0x2e)) <= 99 else 0
+		surface = memory.read_s8(ctl + 0x2c)
+		if near != 0:
+			if memory.read_u32(ctl + 0x2e) == 0:
+				surface = C68kScript.s16(_bsr_unported(0x13452, [obj]))
+			if surface == 0x30 or surface == 0x60 or surface == 0x70:
+				y = memory.read_s32(ctl + 0x2e)
+			else:
+				y = 0
+		else:
+			surface = 0
+	else:
+		near = 1
+		x = memory.read_s32(obj + 0x18)
+		y = 0
+		z = memory.read_s32(obj + 0x20)
+		surface = C68kScript.s16(_bsr_unported(0x13452, [obj]))
+	if near == 0:
+		_bsr_unported(0x11c58, [2, size, 5, 0, 1, x, y, z])
+	elif surface == 0x10:
+		_bsr_unported(0x11c58, [0, size, 0x4b, 0, 0, x, y, z])
+	else:
+		_bsr_unported(0x11c58, [3, C68kScript.divs_trunc(C68kScript.s32(size * 3), 4), 0x2d, 1, 0, x, y, z])
+	return near
+
+## Bullet controller tick (definition key 0xe, +2). When the bullet hit an object (+0x3c, set
+## by bullet_hits_shape): destruction effect at its range +0x14 / 8 (C-truncating), or / 4 when
+## its +0x1c is set; a kill tally when the bullet was the player's (word +0x36); cleanup of the
+## hit object and retirement of the bullet. Then the lifetime word +0x38 += 1: at 0x1f the
+## bullet retires; after frame 3 the long +0x32 gains -0x5b (gravity) and +0xc = it asr 6; the
+## bullet retires once its y (+0x1c) <= ground height +0x2e (signed). The tick loops ignore D0.
+func tick_bullet(ctl: int) -> void:
+	assert(memory != null, "tick_bullet requires original global memory")
+	var obj: int = memory.read_u32(ctl)
+	var hit_obj: int = memory.read_u32(ctl + 0x3c)
+	var effect_range: int
+
+	if hit_obj != 0:
+		if memory.read_u32(hit_obj + 0x1c) == 0:
+			effect_range = C68kScript.divs_trunc(memory.read_s32(hit_obj + 0x14), 8)
+		else:
+			effect_range = C68kScript.divs_trunc(memory.read_s32(hit_obj + 0x14), 4)
+		spawn_destruction_effect(hit_obj, effect_range)
+		if memory.read_s16(ctl + 0x36) != 0:
+			tally_destroyed_entity(hit_obj)
+		dispatch_entity_cleanup(hit_obj)
+		retire_entity(obj)
+	memory.write_u16(ctl + 0x38, C68kScript.u16(memory.read_u16(ctl + 0x38) + 1))
+	if memory.read_s16(ctl + 0x38) != 0x1f:
+		if 3 < memory.read_s16(ctl + 0x38):
+			memory.write_u32(ctl + 0x32, C68kScript.u32(memory.read_s32(ctl + 0x32) - 0x5b))
+		memory.write_u32(ctl + 0xc, C68kScript.u32(C68kScript.asr32(memory.read_u32(ctl + 0x32), 6)))
+		if memory.read_s32(ctl + 0x2e) < memory.read_s32(obj + 0x1c):
+			return
+	retire_entity(obj)
+	return
 
 func find_contact_record(param_1: int, param_2: int) -> int:
 	assert(memory != null, "find_contact_record requires original global memory")

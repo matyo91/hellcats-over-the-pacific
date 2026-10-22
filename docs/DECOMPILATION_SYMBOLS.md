@@ -1010,7 +1010,7 @@ copy_block_return_dst reads next), n * 12 twice in activate_near_range_object (0
 rows * 20 twice in the background-row refresh (0xb578 / 0xb58c). Then the remaining runtime-lea calls: init_mission_object_tables
 (0x17b4..0x1816) passes mission_child0 / child1 / child2or3 to activate_near_range_object (`$4e4e`)
 and mission_child0 - twice, the second time where child1 might be expected - to
-copy_object_vertex_buffer (`$1be4`); dispatch_entity_cleanup frees obj +0x4c and +0x44 through
+copy_object_vertex_buffer (`$1be4`); deactivate_object (FUN_000052dc) frees obj +0x4c and +0x44 through
 heap_free_coalesce (`$19b0`, 0x530c / 0x5318). The ID00..ID09 segments have no dropped call arguments, so the restoration is complete. (approx_dist3_xyz also restored the two stores of the last
 emitted vertex that Ghidra dropped in `build_land_outline_at_detail`, 0x4aee / 0x4af2.)
 Under the verification policy, a function whose body matches the bytes is VERIFIED once

@@ -98,7 +98,7 @@ func run() -> bool:
 	memory.write_u16(FACE + 0xe, 0)
 	memory.write_u16(FACE + 0x10, 1)
 	memory.write_u16(FACE + 0x12, 2)
-	port.code_table[0x6ec].call(CTX, NODE, FACE, PATH + 4, 1)
+	port.code_table[0x6cc].call(CTX, NODE, FACE, PATH + 4, 1)
 	ok = Assertions.assert_equal(hook_calls.size(), 1, "outline hook called once") and ok
 	if hook_calls.size() == 1:
 		ok = Assertions.assert_equal(hook_calls[0][0], 4, "clipped count") and ok

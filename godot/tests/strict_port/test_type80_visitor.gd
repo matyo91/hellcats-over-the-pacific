@@ -97,6 +97,6 @@ func run() -> bool:
 	port = PacificConflictScript.new(memory)
 	port.a7 = STACK_TOP
 	_write_long3(memory, POINT, CENTROID)
-	port.for_each_mission_scene_object(0xaba, POINT)
+	port.for_each_mission_scene_object(0xa9a, POINT)
 	ok = Assertions.assert_equal(_long3(memory, POINT), CENTROID, "equal metric keeps the best") and ok
 	return ok

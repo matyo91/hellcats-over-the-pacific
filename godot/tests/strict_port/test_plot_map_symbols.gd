@@ -14,7 +14,7 @@ const PLOT := 0x888 ## test-only plot callback address
 const PLAYER_CTL := 0x25700
 const PLAYER_OBJ := 0x25800
 
-## collect_map_features (code 0x6ec) is replaced by a stub that fills the context lists, so
+## collect_map_features (runtime 0x6cc) is replaced by a stub that fills the context lists, so
 ## this test isolates plot_mission_map_symbols (the visitor has its own test). Expected plots
 ## from an instruction-level model of 0x954..0xab8 (approx_dist3_xyz 0x3c68, signed cmp.l,
 ## divs.l), independent of the C and of this port. Player x 400, z -600; scale 4; mission 3.
@@ -47,7 +47,7 @@ func run() -> bool:
 	var ok := true
 	var memory = Memory68kScript.new(MEMORY_SIZE)
 	port = PacificConflictScript.new(memory)
-	port.code_table[0x6ec] = Callable(self, "_stub_visitor")
+	port.code_table[0x6cc] = Callable(self, "_stub_visitor")
 	port.code_table[PLOT] = Callable(self, "_plot")
 	memory.write_u32(0x1b738, PLAYER_CTL)
 	memory.write_u32(PLAYER_CTL, PLAYER_OBJ)

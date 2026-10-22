@@ -206,7 +206,7 @@ first line no longer ends the signature early; earlier hashes are unchanged.
 
 `traverse_scene_tree` (`0x5fa`) and `for_each_mission_scene_object` (`0x6a6`)
 introduce calls through code pointers (`jsr (a6)`). The strict module now has
-`code_table`, a map from original code addresses to ported Callables, and `_jsr`,
+`code_table`, a map from original (runtime) code addresses to ported Callables, and `_jsr`,
 which fails loudly for an address with no ported target. Only tests register
 entries so far; ported visitors will be registered as they are translated. The
 ten-slot path stack is a frame local written through memory (a6 - 0x28 of
@@ -268,6 +268,50 @@ The overlay RNG is now strict: `overlay_rng_mul_mix` (`0x114ca`), `overlay_rng_i
 RNG in `godot/hellcats/`. `retire_entity` (`0x51ec`) is ported with it; its test
 covers the shot latch, the child-table clear, the scatter-slot window and the
 equal-byte path.
+
+`bullet_hits_shape` (`0x1665a`), `apply_random_aircraft_damage` (`0x16724`) and
+`bullet_hits_aircraft` (`0x167f4`) are the bullet collision tests. Their callers
+pass D0 on as their own result, so these ports return D0 as the bytes leave it on
+every path, including after `retire_entity`, which now returns its own D0 (the
+caller's D0, byte +1, or 7 after the slot scrub). The test drives them from a
+seeded RNG through every branch: miss, flag-4 latch roll, ignored type 0xe,
+type 0x1b, no controller, the aircraft hit / sound / damage rolls and a damage roll
+that moves bit 9 to bit 8. `check_sync.py` gained a last-resort pattern for
+parameter comments containing `;` (needed by `apply_random_aircraft_damage`); it
+runs only when the earlier patterns fail, so existing hashes are unchanged.
+
+`dispatch_collision` (`0x14348`) reads handler addresses from data (definition +0x12
+and the pair table copied from file 0x1b45c), which hold RUNTIME addresses (file -
+0x20): 0x167d4 is `bullet_hits_aircraft` (file 0x167f4) and 0x14326 is a lone `rts`
+(file 0x14346). `code_table` is therefore keyed by runtime address throughout; the
+two visitors moved to 0xa9a and 0x6cc, because `pea x(pc)` pushes the runtime
+address too. `_jsr` treats the lone-`rts` addresses (`RTS_ONLY`) as returning the
+caller's D0. The test runs the real pair table: bullet against aircraft in both
+orders, an ignored pair, the moving-object fallback, a single handler and both
+early exits, with the cursor left where the bytes leave it.
+
+Three of `tick_bullet`'s callees followed: `probe_nearest_facility_kind` (`0x354`:
+nearest in-range air base of type 0x12 / 0x13 over the low word of `object_count`),
+`tally_destroyed_entity` (`0x488`: kill counters at host_world +0xb8 + 2t, or +0xd2
+for negative types and kills near a friendly base) and `dispatch_entity_cleanup`
+(`0x528a`: retire inside the child window or for non-shapes, otherwise stamp the
+frame). They return D0 as the bytes leave it, like `retire_entity`.
+
+`spawn_destruction_effect` (`0x11db4`) is the first port whose direct callees are not
+ported yet: `spawn_effect` (`0x11c58`) and `surface_type_under_object` (`0x13452`).
+Such calls go through `_bsr_unported(file_address, args)`, which looks the callee up
+in `code_table` under its runtime address and fails loudly when it is missing; the
+mapping row lists both in `blocked_by` while the function's own logic is VERIFIED.
+The test supplies recording stand-ins and checks the effect arguments for the air
+burst, the ground-height surfaces, water, a sign-extended surface byte, truncating
+3 * size / 4 with a negative size, and the no-controller path.
+
+`tick_bullet` (`0x15dc8`) completes the bullet path on top of these: hit handling
+(effect size range / 8 or / 4, kill tally for player bullets, cleanup, retirement),
+then the lifetime counter, gravity after frame 3 and ground retirement. Both
+controller tick loops discard D0, so the port returns nothing. Its test covers each
+lifetime and gravity case (including the flooring `asr` of a negative speed) and
+both hit-size divisors.
 
 The manifest records the exact source-function SHA-256, source/original names,
 address, target, and independent milestone booleans. Run
