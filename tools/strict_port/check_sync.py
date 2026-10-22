@@ -24,6 +24,17 @@ ALLOWED_STATUSES = {
 
 def extract_function(source: str, name: str) -> str:
     signature = re.compile(rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\([^;\n]*\)[^\n]*$", re.MULTILINE)
+    # Fallback for parameter lists wrapped over several lines (tried only when the
+    # one-line form finds no definition, so existing hashes are unchanged).
+    wrapped = re.compile(rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\([^;{{}}]*?\)[^\n;{{}}]*$", re.MULTILINE)
+    for pattern in (signature, wrapped):
+        found = _extract_with(source, pattern)
+        if found is not None:
+            return found
+    raise ValueError(f"function definition not found: {name}")
+
+
+def _extract_with(source: str, signature: re.Pattern) -> str | None:
     for match in signature.finditer(source):
         brace = source.find("{", match.end())
         if brace < 0:
@@ -40,7 +51,7 @@ def extract_function(source: str, name: str) -> str:
                 depth -= 1
                 if depth == 0:
                     return source[match.start():index + 1].replace("\r\n", "\n")
-    raise ValueError(f"function definition not found: {name}")
+    return None
 
 
 def source_hash(path: Path, function_name: str) -> str:

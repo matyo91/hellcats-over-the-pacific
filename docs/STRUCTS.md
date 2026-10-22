@@ -10,7 +10,8 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 |--------------|-------------|-------------|--------|
 | +0x98 | short | Condition used in input path | Pacific Conflict.c:7420 |
 | +0xa8 | short | Mission phase (0 &lt; phase &lt; 6 → run four arrays) | Pacific Conflict.c:5104 |
-| +0xac | short | Mission flag (0 → call FUN_00005df8) | Pacific Conflict.c:5101 |
+| +0xac | short | Ground Clutter option (0 → clear_pending_entity_slots) [PROVEN: MENU 5 item 9 → HEL1:127 +0x15 → A5-0x12dc] | Pacific Conflict.c:5101 |
+| +0xb0 | short | Shadows option [PROVEN] | semantic C (shadow_pre_render) |
 | +0x25e | int | Non-zero check before callback | Pacific Conflict.c:7423 |
 | +0x2b6 | ptr | Callback (0) | Pacific Conflict.c:7424 |
 | +0x2be | ptr | Callback (0) | Pacific Conflict.c:7425 |
@@ -187,6 +188,95 @@ Related: **+0x684 bit0** (status) forces `+0x662=0`, `+0x666=0xFF80` after jitte
 **[INFERRED]** Godot models this as `EntityTemplate`, a separate auxiliary record attached to `EntityState`, specifically to avoid guessing packed entity layout or folding external pointed-to data into the entity byte offsets.
 **[RECONSTRUCTED]** `compute_template_field_40_adjustment` in `SimCore` mirrors the proven `FUN_0000e792` rule at lines 14067-14074: `field_40` is used directly when `direction_char_679 == '-'`, otherwise it is halved toward zero.
 **[RECONSTRUCTED]** `field_38` is also now modeled in Godot helper math because `FUN_0000e570` reads `*(int *)(DAT_00026004 + 0x38)` directly. [Pacific Conflict.c:13910-13915]
+
+## Record layouts: world object, face, controller (2026-10-22)
+
+Consolidated from the semantic C (`sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c`, cited by
+function name and original address; the line numbers in the older sections above refer to the Ghidra
+`Pacific Conflict.c` and are not maintained). Tags: **[PROVEN]** = byte-checked function that reads
+or writes the field with that meaning; **[STRONG INFERENCE]** / **[HYPOTHESIS]** as in the C.
+The older "Entity (FUN_0000e792)" table mixes the controller (`param_1`) with the object it points
+to (`*param_1`); use the tables below for the split.
+
+### World object (scene object; pointer arrays DAT_0001d4a4 / DAT_0001b5a4 / DAT_0001d0e4)
+
+| Offset | Size | Meaning | Tag | Evidence |
+|--------|------|---------|-----|----------|
+| +0x00 | byte | kind: 2 = shape, 3 = group (others: metric only) | [PROVEN] | activate_near_range_object 0x4e6e, dispatch_entity_cleanup 0x528a |
+| +0x01 | byte | child index in the parent's 0x18-byte template table | [PROVEN] | init_mission_object_tables 0x16e2; reset_object_to_template_pose |
+| +0x02 | byte | slot / child index (same value as +1 at setup) | [PROVEN] | init_mission_object_tables 0x16e2 |
+| +0x03 | byte | reference count (AI targets, burning trails) | [PROVEN] | attach_burning_trail 0x16b9e; aircraft destroy hook +0xa |
+| +0x05 | byte | flags (bit 0x10 = camera-facing controller attached) | [PROVEN] store / [HYPOTHESIS] role | create_camera_facing_controller 0x11aae |
+| +0x06 | word | flags: 0x10 of byte +6 = land object (rebuilt by detail bands; template pose restored on release), 2 = group / index trailer, 0x1000 = spawn-gate setup, bits 11 / 13 = mover, bit 15 = collision list | [PROVEN] | build_object_poly_buffers 0x4808, collect_near_objects, update_altitude_detail_bands |
+| +0x07 | byte | bit 0 = far list (DAT_0001d4a4) else near list (DAT_0001b5a4); bit 1 = flagged / skip | [PROVEN] | activate_near_range_object 0x4e6e; reset_object_to_template_pose |
+| +0x08 | long | controller pointer (controller +0 points back) | [PROVEN] | activate_near_range_object 0x4e6e |
+| +0x0c | long | active range (compared with +0x10) | [PROVEN] | collect_near_objects; probe_nearest_facility_kind 0x354 |
+| +0x10 | long | camera metric = max + (mid + min) / 4 of the axis distances | [PROVEN] | update_object_camera_metric 0x3b98 |
+| +0x14 | long | extent (sweep half-width; effect range) | [PROVEN] | collect_far_objects, collision sweep |
+| +0x18 / +0x1c / +0x20 | long ×3 | world position x / y / z | [PROVEN] | update_object_camera_metric 0x3b98, approx_dist3_xyz callers |
+| +0x24 | long | parent / scene root (descriptor via +0x28) | [PROVEN] | init_mission_object_tables 0x16e2 (`obj[9] = root`) |
+| +0x2c | long | support list (groups) / fractal terrain reference | [PROVEN] | sort_group_parts_by_distance 0x1443a; fractal lift helpers |
+| +0x2e | word | child template count (root) | [PROVEN] | init_mission_object_tables 0x16e2 |
+| +0x30 | long / word | root: child table pointer (0x18-byte records); other objects: distance band word | [PROVEN] | init_mission_object_tables 0x16e2; update_record_distance_band 0x3e02 callers |
+| +0x32 | word | projection shift for the camera-relative centre | [PROVEN] | collect_near_objects |
+| +0x34 | word | scale shift (object units) | [PROVEN] | sort_group_parts_by_distance 0x1443a |
+| +0x36 | word | vertex count (normals / points before the faces' vertices) | [PROVEN] | copy_object_vertex_buffer 0x1c04, activate_near_range_object |
+| +0x38 | word | part count (groups) / trailer index count | [PROVEN] | build_object_poly_buffers 0x4808, sort_group_parts_by_distance |
+| +0x3a | word | face count (also the first part face in groups) | [PROVEN] | build_object_poly_buffers 0x4808 |
+| +0x3c | long | frame of last activity (retired after 0x4b frames out of range) | [PROVEN] | collect_near_objects |
+| +0x44 | long | vertex array (12-byte x / y / z), `n * 12` with n = +0x36 + +0x3a | [PROVEN] | activate_near_range_object 0x4ede |
+| +0x48 | long | face records (0x20 bytes each, below) | [PROVEN] | build_object_poly_buffers 0x4808 |
+| +0x4c | long | second vertex array (transformed copy, same size) | [PROVEN] | copy_object_vertex_buffer 0x1c04, activate_near_range_object 0x4ede |
+
+### Face record, live (0x20 bytes, at object +0x48)
+
+| Offset | Size | Meaning | Tag | Evidence |
+|--------|------|---------|-----|----------|
+| +0x02 | word | draw order | [PROVEN] | output_face_colour 0xa16e, output_face_bw 0xa220 |
+| +0x04 | word | colour / pattern index | [PROVEN] | output_face_colour 0xa16e, queue_face_palette_entry 0x147a, assign_face_colour 0x159e |
+| +0x08 | long | cleared at build | [PROVEN] | build_object_poly_buffers 0x4808 |
+| +0x0c..+0x0e | byte ×3 | r / g / b (fogged toward 0x7d / 0x84 / 0xa8 by distance band) | [PROVEN] | sort_group_parts_by_distance 0x1443a, write_face_palette_slot 0x1548 |
+| +0x0f | byte | palette slot (0 = none) | [PROVEN] | write_face_palette_slot 0x1548 |
+| +0x10..+0x13 | byte ×4 | copied from packed bytes +4..+7 | [PROVEN] | build_object_poly_buffers 0x4808 |
+| +0x14 | word | vertex index count | [PROVEN] | build_object_poly_buffers 0x4808 |
+| +0x16 | byte | surface code (high nibble of packed +9) | [PROVEN] | surface_type_at_point 0x13346 |
+| +0x17 | byte | tag (low nibble: 1 carrier deck, 3 arresting zone) | [PROVEN] | carrier_deck_contact |
+| +0x18 | long | vertex index list (heap, count words) | [PROVEN] | build_object_poly_buffers 0x4808 |
+| +0x1c | long | packed long +0xa (× level scale later; durability reading open) | [PROVEN] store / [UNKNOWN] role | apply_entity_mission_rates |
+
+### Face record, packed (scene data stream, 0xe + 2 × count bytes)
+
+| Offset | Size | Meaning | Evidence |
+|--------|------|---------|----------|
+| +0x00 | long | colour long (→ live +0x0c) | build_object_poly_buffers 0x4808 |
+| +0x04 | byte ×4 | → live +0x10..+0x13 | same |
+| +0x08 | byte | vertex count | same; nearest_type80_centroid_visitor |
+| +0x09 | byte | surface code \| tag (type 0x80 = facility centroid, 0x70 tested elsewhere) | same; nearest_type80_centroid_visitor |
+| +0x0a | long | → live +0x1c | same |
+| +0x0e | word × count | vertex indices | same |
+
+### Controller (pointed to by object +0x08)
+
+Common header **[PROVEN]**: +0x00 = owning object; +0x20 / +0x22 / +0x24 = attitude words (pitch-type,
+heading, bank; `attitude_from_velocity` outputs, update_aircraft_entity 0xe792); +0x2e = ground height
+under the controller (ordnance). Kind-specific fields:
+
+| Kind | Fields | Evidence |
+|------|--------|----------|
+| aircraft | +0x36 pose ring, +0x612 ring index, +0x616 buffer, +0x61a / +0x61c / +0x61e previous steering errors, +0x626 / +0x62a throttle / movement, +0x63f / +0x640 state bytes, +0x675 bombing stage, +0x679 gear position, +0x67a gear bits, +0x67b flaps, +0x67c bombs, +0x684 / +0x686 / +0x688 damage / previous / timer, +0x692 AI target object, +0x6ac release frame | update_aircraft_entity 0xe792 and its helpers (param comments) |
+| effect | +0x32 kind, +0x33 flags, +0x34 size, +0x36 lifetime, +0x38 smoke byte, +0x3a / +0x6e / +0xa2 velocities, +0x76 vertical velocity, +0x52 owner controller, +0x56 trail flag | spawn_effect 0x11c58, attach_burning_trail 0x16b9e, effect tick helpers |
+| ordnance | +0x32 pose ring, +0x60e ring index, +0x610 speed, +0x614 kind, +0x616 direct hit, +0x618 blast frame, +0x61c / +0x61e flags | spawn_weapon_entity, ordnance tick helpers |
+| ship (sinking / firing) | +0x32 hits left, +0x34.. angles, +0x3a.. rates, +0x40 drop, +0x44 interval, +0x46 steps, +0x48 next frame, +0x4c sinking started, +0x4e credit, +0x50 shots, +0x52 guns, +0x54 gun positions, +0xe4 aims | ship controller helpers (docs/SHIP_CONTROLLERS.md) |
+| spinner (0x3a bytes) | +0x22 heading word | spin_object_heading 0x114b4 |
+
+### Surface-contact records
+
+Two record variants, as named in the C **[PROVEN, param comments of byte-checked functions]**:
+
+- face-contact record (point_over_face_xz 0x132c8): +0x00 object, +0x04 model, +0x0c position shift,
+  +0x0e vertex shift;
+- fractal-terrain record (fractal_height_at 0x13980, reached through object +0x2c): +0x04 object,
+  +0x0e..+0x14 rotation, +0x16 cell size, +0x18..+0x1e cell bounds, +0x22 / +0x30 planes.
 
 ## Cross-reference to Godot
 

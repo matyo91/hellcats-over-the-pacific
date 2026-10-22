@@ -1495,7 +1495,7 @@ void overlay_init_template_pointer_tables(void) /* Original: FUN_00000054 */
   do {
     src_or_clone = (undefined4 *)0x4a; /* nbytes */
     src = src_walk; /* src */
-    buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */); /*: resolved - the JSR target is heap_alloc (runtime address $1A48 = file 0x1a68) */
+    buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)src_or_clone); /*: resolved - the JSR target is heap_alloc (runtime address $1A48 = file 0x1a68) */
     buf = copy_block_return_dst(buf,(undefined4 *)src,src_or_clone);
     /* table[sign_extend(*psVar4)] = cloned record */
     *(undefined4 **)(&template_ptr_table_base + *key_walk * 4) = buf;
@@ -1538,68 +1538,68 @@ void overlay_init_template_pointer_tables(void) /* Original: FUN_00000054 */
    */
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key05;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key05 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key06;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key06 = (undefined *)copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key07;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key07 = (undefined *)copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key10;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key10 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key11;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key11 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key08;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key08 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key09;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key09 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key17;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key17 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   /* [PROVEN] nbytes=0x20 via PEA $20.W (not address-of overlay_patch_template_u16_pair). */
   nbytes_20 = (code *)0x20;
   src_or_clone = (undefined4 *)&template_key12;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_20);
   def_key12 = copy_block_return_dst(buf,src_or_clone,(undefined4 *)nbytes_20);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key13;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key13 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key14;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key14 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key15;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key15 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key16;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key16 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key18;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key18 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key19;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key19 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key20;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key20 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
 
   /*
@@ -1616,7 +1616,7 @@ void overlay_init_template_pointer_tables(void) /* Original: FUN_00000054 */
   do {
     nbytes = (undefined4 *)0x1c;
     src_or_clone = buf;
-    nbytes_or_dst = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+    nbytes_or_dst = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes);
     src_or_clone = copy_block_return_dst(nbytes_or_dst,src_or_clone,nbytes);
     *(undefined4 **)(&template_ptr_table_base + *key_walk * 4) = src_or_clone;
     key_walk = key_walk + 0xe; /* +0x1C bytes */
@@ -1630,23 +1630,23 @@ void overlay_init_template_pointer_tables(void) /* Original: FUN_00000054 */
    */
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key26;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key26 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key27;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key27 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key28;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key28 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key29;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key29 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   nbytes_or_dst = (undefined4 *)0x1a;
   src_or_clone = (undefined4 *)&template_key30;
-  buf = (undefined4 *)heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+  buf = (undefined4 *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, pea size shared with the copy below] */(int)nbytes_or_dst);
   def_key30 = copy_block_return_dst(buf,src_or_clone,nbytes_or_dst);
   return;
 }
@@ -2199,8 +2199,8 @@ void nearest_type80_centroid_visitor /* Original: FUN_00000aba */ (int *best /* 
     /* FUN_00003be0 = compute_camera_abs_metric (lea.l $3be0.l is a runtime address = file
      * 0x3c00) [PROVEN, 0xbb2..0xbcc]: iVar1 = metric(this centroid), iVar2 = metric(current
      * best param_1[0..2]); the nearer one (strictly) replaces the best. */
-    cand_metric = FUN_00003be0();
-    best_metric = FUN_00003be0();
+    cand_metric = compute_camera_abs_metric( /* Original: FUN_00003be0 (runtime $3be0 = file 0x3c00); RESTORED [PROVEN, pushes before 0xbbe] */sum_x,sum_y,sum_z);
+    best_metric = compute_camera_abs_metric( /* Original: FUN_00003be0 (runtime $3be0 = file 0x3c00); RESTORED [PROVEN, pushes before 0xbcc] */*best,best[1],best[2]);
     if (cand_metric < best_metric) {
       *best = sum_x;
       best[1] = sum_y;
@@ -2234,7 +2234,7 @@ undefined4 point_near_camera_or_type80_object /* Original: FUN_00000bea */ (int 
   int metric; /* iVar1: compute_camera_abs_metric result */
   undefined4 result; /* uVar2: 1 = a point is available */
   
-  metric = compute_camera_abs_metric( /* Original: FUN_00003c00; args dropped by Ghidra = (param_1[0], param_1[1], param_1[2]) [PROVEN] */);
+  metric = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0xbfa] */*point,point[1],point[2]);
   if (metric < 0x33900) {
 LAB_00000c46:
     result = 1;
@@ -2243,7 +2243,7 @@ LAB_00000c46:
     *point = 1000000000;
     for_each_mission_scene_object(FUN_00000aba,point);
     if (*point != 1000000000) {
-      metric = compute_camera_abs_metric( /* Original: FUN_00003c00; args dropped by Ghidra = (param_1[0], param_1[1], param_1[2]) [PROVEN] */);
+      metric = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0xc30] */*point,point[1],point[2]);
       if (metric < 0x40741) goto LAB_00000c46;
     }
     result = 0;
@@ -2303,7 +2303,7 @@ void anchor_point_visitor /* Original: FUN_00000c4c */ (int *ctx /* param_1: fin
     if (0 < verts_y[*(short *)(face + 0xe) * 3]) {
       return;
     }
-    /* Dropped call arguments [PROVEN, 0xcb4..0xccc]: approx_dist3_xyz(ctx +4, ctx +8, ctx
+    /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0xcb4..0xccc]: approx_dist3_xyz(ctx +4, ctx +8, ctx
      * +0xc, local_6a4[0], local_6a8, local_6ac) (the reference point, then the found point). */
     work = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0xccc] */ctx[1], ctx[2], ctx[3], pos_x[0], pos_y, pos_z);
     if (ctx[8] <= work) {
@@ -3103,14 +3103,14 @@ void init_mission_object_tables(void) /* Original: FUN_000016e2 */
   }
   /* Publish selected child object pointers as globals, then run setup hooks. */
   mission_child0 = *(undefined4 *)(scene_root[0xc] + 0x14); /* child[0] */
-  activate_near_range_object( /* args dropped by Ghidra; lea.l $4e4e.l at 0x17ba = runtime -> file 0x4e6e * arg DAT_0001bdb4 (0x17b4) */);
-  copy_object_vertex_buffer( /* args dropped by Ghidra; lea.l $1be4.l at 0x17c8 = runtime -> file 0x1c04 * arg DAT_0001bdb4 (0x17c2) */);
+  activate_near_range_object( /* Original: FUN_00004e4e (runtime $4e4e = file 0x4e6e); argument RESTORED [PROVEN, move.l $1bdb4.l,-(a7) at 0x17b4] */(char *)mission_child0);
+  copy_object_vertex_buffer( /* Original: FUN_00001be4 (runtime $1be4 = file 0x1c04); argument RESTORED [PROVEN, move.l $1bdb4.l,-(a7) at 0x17c2] */(int)mission_child0);
   mission_child1 = *(undefined4 *)(scene_root[0xc] + 0x2c); /* child[1] @ +0x18+0x14 */
-  activate_near_range_object( /* args dropped by Ghidra; lea.l $4e4e.l at 0x17ba = runtime -> file 0x4e6e * arg DAT_0001bdb0 (0x17e2) */);
-  copy_object_vertex_buffer( /* args dropped by Ghidra; lea.l $1be4.l at 0x17c8 = runtime -> file 0x1c04 * arg DAT_0001bdb4 AGAIN (move.l $1bdb4.l at 0x17ea, not bdb0) */);
+  activate_near_range_object( /* Original: FUN_00004e4e (runtime $4e4e = file 0x4e6e); argument RESTORED [PROVEN, move.l $1bdb0.l,-(a7) at 0x17e2] */(char *)mission_child1);
+  copy_object_vertex_buffer( /* Original: FUN_00001be4 (runtime $1be4 = file 0x1c04); argument RESTORED [PROVEN, move.l $1bdb4.l,-(a7) at 0x17ea - child[0] AGAIN, not child[1]] */(int)mission_child0);
   if (*(short *)(host_world + 0x90) == 2) {
     mission_child2or3 = *(char **)(scene_root[0xc] + 0x5c); /* child[3] */
-    activate_near_range_object( /* args dropped by Ghidra; lea.l $4e4e.l at 0x17ba = runtime -> file 0x4e6e * arg DAT_0001bdac (0x1816) */);
+    activate_near_range_object( /* Original: FUN_00004e4e (runtime $4e4e = file 0x4e6e); argument RESTORED [PROVEN, move.l $1bdac.l,-(a7) at 0x1816] */mission_child2or3);
   }
   else {
     mission_child2or3 = *(char **)(scene_root[0xc] + 0x44); /* child[2] */
@@ -4146,8 +4146,8 @@ void attitude_from_velocity(short vx /* param_1: velocity x */,short vy /* param
   ushort angle; /* uVar4: heading, then pitch */
   int work; /* iVar1: abs_int(vy), horizontal length, then acos_fixed14 result */
   
-  abs_x = FUN_00002de8();
-  abs_z = FUN_00002de8();
+  abs_x = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1f48] */(int)vx);
+  abs_z = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1f50] */(int)vz);
   if (abs_z < abs_x) {
     angle = atan_fixed14( /* Original: FUN_00001ebc */((int)vz << 0xc) / (int)abs_x);
     angle = 0x1000 - angle;
@@ -7044,17 +7044,17 @@ void start_mission_scene /* Original: FUN_00003ac4 */ (int mission /* param_1: m
  * add.l / asr.l #2 / add.l, move.l d0,$10(a3)); identical to the C apart from the
  * documented D0 return.
  */
-void update_object_camera_metric(int obj /* param_1: object; +0x10 receives the camera metric */) /* Original: FUN_00003b98 */
+int update_object_camera_metric(int obj /* param_1: object; +0x10 receives the camera metric */) /* Original: FUN_00003b98; return RESTORED [PROVEN: D0 = the metric stored by move.l d0,$10(a3) at 0x3bf6, read by callers] */
 {
   int d1; /* iVar1: |first component|, then the middle value */
   int d2; /* iVar2: |second component|, then the smallest */
   int d3; /* iVar3: |third component| */
   int dmax; /* iVar4: largest component */
   
-  /* Ghidra lost stack args; binary pushes (pos − camera) then abs_int */
-  d1 = FUN_00002de8(); /* callsite≡abs_int [INFERRED]; LEA $2DE8 */
-  d2 = FUN_00002de8();
-  d3 = FUN_00002de8();
+  /* runtime $2de8 = file 0x2e08 abs_int; arguments RESTORED [PROVEN, pushes 0x3baa / 0x3bc0 / 0x3bd0] */
+  d1 = abs_int( /* Original: FUN_00002de8 */*(int *)(obj + 0x18) - camera_x);
+  d2 = abs_int( /* Original: FUN_00002de8 */*(int *)(obj + 0x1c) - camera_y);
+  d3 = abs_int( /* Original: FUN_00002de8 */*(int *)(obj + 0x20) - camera_z);
   dmax = d1;
   if (d1 < d2) {
     dmax = d2;
@@ -7066,7 +7066,7 @@ void update_object_camera_metric(int obj /* param_1: object; +0x10 receives the 
     dmax = d3;
   }
   *(int *)(obj + 0x10) = dmax + (d1 + d2 >> 2);
-  return;
+  return *(int *)(obj + 0x10);
 }
 
 
@@ -7128,17 +7128,17 @@ void FUN_00003be0(void) /* false mid-label; do not rename call sites yet */
  * 0x3c00..0x3c66; identical to the C once the three stack arguments (x, y, z at
  * $8 / $c / $10(a6)) that Ghidra lost are restored, as recorded above.
  */
-int compute_camera_abs_metric(void) /* Original: FUN_00003c00; args lost by Ghidra */
+int compute_camera_abs_metric(int x /* 8(A6) */,int y /* 0xc(A6) */,int z /* 0x10(A6) */) /* Original: FUN_00003c00; signature RESTORED [PROVEN, link frame 0x3c08 / 0x3c1e / 0x3c2e] */
 {
   int d1; /* iVar1: |first component|, then the middle value */
   int d2; /* iVar2: |second component|, then the smallest */
   int d3; /* iVar3: |third component| */
   int dmax; /* iVar4: largest component */
   
-  /* Binary: abs(arg0−d838), abs(arg1−d834), abs(arg2−d830) */
-  d1 = FUN_00002de8(); /* callsite≡abs_int [INFERRED]; LEA $2DE8 */
-  d2 = FUN_00002de8();
-  d3 = FUN_00002de8();
+  /* runtime $2de8 = file 0x2e08 abs_int; arguments RESTORED [PROVEN, pushes 0x3c12 / 0x3c28 / 0x3c38] */
+  d1 = abs_int( /* Original: FUN_00002de8 */x - camera_x);
+  d2 = abs_int( /* Original: FUN_00002de8 */y - camera_y);
+  d3 = abs_int( /* Original: FUN_00002de8 */z - camera_z);
   dmax = d1;
   if (d1 < d2) {
     dmax = d2;
@@ -7273,7 +7273,7 @@ int segment_point_min_distance /* Original: FUN_00003cca; signature restored [PR
   int mx; /* D2: midpoint x */
   int my; /* D3: midpoint y */
   int mz; /* D4: midpoint z */
-  
+
   sx = x0; /* RESTORED [PROVEN, 0x3cd2..0x3d8c] */
   sy = y0;
   sz = z0;
@@ -8390,7 +8390,7 @@ LAB_00004aee:
           cursor = cursor + 2;
         }
         else {
-          /* Dropped call arguments [PROVEN, 0x4aae..0x4ada]: the first call is
+          /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x4aae..0x4ada]: the first call is
            * approx_dist3_xyz(last_x, 0, last_z, uVar1, 0, uVar2), where last_x / last_z
            * (a6 - 0x1bf4 / - 0x1bf8) are the most recently EMITTED vertex, updated only at
            * LAB_00004aee; iVar19 therefore sums the distances of the skipped vertices to that
@@ -8712,9 +8712,9 @@ void activate_near_range_object(char *obj /* param_1: object (kind byte +0: 2 sh
   }
   n = *(short *)(obj + 0x3a) + *(short *)(obj + 0x36);
   /* Capstone: push (sVar12 * 0xC), JSR $1A48 → D0; Ghidra dropped the size arg. */
-  buf = heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */); /*: heap_alloc PROVEN (lea.l $1a48.l = runtime -> file 0x1a68) */
+  buf = heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, push of d2 = sext n * 12 before 0x4ede] */(int)n * 0xc);
   *(undefined4 *)(obj + 0x4c) = buf;
-  buf = heap_alloc( /* size dropped by Ghidra; JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */); /* same size → +0x44 (spawn gate) */
+  buf = heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, same d2 pushed again before 0x4ee6] */(int)n * 0xc); /* same size → +0x44 (spawn gate) */
   *(undefined4 *)(obj + 0x44) = buf;
   work = (uint *)(*(int *)(host_world + 0x8c) +
                     *(int *)(*(int *)(*(int *)(obj + 0x24) + 0x28) + 0x2e +
@@ -8979,8 +8979,8 @@ void deactivate_object /* Original: FUN_000052dc */ (char *obj /* param_1: objec
     if ((obj[6] & 0x10U) != 0) {
       reset_object_to_template_pose((int)obj);
     }
-    heap_free_coalesce( /* arg dropped by Ghidra; lea.l $19b0.l at 0x5310 = runtime -> file 0x19d0; real arg *(int *)(param_1 + 0x4c) [PROVEN, 0x530c] */);
-    heap_free_coalesce( /* arg dropped by Ghidra; lea.l $19b0.l at 0x5310 = runtime -> file 0x19d0; real arg *(int *)(param_1 + 0x44) [PROVEN, 0x5318] */);
+    heap_free_coalesce( /* Original: FUN_000019b0 (runtime $19b0 = file 0x19d0); argument RESTORED [PROVEN, move.l $4c(a3),-(a7) at 0x530c before 0x5316] */*(int *)(obj + 0x4c));
+    heap_free_coalesce( /* Original: FUN_000019b0 (runtime $19b0 = file 0x19d0); argument RESTORED [PROVEN, move.l $44(a3),-(a7) at 0x5318 before 0x531c] */*(int *)(obj + 0x44));
     obj[0x44] = '\0';
     obj[0x45] = '\0';
     obj[0x46] = '\0';
@@ -9542,12 +9542,12 @@ void update_altitude_detail_bands /* Original: FUN_00005a14 */ (void)
   } while (work_d < 4);
   *(int *)(*(int *)(mission_child1 + 0x44) + 100) = work_b;
   *(int *)(*(int *)(work_e + 0x44) + 0x70) = work_b;
-  /* Dropped call arguments [PROVEN, 0x5af8..0x5b54]: the first call is
+  /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x5af8..0x5b54]: the first call is
    * compute_camera_abs_metric(DAT_0001d724, DAT_0001d720, DAT_0001d71c) (last near-range
    * rebuild position x / y / z), the second compute_camera_abs_metric(DAT_0001d718,
    * DAT_0001d714, DAT_0001d710) (last far-range rebuild position). Each result m is
    * compared as m + (m >> 3) (asr.l #3, signed cmpi.l). */
-  work_a = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+  work_a = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x5b0a] */detail_ref_x,detail_ref_y,detail_ref_z);
   work_a = (work_a >> 3) + work_a;
   if (0xce40 < work_a) {
     rebuild = true;
@@ -9555,7 +9555,7 @@ void update_altitude_detail_bands /* Original: FUN_00005a14 */ (void)
     detail_ref_y = camera_y;
     detail_ref_z = camera_z;
   }
-  work_b = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+  work_b = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x5b54] */far_ref_x,far_ref_y,far_ref_z);
   work_b = (work_b >> 3) + work_b;
   /* Section check 0x5a14..0x5b68 (part 1) [PROVEN, matches the C]: band test y < band ||
    * band * 2 <= y (signed cmp.l); bit length by asr.l #1 until 0 (a negative camera y would
@@ -9843,11 +9843,11 @@ void update_ground_scatter_objects /* Original: FUN_00005e28 */ (void)
       n_visible = 0;
       do {
         /* FUN_00002de8 = abs_int (lea.l $2de8.l is a RUNTIME address = file 0x2e08) with
-         * dropped arguments [PROVEN, 0x5ef6..0x5f28]: abs_int(piVar11[0] - DAT_0001d838) and
+         * dropped arguments (RESTORED in the C) [PROVEN, 0x5ef6..0x5f28]: abs_int(piVar11[0] - DAT_0001d838) and
          * abs_int(piVar11[2] - DAT_0001d830); a slot farther than 0x4d58 from the camera on
          * x or z is re-placed. */
-        work = FUN_00002de8();
-        if ((0x4d58 < work) || (work = FUN_00002de8(), 0x4d58 < work)) {
+        work = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x5f06] */pt[0] - camera_x);
+        if ((0x4d58 < work) || (work = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x5f1e] */pt[2] - camera_z), 0x4d58 < work)) {
           if ((view_mode < 6) && (view_flag_d856 == 0)) {
             rnd = overlay_rng_next( /* Original: FUN_00011564 */);
             rnd = (ushort)((*(short *)(player_object + 0x22) +
@@ -11824,8 +11824,8 @@ LAB_00008324:
     work = (int)work_s;
     work_s = (*(code *)&LAB_0000e3e8_4)((int)(short)seen_heading - track_heading);
     dx = (int)work_s;
-    dy = FUN_00002de8( /* = abs_int(iVar5) */);
-    if ((dy < 0x1001) && (dy = FUN_00002de8( /* = abs_int(iVar11) */), dy < 0x1001)) {
+    dy = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x8664] */ /* folded pitch delta */work);
+    if ((dy < 0x1001) && (dy = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x8674] */ /* folded heading delta */dx), dy < 0x1001)) {
       if (work < 0) {
         work = work + 3;
       }
@@ -12227,7 +12227,7 @@ void turn_camera_toward_point /* Original: FUN_00008abe */ (int x /* param_1: po
   ushort new_heading; /* local_8, -4(A6): heading to the point */
   ushort new_pitch; /* local_6, -2(A6): pitch to the point */
 
-  work = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+  work = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x8ad8] */x,y,z);
   work_s = 0;
   for (; (work & 0xffff8000) != 0; work = (int)work >> 1) {
     work_s = work_s + 1;
@@ -12243,8 +12243,8 @@ void turn_camera_toward_point /* Original: FUN_00008abe */ (int x /* param_1: po
   work2 = (int)work_s;
   work_s = (*(code *)&LAB_0000e3e8_4)((int)(short)new_heading - (int)(short)camera_heading);
   dx = (int)work_s;
-  dy = FUN_00002de8();
-  if ((dy < 0x1001) && (dy = FUN_00002de8(), dy < 0x1001)) {
+  dy = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x8b8e] */ /* pitch delta */work2);
+  if ((dy < 0x1001) && (dy = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x8b9e] */ /* heading delta */dx), dy < 0x1001)) {
     if (work2 < 0) {
       work2 = work2 + 3;
     }
@@ -14838,8 +14838,8 @@ uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_
       background_rows = (short *)0x0;
     }
     if (view_depth != 1) {
-      background_rows_next = (short *)heap_alloc( /* size dropped by Ghidra: rows * 20 = sext(DAT_00025f38._2_2_) * 5 << 2 (0xb566..0xb570 / 0xb580..0xb58a); JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
-      background_rows = (short *)heap_alloc( /* size dropped by Ghidra: rows * 20 = sext(DAT_00025f38._2_2_) * 5 << 2 (0xb566..0xb570 / 0xb580..0xb58a); JSR via lea.l $1a48.l = runtime -> file 0x1a68 = heap_alloc */);
+      background_rows_next = (short *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, rows * 20 = sext word 0x25f3a * 5 << 2, 0xb566..0xb570 / 0xb580..0xb58a] */(int)bg_cache_size._2_2_ * 0x14);
+      background_rows = (short *)heap_alloc( /* Original: FUN_00001a48 (runtime $1a48 = file 0x1a68 heap_alloc); size RESTORED [PROVEN, rows * 20 = sext word 0x25f3a * 5 << 2, 0xb566..0xb570 / 0xb580..0xb58a] */(int)bg_cache_size._2_2_ * 0x14);
     }
     reset_background_rows();
   }
@@ -18855,7 +18855,7 @@ void aircraft_tick /* Original: FUN_0000e5aa */ (int *ctl /* param_1: aircraft c
  * compares, rounding, call targets and arguments are identical to the C, with these
  * recorded corrections: touchdown reads the impact word +0xe before snapping +0xc (order
  * correction, 0xf112 / 0xf124); FUN_00001d56() x2 = sin_fixed14(local_28 / +0x20)
- * (dropped arguments); Ghidra's (short) casts on the long first arguments of
+ * (dropped arguments, RESTORED in the C); Ghidra's (short) casts on the long first arguments of
  * spawn_weapon_entity / spawn_ordnance_oriented / spawn_bailout_parachute. Open points
  * (behaviour as in the bytes, not reconstruction gaps): stale engine locals read in
  * blk 3b for non-designated aircraft; possible 68000 divide-by-zero trap in blk 2b.
@@ -19809,12 +19809,12 @@ LAB_0000f47c:
   speed = fold_angle_pm_0x2000( /* Original: FUN_0000e40c */att_22 - *(short *)((int)ctl + 0x22));
   *(ushort *)(ctl + 8) = pitch; /* pos_20 */
   *(ushort *)((int)ctl + 0x22) = att_22; /* attitude_22 */
-  scratch = FUN_00001d56( /* = sin_fixed14(sext local_28) [PROVEN: lea.l $1d56.l = runtime -> file 0x1d76; arg pushed at 0xf49c, dropped by Ghidra] */);
+  scratch = (short *)sin_fixed14( /* Original: FUN_00001d56 (runtime $1d56 = file 0x1d76 sin_fixed14); argument RESTORED [PROVEN, push of sext -0x24(A6) before 0xf4a8] */(int)(short)pitch);
   *(ushort *)(ctl + 9) =
        bank + (short)((int)(short)speed * (int)(short)scratch >> 0xc) & 0x3fff; /* field_24 */
   *(int *)((int)ctl + 0x62a) = airspeed; /* movement_62a */
   if (ctl == player_object) {
-    scratch = FUN_00001d56( /* = sin_fixed14(sext word +0x20) [PROVEN: jsr (a2) at 0xf4d0, arg pushed at 0xf4ca; +0x20 = local_28 here] */);
+    scratch = (short *)sin_fixed14( /* Original: FUN_00001d56 (runtime $1d56 = file 0x1d76 sin_fixed14); argument RESTORED [PROVEN, push of sext word +0x20 before 0xf4d0; +0x20 = pitch here] */(int)*(short *)(ctl + 8));
     scratch = (short *)((airspeed * (((int)(short)scratch << 0xd) >> 0xc)) / 0x1ce);
     if (0x1d80 < (int)scratch) {
       scratch = (short *)0x1d80;
@@ -20760,8 +20760,8 @@ ushort atan2_fixed14(short dx /* param_1: first component (dx per the header) */
   ushort base_angle; /* uVar3; atan_fixed14 of the smaller / larger ratio */
   ushort angle; /* unaff_D2w: result angle (D2.w; left unwritten for (0, 0)) */
   
-  abs_dx = FUN_00002de8();
-  abs_dz = FUN_00002de8();
+  abs_dx = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x102ec] */(int)dx);
+  abs_dz = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x102f6] */(int)dz);
   if (abs_dz < abs_dx) {
     base_angle = atan_fixed14( /* Original: FUN_00001ebc */((int)dz << 0xc) / (int)abs_dx);
     angle = 0x1000 - base_angle;
@@ -20839,11 +20839,11 @@ build_relative_steer_sample(int *ctl /* param_1: aircraft controller */,int x /*
     low = 0;
   }
   height = *(int *)(obj + 0x18);
-  dy_aim = FUN_00002de8();
+  dy_aim = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x103c6] */ /* target x - aircraft x */x - height);
   dy = y - *(int *)(obj + 0x1c);
-  tmp = FUN_00002de8();
+  tmp = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x103d0] */dy);
   obj = *(int *)(obj + 0x20);
-  horiz = FUN_00002de8();
+  horiz = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x103e0] */ /* target z - aircraft z */z - obj);
   horiz = horiz + dy_aim;
   dy_aim = dy;
   if (horiz < 0x8001) goto LAB_00010464;
@@ -21271,8 +21271,8 @@ void apply_relative_heading_steer(int ctl /* param_1: aircraft controller (+0x61
   short rudder; /* sVar6; rudder command */
 
   rudder = 0;
-  tmp = FUN_00002de8();
-  if (((tmp < 0x501) && (tmp = FUN_00002de8(), tmp < 0x501)) && (-1 < height)) {
+  tmp = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x109de] */(int)heading_err);
+  if (((tmp < 0x501) && (tmp = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x109ee] */(int)pitch_err), tmp < 0x501)) && (-1 < height)) {
     elevator = pitch_err * 5 + *(short *)(ctl + 0x61a) * -4;
     aileron = heading_err * 2 - *(short *)(ctl + 0x61c);
     rudder = (short)aileron >> 4;
@@ -22944,9 +22944,9 @@ int spawn_effect /* Original: FUN_00011c58 */ (int kind /* param_1: effect kind 
     return 0;
   }
   if ((kind != 1) && ((view_mode < 3 || (view_mode == 8)))) {
-    /* Dropped call arguments [PROVEN, 0x11d04..0x11d0a]: compute_camera_abs_metric(param_6,
+    /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x11d04..0x11d0a]: compute_camera_abs_metric(param_6,
      * param_7, param_8) (the effect position). */
-    tmp = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+    tmp = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x11d0a] */x,y,z);
     if (tmp < 10000) {
       snd_explosion_timer = 0x1e;
     }
@@ -24559,10 +24559,10 @@ int surface_type_at_point /* Original: FUN_00013346 */ (int x /* param_1: point 
   
   left = entity_array_1_count._2_2_;
   slot = &entity_array_1 + entity_array_1_count._2_2_;
-  /* Dropped call arguments [PROVEN, 0x1336e..0x133c2]: compute_camera_abs_metric(param_1,
+  /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x1336e..0x133c2]: compute_camera_abs_metric(param_1,
    * param_2, param_3) here, and below approx_dist3_xyz(param_1, param_2, param_3, obj +0x18,
    * obj +0x1c, obj +0x20) (the object position). */
-  metric = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+  metric = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x13374] */x,y_unused,z);
   do {
     do {
       left = left + -1;
@@ -24756,6 +24756,8 @@ uint * create_shape_contact_record /* Original: FUN_000135e8 */ (uint obj_a /* p
   int face; /* iVar9; face record (0x20 bytes) */
   uint *entry; /* puVar10; record entry being written */
   uint *next_entry; /* puVar11; next record entry */
+  short *sel; /* A5: cursor over the selected face indices at rec +0x10 - RESTORED [PROVEN, 0x136e0..0x136e4], Ghidra dropped it with the abs_int arguments */
+  short sel_idx; /* A0.w: face index read through sel [PROVEN, 0x13706 movea.w (a5)+] */
 
   face = *(int *)(obj_b + 0x48);
   count = 0;
@@ -24807,6 +24809,7 @@ uint * create_shape_contact_record /* Original: FUN_000135e8 */ (uint obj_a /* p
     entry = next_entry;
   }
   i = *(short *)((int)rec + 10);
+  sel = (short *)(rec + 4); /* RESTORED [PROVEN, 0x136e0..0x136e4 a5 = rec + 0x10] */
   entry = rec + i + 4;
   do {
     while( true ) {
@@ -24814,9 +24817,11 @@ uint * create_shape_contact_record /* Original: FUN_000135e8 */ (uint obj_a /* p
       if (i == -1) {
         return rec;
       }
-      count = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: x of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) - x of vertex 0 */
-      abs_y = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: y of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) + 4 - y of vertex 0 */
-      abs_z = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: z of vertex (*(b+0x44) + 12 * (*(short *)(b+0x36) + idx)) + 8 - z of vertex 0 */
+      sel_idx = *sel; /* RESTORED [PROVEN, 0x13706] */
+      sel = sel + 1;
+      count = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x13724] */*(int *)(*(int *)(obj_b + 0x44) + ((int)*(short *)(obj_b + 0x36) + (int)sel_idx) * 0xc) - **(int **)(obj_b + 0x44)); /* normal x - vertex 0 x */
+      abs_y = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x13736] */*(int *)(*(int *)(obj_b + 0x44) + ((int)*(short *)(obj_b + 0x36) + (int)sel_idx) * 0xc + 4) - *(int *)(*(int *)(obj_b + 0x44) + 4)); /* normal y - vertex 0 y */
+      abs_z = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x13748] */*(int *)(*(int *)(obj_b + 0x44) + ((int)*(short *)(obj_b + 0x36) + (int)sel_idx) * 0xc + 8) - *(int *)(*(int *)(obj_b + 0x44) + 8)); /* normal z - vertex 0 z */
       if (count <= abs_y) break;
       if (abs_z < count) {
         *(undefined2 *)entry = 0;
@@ -25017,6 +25022,7 @@ int fractal_height_at /* Original: FUN_00013980 */ (int rec /* param_1: contact 
   int centre; /* iVar12; face-centre entry, then the face centre vertex */
   int obj; /* iVar13; fractal object, then the height result */
   int *centre_z_p; /* local_16, -0x12(A6): z long of the face-centre entry */
+  int centre_x; /* D6: cell centre x - RESTORED [PROVEN, 0x13a66..0x13a9a], Ghidra dropped it with the abs_int argument */
   short cell_v; /* local_6, -2(A6): second cell coordinate (rotated z) */
 
   cell_v = z;
@@ -25056,11 +25062,14 @@ int fractal_height_at /* Original: FUN_00013980 */ (int rec /* param_1: contact 
     *(short *)(rec + 0x1c) = cell_v0;
     *(short *)(rec + 0x1e) = cell_v0 + n;
     centre_z = (int)(half_size >> 1) + (int)cell_v0;
+    centre_x = ((int)(half_size >> 1) + (int)(short)(col * n)) - centre_z / 2; /* RESTORED [PROVEN, 0x13a6e..0x13a7c]: truncating halving (bge / addq / asr) */
     if (*(short *)(rec + 10) < 0) {
       centre_z = centre_z << (-(int)*(short *)(rec + 10) & 0x3fU);
+      centre_x = centre_x << (-(int)*(short *)(rec + 10) & 0x3fU); /* RESTORED [PROVEN, 0x13a8e] */
     }
     else {
       centre_z = centre_z >> ((int)*(short *)(rec + 10) & 0x3fU);
+      centre_x = centre_x >> ((int)*(short *)(rec + 10) & 0x3fU); /* RESTORED [PROVEN, 0x13a98] */
     }
     centres = *(int *)(host_world + 0x8c) +
             *(int *)(*(int *)(*(int *)(obj + 0x24) + 0x28) + 0x2e +
@@ -25072,8 +25081,8 @@ int fractal_height_at /* Original: FUN_00013980 */ (int rec /* param_1: contact 
     centre_z_p = (int *)(centres + 8);
     centre = centres;
     while (n = n + -1, n != -1) {
-      dx = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)iVar12 - xc, where xc (D6, computed at 0x13a66..0x13a9a and dropped by Ghidra) = ((short)(sVar11 >> 1) + sVar8 * cell) - iVar10_unshifted / 2 (signed), shifted by +0xa like iVar10 */
-      dz = FUN_00002de8(); /* runtime abs_int; dropped arg: *local_16 - iVar10 (vertex z - cell z centre) */
+      dx = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x13b08] */*(int *)centre - centre_x); /* vertex x - cell centre x */
+      dz = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x13b16] */*centre_z_p - centre_z); /* vertex z - cell centre z */
       if (dz + dx < 0xad40) {
         if (centre_z < *centre_z_p) {
           cell_face_b = (undefined2)((centre - centres) / 0xc);
@@ -25241,7 +25250,7 @@ void test_proximity_collision /* Original: FUN_00013e4e */ (int obj_a /* param_1
   int dist; /* iVar1; approx_dist3_xyz, then 3/4 of it */
   
   if ((*(uint *)(obj_b + 4) & *(uint *)(obj_a + 4) & 0x100000) != 0) {
-    /* Dropped call arguments [PROVEN, 0x13e68..0x13e80]: approx_dist3_xyz(a +0x18, a +0x1c,
+    /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x13e68..0x13e80]: approx_dist3_xyz(a +0x18, a +0x1c,
      * a +0x20, b +0x18, b +0x1c, b +0x20), the two object positions. */
     dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x13e80] */*(int *)(obj_a + 0x18), *(int *)(obj_a + 0x1c), *(int *)(obj_a + 0x20), *(int *)(obj_b + 0x18), *(int *)(obj_b + 0x1c), *(int *)(obj_b + 0x20));
     dist = (dist >> 2) + (dist >> 1);
@@ -25313,7 +25322,7 @@ uint * test_object_collision /* Original: FUN_00013ee0 */ (uint obj_a /* param_1
   short ax; /* sStack_1e, -0x1a(A6): a x scaled by the record shift */
   short left; /* local_6, -2(A6): faces left */
   
-  /* Dropped call arguments [PROVEN, 0x13ef0..0x13f08]: approx_dist3_xyz(a +0x18, a +0x1c,
+  /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x13ef0..0x13f08]: approx_dist3_xyz(a +0x18, a +0x1c,
    * a +0x20, b +0x18, b +0x1c, b +0x20). */
   faces = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x13f08] */*(int *)(obj_a + 0x18), *(int *)(obj_a + 0x1c), *(int *)(obj_a + 0x20), *(int *)(obj_b + 0x18), *(int *)(obj_b + 0x1c), *(int *)(obj_b + 0x20));
   result = (uint *)(faces - (faces >> 2));
@@ -25487,7 +25496,7 @@ void handle_player_contact /* Original: FUN_0001429c */ (uint obj_a /* param_1: 
   uint *rec; /* puVar2; shape contact record */
   
   if (*(int *)(obj_a + 8) == player_object) {
-    /* Dropped call arguments [PROVEN, 0x142b6..0x142ce]: approx_dist3_xyz(a +0x18, a +0x1c,
+    /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x142b6..0x142ce]: approx_dist3_xyz(a +0x18, a +0x1c,
      * a +0x20, b +0x18, b +0x1c, b +0x20). */
     dist = approx_dist3_xyz( /* Original: FUN_00003c68 */ /* RESTORED [PROVEN, pushes before 0x142ce] */*(int *)(obj_a + 0x18), *(int *)(obj_a + 0x1c), *(int *)(obj_a + 0x20), *(int *)(obj_b + 0x18), *(int *)(obj_b + 0x1c), *(int *)(obj_b + 0x20));
     if (dist - (dist >> 2) <= *(int *)(obj_b + 0x14) + *(int *)(obj_a + 0x14)) {
@@ -25623,6 +25632,7 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param
   short *idx_p; /* psVar18; part index cursor, then a support record */
   int dist; /* iVar19; distance being placed */
   int *dist_p; /* local_426, -0x422(A6): cursor into dists */
+  int verts; /* -0x418(A6): template vertex block, obj +0x44 + 12 * (+0x36 - +0x38) [RESTORED, 0x14490..0x144a8] */
   short support_count; /* local_41e, -0x41a(A6): supports left */
   int dists [256]; /* local_404, -0x400(A6): part distances (256 longs) */
 
@@ -25633,6 +25643,7 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param
   camera_y = 0;
   camera_z = camera_z << ((int)*(short *)(obj + 0x34) & 0x3fU);
   parts_left = *(short *)(obj + 0x38);
+  verts = ((int)*(short *)(obj + 0x36) - (int)parts_left) * 0xc + *(int *)(obj + 0x44);
   faces = *(int *)(obj + 0x48);
   dist_p = dists;
   list = (short *)(*(short *)(obj + 0x3a) * 0x20 + faces);
@@ -25640,7 +25651,9 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param
     i = 0;
     if (0 < parts_left) {
       do {
-        tmp = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args: template vertex x, 0, z for the face's index entry (vertex block +0x44 + 12 * (+0x36 - +0x38) + 12 * idx) */);
+        part = *list; /* movea.w (a4)+,a0 at 0x145c0 [RESTORED] */
+        list = list + 1;
+        tmp = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x145d6] */*(int *)(verts + part * 0xc),0,*(int *)(verts + part * 0xc + 8));
         *dist_p = tmp;
         i = i + 1;
         dist_p = dist_p + 1;
@@ -25654,7 +25667,7 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param
       do {
         part = *idx_p;
         haze_rec = (byte *)(list + (int)parts_left + part * 3);
-        tmp = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args: template vertex x, 0, z for the face's index entry (vertex block +0x44 + 12 * (+0x36 - +0x38) + 12 * idx) */);
+        tmp = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x1450a] */*(int *)(verts + part * 0xc),0,*(int *)(verts + part * 0xc + 8));
         *dist_p = tmp;
         tmp = update_record_distance_band((int)haze_rec,tmp);
         if (tmp != 0) {
@@ -25723,7 +25736,7 @@ void sort_group_parts_by_distance /* Original: FUN_0001443a */ (int obj /* param
       if (0 < support_count) {
         do {
           tmp = supports[(short)k];
-          dist = compute_camera_abs_metric( /* Original: FUN_00003c00 */ /* dropped args (0x146cc..0x146d2): support point +4 (x), 0, +8 (z) */);
+          dist = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x146d6] */*(int *)(tmp + 4),0,*(int *)(tmp + 8));
           *(int *)(tmp + 0xc) = dist;
           j = k;
           while (j = j - 1, -1 < (int)((uint)j << 0x10)) {
@@ -28064,9 +28077,9 @@ int * attach_burning_trail /* Original: FUN_00016b9e */ (uint x,uint y,uint z,in
     *(undefined2 *)((int)trail_ctl + 0x56) = 1;
     *(char *)(*owner_ctl + 3) = *(char *)(*owner_ctl + 3) + '\x01';
     tick_trail(trail_ctl);
-    /* Dropped call arguments [PROVEN, 0x16bea..0x16bf0]: compute_camera_abs_metric(param_1,
+    /* Call arguments dropped by Ghidra, RESTORED in the C [PROVEN, 0x16bea..0x16bf0]: compute_camera_abs_metric(param_1,
      * param_2, param_3) (the trail position). */
-    cam_dist = compute_camera_abs_metric( /* Original: FUN_00003c00 */);
+    cam_dist = compute_camera_abs_metric( /* Original: FUN_00003c00; RESTORED [PROVEN, pushes before 0x16bf0] */x,y,z);
     if (cam_dist < 5000) {
       snd_explosion_timer = 0x1e;
     }
@@ -28593,8 +28606,8 @@ undefined2 animate_ground_fire /* Original: FUN_00017150 */ (int *ctl /* ground 
   fire_obj = *ctl;
   owner = ctl[0x14];
   owner_ctl = *(int *)(owner + 8);
-  abs_vx = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)(iVar4 + 8) (host velocity x) */
-  speed = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: *(int *)(iVar4 + 0x10) (host velocity z) */
+  abs_vx = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1717c] */*(int *)(owner_ctl + 8)); /* owner controller velocity x */
+  speed = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x17184] */*(int *)(owner_ctl + 0x10)); /* owner controller velocity z */
   speed = speed + abs_vx;
   if (((*(byte *)(owner + 7) & 2) != 0) || (speed == 0)) {
     if (*(short *)(ctl + 0xd) == 1) {
@@ -29532,8 +29545,8 @@ void tick_aircraft_spawner /* Original: FUN_00017dd4 */ (int *ctl /* spawner con
       player_x = *(int *)(player + 0x18);
       spawner_z = *(int *)(obj + 0x20);
       player_z = *(int *)(player + 0x20);
-      abs_dx = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: iVar8 - iVar2 (spawner x - player x) */
-      abs_dz = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: iVar3 - iVar4 (spawner z - player z) */
+      abs_dx = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x17e92] */spawner_x - player_x);
+      abs_dz = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x17e98] */spawner_z - player_z);
       slot = 0;
       for (spawn_z = abs_dz + abs_dx; (spawn_z & 0xffff8000) != 0; spawn_z = (int)spawn_z >> 1) {
         slot = slot + 1;
@@ -29802,10 +29815,9 @@ void ai_pursue_target /* Original: FUN_0001820a */ (int *ctl /* attacking aircra
       steer_b = steer_b + 3;
     }
     steer_b = steer_b >> 2;
-    ring_idx = FUN_00002de8();
+    ring_idx = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x18324] */(int)steer_b);
     if ((0x53f < ring_idx) && (*(char *)((int)ctl + 0x69a) != '\x04')) {
-      fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(target_ctl + 0x22) - *(short *)((int)ctl + 0x22));
-      ring_idx = FUN_00002de8();
+      ring_idx = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x18350] */ /* the argument is ext.l of this fold, which Ghidra printed as a separate statement */(int)(short)fold_angle_pm_0x2000( /* Original: FUN_0000e40c */*(short *)(target_ctl + 0x22) - *(short *)((int)ctl + 0x22)));
       if ((ring_idx < 0x1001) || (rnd = overlay_rng_next( /* Original: FUN_00011564 */), (rnd & 1) == 0)) {
         max_ai_throttle_maybe_invert_679( /* Original: FUN_00010cb2 */ctl);
         do {
@@ -29982,8 +29994,8 @@ LAB_00018878:
     attitude_from_velocity( /* Original: FUN_00001f22 */rel_x,rel_y,rel_z,(int)(short)own_obj,target,&rel_att_a,&rel_att_b);
     steer_a = (*(code *)&LAB_0000e3e8_4)((int)(short)rel_att_a);
     steer_b = (*(code *)&LAB_0000e3e8_4)((int)(short)rel_att_b);
-    target = FUN_00002de8();
-    if (((target < 0x80) && (target = FUN_00002de8(), target < 0x80)) &&
+    target = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1852c] */ /* steer_a - (word ctl +0x626 - word definition +0x44), lost by Ghidra (0x18512..0x18522) */(int)steer_a - ((int)*(short *)((int)ctl + 0x626) - (int)*(short *)(ctl[1] + 0x44)));
+    if (((target < 0x80) && (target = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1853c] */(int)steer_b), target < 0x80)) &&
        (*(char *)((int)ctl + 0x676) == '\0')) {
       *(undefined1 *)((int)ctl + 0x676) = 1;
     }
@@ -30182,11 +30194,11 @@ undefined4 shadow_pre_render /* Original: FUN_00018a34 */ (int *ctl /* shadow co
       owner = (int)min_half;
       while (n = n + -1, n != -1) {
         vidx = *idx;
-        face = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: long template vertex *(int *)(iVar2 + iVar4 + 0x22 + sVar5 * 0xc) */
+        face = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x18afc] */*(int *)(world_tmpl + scene_off + 0x22 + vidx * 0xc)); /* long template vertex */
         if (owner < face) {
           vert = (int *)(verts + *idx * 0xc);
           vidx = (short)(*(int *)(world_tmpl + scene_off + 0x22 + vidx * 0xc) * (int)(short)obj >> 0xc);
-          face = FUN_00002de8(); /* runtime lea $2de8.l = abs_int (file 0x2e08); dropped arg: (int)sVar5 (sext word of the cos-scaled product) */
+          face = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x18b22] */(int)vidx); /* sext word of the cos-scaled product */
           if (owner < face) {
             *vert = (int)vidx;
           }
@@ -31746,8 +31758,8 @@ LAB_0001a2da:
     throttle_target = 0x9d8;
   }
   /* Heading from Δxz to aim; lateral offset via sin/cos of local_6. */
-  lead = FUN_00002de8( /* = abs_int(own x - target x) [PROVEN: lea.l $2de8.l runtime = file 0x2e08; arg pushed at 0x1a31e, dropped by Ghidra] */);
-  tmp = FUN_00002de8( /* = abs_int(own z - target z) [PROVEN, arg pushed at 0x1a330] */);
+  lead = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1a326] */*(int *)(obj + 0x18) - tx); /* own x - target x */
+  tmp = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1a332] */*(int *)(obj + 0x20) - tz); /* own z - target z */
   shift = 0;
   for (sum = tmp + lead; (sum & 0xffff8000) != 0; sum = (int)sum >> 1) {
     shift = shift + 1;
@@ -31847,7 +31859,7 @@ LAB_0001a2da:
   steer_entity_toward_point( /* Original: FUN_00010b2e */ctl,obj,ty,tx);
   /* Mid-band range + abs noise: abort glide, restore prior +0x32. */
   if (((range < 18000) && (15000 < range)) &&
-     ((obj = FUN_00002de8( /* = abs_int(vertical error: target y - own y, register d2) [PROVEN, 0x1a5e8] */), 100 < obj || (obj = FUN_00002de8( /* = abs_int(sext local_12 - (+0x62a >> 2)): speed error [PROVEN, 0x1a5fa..0x1a602] */), 0x5a < obj)))) {
+     ((obj = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1a5f0] */ /* vertical error: target y - own y, register d2 */lead), 100 < obj || (obj = abs_int( /* Original: FUN_00002de8 (runtime $2de8 = file 0x2e08 abs_int); argument RESTORED [PROVEN, push before 0x1a604] */ /* speed error */(int)throttle_target - (*(int *)((int)ctl + 0x62a) >> 2)), 0x5a < obj)))) {
     snd_approach_ok = 1;
     *(undefined4 *)((int)ctl + 0x32) = glide_saved_state;
   }

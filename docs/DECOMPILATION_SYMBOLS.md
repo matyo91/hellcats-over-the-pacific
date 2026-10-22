@@ -989,8 +989,30 @@ C, one callee family at a time - the callee gets its real signature and body, ev
 arguments (marked `RESTORED [PROVEN, pushes before 0x...]`), and the rows below stay as the evidence.
 Restored so far: `approx_dist3_xyz` (FUN_00003c68; 38 call sites) and `segment_point_min_distance`
 (FUN_00003cca: 9-long signature, its start / far end / midpoint locals and three internal calls, and
-the two bullet callers) - including the two stores of the last emitted vertex that
-Ghidra dropped in `build_land_outline_at_detail` (0x4aee / 0x4af2).
+the two bullet callers); `abs_int` through the false entry FUN_00002de8 (runtime `$2de8`): 13 of the
+sites are restored (animate_ground_fire, tick_aircraft_spawner, ai_pursue_target - including two
+arguments Ghidra lost entirely - shadow_pre_render, tick_landing_approach_glide), then 11 more (turn_camera_toward_point,
+atan2_fixed14, apply_relative_heading_steer, update_ground_scatter_objects, and
+create_shape_contact_record with the selected-face cursor Ghidra dropped), then the last 9
+(attitude_from_velocity, build_relative_steer_sample, process_flight_input_and_outcome, and
+fractal_height_at with its dropped cell centre x). Then the camera-metric pair:
+`update_object_camera_metric` (FUN_00003b98) returns `int` (D0 = the metric it stores at +0x10, which
+callers already read) and `compute_camera_abs_metric` (FUN_00003c00) takes `(x, y, z)`; both bodies
+call `abs_int(position - camera)`, and all 13 compute_camera_abs_metric sites carry their arguments
+(including the two FUN_00003be0 runtime-address calls in nearest_type80_centroid_visitor and the
+template-vertex block -0x418(A6) / index cursor Ghidra dropped in sort_group_parts_by_distance).
+No call through FUN_00002de8 remains. Then the sin / cos false entries: the last two calls through FUN_00001d56 (both in
+update_aircraft_entity, 0xf4a8 / 0xf4d0) are `sin_fixed14(pitch)` / `sin_fixed14(+0x20)`; the
+FUN_00001db8 / FUN_00001d56 sites in the fuel-needle and gauge code were already rewritten, so no
+call through either false entry remains. Then `heap_alloc` through the runtime `$1a48` (file 0x1a68): all 27 calls carry
+their size - 23 in the template-table init at 0x54 (the pushed size is the same stack slot that
+copy_block_return_dst reads next), n * 12 twice in activate_near_range_object (0x4ede / 0x4ee6), and
+rows * 20 twice in the background-row refresh (0xb578 / 0xb58c). Then the remaining runtime-lea calls: init_mission_object_tables
+(0x17b4..0x1816) passes mission_child0 / child1 / child2or3 to activate_near_range_object (`$4e4e`)
+and mission_child0 - twice, the second time where child1 might be expected - to
+copy_object_vertex_buffer (`$1be4`); dispatch_entity_cleanup frees obj +0x4c and +0x44 through
+heap_free_coalesce (`$19b0`, 0x530c / 0x5318). The ID00..ID09 segments have no dropped call arguments, so the restoration is complete. (approx_dist3_xyz also restored the two stores of the last
+emitted vertex that Ghidra dropped in `build_land_outline_at_detail`, 0x4aee / 0x4af2.)
 Under the verification policy, a function whose body matches the bytes is VERIFIED once
 its dropped arguments are listed here.
 

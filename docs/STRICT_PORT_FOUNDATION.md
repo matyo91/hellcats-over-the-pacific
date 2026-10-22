@@ -110,6 +110,70 @@ an 8-bit changed flag store at `_DAT_0002666e`. Independent Capstone evidence
 recorded with the decompiled function establishes those widths and addresses;
 the deterministic test initializes nonzero counts and sentinel neighbor bytes.
 
+`abs_int` (`FUN_00002e08`) and `approx_dist3_xyz` (`FUN_00003c68`) are pure
+leaves whose semantic C was byte-checked and whose signature was restored from
+the pushes (call-argument restoration, 2026-10-22). The GDScript keeps the C's
+variable roles and makes every 68000 width explicit: `abs_int` keeps NEG.L's
+`abs_int(0x80000000) == 0x80000000`, and `approx_dist3_xyz` wraps the `suba.l`
+deltas and the `add.l` sum at 32 bits before `asr.l #2`. Their vectors come from
+an instruction-level model of 0x2e08..0x2e10 / 0x3c68..0x3cc8 (including the
+binary's own register order of the swaps), not from running the port, and
+include the INT_MIN and sum-overflow cases.
+
+`update_object_camera_metric` (`FUN_00003b98`) and `compute_camera_abs_metric`
+(`FUN_00003c00`) are the first callers of a ported leaf: both call the strict
+`abs_int` on (position - camera), reading the camera globals at the C's literal
+addresses `DAT_0001d838` / `DAT_0001d834` / `DAT_0001d830` from `Memory68k`. The
+object variant stores the metric at +0x10 and returns it (the D0 return restored
+in the semantic C). One test covers both with the same vectors, including a
+32-bit wrap of the delta and of the sum, and checks that +0x0c / +0x14 stay intact.
+
+`sin_fixed14` (`FUN_00001d76`) and `cos_fixed14` (`FUN_00001dd8`) read their
+256-word tables from `Memory68k` at the runtime addresses the code names
+(`lea.l $1ab6c` / `$1ad6c`). The test copies those tables from the immutable
+original binary (file 0x1ab8c / 0x1ad8c, the runtime-address rule) rather than
+from a regenerated formula, and checks 14 angles per function against an
+instruction-level model: fraction steps, quarter turns, the floored negative
+delta and the masked next index at the end of the table. Callers pass 0..0x3fff;
+a negative angle would index before the table exactly as the original does.
+
+The attitude setup layer sits on top: `load_attitude_angle_sincos` (`0x202a`) and
+`load_attitude_angle_sincos_5_6` (`0x20a0`) store cos then sin of each angle as
+words at `0x1d7fa..0x1d7e6`, and the four fills (`0x20e6`, `0x21a0`, `0x21e0`,
+`0x2220`) write the 3x3 s16 bases at `0x1d7d4 / 0x1d7bc / 0x1d7a4 / 0x1d78c /
+0x1d774 / 0x1d75c` (element [r][c] at +2 * (3r + c)). Their expected matrices come
+from interpreting the disassembled `move.w` / `clr.w` / `neg.w` sequences over the
+model's sin / cos words, and one case checks that `neg.w` leaves 0x8000 unchanged.
+
+`matmul3x3_s16` (`0x1d02`), `finalize_attitude_matrix_4ang` (`0x2562`) and
+`build_attitude_matrix` (`0x25a8`) complete the chain: out = ((R4 * Rz) * Rx) * Ry.
+finalize's intermediate matrix is a frame local (a6 - 0x12), so the strict module
+gained `a7`, the stack pointer at entry of the outermost ported call; finalize
+places its temp at a7 - 0x16 and build enters finalize with a7 - 0x1c, both read
+from the link / push / bsr sequence. Saved registers and matmul's register spill
+are not modelled because no result reads them. The test checks a mixed-sign
+product, the returned a0 (b + 6), the built matrix and the temp matrix in place.
+
+The remaining builders and composers (`0x2428` .. `0x2700`: the 3-angle, x-axis and
+6-angle forms and their alternates) follow the same pattern. Each composer's
+matmul operands were read from its pushes; the tagged composers store their
+runtime address ($2408 / $2468 / $26e0) at `DAT_00020ce4`. Builders enter their
+composer at 0x1c, 0x24 or (`build_attitude_matrix_x_alt`, whose `link.w a6,#-0x24`
+frame is never popped before `unlk`) 0x40 below their own entry. The test runs
+all six builders against a model that executes each composer's disassembly.
+`check_sync.py` gained a fallback for parameter lists wrapped over two lines
+(the 6-angle builders); it runs only when the one-line form finds nothing, so
+earlier hashes are unchanged, and `test_strict_port_sync.py` now derives its
+counts from the manifest instead of the original fixed 3.
+
+`transform_vecs12_by_matrix3` (`0x28dc`) and `transform_vecs12_to_int3_by_matrix3`
+(`0x2976`) apply a matrix to 12-byte vertex records (words at +2 / +6 / +0xa):
+each output is (x * m[i] + y * m[3+i] + z * m[6+i] + 0x800) asr 12, stored as a
+word or a long. The port keeps Ghidra's form of the 32-bit `dbra` / `clr.w` /
+`subq.l` / `bcc` count loop with explicit widths. The test covers count 0, an
+in-place transform, a sum that wraps at 32 bits (visible in the long store), and
+count 0x10001, which exercises the high word of the counter.
+
 The manifest records the exact source-function SHA-256, source/original names,
 address, target, and independent milestone booleans. Run
 `python3 tools/progress_stats.py` for current orthogonal coverage counts.

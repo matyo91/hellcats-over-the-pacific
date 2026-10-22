@@ -22,11 +22,22 @@ MANIFEST = REPO_ROOT / "godot/strict_port/mappings/functions.json"
 class StrictPortSyncTest(unittest.TestCase):
     def test_current_source_is_synchronized(self) -> None:
         report, errors = SYNC.check(MANIFEST, REPO_ROOT)
+        rows = json.loads(MANIFEST.read_text(encoding="utf-8"))["functions"]
         self.assertEqual(errors, [])
         self.assertEqual(report["decompiled_functions"], 740)
-        self.assertEqual(report["mapped_functions"], 3)
-        self.assertEqual(report["not_ported_functions"], 737)
-        self.assertEqual(report["behaviorally_verified"], 3)
+        self.assertEqual(report["mapped_functions"], len(rows))
+        self.assertEqual(report["not_ported_functions"], 740 - len(rows))
+        self.assertEqual(report["behaviorally_verified"], sum(1 for row in rows if row["behaviorally_verified"]))
+        self.assertGreaterEqual(len(rows), 3)
+
+    def test_wrapped_signature_is_extracted(self) -> None:
+        source = (
+            "int one_line(int a) /* c */\n{\n  return a;\n}\n"
+            "void wrapped(int a,\n             int b) /* Original: FUN_x */\n{\n  if (a) {\n    b = 1;\n  }\n}\n"
+        )
+        self.assertEqual(SYNC.extract_function(source, "one_line"), "int one_line(int a) /* c */\n{\n  return a;\n}")
+        self.assertTrue(SYNC.extract_function(source, "wrapped").startswith("void wrapped(int a,\n"))
+        self.assertTrue(SYNC.extract_function(source, "wrapped").endswith("  }\n}"))
 
     def test_changed_source_is_reported_without_rewriting_manifest(self) -> None:
         manifest_before = MANIFEST.read_bytes()
