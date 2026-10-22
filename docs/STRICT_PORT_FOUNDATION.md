@@ -313,6 +313,266 @@ controller tick loops discard D0, so the port returns nothing. Its test covers e
 lifetime and gravity case (including the flooring `asr` of a negative speed) and
 both hit-size divisors.
 
+The surface lookup is now strict: `point_in_polygon_xz / _yz` (`0x13070`,
+`0x1310e`), `project_face_vertices_xy / _xz` (`0x131ac`, `0x1320a`),
+`surface_type_at_point` (`0x13346`, projection buffer in its frame) and
+`surface_type_under_object` (`0x13452`). `spawn_destruction_effect` now calls the
+ported `surface_type_under_object` directly (entered 0x20 below it), and
+`tick_bullet` enters `spawn_destruction_effect` 0x18 below its own entry; only
+`spawn_effect` remains supplied through `code_table`. The tests of both callers now
+get their surface from the default ground face instead of a stand-in, and the new
+test covers the object filters, face order, the sign-extended code 0x80, the
+low-word count, both polygon tests and the xy projection.
+
+`spawn_effect` (`0x11c58`) is ported: effect log ring, replay gating, explosion
+sound timers, controller set-up, the per-kind initialiser through `code_table` and
+the debris loop, each callee entered at the depth the bytes give (0x4c / 0x30 /
+0x3c). Its own callees `spawn_mission_pool_object` (`0x5116`) and
+`spawn_debris_fragment` (`0x173fe`) remain unported (`_bsr_unported`), as do the
+initialisers. `spawn_destruction_effect` now calls it directly (0x3c below), and
+the caller tests read the effects back from the log `spawn_effect` writes.
+
+`spawn_mission_pool_object` (`0x5116`: first free slot of the scene root's table,
+growth by 10 records, low-word stores of the angle / factory arguments, retirement of
+an object without vertices) and `spawn_debris_fragment` (`0x173fe`: random velocity
+and angles from the overlay RNG; word +0x36 is the low word of the y velocity it has
+just stored, shifted left by 4) are ported, and `spawn_effect` calls both directly.
+Their own callees `heap_realloc_grow_only` (`0x1ba8`) and
+`instantiate_mission_pool_slot` (`0x46da`) stay unported. Note for test authors: a
+GDScript parse error in one test makes `run_all.gd` hang instead of exiting, so run
+it under a time limit.
+
+The heap allocator is strict: `heap_sbrk` (`0x1958`), `heap_new_size_class_block`
+(`0x1974`), `heap_add_large_block` (`0x199a`), `heap_free_coalesce` (`0x19d0`, including
+the fall-through store at the false entry 0x1a48), `heap_alloc` (`0x1a68`),
+`heap_zero_payload` (`0x1b38`), `heap_alloc_cleared` (`0x1b6c`), `heap_calloc`
+(`0x1b84`), `heap_realloc_grow_only` (`0x1ba8`), plus `memmove_block` (`0x1a63e`) and
+`memzero` (`0x1a716`). The block copies keep the original's direction rule; its
+long-versus-byte chunking never changes the bytes written, so the port copies bytes
+(documented in the functions). The arena lives in `Memory68k` at host_world +0x348;
+the test's expected addresses come from a Python model of the allocator written from
+the disassembly. `spawn_mission_pool_object` now grows its table through the real
+`heap_realloc_grow_only`.
+
+Object creation followed: `alloc_object_from_desc` (`0x45ba`; another tag returns the
+caller's D1), `instantiate_object_from_desc` (`0x4690`), `apply_entity_mission_rates`
+(`0x435a`) and `instantiate_mission_pool_slot` (`0x46da`), so the pool spawn now runs
+the real instantiation (template chain transform, class factory through
+`DAT_0001b524` +6, mission rates, camera metric). Its remaining unported targets are
+`activate_near_range_object` (`0x4e6e`) and the class factories. Tests that spawn
+pool objects share `tests/strict_port/helpers/pool_fixture.gd` (scene root,
+templates, descriptors, heap arena, stand-ins for those two). One behaviour the
+tests pin down: a far object is appended to `entity_array_3` without activation, so
+it has no vertices and `spawn_mission_pool_object` retires it and returns 0 while the
+pointer stays in the array.
+
+Five leaves of `activate_near_range_object` are ported: `update_object_distance_band`
+(`0x3da8`) and `update_record_distance_band` (`0x3e02`, the same band search on another
+offset), `build_object_poly_buffers` (`0x4808`), `set_object_faces_bw_pattern`
+(`0x4916`) and `reset_object_to_template_pose` (`0x4e06`). Its remaining callees are
+`shade_object_faces`, `sink_object_shape_at_waterline` and
+`build_land_outline_at_detail`.
+
+`activate_near_range_object` (`0x4e6e`) itself is ported (list publishing, vertex and
+face buffers, controller listing, the four flag paths, group children), with those
+three callees as `_bsr_unported` stand-ins, and `instantiate_mission_pool_slot` now
+calls it directly. Because a real activation always allocates the vertex buffers, a
+pool spawn now only fails through the far / deferred path; `PoolFixture.make_far`
+sets that up, and the fixture also provides band thresholds and the shading
+stand-in. `test_activate.gd` covers each flag path, the one-bit-display pattern,
+the sink arguments, the group path and the metric-only kinds.
+
+Shading and the palette chain are ported: `queue_face_palette_entry` (`0x147a`),
+`write_face_palette_slot` (`0x1548`), `assign_face_colour` (`0x159e`),
+`snapshot_face_colours` (`0x3e5c`) and `shade_object_faces` (`0x3ea0`), so
+`activate_near_range_object` now shades through the strict code. A detail the test
+pins down: byte +6 bit 1 is flag-long bit 0x200, one of the 0x1280 bits that turn the
+haze off for an object, and the same bit makes it take the colour snapshot - an
+object that gets the snapshot is never hazed. The pool fixture now identifies
+activated shapes from the lists activation publishes to (`activated()`).
+
+The waterline sink is ported: `clip_polygon_y_nonneg` (`0x1562e`) and
+`sink_object_shape_at_waterline` (`0x15762`). The sink keeps its 0x3358-byte frame in
+simulated memory below `a7` (attitude matrix, normals, the 256-bucket point hash and
+the clip buffers), clips every template face to y >= 0, gives repeated points one id
+through the hash, and rebuilds the +0x44 / +0x4c buffers (points, then the normal
+points moved with the new vertex 0). `activate_near_range_object` now calls it
+directly; `build_land_outline_at_detail` is its last unported callee. `test_sink.gd`
+loads the original sin / cos tables, so angles 0 give the identity matrix.
+
+`build_land_outline_at_detail` (`0x4958`) is ported, so every callee of
+`activate_near_range_object` now runs strict code. It thins each face outline by
+camera distance (a vertex is kept once the distances skipped since the last kept one
+reach camera distance divs.l (host +0xa8 + 3)), clips it to the +-limit square
+through the four clip passes (each bound global saved, set and restored), merges
+equal points and rebuilds the vertex buffers like the sink, then sets the position
+to `detail_ref`, the range, the camera metric and the +0x32 detail shift.
+`test_land_outline.gd` covers the shared indices, the shift rounding, a clipped face
+and a fully thinned object; `test_activate.gd` now also loads the trig tables.
+
+The 20 controller factories that definition records point to at +6 are ported, with
+`fill_pose_history` (`0xdf5e`): spinner, plume, camera-facing, effect, ordnance,
+carrier, firing ship, sinking, basic ship, bullet, trail, ground fire, debris, ground
+mark, shadow, flak, turret, parachute, cloud and view-attached (`0x11486`..`0x19b82`).
+Each one allocates a cleared controller, stores the object and the definition, sets its
+object flags and fields, and returns the controller in D0. They are registered in
+`code_table` under their runtime addresses (file - 0x20), the form the definition
+records store, so `_call_class_factory` reaches them directly. The plume and ground
+fire factories read `DAT_0001b524[7]` / `[11]` as absolute longs and ignore the key.
+`test_factories.gd` calls each one through `code_table`. The four aircraft creators
+(`aircraft_create` and the fighter / bomber variants) are still unported.
+
+The four effect initialisers in `effect_init_table` (`0x1b40c`, kinds 0..3) are ported:
+`init_effect_kind0_flat_ring` (`0x1203a`), `init_effect_kind1_column` (`0x120ca`),
+`init_effect_kind2_burst` (`0x11efc`) and `init_effect_kind3_debris_explosion`
+(`0x1217e`). The entries after kind 3 belong to the animate table, not to the
+initialisers. Each one scales the effect's vertices by its size (size × 256 / 100,
+low long of `muls.l`), sets the start velocities, clears the shift and scales the
+range. Kind 2 adds RNG jitter and triples alternate velocities; kind 3 first spawns a
+kind-2 burst through the strict `spawn_effect`. They are registered in `code_table` by
+runtime address, so `spawn_effect` now reaches real initialisers.
+`test_effect_init.gd` checks kinds 0, 1 and 3 against an instruction-level model and
+kind 2 against the byte formulas fed by a twin RNG.
+
+The aircraft creators are ported with their callees: `init_aircraft_controller`
+(`0xdff0`), `aircraft_create` (`0xe0ce`), `create_enemy_fighter` (`0xe1e6`),
+`create_friendly_bomber` (`0xe2a4`), `create_enemy_bomber` (`0xe340`),
+`spawn_object_shadow` (`0x18956`) and `spawn_turret_on_object` (`0x19130`). Every
+class factory that a definition record points to is now strict code, and no mapped
+function is blocked any more. Details the test pins down:
+- the first `aircraft_create` becomes the player: bombs come from host byte +0xb9,
+  the weight word is moved by the difference, and fuel is scaled by the host
+  percentage, with at least 1 in the left tank;
+- in host mode 2, and for bombers, the bomb count changes without the weight word;
+- the first key-4 fighter is only kept as `enemy_fighter_template`;
+- a shadow gets the far metric only when its owner is `*player_object`;
+- the bombers' gunner turrets are configured, and the enemy bomber's gets +0x3e =
+  0x100.
+
+Effect ticking has started. `tick_effect` (`0x12768`) and the animators for kinds 0
+and 1 are ported: `animate_effect_kind0_ring` (`0x123ce`; Ghidra's
+`animate_effect_kind0_ring_tail`, `0x12466`, is a false split of its loop and maps to
+the same target) and `animate_effect_kind1_column` (`0x12486`). So are the two
+spawners that kinds 2 and 3 will need, `spawn_smoke_plume` (`0x115fc`) and
+`spawn_ground_mark` (`0x175de`). Velocities decay as v × 3, plus 3 when negative,
+asr 2, and the 32-bit wrap of that product is tested. `tick_effect` tests only the
+low word of the animator's D0. `test_effect_animate.gd` covers both animators, the
+kind-1 spawn at lifetime 0x47, the tick (count-down, hide, retire) and both spawners.
+The kind 2 and kind 3 animators are now ported as well, so `tick_effect` is no longer
+blocked.
+- `animate_effect_kind2_burst` (`0x12296`) moves the twelve burst vertices in x / y,
+  halves their velocities and darkens the faces by 6/8 at view depth 8. When it
+  finishes with the smoke byte set, it spawns a smoke plume (size × 3, size × 6).
+- `animate_effect_kind3_debris` (`0x12528`) applies gravity to y (clamped at 0) and
+  decays x / z to 3/4. It sets vertex 12 y to vertex 2 y × 3/2 and darkens by 7/8 at
+  host depth 8. Debris spawned live is hidden and idle while any replay runs. Once
+  landed, live debris spawns a ground mark (when the object lies at y 0) and a smoke
+  plume sized from vertex 1 z: both its long and its low word are read, as in the
+  bytes. Replay debris finishes without spawning, except in replay state 3, where it
+  stays.
+`test_effect_debris.gd` checks the movement against a Python instruction model and
+covers the palette-owner rule and every replay branch.
+
+Five self-contained controller tick handlers are ported and registered in `code_table`
+under their runtime addresses (definition record +2):
+- `tick_ground_mark` (`0x175c0`) retires the mark at its expiry frame.
+- `tick_view_attached_object` (`0x19bbc`) keeps a fixed offset from the camera and the
+  negated camera angles.
+- `tick_shadow` (`0x189d0`) follows its owner and is retired with it, dropping the
+  owner's reference count.
+- `tick_debris_fragment` (`0x174c4`) spins and falls. In replay state 3 it saves the
+  position, then moves. It is retired at its end frame or on its floor.
+- `tick_smoke_plume` (`0x116fc`) records a ring of the burning owner's positions. Its
+  burning flag is bit 0 of byte +0x684, the high byte of that controller word, and the
+  test checks that the low byte does not count.
+
+None of them sets D0 before `retire_entity`, so the caller's D0 is passed through.
+Sinking is ported: `carry_attached_objects` (`0x14bea`), `step_sinking_object`
+(`0x14d86`) and `tick_sinking_controller` (`0x155d8`).
+- Each due step advances the sink angles and drop and re-cuts the hull at the waterline.
+- While the ship floats, its cargo is carried: types 7 / 0x1b / 0x1a / 8 within range.
+  Each cargo object's position is recomputed through its template chain, its word
+  offset from the ship is rotated, and the drop is subtracted from y.
+- Once nothing is left above water, the cargo is removed and the kill is tallied. The
+  mission-7 / 8 / 9 facility flags are set, and the ship is cleaned up.
+`test_sinking_step.gd` runs the real waterline cut with the original trig tables. It
+checks the cargo position exactly with zero angles; with non-zero angles it checks
+only the angle words.
+
+The inverse trigonometry the turrets need is ported: `acos_fixed14` (`0x1e3a`,
+searching the cosine table), `atan_fixed14` (`0x1ebc`, searching the 128-long tangent
+table at `0x1af6c`), `isqrt_floor` (`0xe372`) and `attitude_from_velocity` (`0x1f22`,
+the heading and pitch of a word velocity). All three searches stop at hi − 1, so
+`isqrt_floor` never returns 0x7fff: the square root of 0x3fff0001 comes out as 32766.
+Ratios past the tangent table land on its last entry, which is out of order.
+`test_inverse_trig.gd` compares them against an instruction-level Python model over
+the table bytes from the original binary.
+
+Turrets fire through strict code: `spawn_ordnance_scattered` (`0x15bf6`),
+`spawn_ordnance_oriented` (`0x15d20`), `spawn_ordnance_oriented_3ang` (`0x15d78`) and
+`tick_turret` (`0x1917c`, registered by runtime address).
+- A bullet's forward velocity is rotated by the attitude matrix, jittered by three RNG
+  draws, and stored as quarters; the matrix is copied into the bullet.
+- The turret rides its carrier and lets go of a carrier that is retired or burning,
+  and of a target that is retired or has no vertices.
+- It aims with `attitude_from_velocity` on the target offset, scaled down by the
+  distance's magnitude.
+- In live play it fires bursts with a scatter that shrinks to 7/8 per shot.
+`test_turret.gd` covers each branch and predicts the RNG with a twin.
+
+The blast damage path is ported: `fold_angle_pm_0x2000` (`0xe40c`),
+`apply_hit_to_sinkable_object` (`0x14f48`) and `apply_blast_damage` (`0x12b66`).
+- A blast hits whatever lies within its range; non-aircraft are also hit up to 599
+  past it. Aircraft past their range are hit by an RNG chance; otherwise they take
+  random damage.
+- Ships take a sinking hit; aircraft get damage bit 0x400. Anything else is destroyed:
+  destruction effect, kill tally, cleanup.
+- Objects whose range exceeds the blast radius are hit only as ships, and only with
+  `hit_ships`.
+- A sinking hit uses one of the ship's hits. The remaining count picks the roll:
+  - 2 left: an angle-c roll;
+  - 1 left: an angle-a roll, plus the c roll if the ship was not yet sinking;
+  - 0 left: a large roll toward its list (the folded first angle), plus the c roll if
+    not yet sinking.
+  Each roll draws its own drop, and the angles and drop are spread over 15 steps.
+
+Quirk: with any other count the drop register (D4) is not set, so the caller's value
+is used. `apply_blast_damage` leaves its credit flag there.
+`test_blast_damage.gd` covers every roll with a twin RNG and the blast filters.
+
+`tick_flak_gun` (`0x18c96`) is ported and registered by runtime address. On its first
+tick the gun finds its barrel: the first face flagged 1, giving the mean point and the
+aim of the face's normal. In live play:
+- due burst slots explode: `spawn_effect`, then `apply_blast_damage` with radius 500;
+- one RNG draw in 64 tries a shot at the target. A shot needs a pitch above 0x3f and a
+  heading within 0x1000 of the barrel.
+- A shot fills the first free slot. Its fuse is distance / 1024 frames, and the burst
+  point leads the target by the fuse plus a random 0..63 frames, with random jitter.
+  It is kept 500 above the target's ground.
+A heading that `attitude_from_velocity` leaves unwritten keeps the frame word's old
+value, as in the original, so the frame words live in simulated memory.
+`test_flak_gun.gd` checks the aim against the inverse-trig model and the shot against a
+twin RNG.
+
+`animate_ground_fire` (`0x17150`) and `tick_ground_fire` (`0x17380`) are ported. The
+fire keeps four vertices beside its owner, across the owner's velocity: offsets
+(±v asl 5) divs.l (|vx| + |vz|), stored / 8 toward zero as drift words. While the
+owner's damage word has bits 0x1800, vertices 0 / 3 detach by a coin from the overlay
+RNG and drift. Otherwise all four detach and the fire counts its timer down (state 3).
+A retired or stopped owner, or a rewind, also ends the fire. `test_ground_fire.gd`
+covers each state and branch.
+
+The trail family is ported (`0x16ac4`..`0x1702a`): both initialisers, `spawn_trail`,
+`attach_smoke_trail`, `attach_burning_trail`, `destroy_trail_controller`,
+`animate_smoke_trail`, `animate_burning_trail` and `tick_trail`. They are registered
+by runtime address, so a trail's init, animate, tick and destroy all run strict code.
+A trail is a four-vertex ribbon at its owner. Vertices detach one at a time by RNG
+coins and stay behind; on the burning trail they also drift. A smoke trail whose
+owner keeps smoking re-attaches a fresh trail from state 3.
+A detail the test pins down: release sets state 4 before the state switch, so a
+released trail at lifetime 0 finishes in the same call. Each later call releases
+again, taking the owner's trail count below zero, as the bytes do.
+
 The manifest records the exact source-function SHA-256, source/original names,
 address, target, and independent milestone booleans. Run
 `python3 tools/progress_stats.py` for current orthogonal coverage counts.
