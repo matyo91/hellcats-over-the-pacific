@@ -26,6 +26,7 @@ const DAT_0001b50c: int = 0x1b50c ## trail_init_table: per-kind trail initialise
 const DAT_0001b514: int = 0x1b514 ## trail_animate_table: per-kind trail animator (runtime code addresses)
 const DAT_0001d83c: int = 0x1d83c ## anchor_x (anchor record +0; y +4, z +8)
 const DAT_0001d854: int = 0x1d854 ## anchor_found (word, anchor record +0x18)
+const DAT_00026280: int = 0x26280 ## ordnance_template (long)
 const DAT_0002664a: int = 0x2664a ## bullet_template (long)
 const DAT_00026650: int = 0x26650 ## trail_templates: template object per trail kind (long each)
 const DAT_0001d810: int = 0x1d810 ## neg_camera_pitch (word)
@@ -115,6 +116,44 @@ const DAT_0001d724: int = 0x1d724 ## detail_ref_x
 const _DAT_0002666e: int = 0x2666e
 const DAT_00026672: int = 0x26672
 const DAT_00026676: int = 0x26676
+const DAT_0001b884: int = 0x1b884 ## view_follow_target (long)
+const DAT_0001b87c: int = 0x1b87c ## parachute_object (long)
+const DAT_0001b87a: int = 0x1b87a ## abandoned_intact_aircraft (word)
+const DAT_0001b874: int = 0x1b874 ## state_flag_b874 (word)
+const DAT_0001b872: int = 0x1b872 ## state_flag_b872 (word)
+const DAT_0001b844: int = 0x1b844 ## snd_ugh (word)
+const DAT_00026004: int = 0x26004 ## aircraft_type_rec: definition record of the aircraft being updated
+const DAT_0001b2c0: int = 0x1b2c0 ## altitude curve: 9 longs (inverse air density per 0x10000 band)
+const DAT_0001b828: int = 0x1b828 ## view_rows (word)
+const DAT_0001b82a: int = 0x1b82a ## view_width (word)
+const DAT_0001daa0: int = 0x1daa0 ## fill_colour (word)
+const DAT_0001b778: int = 0x1b778 ## session_ptr_a_slot1: span-run buffers of slots 1..3 (longs)
+const DAT_0001c1bc: int = 0x1c1bc ## deferred_free_flag (word)
+const DAT_00026780: int = 0x26780 ## parachute_template (long)
+const DAT_0001b2e0: int = 0x1b2e0 ## route_1b2e0: 4 patrol points (12 bytes) in the aircraft's frame
+const DAT_0001b310: int = 0x1b310 ## route_1b310: 4 patrol points
+const DAT_0001b340: int = 0x1b340 ## route_1b340: 4 patrol points
+const DAT_0001b370: int = 0x1b370 ## route_1b370: 8 world points of the scripted mission
+const DAT_0001b3d0: int = 0x1b3d0 ## route_1b370_speeds: throttle target per mission point (long each)
+const DAT_00020b40: int = 0x20b40 ## type10_controller: controller whose object mirrors the glide target (long, may be 0)
+const DAT_0001b83c: int = 0x1b83c ## snd_approach_ok (word): set when the glide is waved off
+const DAT_00026798: int = 0x26798 ## glide_saved_state: +0x32 handler before the landing approach
+const DAT_0002679c: int = 0x2679c ## glide_start_z (long)
+const DAT_000267a0: int = 0x267a0 ## glide_start_x (long)
+const DAT_000267a4: int = 0x267a4 ## glide_long_267a4
+const DAT_000267a8: int = 0x267a8 ## glide_long_267a8
+const DAT_000267ac: int = 0x267ac ## glide_blend (word)
+const DAT_000267ae: int = 0x267ae ## glide_height_floor (word)
+const DAT_000267b2: int = 0x267b2 ## glide_dir x / y / z (words at +0 / +4 / +8)
+const DAT_000267bc: int = 0x267bc ## glide_aim x / y / z (longs)
+const DAT_0001b876: int = 0x1b876 ## ai_aim_lag_key1 (word): pose-ring lag for type-record key 1
+const DAT_0001b878: int = 0x1b878 ## ai_aim_lag (word): pose-ring lag for the other aircraft
+const DAT_0001b3f4: int = 0x1b3f4 ## ai_fly_table: per-kind fly handler (runtime code addresses; 0 = update_aircraft_entity)
+const DAT_0001b86c: int = 0x1b86c ## replay_request (word): 1 airborne, 2 on the ground
+const DAT_00026658: int = 0x26658 ## ground_fire_template (long)
+const DAT_0001b888: int = 0x1b888 ## designated_entity_2 (controller pointer): nearest radar-worthy aircraft for the player
+const DAT_00026666: int = 0x26666 ## radar_limit (long): 2 * radar_range
+const DAT_0001b51c: int = 0x1b51c ## radar_tracks (pointer): up to 6 tracks of 0x14 bytes
 
 var memory
 ## Stack pointer at entry of the outermost ported call (the address of its return
@@ -173,6 +212,35 @@ func _init(param_memory = null) -> void:
 	code_table[0x155b8] = Callable(self, "tick_sinking_controller")
 	code_table[0x1915c] = Callable(self, "tick_turret")
 	code_table[0x18c76] = Callable(self, "tick_flak_gun")
+	code_table[0x180a8] = Callable(self, "tick_wave_spawner")
+	code_table[0x17db4] = Callable(self, "tick_aircraft_spawner")
+	code_table[0x15336] = Callable(self, "tick_firing_ship_controller")
+	code_table[0x11494] = Callable(self, "spin_object_heading")
+	code_table[0x11ac6] = Callable(self, "face_camera_heading")
+	code_table[0x17cf6] = func(o: int, k: int, _c: int = 0) -> int: return create_aircraft_spawner_controller(o, k)
+	code_table[0x17d98] = Callable(self, "destroy_aircraft_spawner_controller")
+	code_table[0x18020] = func(o: int, k: int, _c: int = 0) -> int: return create_wave_spawner_controller(o, k)
+	code_table[0x18b78] = Callable(self, "destroy_flak_controller")
+	code_table[0xe084] = Callable(self, "aircraft_destroy")
+	code_table[0xfe76] = func(a: int, b: int, _c: int = 0) -> void: aircraft_notice_object(a, b)
+	code_table[0x1009c] = Callable(self, "release_ai_target")
+	code_table[0x100b4] = func(a: int, b: int, _c: int = 0) -> void: enemy_fighter_notice_object(a, b)
+	code_table[0xfb0a] = Callable(self, "animate_landing_gear")
+	code_table[0xe58a] = Callable(self, "aircraft_tick")
+	code_table[0xe772] = Callable(self, "update_aircraft_entity")
+	code_table[0x110d4] = Callable(self, "ai_attack_or_fly")
+	code_table[0x10d48] = Callable(self, "ensure_ai_script_1b2e0_tick")
+	code_table[0x1a186] = Callable(self, "tick_landing_approach_glide")
+	code_table[0x10d88] = Callable(self, "ensure_ai_script_1b310_tick")
+	code_table[0x10dc8] = Callable(self, "ensure_ai_script_1b340_tick")
+	code_table[0x10eac] = Callable(self, "tick_ai_1b310_approach_fire")
+	code_table[0x10f48] = Callable(self, "tick_ai_1b370_mission")
+	code_table[0x11162] = Callable(self, "ai_fly")
+	code_table[0x1118e] = Callable(self, "ai_fly_bomber")
+	code_table[0x111ba] = Callable(self, "ai_dive_at_target")
+	code_table[0x112c0] = Callable(self, "ai_bombing_run")
+	code_table[0xfdea] = func(a: int, b: int, _c: int = 0) -> void: aircraft_collision(a, b)
+	code_table[0x18b9a] = func(g: int, o: int, _c: int = 0, d0_in: int = 0) -> int: return flak_notice_object(g, o, d0_in)
 	## Trails: init / animate tables (0x1b50c / 0x1b514), tick and destroy handlers.
 	code_table[0x16aa4] = Callable(self, "init_trail_kind0")
 	code_table[0x16ab6] = Callable(self, "init_trail_kind1")
@@ -5098,6 +5166,2925 @@ func tick_flak_gun(ctl: int) -> void:
 		memory.write_u32(burst + 4 * k, C68kScript.u32(C68kScript.s32(lead * memory.read_s32(target_ctl + 8 + 4 * k)) + memory.read_u32(target + 0x18 + 4 * k) - 0x800 + jitter))
 	if C68kScript.s32(memory.read_u32(burst + 4) - 500) < memory.read_s32(target_ctl + 0x2e):
 		memory.write_u32(burst + 4, C68kScript.u32(memory.read_u32(target_ctl + 0x2e) + 500))
+
+## 0xe262: spawn_mission_pool_object(enemy_fighter_template, the seven arguments unchanged)
+## (0x28 below); returns the new object's controller (+8), or 0.
+func spawn_enemy_fighter(x: int, y: int, z: int, angle_a: int, angle_b: int, angle_c: int, arg_word: int) -> int:
+	assert(memory != null, "spawn_enemy_fighter requires original global memory")
+	var entry_a7: int = a7
+	a7 = entry_a7 - 0x28
+	var spawned: int = spawn_mission_pool_object(memory.read_u32(DAT_00026000), x, y, z, angle_a, angle_b, angle_c, arg_word)
+	a7 = entry_a7
+	if spawned == 0:
+		return 0
+	return memory.read_u32(spawned + 8)
+
+## 0x180c8: while fighters remain (word +0x32), in live play, at the due frame (long +0x34,
+## signed): bearing = word((rng & 0xffff) % 0x1540 - 0xa80) & 0x3fff; distance = (sext word rng +
+## 0x5a3c0) asr 4; a fighter at (-0xb92670 - (sin * distance asr 8), 40000, 0x7f8e4c + (cos *
+## distance asr 8)) (muls.l of the sign-extended sin / cos words), heading word (bearing +
+## (rng & 0x1ff) + 0xdf00) & 0x3fff, arguments (0, heading, 0, 1) (spawn_enemy_fighter 0x48
+## below). A spawned fighter gets damage word +0x684 |= 0x20 and, while mission_target_list word
+## +4 is 0, +0x32 = 0x111ba; the count drops by one and in host mode 7 the controller is stored
+## at mission_target_list + 6 + 4 * count. Next due frame: frame + (0x1356 when 5 remain, else
+## 0x546) + (rng & 0xffff) % 0x1c2 - 0xe1.
+func tick_wave_spawner(ctl: int) -> void:
+	assert(memory != null, "tick_wave_spawner requires original global memory")
+	if memory.read_u16(ctl + 0x32) == 0 or memory.read_u16(DAT_0001b870) != 0:
+		return
+	if memory.read_s32(DAT_0001b838) < memory.read_s32(ctl + 0x34):
+		return
+	var bearing: int = C68kScript.u16(((overlay_rng_next() & 0xffff) % 0x1540) + 0xf580) & 0x3fff
+	var dist: int = C68kScript.asr32(C68kScript.s16(overlay_rng_next()) + 0x5a3c0, 4)
+	var x: int = C68kScript.s32(-0xb92670 - C68kScript.asr32(C68kScript.s32(C68kScript.s16(sin_fixed14(bearing)) * dist), 8))
+	var z: int = C68kScript.s32(C68kScript.asr32(C68kScript.s32(C68kScript.s16(cos_fixed14(bearing)) * dist), 8) + 0x7f8e4c)
+	var heading: int = C68kScript.u16(bearing + 0xe000 + (overlay_rng_next() & 0x1ff) + 0xff00) & 0x3fff
+	var entry_a7: int = a7
+	a7 = entry_a7 - 0x48
+	var fighter: int = spawn_enemy_fighter(C68kScript.u32(x), 40000, C68kScript.u32(z), 0, heading, 0, 1)
+	a7 = entry_a7
+	if fighter != 0:
+		memory.write_u16(fighter + 0x684, memory.read_u16(fighter + 0x684) | 0x20)
+		if memory.read_u16(memory.read_u32(DAT_00020adc) + 4) == 0:
+			memory.write_u32(fighter + 0x32, 0x111ba)
+		memory.write_u16(ctl + 0x32, C68kScript.u16(memory.read_u16(ctl + 0x32) - 1))
+		if memory.read_s16(memory.read_u32(DAT_0001b5a0) + 0x90) == 7:
+			memory.write_u32(memory.read_u32(DAT_00020adc) + 6 + memory.read_s16(ctl + 0x32) * 4, fighter)
+	var delay: int = 0x1356 if memory.read_s16(ctl + 0x32) == 5 else 0x546
+	var r: int = (overlay_rng_next() & 0xffff) % 0x1c2
+	memory.write_u32(ctl + 0x34, C68kScript.u32(delay + memory.read_u32(DAT_0001b838) + r - 0xe1))
+
+## 0x17dd4: aircraft spawner (word +0x32 aircraft left, five slots at +0x34 + 4i; live play).
+## Slots holding a retired aircraft, or one whose controller +0 is cleared, are released (byte
+## +3 - 1, slot 0); a group launches only when no tracked aircraft is undamaged (controller
+## word +0x684 & 0x3fe == 0) and one rng in 512 (& 0x1ff == 0) allows it. Group size =
+## (rng & 0xffff) % min(left, 3) + 1 (divsl.l remainder). Bearing: heading of the spawner
+## seen from the player (attitude_from_velocity on (dx, 0, dz) shifted below 0x8000, speed 0,
+## heading into the frame word a6 - 2 - left unwritten when the call writes none) plus
+## ((rng & 0x1f) - 0x10) asl 6. With r = word(((spawner range +0xc) asl 1) divs.l 3 asr 5):
+## x = player x - (muls.w(r, sin) asr 7), altitude = (rng & 0xfff) * 10 + 30000, z = player z +
+## (muls.w(r, cos) asr 7); the launch heading = bearing + ((rng & 0x1f) - 0x10) asl 6 + 0x2000.
+## For each aircraft of the group: the next empty slot (search kept across the group), x / z
+## each moved by (rng & 0xfff) - 0x800 (cumulative), spawn_enemy_fighter(x, altitude, z, 0,
+## heading, 0, 1) (0x5c below); a fighter uses one of the left count and its object goes into
+## the slot with its reference byte +3 + 1.
+func tick_aircraft_spawner(ctl: int) -> void:
+	assert(memory != null, "tick_aircraft_spawner requires original global memory")
+	assert(a7 != 0, "tick_aircraft_spawner needs a7 (its frame holds the heading word)")
+	if memory.read_u16(ctl + 0x32) == 0 or memory.read_u16(DAT_0001b870) != 0:
+		return
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var alive: int = 0
+	for slot in range(5):
+		var obj: int = memory.read_u32(ctl + 0x34 + 4 * slot)
+		if obj == 0:
+			continue
+		if (memory.read_u8(obj + 7) & 2) != 0 or memory.read_u32(memory.read_u32(obj + 8)) == 0:
+			memory.write_u8(obj + 3, C68kScript.u8(memory.read_u8(obj + 3) - 1))
+			memory.write_u32(ctl + 0x34 + 4 * slot, 0)
+		elif (memory.read_u16(memory.read_u32(obj + 8) + 0x684) & 0x3fe) == 0:
+			alive += 1
+	if alive != 0 or (overlay_rng_next() & 0x1ff) != 0:
+		return
+	var spawner: int = memory.read_u32(ctl)
+	var player: int = memory.read_u32(memory.read_u32(DAT_0001b738))
+	var group: int = memory.read_s16(ctl + 0x32) if memory.read_s16(ctl + 0x32) <= 2 else 3
+	group = C68kScript.s16((overlay_rng_next() & 0xffff) % group + 1)
+	var dx: int = C68kScript.s32(memory.read_u32(spawner + 0x18) - memory.read_u32(player + 0x18))
+	var dz: int = C68kScript.s32(memory.read_u32(spawner + 0x20) - memory.read_u32(player + 0x20))
+	var span: int = C68kScript.u32(abs_int(dx) + abs_int(dz))
+	var shift: int = 0
+	while (span & 0xffff8000) != 0:
+		shift = C68kScript.s16(shift + 1)
+		span = C68kScript.u32(C68kScript.asr32(span, 1))
+	a7 = entry_a7 - 0x5c
+	attitude_from_velocity(C68kScript.asr32(dx, shift), 0, C68kScript.asr32(dz, shift), 0, 0, 0, a6 - 2)
+	a7 = entry_a7
+	memory.write_u16(a6 - 2, C68kScript.u16(memory.read_u16(a6 - 2) + (((overlay_rng_next() & 0x1f) - 0x10) << 6)) & 0x3fff)
+	var r: int = C68kScript.asr32(C68kScript.divs_trunc(C68kScript.s32(C68kScript.lsl32(memory.read_u32(spawner + 0xc), 1)), 3), 5)
+	var heading: int = memory.read_s16(a6 - 2)
+	var x: int = C68kScript.s32(memory.read_u32(player + 0x18) - C68kScript.asr32(C68kScript.s16(r) * C68kScript.s16(sin_fixed14(heading)), 7))
+	var altitude: int = (overlay_rng_next() & 0xfff) * 10 + 30000
+	var z: int = C68kScript.s32(C68kScript.asr32(C68kScript.s16(r) * C68kScript.s16(cos_fixed14(heading)), 7) + memory.read_u32(player + 0x20))
+	memory.write_u16(a6 - 2, C68kScript.u16(memory.read_u16(a6 - 2) + (((overlay_rng_next() & 0x1f) - 0x10) << 6) + 0x2000) & 0x3fff)
+	var slot2: int = 0
+	var k: int = 0
+	while k < group:
+		while memory.read_u32(ctl + 0x34 + 4 * slot2) != 0:
+			slot2 = C68kScript.s16(slot2 + 1)
+		x = C68kScript.s32(x - 0x800 + (overlay_rng_next() & 0xfff))
+		z = C68kScript.s32(z - 0x800 + (overlay_rng_next() & 0xfff))
+		a7 = entry_a7 - 0x5c
+		var fighter: int = spawn_enemy_fighter(C68kScript.u32(x), altitude, C68kScript.u32(z), 0, memory.read_s16(a6 - 2), 0, 1)
+		a7 = entry_a7
+		if fighter != 0:
+			memory.write_u16(ctl + 0x32, C68kScript.u16(memory.read_u16(ctl + 0x32) - 1))
+			var fobj: int = memory.read_u32(fighter)
+			memory.write_u32(ctl + 0x34 + 4 * slot2, fobj)
+			memory.write_u8(fobj + 3, C68kScript.u8(memory.read_u8(fobj + 3) + 1))
+		k += 1
+
+## 0x12840: spawn_mission_pool_object(ordnance_template, x, y, z, sext pitch / att_22 / bank
+## words, 0) (0x34 below); null -> 0. The controller: word +0x61c |= 0x40 when flag_40, word
+## +0x610 = the low word of speed, words +0x20 / +0x22 / +0x24 = the three angle words.
+func spawn_weapon_entity(speed: int, flag_40: int, x: int, y: int, z: int, pitch: int, att_22: int, bank: int) -> int:
+	assert(memory != null, "spawn_weapon_entity requires original global memory")
+	var entry_a7: int = a7
+	a7 = entry_a7 - 0x34
+	var obj: int = spawn_mission_pool_object(memory.read_u32(DAT_00026280), x, y, z, C68kScript.s16(pitch), C68kScript.s16(att_22), C68kScript.s16(bank), 0)
+	a7 = entry_a7
+	if obj == 0:
+		return 0
+	var ctl: int = memory.read_u32(obj + 8)
+	if C68kScript.u32(flag_40) != 0:
+		memory.write_u16(ctl + 0x61c, memory.read_u16(ctl + 0x61c) | 0x40)
+	memory.write_u16(ctl + 0x610, C68kScript.u16(speed))
+	memory.write_u16(ctl + 0x20, C68kScript.u16(pitch))
+	memory.write_u16(ctl + 0x22, C68kScript.u16(att_22))
+	memory.write_u16(ctl + 0x24, C68kScript.u16(bank))
+	return ctl
+
+## 0x15356: a sinking ship (word +0x4c) only steps its sinking (0x44 below). Otherwise, once
+## (gun count word +0x52 == 0): every face with byte +0x17 == 1 is a gun - its vertex mean
+## (asr word +0x34; divs.l by the word count; the vertex loop runs the count unsigned via
+## subq / bcc) at +0x54 + 12 g, and the aim of its normal point minus vertex 0
+## (attitude_from_velocity speed 0x4000, 0x10000000 into the frame words a6 - 2 / a6 - 4, 0x5c
+## below) at words +0xe4 / +0xe6 + 6 g, +0xe8 + 6 g = 0; the count is stored. With shots left
+## (word +0x50) one rng in 256 (low byte 0x1b) uses a shot: gun = (rng & 0xffff) % guns
+## (divsl.l remainder); pitch / heading = gun aim + (rng & 0xff) - 0x80 (& 0x3fff, kept in the
+## frame words); in live play spawn_weapon_entity(0x7fff - (rng & 0xff), 1, gun x, gun y + 10,
+## gun z, pitch, heading, 0) (0x60 below).
+func tick_firing_ship_controller(ctl: int) -> void:
+	assert(memory != null, "tick_firing_ship_controller requires original global memory")
+	assert(a7 != 0, "tick_firing_ship_controller needs a7 (its frame holds the aim words)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var obj: int = memory.read_u32(ctl)
+	if memory.read_u16(ctl + 0x4c) != 0:
+		a7 = entry_a7 - 0x44
+		step_sinking_object(ctl)
+		a7 = entry_a7
+		return
+	if memory.read_u16(ctl + 0x52) == 0:
+		var normals: int = C68kScript.u32(memory.read_s16(obj + 0x36) * 0xc + memory.read_u32(obj + 0x44))
+		var face: int = memory.read_u32(obj + 0x48)
+		var guns: int = 0
+		var i: int = 0
+		while i < memory.read_s16(obj + 0x3a):
+			if memory.read_u8(face + 0x17) == 1:
+				var sums := [0, 0, 0]
+				var idx: int = memory.read_u32(face + 0x18)
+				var left: int = memory.read_u16(face + 0x14)
+				while left != 0:
+					left = C68kScript.u16(left - 1)
+					var vert: int = memory.read_u32(obj + 0x44) + memory.read_s16(idx) * 0xc
+					idx += 2
+					for k in range(3):
+						sums[k] = C68kScript.s32(sums[k] + C68kScript.asr32(memory.read_u32(vert + 4 * k), memory.read_s16(obj + 0x34)))
+				var count: int = memory.read_s16(face + 0x14)
+				for k in range(3):
+					memory.write_u32(ctl + 0x54 + 12 * guns + 4 * k, C68kScript.u32(C68kScript.divs_trunc(sums[k], count)))
+				var v0: int = memory.read_u32(obj + 0x44)
+				var rel := []
+				for k in range(3):
+					rel.append(C68kScript.s32(memory.read_u32(normals + i * 0xc + 4 * k) - memory.read_u32(v0 + 4 * k)))
+				a7 = entry_a7 - 0x5c
+				attitude_from_velocity(rel[0], rel[1], rel[2], 0x4000, 0x10000000, a6 - 2, a6 - 4)
+				a7 = entry_a7
+				memory.write_u16(ctl + 0xe4 + 6 * guns, memory.read_u16(a6 - 2))
+				memory.write_u16(ctl + 0xe6 + 6 * guns, memory.read_u16(a6 - 4))
+				memory.write_u16(ctl + 0xe8 + 6 * guns, 0)
+				guns = C68kScript.s16(guns + 1)
+			i += 1
+			face += 0x20
+		memory.write_u16(ctl + 0x52, C68kScript.u16(guns))
+	if memory.read_u16(ctl + 0x50) == 0:
+		return
+	if (overlay_rng_next() & 0xff) != 0x1b:
+		return
+	memory.write_u16(ctl + 0x50, C68kScript.u16(memory.read_u16(ctl + 0x50) - 1))
+	var draw: int = overlay_rng_next() & 0xffff
+	var gun: int = C68kScript.s16(C68kScript.rems_trunc(draw, memory.read_s16(ctl + 0x52)))
+	var gun_pos: int = ctl + 0x54 + gun * 12
+	var aim: int = ctl + 0xe4 + gun * 6
+	memory.write_u16(a6 - 2, C68kScript.u16(memory.read_u16(aim) + (overlay_rng_next() & 0xff) - 0x80) & 0x3fff)
+	memory.write_u16(a6 - 4, C68kScript.u16(memory.read_u16(aim + 2) + (overlay_rng_next() & 0xff) - 0x80) & 0x3fff)
+	if memory.read_u16(DAT_0001b870) != 0:
+		return
+	var speed: int = 0x7fff - (overlay_rng_next() & 0xff)
+	a7 = entry_a7 - 0x60
+	spawn_weapon_entity(speed, 1, memory.read_u32(gun_pos), C68kScript.u32(memory.read_u32(gun_pos + 4) + 10), memory.read_u32(gun_pos + 8), memory.read_s16(a6 - 2), memory.read_s16(a6 - 4), 0)
+	a7 = entry_a7
+
+## 0x114b4: spinner tick: heading word +0x22 += 0x40 (& 0x3fff).
+func spin_object_heading(ctl: int) -> void:
+	memory.write_u16(ctl + 0x22, (memory.read_u16(ctl + 0x22) + 0x40) & 0x3fff)
+
+## 0x11ae6: camera-facing animate handler: heading word +0x22 = -neg_camera_heading & 0x3fff;
+## returns 0.
+func face_camera_heading(ctl: int) -> int:
+	memory.write_u16(ctl + 0x22, C68kScript.u16(-memory.read_u16(DAT_0001d80e)) & 0x3fff)
+	return 0
+
+## 0x17d16: cleared 0x48-byte spawner controller: +0 = object, object long +4 |= 0x30040
+## (key 0x12 also sets byte +5 bit 4), +4 = DAT_0001b524[key]; aircraft to launch word +0x32 =
+## rng & 0xf, reduced by the object's range: 0x80e80 -> (rng & 3) + 1, 0xc15c0 -> (rng & 3) +
+## 2, 0x40740 -> (rng & 0xf) % 3 (divs.w remainder), any other range keeps rng & 0xf.
+func create_aircraft_spawner_controller(obj: int, def_key: int) -> int:
+	assert(memory != null, "create_aircraft_spawner_controller requires original global memory")
+	var ctl: int = heap_alloc_cleared(0x48)
+	memory.write_u32(ctl, obj)
+	memory.write_u32(obj + 4, memory.read_u32(obj + 4) | 0x30040)
+	if C68kScript.s32(def_key) == 0x12:
+		memory.write_u8(obj + 5, memory.read_u8(obj + 5) | 0x10)
+	memory.write_u32(ctl + 4, _definition(def_key))
+	var left: int = overlay_rng_next() & 0xf
+	var rng: int = memory.read_s32(obj + 0xc)
+	if rng == 0x80e80:
+		left = (left & 3) + 1
+	elif rng == 0xc15c0:
+		left = (left & 3) + 2
+	elif rng == 0x40740:
+		left = left % 3
+	memory.write_u16(ctl + 0x32, left)
+	return ctl
+
+## 0x17db8: drops the reference byte +3 of the objects in slots 0..2 (+0x34 + 4i) - only three
+## of the five slots tick_aircraft_spawner uses, as in the bytes.
+func destroy_aircraft_spawner_controller(ctl: int) -> void:
+	for i in range(3):
+		var ref: int = memory.read_u32(ctl + 0x34 + 4 * i)
+		if ref != 0:
+			memory.write_u8(ref + 3, C68kScript.u8(memory.read_u8(ref + 3) - 1))
+
+## 0x18040: cleared 0x38-byte wave spawner: +0 = object, object long +4 |= 0x130040, +4 =
+## DAT_0001b524[key], word +0x32 = 10, long +0x34 = frame + 0x546. In host mode 7 it also
+## allocates the cleared mission_target_list (10 + 4 * count bytes) with words +0 / +2 = count.
+func create_wave_spawner_controller(obj: int, def_key: int) -> int:
+	assert(memory != null, "create_wave_spawner_controller requires original global memory")
+	var ctl: int = heap_alloc_cleared(0x38)
+	memory.write_u32(ctl, obj)
+	memory.write_u32(obj + 4, memory.read_u32(obj + 4) | 0x130040)
+	memory.write_u32(ctl + 4, _definition(def_key))
+	memory.write_u16(ctl + 0x32, 10)
+	memory.write_u32(ctl + 0x34, C68kScript.u32(memory.read_u32(DAT_0001b838) + 0x546))
+	if memory.read_s16(memory.read_u32(DAT_0001b5a0) + 0x90) == 7:
+		var list: int = heap_alloc_cleared(memory.read_s16(ctl + 0x32) * 4 + 10)
+		memory.write_u32(DAT_00020adc, list)
+		memory.write_u16(list + 2, memory.read_u16(ctl + 0x32))
+		memory.write_u16(list, memory.read_u16(ctl + 0x32))
+	return ctl
+
+## 0x18b98: drops the reference bytes of the held target (+0x36) and carrier (+0x32).
+func destroy_flak_controller(ctl: int) -> void:
+	for off in [0x36, 0x32]:
+		var ref: int = memory.read_u32(ctl + off)
+		if ref != 0:
+			memory.write_u8(ref + 3, C68kScript.u8(memory.read_u8(ref + 3) - 1))
+
+## 0x18bba: a flak gun notices another object. Guns probing an enemy carrier (+0x3e == 0x200)
+## consider types 3..4, guns probing a friendly one (0x100) types <= 2; once set up (+0x40),
+## one rng in 64 rolls the target: chance = 0x339000 / distance (0x7fffffff at 0), halved when
+## a target is held; rng & 0x7f below it takes the new object, replacing a held target only
+## when it is under half the held distance (+0x3a) - the old target's reference byte drops,
+## the new one's rises. D0 is returned as the bytes leave it: the type word over the caller's
+## high word, then each rng draw's masked value, or twice the distance on the replace test.
+func flak_notice_object(gun: int, other: int, d0_in: int = 0) -> int:
+	assert(memory != null, "flak_notice_object requires original global memory")
+	var ctl: int = memory.read_u32(gun + 8)
+	var type: int = memory.read_s16(memory.read_u32(memory.read_u32(other + 8) + 4))
+	var d0: int = (C68kScript.u32(d0_in) & 0xffff0000) | C68kScript.u16(type)
+	var probe: int = memory.read_u16(ctl + 0x3e)
+	var wanted: bool = (probe == 0x200 and type > 2 and type <= 4) or (probe == 0x100 and type <= 2)
+	if not wanted or memory.read_u16(ctl + 0x40) == 0:
+		return d0
+	d0 = overlay_rng_next() & 0x3f
+	if d0 != 0:
+		return d0
+	var dist: int = approx_dist3_xyz(memory.read_s32(gun + 0x18), memory.read_s32(gun + 0x1c), memory.read_s32(gun + 0x20), memory.read_s32(other + 0x18), memory.read_s32(other + 0x1c), memory.read_s32(other + 0x20))
+	var chance: int = 0x7fffffff if dist == 0 else C68kScript.divs_trunc(0x339000, dist)
+	if memory.read_u32(ctl + 0x36) != 0:
+		chance = chance >> 1
+	d0 = overlay_rng_next() & 0x7f
+	if chance <= d0:
+		return d0
+	if memory.read_u32(ctl + 0x36) != 0:
+		d0 = C68kScript.u32(C68kScript.lsl32(dist, 1))
+		if C68kScript.s32(d0) >= memory.read_s32(ctl + 0x3a):
+			return d0
+		memory.write_u32(ctl + 0x3a, C68kScript.u32(dist))
+		var old: int = memory.read_u32(ctl + 0x36)
+		memory.write_u8(old + 3, C68kScript.u8(memory.read_u8(old + 3) - 1))
+		memory.write_u32(ctl + 0x36, other)
+	else:
+		memory.write_u32(ctl + 0x36, other)
+		memory.write_u32(ctl + 0x3a, C68kScript.u32(dist))
+	memory.write_u8(other + 3, C68kScript.u8(memory.read_u8(other + 3) + 1))
+	return d0
+
+## 0xe0a4: aircraft destroy handler: frees the controller's buffer (+0x616) and drops the AI
+## target's (+0x692) reference byte +3.
+func aircraft_destroy(ctl: int) -> void:
+	assert(memory != null, "aircraft_destroy requires original global memory")
+	if memory.read_u32(ctl + 0x616) != 0:
+		heap_free_coalesce(memory.read_u32(ctl + 0x616))
+	var target: int = memory.read_u32(ctl + 0x692)
+	if target != 0:
+		memory.write_u8(target + 3, C68kScript.u8(memory.read_u8(target + 3) - 1))
+
+## 0xfe0a: aircraft collision handler (live play only): this aircraft's damage word +0x684 |=
+## 0x400; another aircraft (type <= 4) gets the same; hitting a ship (type 0x15..0x19) sets off
+## apply_blast_damage at this aircraft (y raised to its controller's ground +0x2e when below),
+## radius 10, credited when this is the player's controller, sure_hit 0, hit_ships 1 (0x2c
+## below).
+func aircraft_collision(self_obj: int, other_obj: int) -> void:
+	assert(memory != null, "aircraft_collision requires original global memory")
+	if memory.read_u16(DAT_0001b870) != 0:
+		return
+	var self_ctl: int = memory.read_u32(self_obj + 8)
+	memory.write_u16(self_ctl + 0x684, memory.read_u16(self_ctl + 0x684) | 0x400)
+	var other_ctl: int = memory.read_u32(other_obj + 8)
+	if other_ctl == 0:
+		return
+	var type: int = memory.read_s16(memory.read_u32(other_ctl + 4))
+	if type <= 4:
+		memory.write_u16(other_ctl + 0x684, memory.read_u16(other_ctl + 0x684) | 0x400)
+	elif type > 0x14 and type <= 0x19:
+		var y: int = memory.read_s32(self_obj + 0x1c)
+		if y <= memory.read_s32(self_ctl + 0x2e):
+			y = memory.read_s32(self_ctl + 0x2e)
+		var entry_a7: int = a7
+		a7 = entry_a7 - 0x2c
+		apply_blast_damage(memory.read_u32(self_obj + 0x18), C68kScript.u32(y), memory.read_u32(self_obj + 0x20), 10, 1 if self_ctl == memory.read_u32(DAT_0001b738) else 0, 0, 1)
+		a7 = entry_a7
+
+## 0x10cd8: a positive AI bias byte +0x67b is negated.
+func invert_ai_bias_67b_if_positive(ctl: int) -> void:
+	var v: int = memory.read_s8(ctl + 0x67b)
+	if v > 0:
+		memory.write_u8(ctl + 0x67b, C68kScript.u8(-v))
+
+## 0x176b2: while fewer than six tracks are in use (long count 0x26676) and the object's metric
+## (+0x10) is within radar_limit (signed), appends a track at radar_tracks + 0x14 * count: x,
+## z, sext controller words +0xa / +0x12, 0.
+func add_radar_track(obj: int) -> void:
+	assert(memory != null, "add_radar_track requires original global memory")
+	if memory.read_s32(DAT_00026676) > 5:
+		return
+	var ctl: int = memory.read_u32(obj + 8)
+	var word_a: int = memory.read_s16(ctl + 0xa)
+	var word_12: int = memory.read_s16(ctl + 0x12)
+	if memory.read_s32(obj + 0x10) > memory.read_s32(DAT_00026666):
+		return
+	var track: int = C68kScript.u32(memory.read_u32(DAT_00026676) * 0x14 + memory.read_u32(DAT_0001b51c))
+	memory.write_u32(DAT_00026676, C68kScript.u32(memory.read_u32(DAT_00026676) + 1))
+	memory.write_u32(track, memory.read_u32(obj + 0x18))
+	memory.write_u32(track + 4, memory.read_u32(obj + 0x20))
+	memory.write_u32(track + 8, C68kScript.u32(word_a))
+	memory.write_u32(track + 0xc, C68kScript.u32(word_12))
+	memory.write_u32(track + 0x10, 0)
+
+## 0xfe96: an aircraft notices another object (its type word, signed).
+## Player's aircraft: only in view modes 1 / 8 / 7 and for aircraft (type <= 4); one flying
+## more than 1999 above its ground gets a radar track (0x24 below); a non-player aircraft
+## (type != 1) closer than the designated one (metric +0x10, signed) becomes
+## designated_entity_2 (its controller).
+## AI aircraft (types 3, 4 and 0x15..0x19 by the jump table): one rng in 64, unless byte +0x63e
+## is set, and only in AI states 0x110d4 / 0x11162: chance = ((other range +0x14 * 0x6720)
+## divs.l 500 asl 6) divs.l distance (0x7fffffff at 0). Ships need probe_nearest_facility_kind
+## 0x100 (0x24 below) and bombs (byte +0x67c); aircraft need state 0x110d4 and ammo (word +0x682)
+## above 1. A held target (+0x692) halves the chance; rng & 0x7f below it takes the object
+## (replacing a held one only when under half its distance +0x696; references moved). Taking a
+## ship: invert_ai_bias_67b_if_positive, state 0x112c0, byte +0x675 = 0; an aircraft: state
+## 0x110d4, then invert_ai_bias_67b_if_positive.
+func aircraft_notice_object(self_obj: int, other_obj: int) -> void:
+	assert(memory != null, "aircraft_notice_object requires original global memory")
+	var entry_a7: int = a7
+	var self_ctl: int = memory.read_u32(self_obj + 8)
+	var other_ctl: int = memory.read_u32(other_obj + 8)
+	var type: int = memory.read_s16(memory.read_u32(other_ctl + 4))
+	if self_ctl == memory.read_u32(DAT_0001b738):
+		var view: int = memory.read_s16(DAT_0001d858)
+		if view != 1 and view != 8 and view != 7:
+			return
+		if type > 4:
+			return
+		if C68kScript.s32(memory.read_u32(other_obj + 0x1c) - memory.read_u32(other_ctl + 0x2e)) > 0x7cf:
+			a7 = entry_a7 - 0x24
+			add_radar_track(other_obj)
+			a7 = entry_a7
+		if type == 1:
+			return
+		var designated: int = memory.read_u32(DAT_0001b888)
+		if designated != 0 and memory.read_s32(other_obj + 0x10) >= memory.read_s32(memory.read_u32(designated) + 0x10):
+			return
+		memory.write_u32(DAT_0001b888, other_ctl)
+		return
+	var ship: bool = type >= 0x15 and type <= 0x19
+	if not (type == 3 or type == 4 or ship):
+		return
+	if (overlay_rng_next() & 0x3f) != 0:
+		return
+	if memory.read_u8(self_ctl + 0x63e) != 0:
+		return
+	var state: int = memory.read_u32(self_ctl + 0x32)
+	if state != 0x110d4 and state != 0x11162:
+		return
+	var dist: int = approx_dist3_xyz(memory.read_s32(self_obj + 0x18), memory.read_s32(self_obj + 0x1c), memory.read_s32(self_obj + 0x20), memory.read_s32(other_obj + 0x18), memory.read_s32(other_obj + 0x1c), memory.read_s32(other_obj + 0x20))
+	var chance: int = 0x7fffffff
+	if dist != 0:
+		var scaled: int = C68kScript.divs_trunc(C68kScript.s32(memory.read_s32(other_obj + 0x14) * 0x6720), 500)
+		chance = C68kScript.divs_trunc(C68kScript.s32(C68kScript.lsl32(scaled, 6)), dist)
+	if ship:
+		a7 = entry_a7 - 0x24
+		var facility: int = probe_nearest_facility_kind(other_obj)
+		a7 = entry_a7
+		if facility != 0x100 or memory.read_u8(self_ctl + 0x67c) == 0:
+			return
+	elif type <= 4:
+		if state == 0x11162 or memory.read_s16(self_ctl + 0x682) <= 1:
+			return
+	if memory.read_u32(self_ctl + 0x692) != 0:
+		chance = chance >> 1
+	if chance <= (overlay_rng_next() & 0x7f):
+		return
+	var held: int = memory.read_u32(self_ctl + 0x692)
+	if held != 0:
+		if C68kScript.s32(C68kScript.lsl32(dist, 1)) >= memory.read_s32(self_ctl + 0x696):
+			return
+		memory.write_u32(self_ctl + 0x696, C68kScript.u32(dist))
+		memory.write_u8(held + 3, C68kScript.u8(memory.read_u8(held + 3) - 1))
+		memory.write_u32(self_ctl + 0x692, other_obj)
+	else:
+		memory.write_u32(self_ctl + 0x692, other_obj)
+		memory.write_u32(self_ctl + 0x696, C68kScript.u32(dist))
+	memory.write_u8(other_obj + 3, C68kScript.u8(memory.read_u8(other_obj + 3) + 1))
+	a7 = entry_a7 - 0x24
+	if ship:
+		invert_ai_bias_67b_if_positive(self_ctl)
+		memory.write_u32(self_ctl + 0x32, 0x112c0)
+		memory.write_u8(self_ctl + 0x675, 0)
+	elif type <= 4:
+		memory.write_u32(self_ctl + 0x32, 0x110d4)
+		invert_ai_bias_67b_if_positive(self_ctl)
+	a7 = entry_a7
+
+## 0x100bc: drops the AI target's (+0x692) reference byte +3 and clears the target.
+func release_ai_target(ctl: int) -> void:
+	var target: int = memory.read_u32(ctl + 0x692)
+	if target != 0:
+		memory.write_u8(target + 3, C68kScript.u8(memory.read_u8(target + 3) - 1))
+		memory.write_u32(ctl + 0x692, 0)
+
+## 0x100d4: an enemy fighter notices another object. Only types 1, 2 and 0x15..0x19 (the jump
+## table on type - 1) are considered; one rng in 64, unless byte +0x63e is set, in AI states
+## 0x110d4 / 0x11162 / 0x111ba / 0x112c0; chance as in aircraft_notice_object.
+## State 0x111ba (escort): with no target, a ship near an enemy facility
+## (probe_nearest_facility_kind 0x200, 0x24 below) is taken when rng & 0x7f < chance.
+## Other states: a held target halves the chance; rng & 0x7f below it lets the object compete
+## (always without a target, else when under half the held distance). A ship near an enemy
+## facility switches the AI to 0x111ba when damaged (word +0x684 & 0x3b2), else to the bombing
+## state 0x112c0 (byte +0x675 = 0) when it has bombs, else is not taken; an aircraft (type <= 4)
+## needs ammo (word +0x682 > 1) and sets 0x110d4. A switch also runs
+## invert_ai_bias_67b_if_positive (0x24 below); the target and its references are then moved.
+## The D0 the bytes leave is not modelled (callers of the notice handlers are not ported yet).
+func enemy_fighter_notice_object(self_obj: int, other_obj: int) -> void:
+	assert(memory != null, "enemy_fighter_notice_object requires original global memory")
+	var entry_a7: int = a7
+	var self_ctl: int = memory.read_u32(self_obj + 8)
+	var type: int = memory.read_s16(memory.read_u32(memory.read_u32(other_obj + 8) + 4))
+	var ship: bool = type >= 0x15 and type <= 0x19
+	if not (type == 1 or type == 2 or ship):
+		return
+	if (overlay_rng_next() & 0x3f) != 0:
+		return
+	if memory.read_u8(self_ctl + 0x63e) != 0:
+		return
+	var state: int = memory.read_u32(self_ctl + 0x32)
+	if state != 0x110d4 and state != 0x11162 and state != 0x111ba and state != 0x112c0:
+		return
+	var dist: int = approx_dist3_xyz(memory.read_s32(self_obj + 0x18), memory.read_s32(self_obj + 0x1c), memory.read_s32(self_obj + 0x20), memory.read_s32(other_obj + 0x18), memory.read_s32(other_obj + 0x1c), memory.read_s32(other_obj + 0x20))
+	var chance: int = 0x7fffffff
+	if dist != 0:
+		var scaled: int = C68kScript.divs_trunc(C68kScript.s32(memory.read_s32(other_obj + 0x14) * 0x6720), 500)
+		chance = C68kScript.divs_trunc(C68kScript.s32(C68kScript.lsl32(scaled, 6)), dist)
+	if state == 0x111ba:
+		if memory.read_u32(self_ctl + 0x692) != 0 or not ship:
+			return
+		a7 = entry_a7 - 0x24
+		var facility: int = probe_nearest_facility_kind(other_obj)
+		a7 = entry_a7
+		if facility != 0x200:
+			return
+		if chance <= (overlay_rng_next() & 0x7f):
+			return
+		memory.write_u32(self_ctl + 0x692, other_obj)
+		memory.write_u32(self_ctl + 0x696, C68kScript.u32(dist))
+		memory.write_u8(other_obj + 3, C68kScript.u8(memory.read_u8(other_obj + 3) + 1))
+		return
+	if memory.read_u32(self_ctl + 0x692) != 0:
+		chance = chance >> 1
+	if chance <= (overlay_rng_next() & 0x7f):
+		return
+	var held: int = memory.read_u32(self_ctl + 0x692)
+	if held != 0 and C68kScript.s32(C68kScript.lsl32(dist, 1)) >= memory.read_s32(self_ctl + 0x696):
+		return
+	var take: bool = false
+	if ship:
+		a7 = entry_a7 - 0x24
+		var facility2: int = probe_nearest_facility_kind(other_obj)
+		a7 = entry_a7
+		if facility2 == 0x200:
+			if (memory.read_u16(self_ctl + 0x684) & 0x3b2) != 0:
+				memory.write_u32(self_ctl + 0x32, 0x111ba)
+				take = true
+			elif memory.read_u8(self_ctl + 0x67c) != 0:
+				memory.write_u32(self_ctl + 0x32, 0x112c0)
+				memory.write_u8(self_ctl + 0x675, 0)
+				take = true
+	elif type <= 4 and memory.read_s16(self_ctl + 0x682) > 1:
+		memory.write_u32(self_ctl + 0x32, 0x110d4)
+		take = true
+	if not take:
+		return
+	a7 = entry_a7 - 0x24
+	invert_ai_bias_67b_if_positive(self_ctl)
+	a7 = entry_a7
+	if held != 0:
+		memory.write_u32(self_ctl + 0x696, C68kScript.u32(dist))
+		memory.write_u8(held + 3, C68kScript.u8(memory.read_u8(held + 3) - 1))
+		memory.write_u32(self_ctl + 0x692, other_obj)
+	else:
+		memory.write_u32(self_ctl + 0x692, other_obj)
+		memory.write_u32(self_ctl + 0x696, C68kScript.u32(dist))
+	memory.write_u8(other_obj + 3, C68kScript.u8(memory.read_u8(other_obj + 3) + 1))
+
+## 0x5832: one-dimensional sweep over a list of objects sorted by metric (+0x10) with radii
+## (+0xc); count = word header +2 (dbra). designated_entity_2 is cleared first unless replay
+## state 3. Each object whose reach (metric + radius) exceeds the smallest start (metric -
+## radius) seen so far scans back over the earlier entries: an earlier object whose start lies
+## below the reach is a pair - the definition +0x16 notice handler of each (when it has a
+## controller and a handler) is jsr'd as (self, other), this object's first (0x30 below); an
+## earlier object that does not reach ends the scan once its running minimum (+0x28) is above
+## the reach. Every object then stores the running minimum start in +0x28.
+func dispatch_overlap_collisions(list: int, header: int) -> void:
+	assert(memory != null, "dispatch_overlap_collisions requires original global memory")
+	var entry_a7: int = a7
+	if memory.read_s16(DAT_0001b870) != 3:
+		memory.write_u32(DAT_0001b888, 0)
+	var left: int = memory.read_u16(header + 2)
+	var min_start: int = 0x7fffffff
+	var cursor: int = list
+	while true:
+		left = C68kScript.u16(left - 1)
+		if left == 0xffff:
+			break
+		var obj: int = memory.read_u32(cursor)
+		cursor += 4
+		var reach: int = C68kScript.s32(memory.read_u32(obj + 0x10) + memory.read_u32(obj + 0xc))
+		if min_start < reach:
+			var back: int = cursor - 4
+			var back_left: int = C68kScript.u16(C68kScript.asr32(back - list, 2))
+			while true:
+				back_left = C68kScript.u16(back_left - 1)
+				if back_left == 0xffff:
+					break
+				back -= 4
+				var other: int = memory.read_u32(back)
+				var start: int = C68kScript.s32(memory.read_u32(other + 0x10) - memory.read_u32(other + 0xc))
+				if reach <= start:
+					if reach < memory.read_s32(other + 0x28):
+						break
+					continue
+				for pair in [[obj, other], [other, obj]]:
+					var ctl: int = memory.read_u32(pair[0] + 8)
+					if ctl == 0:
+						continue
+					var notice: int = memory.read_u32(memory.read_u32(ctl + 4) + 0x16)
+					if notice == 0:
+						continue
+					a7 = entry_a7 - 0x30
+					_jsr(notice, [pair[0], pair[1]])
+					a7 = entry_a7
+		var own_start: int = C68kScript.s32(memory.read_u32(obj + 0x10) - memory.read_u32(obj + 0xc))
+		if own_start < min_start:
+			min_start = own_start
+		memory.write_u32(obj + 0x28, C68kScript.u32(min_start))
+
+## 0xfb2a: landing gear (definition +0xe animate handler of the aircraft records). It works
+## while gear bit 1 (byte +0x67a) is set or the gear position byte +0x679 is neither 0x2d
+## (down) nor 0 (up, via abs_int). Position 0 or 0x2d clears bit 1, others set it. Fully up:
+## bit 0 set and every gear face (byte +0x17 == 1) hidden (+0x13 |= 2). Otherwise bit 0 is
+## cleared; angle = -((0x2d - |pos|) asl 12) divs.l 0x2d & 0x3fff gives two matrices
+## (build_attitude_matrix_3ang_alt(angle, angle, 0) / (angle, -angle & 0x3fff, 0), frame a6 -
+## 0x1e / - 0x30, entered 0x8c / 0x9c below). Each gear face is shown and swung on the side of
+## its first vertex (template x > 0: the first matrix about x = 0x46 << shift, else the second
+## about -0x46 << shift, as words): its normal point (vertex +0x36 + face index) is rotated
+## about template vertex 0, its vertices about (pivot, -0x1a << shift) - each through
+## transform_vecs12_to_int3_by_matrix3 in place (low words in, longs out). Finally the body
+## matrix 0x1d72c = build_attitude_matrix_x((word +0x626 - definition word +0x44) & 0x3fff,
+## words +0x20 / +0x22 / +0x24) (0x8c below). Returns 1.
+func animate_landing_gear(ctl: int) -> int:
+	assert(memory != null, "animate_landing_gear requires original global memory")
+	assert(a7 != 0, "animate_landing_gear needs a7 (its frame holds the gear matrices)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var matrix_pos: int = a6 - 0x1e
+	var matrix_neg: int = a6 - 0x30
+	var obj: int = memory.read_u32(ctl)
+	var pos: int = memory.read_s8(ctl + 0x679)
+	if (memory.read_u8(ctl + 0x67a) & 2) != 0 or (pos != 0x2d and abs_int(pos) > 0):
+		var up: bool = pos == 0
+		if up or pos == 0x2d:
+			memory.write_u8(ctl + 0x67a, memory.read_u8(ctl + 0x67a) & 0xfd)
+		else:
+			memory.write_u8(ctl + 0x67a, memory.read_u8(ctl + 0x67a) | 2)
+		var face: int = memory.read_u32(obj + 0x48)
+		if up:
+			memory.write_u8(ctl + 0x67a, memory.read_u8(ctl + 0x67a) | 1)
+			var left: int = memory.read_u16(obj + 0x3a)
+			while true:
+				left = C68kScript.u16(left - 1)
+				if left == 0xffff:
+					break
+				if memory.read_u8(face + 0x17) == 1:
+					memory.write_u8(face + 0x13, memory.read_u8(face + 0x13) | 2)
+				face += 0x20
+		else:
+			memory.write_u8(ctl + 0x67a, memory.read_u8(ctl + 0x67a) & 0xfe)
+			var angle: int = C68kScript.divs_trunc(C68kScript.s32(-C68kScript.lsl32(0x2d - abs_int(pos), 12)), 0x2d) & 0x3fff
+			a7 = entry_a7 - 0x8c
+			build_attitude_matrix_3ang_alt(angle, angle, 0, matrix_pos)
+			a7 = entry_a7 - 0x9c
+			build_attitude_matrix_3ang_alt(angle, (-angle) & 0x3fff, 0, matrix_neg)
+			a7 = entry_a7
+			var world: int = memory.read_u32(DAT_0001b5a0)
+			var tmpl: int = C68kScript.u32(memory.read_u32(memory.read_u32(memory.read_u32(obj + 0x24) + 0x28) + 0x2e + memory.read_u8(obj + 1) * 0x18) + memory.read_u32(world + 0x8c) + 0x22)
+			var origin := [memory.read_u32(tmpl), memory.read_u32(tmpl + 4), memory.read_u32(tmpl + 8)]
+			var n_off: int = memory.read_s16(obj + 0x36) * 0xc
+			var verts: int = memory.read_u32(obj + 0x44)
+			var shift: int = memory.read_s16(obj + 0x34)
+			var x_pos: int = C68kScript.s16(C68kScript.lsl32(0x46, shift))
+			var x_neg: int = C68kScript.s16(C68kScript.lsl32(-0x46, shift))
+			var pivot_dy: int = C68kScript.s32(C68kScript.lsl32(0x1a, shift))
+			var i: int = 0
+			while i < memory.read_s16(obj + 0x3a):
+				if memory.read_u8(face + 0x17) == 1:
+					memory.write_u8(face + 0x13, memory.read_u8(face + 0x13) & 0xfd)
+					var idx: int = memory.read_u32(face + 0x18)
+					var mat: int = matrix_neg
+					var x_off: int = x_neg
+					if memory.read_s32(tmpl + memory.read_s16(idx) * 0xc) > 0:
+						mat = matrix_pos
+						x_off = x_pos
+					var src: int = tmpl + n_off + i * 0xc
+					var dst: int = verts + n_off + i * 0xc
+					for k in range(3):
+						memory.write_u32(dst + 4 * k, C68kScript.u32(memory.read_u32(src + 4 * k) - origin[k]))
+					transform_vecs12_to_int3_by_matrix3(1, dst, dst, mat)
+					for k in range(3):
+						memory.write_u32(dst + 4 * k, C68kScript.u32(memory.read_u32(dst + 4 * k) + origin[k]))
+					var left2: int = memory.read_u16(face + 0x14)
+					while true:
+						left2 = C68kScript.u16(left2 - 1)
+						if left2 == 0xffff:
+							break
+						var v: int = memory.read_s16(idx) * 0xc
+						idx += 2
+						var sv: int = tmpl + v
+						var dv: int = verts + v
+						memory.write_u32(dv, C68kScript.u32(memory.read_u32(sv) - x_off))
+						memory.write_u32(dv + 4, C68kScript.u32(pivot_dy + memory.read_u32(sv + 4)))
+						memory.write_u32(dv + 8, memory.read_u32(sv + 8))
+						transform_vecs12_to_int3_by_matrix3(1, dv, dv, mat)
+						memory.write_u32(dv, C68kScript.u32(memory.read_u32(dv) + x_off))
+						memory.write_u32(dv + 4, C68kScript.u32(memory.read_u32(dv + 4) - pivot_dy))
+				i += 1
+				face += 0x20
+	a7 = entry_a7 - 0x8c
+	build_attitude_matrix_x((memory.read_s16(ctl + 0x626) - memory.read_s16(memory.read_u32(ctl + 4) + 0x44)) & 0x3fff, memory.read_s16(ctl + 0x20), memory.read_s16(ctl + 0x22), memory.read_s16(ctl + 0x24), 0x1d72c)
+	a7 = entry_a7
+	return 1
+
+## 0x8784: replay_request = 1 when airborne (long argument != 0), else 2.
+func request_instant_replay(airborne: int) -> void:
+	memory.write_u16(DAT_0001b86c, 1 if C68kScript.u32(airborne) != 0 else 2)
+
+## 0x11670: spawn_smoke_plume(0x48, 0, 0, 0, 0, x, y, z) (0x2c below); when a plume comes back its
+## eight trail points (+0x40 + 12 i) start at the plume object's position, the object's long +4
+## loses bit 0x100000 and its word +0x34 is cleared, +0x3c = the owner's object, whose reference
+## byte +3 rises.
+func attach_trailing_plume(x: int, y: int, z: int, owner: int) -> void:
+	assert(memory != null, "attach_trailing_plume requires original global memory")
+	var entry_a7: int = a7
+	a7 = entry_a7 - 0x2c
+	var plume: int = spawn_smoke_plume(0x48, 0, 0, 0, 0, x, y, z)
+	a7 = entry_a7
+	if plume == 0:
+		return
+	var plume_obj: int = memory.read_u32(plume)
+	for i in range(8):
+		for k in range(3):
+			memory.write_u32(plume + 0x40 + 12 * i + 4 * k, memory.read_u32(plume_obj + 0x18 + 4 * k))
+	memory.write_u32(plume_obj + 4, memory.read_u32(plume_obj + 4) & 0xffefffff)
+	memory.write_u16(plume_obj + 0x34, 0)
+	var owner_obj: int = memory.read_u32(owner)
+	memory.write_u32(plume + 0x3c, owner_obj)
+	memory.write_u8(owner_obj + 3, C68kScript.u8(memory.read_u8(owner_obj + 3) + 1))
+
+## 0x170ba: spawn_mission_pool_object(ground_fire_template, x, y, z, 0, 0, 0, 0) (0x28 below);
+## the controller gets word +0x34 = 1 (state 1) and +0x32 = 0x2d (timer); null -> 0.
+func spawn_ground_fire_object(x: int, y: int, z: int) -> int:
+	assert(memory != null, "spawn_ground_fire_object requires original global memory")
+	var entry_a7: int = a7
+	a7 = entry_a7 - 0x28
+	var obj: int = spawn_mission_pool_object(memory.read_u32(DAT_00026658), x, y, z, 0, 0, 0, 0)
+	a7 = entry_a7
+	if obj == 0:
+		return 0
+	var ctl: int = memory.read_u32(obj + 8)
+	memory.write_u16(ctl + 0x34, 1)
+	memory.write_u16(ctl + 0x32, 0x2d)
+	return ctl
+
+## 0x17102: spawn_ground_fire_object (0x14 below); a fire follows the owner's object (+0x50),
+## whose reference byte +3 rises; returns the fire, or 0 when none came back or its +0 is clear.
+func attach_ground_fire(x: int, y: int, z: int, owner_ctl: int) -> int:
+	assert(memory != null, "attach_ground_fire requires original global memory")
+	var entry_a7: int = a7
+	a7 = entry_a7 - 0x14
+	var fire: int = spawn_ground_fire_object(x, y, z)
+	a7 = entry_a7
+	if fire == 0:
+		return 0
+	var owner_obj: int = memory.read_u32(owner_ctl)
+	memory.write_u32(fire + 0x50, owner_obj)
+	memory.write_u8(owner_obj + 3, C68kScript.u8(memory.read_u8(owner_obj + 3) + 1))
+	return fire if memory.read_u32(fire) != 0 else 0
+
+## 0x17ffe: clears every mission_target_list entry (long at +6 + 4 i, i < word +2) holding this
+## aircraft, counting the live word +0 down for each; once it reaches 0, host word +0xce is set to
+## 1 when still 0.
+func remove_mission_target(aircraft: int) -> void:
+	assert(memory != null, "remove_mission_target requires original global memory")
+	var i: int = 0
+	while i < memory.read_s16(memory.read_u32(DAT_00020adc) + 2):
+		var list: int = memory.read_u32(DAT_00020adc)
+		if memory.read_u32(list + 6 + i * 4) == C68kScript.u32(aircraft):
+			memory.write_u32(list + 6 + i * 4, 0)
+			memory.write_u16(list, C68kScript.u16(memory.read_u16(list) - 1))
+		i = C68kScript.s16(i + 1)
+	var host: int = memory.read_u32(DAT_0001b5a0)
+	if memory.read_u16(memory.read_u32(DAT_00020adc)) == 0 and memory.read_u16(host + 0xce) == 0:
+		memory.write_u16(host + 0xce, 1)
+
+## 0x10650: one damage step of an aircraft controller (word +0x684 damage, +0x686 last frame,
+## +0x688 stage timer). A running timer counts down and hides the stage bits (0x3c0) for this
+## step. Stage pass (repeated while bits become newly set; the next pass sees only the newly
+## set bits, with the newly cleared ones as "previous"): exactly 0x40 (smoking) - new:
+## attach_smoke_trail; old: rng bit 0 clears it and a second rng bit 0 escalates to 0x80, else
+## 0x200; 0x80 - with the previous low byte negative (0x80 already) an rng & 3 == 0 turns it
+## into 0x200; 0x100 (burning) - with damage bit 0x800 the timer is 0x16, else a timer is armed;
+## new: attach_trailing_plume; old: bit 0x800 or rng bit 0 turns it into 0x400 (destroyed); 0x40
+## / 0x80 / 0x200 arm a timer. Each pass writes the changed bits into +0x684.
+## Then: newly destroyed (0x400 now, not last frame) - for the player, request_instant_replay
+## (airborne unless 0x800), host +0x98 = 2 in live play, view_follow_target =
+## designated_entity_2, and while replaying host +0xd4 = 1 (no parachute) or 4 (abandoned
+## aircraft); stage bits cleared; spawn_destruction_effect(obj, 300 in state 0x111ba else 100)
+## with replay_state forced to -1 around it; in live play the mission-5 / 6 outcome flags (host
+## +0xce), mission 7's remove_mission_target, and the kill tally (object word +0x50 when damage
+## bit 0x8000: positive -> host word +0xb8 + 2 n, else +0xd2); then dispatch_entity_cleanup.
+## Newly 0x1000 (crashed): attach_ground_fire at the ground height (+0x2e). An AI aircraft with
+## 0x100 bails out (byte +0x677 = 1) on rng & 0x1f == 0 unless diving (0x111ba) or in host mode
+## 2. The player newly at bit 0x1: flags 0x1b874 = 1, 0x1b872 = 0 and, without a parachute,
+## host +0xd4 = 1 and snd_ugh = 1. An armed timer becomes 0x7f + ((rng & 0xff) >> 1). Finally
+## +0x686 = +0x684. (The D0 the bytes leave is not used by aircraft_tick and is not modelled.)
+func update_aircraft_damage_state(ctl: int) -> void:
+	assert(memory != null, "update_aircraft_damage_state requires original global memory")
+	var entry_a7: int = a7
+	var obj: int = memory.read_u32(ctl)
+	var timer_range: int = 0
+	var damage: int = memory.read_u16(ctl + 0x684)
+	var prev: int = memory.read_u16(ctl + 0x686)
+	if memory.read_u16(ctl + 0x688) != 0:
+		memory.write_u16(ctl + 0x688, C68kScript.u16(memory.read_u16(ctl + 0x688) - 1))
+		damage = damage & 0xfc3f
+	while true:
+		var before: int = damage
+		var stage: int = damage & 0x3c0
+		if stage == 0x40:
+			timer_range = 0xff
+			if (prev & 0x40) == 0:
+				a7 = entry_a7 - 0x2c
+				attach_smoke_trail(memory.read_u32(obj + 0x18), memory.read_u32(obj + 0x1c), memory.read_u32(obj + 0x20), ctl)
+				a7 = entry_a7
+			elif (overlay_rng_next() & 1) != 0:
+				damage = damage & 0xffbf
+				if (overlay_rng_next() & 1) != 0:
+					damage = damage | 0x80
+				else:
+					damage = damage | 0x200
+		elif stage == 0x80:
+			timer_range = 0xff
+			if (prev & 0x80) != 0 and (overlay_rng_next() & 3) == 0:
+				damage = (damage & 0xff7f) | 0x200
+		elif stage == 0x100:
+			if (memory.read_u8(ctl + 0x684) & 8) != 0:
+				memory.write_u16(ctl + 0x688, 0x16)
+			else:
+				timer_range = 0xff
+			if (prev & 0x100) == 0:
+				a7 = entry_a7 - 0x2c
+				attach_trailing_plume(memory.read_u32(obj + 0x18), memory.read_u32(obj + 0x1c), memory.read_u32(obj + 0x20), ctl)
+				a7 = entry_a7
+			elif (memory.read_u8(ctl + 0x684) & 8) != 0 or (overlay_rng_next() & 1) != 0:
+				damage = (damage & 0xfeff) | 0x400
+		elif stage == 0x200:
+			timer_range = 0xff
+		var changed: int = (before ^ damage) & 0xffff
+		memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) & (~changed & 0xffff))
+		memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | (changed & damage))
+		prev = before & changed
+		damage = changed & damage
+		if damage == 0:
+			break
+	var host: int = memory.read_u32(DAT_0001b5a0)
+	var player: int = memory.read_u32(DAT_0001b738)
+	if (memory.read_u8(ctl + 0x684) & 4) != 0 and (memory.read_u8(ctl + 0x686) & 4) == 0:
+		if ctl == player:
+			a7 = entry_a7 - 0x20
+			request_instant_replay(0 if (memory.read_u8(ctl + 0x684) & 8) != 0 else 1)
+			a7 = entry_a7
+			if memory.read_u16(DAT_0001b870) == 0:
+				memory.write_u16(host + 0x98, 2)
+			memory.write_u32(DAT_0001b884, memory.read_u32(DAT_0001b888))
+			if memory.read_u16(DAT_0001b870) != 0:
+				if memory.read_u32(DAT_0001b87c) == 0:
+					memory.write_u16(host + 0xd4, 1)
+				elif memory.read_u16(DAT_0001b87a) != 0:
+					memory.write_u16(host + 0xd4, 4)
+		memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) & 0xfc3f)
+		var saved: int = memory.read_u16(DAT_0001b870)
+		memory.write_u16(DAT_0001b870, 0xffff)
+		a7 = entry_a7 - 0x24
+		spawn_destruction_effect(obj, 300 if memory.read_u32(ctl + 0x32) == 0x111ba else 100)
+		a7 = entry_a7
+		memory.write_u16(DAT_0001b870, saved)
+		if saved == 0:
+			var type: int = memory.read_s16(memory.read_u32(ctl + 4))
+			if memory.read_s16(host + 0x90) == 5 and type == 2 and memory.read_u16(host + 0xce) == 0:
+				memory.write_u16(host + 0xce, 0xffff)
+			if memory.read_s16(host + 0x90) == 6 and type == 3 and memory.read_u16(host + 0xce) == 0:
+				memory.write_u16(host + 0xce, 1)
+			if memory.read_s16(host + 0x90) == 7:
+				a7 = entry_a7 - 0x20
+				remove_mission_target(ctl)
+				a7 = entry_a7
+			var tally: int = memory.read_s16(obj + 0x50)
+			if tally != 0 and memory.read_s8(ctl + 0x684) < 0:
+				var counter: int = host + 0xb8 + tally * 2 if tally > 0 else host + 0xd2
+				memory.write_u16(counter, C68kScript.u16(memory.read_u16(counter) + 1))
+		a7 = entry_a7 - 0x20
+		dispatch_entity_cleanup(obj)
+		a7 = entry_a7
+	if (memory.read_u8(ctl + 0x684) & 0x10) != 0 and (memory.read_u8(ctl + 0x686) & 0x10) == 0:
+		a7 = entry_a7 - 0x2c
+		attach_ground_fire(memory.read_u32(obj + 0x18), memory.read_u32(ctl + 0x2e), memory.read_u32(obj + 0x20), ctl)
+		a7 = entry_a7
+	if (memory.read_u8(ctl + 0x684) & 1) != 0 and memory.read_u8(ctl + 0x677) == 0 and ctl != player:
+		if (overlay_rng_next() & 0x1f) == 0 and memory.read_u32(ctl + 0x32) != 0x111ba and memory.read_s16(host + 0x90) != 2:
+			memory.write_u8(ctl + 0x677, 1)
+	if ctl == player and (memory.read_u8(ctl + 0x685) & 1) != 0 and (memory.read_u8(ctl + 0x687) & 1) == 0:
+		memory.write_u16(DAT_0001b874, 1)
+		memory.write_u16(DAT_0001b872, 0)
+		if memory.read_u32(DAT_0001b87c) == 0:
+			memory.write_u16(host + 0xd4, 1)
+			memory.write_u16(DAT_0001b844, 1)
+	if timer_range != 0:
+		var r: int = overlay_rng_next() & 0xffff
+		memory.write_u16(ctl + 0x688, C68kScript.u16(((timer_range & r) >> 1) + (timer_range >> 1)))
+	memory.write_u16(ctl + 0x686, memory.read_u16(ctl + 0x684))
+
+## 0xe5aa: aircraft tick (definition +2). The pose ring (75 entries of 0x14 bytes at +0x36,
+## index word +0x612, wrapping at 0x4b) records or replays the aircraft.
+## Live play: a destroyed aircraft (damage 0x400 now and last frame) stops (velocity +8 / +0xc /
+## +0x10 = 0), otherwise its AI / flight handler (+0x32) runs (jsr, 0x18 below); then
+## update_aircraft_damage_state (0x18 below) and the entry records position + velocity, the
+## angle words +0x20 / +0x22 / +0x24 and the damage word.
+## Replay: nothing before the object's start frame (+0x40). On a rewind (state 1) or the start
+## frame the aircraft jumps to the entry: velocity 0, position, timer +0x688 = 0, +0x686 =
+## damage & 0xeeff, +0x684 = damage, gear byte +0x679 = 0 when damage bit 0x2000 (gear up) else
+## 0x2d; a recorded stage without 0x1000 restarts as smoking (0x40). Otherwise the velocity
+## is the step to the entry, the damage word is taken over and the timer +0x688 is 1 when the
+## stage bits did not change (else 0). Either way the angles are copied back and the damage step
+## runs. The gear-bit test that follows (0x2000 of +0x684 against +0x686, moving the gear byte
+## to -|player gear| or |player gear|) can never fire, because the damage step always ends with
+## +0x686 = +0x684; it is kept as in the bytes. Finally +0x686 = the damage word before the step.
+func aircraft_tick(ctl: int) -> void:
+	assert(memory != null, "aircraft_tick requires original global memory")
+	var entry_a7: int = a7
+	var pose: int = ctl + 0x36 + memory.read_s16(ctl + 0x612) * 0x14
+	memory.write_u16(ctl + 0x612, C68kScript.u16(memory.read_u16(ctl + 0x612) + 1))
+	if memory.read_u16(ctl + 0x612) == 0x4b:
+		memory.write_u16(ctl + 0x612, 0)
+	var obj: int = memory.read_u32(ctl)
+	if memory.read_u16(DAT_0001b870) == 0:
+		if (memory.read_u8(ctl + 0x684) & 4) != 0 and (memory.read_u8(ctl + 0x686) & 4) != 0:
+			for k in range(3):
+				memory.write_u32(ctl + 8 + 4 * k, 0)
+		else:
+			a7 = entry_a7 - 0x18
+			_jsr(memory.read_u32(ctl + 0x32), [ctl])
+			a7 = entry_a7
+		a7 = entry_a7 - 0x18
+		update_aircraft_damage_state(ctl)
+		a7 = entry_a7
+		for k in range(3):
+			memory.write_u32(pose + 4 * k, C68kScript.u32(memory.read_u32(obj + 0x18 + 4 * k) + memory.read_u32(ctl + 8 + 4 * k)))
+		memory.write_u16(pose + 0xc, memory.read_u16(ctl + 0x20))
+		memory.write_u16(pose + 0xe, memory.read_u16(ctl + 0x22))
+		memory.write_u16(pose + 0x10, memory.read_u16(ctl + 0x24))
+		memory.write_u16(pose + 0x12, memory.read_u16(ctl + 0x684))
+		return
+	var frame: int = memory.read_s32(DAT_0001b838)
+	if frame < memory.read_s32(obj + 0x40):
+		return
+	var recorded: int = memory.read_u16(pose + 0x12)
+	if memory.read_s16(DAT_0001b870) == 1 or frame == memory.read_s32(obj + 0x40):
+		for k in range(3):
+			memory.write_u32(ctl + 8 + 4 * k, 0)
+			memory.write_u32(obj + 0x18 + 4 * k, memory.read_u32(pose + 4 * k))
+		memory.write_u16(ctl + 0x688, 0)
+		memory.write_u16(ctl + 0x686, recorded & 0xeeff)
+		memory.write_u16(ctl + 0x684, recorded)
+		memory.write_u8(ctl + 0x679, 0 if (memory.read_u8(ctl + 0x684) & 0x20) != 0 else 0x2d)
+		if (recorded & 0x3c0) != 0 and (memory.read_u8(pose + 0x12) & 0x10) == 0:
+			memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) & 0xfc3f)
+			memory.write_u16(ctl + 0x686, memory.read_u16(ctl + 0x686) & 0xfc3f)
+			memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | 0x40)
+	else:
+		for k in range(3):
+			memory.write_u32(ctl + 8 + 4 * k, C68kScript.u32(memory.read_u32(pose + 4 * k) - memory.read_u32(obj + 0x18 + 4 * k)))
+		memory.write_u16(ctl + 0x684, recorded)
+		memory.write_u16(ctl + 0x688, 0 if ((memory.read_u16(ctl + 0x684) ^ memory.read_u16(ctl + 0x686)) & 0x3c0) != 0 else 1)
+	memory.write_u16(ctl + 0x20, memory.read_u16(pose + 0xc))
+	memory.write_u16(ctl + 0x22, memory.read_u16(pose + 0xe))
+	memory.write_u16(ctl + 0x24, memory.read_u16(pose + 0x10))
+	var flags_now: int = memory.read_u16(ctl + 0x684)
+	a7 = entry_a7 - 0x18
+	update_aircraft_damage_state(ctl)
+	a7 = entry_a7
+	if ((memory.read_u16(ctl + 0x684) ^ memory.read_u16(ctl + 0x686)) & 0x2000) != 0:
+		var player_gear: int = abs_int(memory.read_s8(memory.read_u32(DAT_0001b738) + 0x679))
+		if (memory.read_u8(ctl + 0x684) & 0x20) != 0:
+			memory.write_u8(ctl + 0x679, C68kScript.u8(-player_gear))
+		else:
+			memory.write_u8(ctl + 0x679, C68kScript.u8(player_gear))
+			if memory.read_u8(ctl + 0x679) == 0:
+				memory.write_u8(ctl + 0x679, 1)
+	memory.write_u16(ctl + 0x686, flags_now)
+
+## 0xe42a: altitude curve lookup: band = altitude asr 16, at most 7 (a negative band is not
+## clamped, as in the bytes); result = sext(low word of entry[band] + ((entry[band + 1] -
+## entry[band]) muls.l (altitude & 0xffff) asr 16)) - a word add.
+func table_lerp_1b2c0(altitude: int) -> int:
+	assert(memory != null, "table_lerp_1b2c0 requires the altitude table in memory")
+	var band: int = C68kScript.asr32(altitude, 16)
+	if band > 7:
+		band = 7
+	var entry: int = DAT_0001b2c0 + band * 4
+	var delta: int = C68kScript.s32(memory.read_u32(entry + 4) - memory.read_u32(entry))
+	var step: int = C68kScript.asr32(C68kScript.s32(delta * (C68kScript.u32(altitude) & 0xffff)), 16)
+	return C68kScript.s16(step + memory.read_u16(entry + 2))
+
+## 0xe468: below 0x200 above the ground the density word is reduced by ((0x200 - height) *
+## density) asr 12 (rounded toward zero); returns the word sign-extended.
+func damp_short_if_below_0x200(height: int, density: int) -> int:
+	var d: int = C68kScript.s16(density)
+	height = C68kScript.s32(height)
+	if height <= 0x1ff:
+		var r: int = C68kScript.s32(d * C68kScript.s32(-(height - 0x200)))
+		if r < 0:
+			r = C68kScript.s32(r + 0xfff)
+		d = C68kScript.s16(d - (r >> 12))
+	return d
+
+## 0xe4a4: lift coefficient from the angle of attack (word +0x626) and flaps (byte +0x67b) for
+## aircraft_type_rec: base / slope = +0x26 / +0x28, blended toward +0x2a / +0x2c by |flaps| / 15
+## (muls.l, divs.l). Up to the stall angle +0x34: base + (slope * aoa) / 64 (toward zero); past
+## it the out byte is set to 0xc and the lift at the stall fades over 0x20 more: (0x20 - (aoa
+## - stall), at least 0) * (slope * stall + base) / 2048 (toward zero). Returns the word
+## sign-extended.
+func compute_template_force_from_626(aoa: int, flaps: int, smooth_frames: int) -> int:
+	assert(memory != null, "compute_template_force_from_626 requires original global memory")
+	var rec: int = memory.read_u32(DAT_00026004)
+	aoa = C68kScript.s16(aoa)
+	flaps = C68kScript.s16(flaps)
+	var lift: int
+	var slope: int
+	if flaps == 0:
+		lift = memory.read_s16(rec + 0x26)
+		slope = memory.read_s16(rec + 0x28)
+	else:
+		var f: int = C68kScript.s16(abs_int(flaps))
+		lift = C68kScript.s16(C68kScript.divs_trunc(C68kScript.s32((memory.read_s16(rec + 0x2a) - memory.read_s16(rec + 0x26)) * f), 15)) + memory.read_s16(rec + 0x26)
+		slope = C68kScript.s16(C68kScript.divs_trunc(C68kScript.s32((memory.read_s16(rec + 0x2c) - memory.read_s16(rec + 0x28)) * f), 15) + memory.read_s16(rec + 0x28))
+	var stall: int = memory.read_s16(rec + 0x34)
+	if aoa <= stall:
+		var t: int = C68kScript.s32(C68kScript.s16(slope) * aoa)
+		if t < 0:
+			t = C68kScript.s32(t + 0x3f)
+		return C68kScript.s16((t >> 6) + C68kScript.s16(lift))
+	memory.write_u8(smooth_frames, 0xc)
+	var fade: int = C68kScript.s32(0x20 - (aoa - stall))
+	if fade < 0:
+		fade = 0
+	var peak: int = C68kScript.s32(C68kScript.s32(stall * C68kScript.s16(slope)) + C68kScript.s16(lift))
+	var t2: int = C68kScript.s32(peak * fade)
+	if t2 < 0:
+		t2 = C68kScript.s32(t2 + 0x7ff)
+	return C68kScript.s16(t2 >> 11)
+
+## 0xe570: *out = (aircraft_type_rec long +0x38 * word(0x551a divs.w word((density + 0x105) asr
+## 3))) asr 8 - the rated power at this air density.
+func scale_template_field_38(density: int, out: int) -> void:
+	assert(memory != null, "scale_template_field_38 requires original global memory")
+	var divisor: int = C68kScript.s16(C68kScript.asr32(C68kScript.s16(density) + 0x105, 3))
+	var q: int = C68kScript.s16(C68kScript.divs_trunc(0x551a, divisor))
+	memory.write_u32(out, C68kScript.u32(C68kScript.asr32(C68kScript.s32(memory.read_s32(memory.read_u32(DAT_00026004) + 0x38) * q), 8)))
+
+## 0x10c2c: AI throttle: speed error = target - word(airspeed +0x62a asr 2); acc = 33 * error
+## - 32 * previous error (+0x620) + remainder (+0x63c) (word arithmetic); the new remainder is
+## acc % 256 (toward zero) and the throttle byte +0x668 moves by acc / 256 (toward zero),
+## clamped to 0..9. acc < -0x438 lowers the gear (byte +0x679 0 -> 1); acc > 0x1c2 opens up
+## fully (max_ai_throttle_maybe_invert_679).
+func adjust_ai_throttle_vs_speed(ctl: int, target_speed: int) -> void:
+	assert(memory != null, "adjust_ai_throttle_vs_speed requires original global memory")
+	var err: int = C68kScript.s16(C68kScript.s16(target_speed) - C68kScript.asr32(memory.read_u32(ctl + 0x62a), 2))
+	var delta: int = C68kScript.s16(err - memory.read_s16(ctl + 0x620))
+	memory.write_u16(ctl + 0x620, C68kScript.u16(err))
+	var acc: int = C68kScript.s16(err + memory.read_s16(ctl + 0x63c) + C68kScript.s16(delta << 5))
+	var rounded: int = C68kScript.s16(acc + 0xff) if acc < 0 else acc
+	memory.write_u16(ctl + 0x63c, C68kScript.u16(acc - C68kScript.s16(rounded & 0xff00)))
+	memory.write_u8(ctl + 0x668, C68kScript.u8(memory.read_u8(ctl + 0x668) + (rounded >> 8)))
+	if memory.read_s8(ctl + 0x668) < 0:
+		memory.write_u8(ctl + 0x668, 0)
+	elif memory.read_s8(ctl + 0x668) > 9:
+		memory.write_u8(ctl + 0x668, 9)
+	if acc < -0x438:
+		if memory.read_u8(ctl + 0x679) == 0:
+			memory.write_u8(ctl + 0x679, 1)
+	elif acc > 0x1c2:
+		max_ai_throttle_maybe_invert_679(ctl)
+
+## 0x10cb2: throttle byte +0x668 = 9; a gear moving down (byte +0x679 > 0) more than 100 above
+## the ground is sent back up (negated).
+func max_ai_throttle_maybe_invert_679(ctl: int) -> void:
+	memory.write_u8(ctl + 0x668, 9)
+	var gear: int = memory.read_s8(ctl + 0x679)
+	if gear > 0 and C68kScript.s32(memory.read_u32(memory.read_u32(ctl) + 0x1c) - memory.read_u32(ctl + 0x2e)) > 100:
+		memory.write_u8(ctl + 0x679, C68kScript.u8(-gear))
+
+## 0x102d6: angle of the word vector (dx, dz), 0x4000 per turn: |dz| < |dx| (words) ->
+## 0x1000 - atan((dz asl 12) / |dx|), negated when dx > 0; else dz != 0 -> atan((-dx asl 12) /
+## |dz|), 0x2000 - that when dz < 0; & 0x3fff. For (0, 0) the result register D2 is never
+## written, so the caller's D2 comes back (d2_in & 0x3fff).
+func atan2_fixed14(dx: int, dz: int, d2_in: int = 0) -> int:
+	dx = C68kScript.s16(dx)
+	dz = C68kScript.s16(dz)
+	var abs_x: int = C68kScript.s16(abs_int(dx))
+	var abs_z: int = C68kScript.s16(abs_int(dz))
+	var d2: int = C68kScript.u32(d2_in)
+	if abs_z < abs_x:
+		d2 = C68kScript.u16(0x1000 - atan_fixed14(C68kScript.divs_trunc(C68kScript.s32(dz << 12), abs_x)))
+		if dx > 0:
+			d2 = C68kScript.u16(-d2)
+	elif dz != 0:
+		d2 = atan_fixed14(C68kScript.divs_trunc(C68kScript.s32((-dx) << 12), abs_z))
+		if dz < 0:
+			d2 = C68kScript.u16(0x2000 - d2)
+	return d2 & 0x3fff
+
+## 0x10558: control inputs into the 4-entry ring (+0x642 index; aileron +0x644, elevator +0x64c,
+## rudder +0x654 slots; running sums +0x65c / +0x65e / +0x660), clamped to +-0x140 / +-0x200 /
+## +-0x40: the new value is added, the next slot's value (written 3 calls ago) subtracted, and
+## the outputs +0x666 / +0x662 / +0x664 = sum / 4 toward zero. Nothing when the damage byte +0x685
+## has bit 0 (word bit 0x100).
+func enqueue_control_inputs_avg4(ctl: int, rudder: int, elevator: int, aileron: int) -> void:
+	assert(memory != null, "enqueue_control_inputs_avg4 requires original global memory")
+	if (memory.read_u8(ctl + 0x685) & 1) != 0:
+		return
+	var inputs := [[C68kScript.s16(aileron), 0x140, 0x644, 0x65c, 0x666], [C68kScript.s16(elevator), 0x200, 0x64c, 0x65e, 0x662], [C68kScript.s16(rudder), 0x40, 0x654, 0x660, 0x664]]
+	for c in inputs:
+		if abs_int(c[0]) > c[1]:
+			c[0] = -c[1] if c[0] < 0 else c[1]
+	var ring: int = memory.read_s16(ctl + 0x642)
+	for c in inputs:
+		memory.write_u16(ctl + c[2] + ring * 2, C68kScript.u16(c[0]))
+		memory.write_u16(ctl + c[3], C68kScript.u16(memory.read_u16(ctl + c[3]) + c[0]))
+	ring = C68kScript.s16(ring + 1)
+	if ring == 4:
+		ring = 0
+	for c in inputs:
+		memory.write_u16(ctl + c[3], C68kScript.u16(memory.read_u16(ctl + c[3]) - memory.read_u16(ctl + c[2] + ring * 2)))
+		var sum: int = memory.read_s16(ctl + c[3])
+		if sum < 0:
+			sum += 3
+		memory.write_u16(ctl + c[4], C68kScript.u16(sum >> 2))
+	memory.write_u16(ctl + 0x642, C68kScript.u16(ring))
+
+## 0x10360: the target seen from the aircraft. height = obj y + 0x2d * vertical speed (+0xc) -
+## ground (+0x2e) goes to *height_out; below 4000 the target is raised by (4000 - height) (and
+## at or below 1000 the AI opens up fully: max_ai_throttle_maybe_invert_679, 0x4c below) and
+## the function returns 1, else 0. Offsets dx / dy / dz; far away (|dx| + |dz| > 0x8000) the
+## climb is limited: aim = |dy| > 0x800 ? horiz / 4 : (horiz / 256) * |dy| / 32 (toward zero,
+## signed like dy), blended back toward dy while horiz <= 0xffff ((aim - dy) * (horiz - 0x8000)
+## / 0x8000). The vector, shifted to fit 15 bits, is written as words +2 / +6 / +10 of vec,
+## rotated by the inverse attitude (build_attitude_matrix_3ang_alt of the negated angle words,
+## frame a6 - 0x12, 0x58 below; transform_vecs12_by_matrix3 in place), and aimed at
+## (attitude_from_velocity into the frame words a6 - 0x14 / - 0x16, isqrt 0x4c / attitude 0x68
+## below); the folded pitch / heading go to *pitch_err / *heading_err (words).
+func build_relative_steer_sample(ctl: int, x: int, y: int, z: int, height_out: int, vec: int, pitch_err: int, heading_err: int) -> int:
+	assert(memory != null, "build_relative_steer_sample requires original global memory")
+	assert(a7 != 0, "build_relative_steer_sample needs a7 (its frame holds the matrix and angles)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var obj: int = memory.read_u32(ctl)
+	var height: int = C68kScript.s32(C68kScript.s32(0x2d * memory.read_s32(ctl + 0xc)) + memory.read_u32(obj + 0x1c) - memory.read_u32(ctl + 0x2e))
+	memory.write_u32(height_out, C68kScript.u32(height))
+	var low: int = 0
+	var ty: int = C68kScript.s32(y)
+	if height <= 0xf9f:
+		ty = C68kScript.s32(ty + 0xfa0 - height)
+		if height <= 0x3e8:
+			a7 = entry_a7 - 0x4c
+			max_ai_throttle_maybe_invert_679(ctl)
+			a7 = entry_a7
+		low = 1
+	var dx: int = C68kScript.s32(C68kScript.s32(x) - memory.read_u32(obj + 0x18))
+	var horiz: int = abs_int(dx)
+	var dy: int = C68kScript.s32(ty - memory.read_u32(obj + 0x1c))
+	var abs_dy: int = abs_int(dy)
+	var dz: int = C68kScript.s32(C68kScript.s32(z) - memory.read_u32(obj + 0x20))
+	horiz = C68kScript.s32(horiz + abs_int(dz))
+	if horiz > 0x8000:
+		var aim: int
+		if abs_dy > 0x800:
+			aim = horiz
+			if aim < 0:
+				aim += 3
+			aim = aim >> 2
+		else:
+			var h: int = horiz
+			if h < 0:
+				h += 0xff
+			aim = C68kScript.s32((h >> 8) * abs_dy)
+			if aim < 0:
+				aim += 0x1f
+			aim = aim >> 5
+		if dy < 0:
+			aim = -aim
+		if horiz <= 0xffff:
+			var t: int = C68kScript.s32((aim - dy) * (horiz - 0x8000))
+			if t < 0:
+				t += 0x7fff
+			dy = C68kScript.s32(dy + (t >> 15))
+		else:
+			dy = aim
+		abs_dy = abs_int(dy)
+	var span: int = C68kScript.u32(horiz + abs_dy)
+	var shift: int = 0
+	while (span & 0xffff8000) != 0:
+		shift += 1
+		span = C68kScript.u32(C68kScript.asr32(span, 1))
+	memory.write_u16(vec + 2, C68kScript.u16(C68kScript.asr32(dx, shift)))
+	memory.write_u16(vec + 6, C68kScript.u16(C68kScript.asr32(dy, shift)))
+	memory.write_u16(vec + 10, C68kScript.u16(C68kScript.asr32(dz, shift)))
+	var matrix: int = a6 - 0x12
+	a7 = entry_a7 - 0x58
+	build_attitude_matrix_3ang_alt((-memory.read_s16(ctl + 0x20)) & 0x3fff, (-memory.read_s16(ctl + 0x22)) & 0x3fff, (-memory.read_s16(ctl + 0x24)) & 0x3fff, matrix)
+	a7 = entry_a7
+	transform_vecs12_by_matrix3(1, vec, vec, matrix)
+	var sq: int = 0
+	for off in [2, 6, 10]:
+		sq = C68kScript.s32(sq + memory.read_s16(vec + off) * memory.read_s16(vec + off))
+	var length: int = isqrt_floor(sq)
+	attitude_from_velocity(memory.read_s16(vec + 2), memory.read_s16(vec + 6), memory.read_s16(vec + 10), C68kScript.s16(length), sq, a6 - 0x14, a6 - 0x16)
+	memory.write_u16(pitch_err, C68kScript.u16(fold_angle_pm_0x2000(memory.read_s16(a6 - 0x14))))
+	memory.write_u16(heading_err, C68kScript.u16(fold_angle_pm_0x2000(memory.read_s16(a6 - 0x16))))
+	return low
+
+## 0x109ba: steering. Small errors (both within 0x500) at or above the ground: elevator = 5 *
+## pitch - 4 * previous pitch (+0x61a), aileron = 2 * heading - previous heading (+0x61c),
+## rudder = aileron asr 4. Otherwise a bank toward the target: bank error = fold(atan2(vec +2,
+## vec +6)); below 0x5000 the target bank (current bank +0x24 + error) is limited to a height-
+## dependent maximum (0 below the ground, the height up to 0x1000, then 0x1000 + (height -
+## 0x1000) / 4; mirrored past 0x2000) and the error recomputed; aileron = the error, or within
+## 0x280 (3 * error - 2 * previous +0x61e) / 2; elevator = (cos(error) asl 9) asr 12; rudder 0;
+## +0x61e = error. The errors are kept in +0x61a / +0x61c and the commands queued
+## (enqueue_control_inputs_avg4, 0x3c below). d2_in is the caller's D2, which atan2_fixed14
+## returns for a zero vector.
+func apply_relative_heading_steer(ctl: int, height: int, vec: int, pitch_err: int, heading_err: int, d2_in: int = 0) -> void:
+	assert(memory != null, "apply_relative_heading_steer requires original global memory")
+	var entry_a7: int = a7
+	height = C68kScript.s32(height)
+	pitch_err = C68kScript.s16(pitch_err)
+	heading_err = C68kScript.s16(heading_err)
+	var rudder: int = 0
+	var elevator: int
+	var aileron: int
+	if abs_int(heading_err) <= 0x500 and abs_int(pitch_err) <= 0x500 and height >= 0:
+		elevator = C68kScript.s16((C68kScript.s16(pitch_err - memory.read_s16(ctl + 0x61a)) << 2) + pitch_err)
+		aileron = C68kScript.s16(heading_err + (heading_err - memory.read_s16(ctl + 0x61c)))
+		rudder = aileron >> 4
+	else:
+		var bank_err: int = C68kScript.s16(fold_angle_pm_0x2000(atan2_fixed14(memory.read_s16(vec + 2), memory.read_s16(vec + 6), d2_in)))
+		if height <= 0x4fff:
+			var target: int = C68kScript.u16(bank_err + memory.read_u16(ctl + 0x24)) & 0x3fff
+			var limit: int
+			if height < 0:
+				limit = 0
+			elif height <= 0xfff:
+				limit = C68kScript.s16(height)
+			else:
+				var t: int = C68kScript.s32((height - 0x1000) << 12)
+				if t < 0:
+					t += 0x3fff
+				limit = C68kScript.s16((t >> 14) + 0x1000)
+			if target > 0x2000:
+				limit = C68kScript.s16(0x4000 - limit)
+				if target < limit:
+					target = limit
+			elif target > limit:
+				target = limit
+			bank_err = C68kScript.s16(fold_angle_pm_0x2000((C68kScript.s16(target) - memory.read_s16(ctl + 0x24)) & 0x3fff))
+		if abs_int(bank_err) > 0x280:
+			aileron = bank_err
+		else:
+			aileron = C68kScript.s16(C68kScript.asr32(bank_err + 2 * (bank_err - memory.read_s16(ctl + 0x61e)), 1))
+		elevator = C68kScript.s16(C68kScript.asr32(C68kScript.lsl32(cos_fixed14(bank_err & 0x3fff), 9), 12))
+		memory.write_u16(ctl + 0x61e, C68kScript.u16(bank_err))
+	memory.write_u16(ctl + 0x61a, C68kScript.u16(pitch_err))
+	memory.write_u16(ctl + 0x61c, C68kScript.u16(heading_err))
+	a7 = entry_a7 - 0x3c
+	enqueue_control_inputs_avg4(ctl, rudder, elevator, aileron)
+	a7 = entry_a7
+
+## 0x10b2e: build_relative_steer_sample into the frame (height a6 - 0x10, vector a6 - 0xc,
+## pitch a6 - 0x12, heading a6 - 0x14; 0x44 below), then apply_relative_heading_steer (0x38
+## below) - with D2 still holding the vector's address.
+func steer_entity_toward_point(ctl: int, x: int, y: int, z: int) -> void:
+	assert(a7 != 0, "steer_entity_toward_point needs a7 (its frame holds the sample)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var vec: int = a6 - 0xc
+	a7 = entry_a7 - 0x44
+	build_relative_steer_sample(ctl, x, y, z, a6 - 0x10, vec, a6 - 0x12, a6 - 0x14)
+	a7 = entry_a7 - 0x38
+	apply_relative_heading_steer(ctl, memory.read_s32(a6 - 0x10), vec, memory.read_s16(a6 - 0x12), memory.read_s16(a6 - 0x14), vec)
+	a7 = entry_a7
+
+## 0x6e74: resets the span runs of the device slots 1..3 (buffers at 0x1b778 + 4 (i - 1)) -
+## every slot when slot == 0, else that one: for each view row (sext word view_rows) an 8-byte
+## run (0, 1, view_width, fill_colour).
+func reset_span_row_lists(slot: int) -> void:
+	assert(memory != null, "reset_span_row_lists requires original global memory")
+	for i in range(1, 4):
+		var run: int = memory.read_u32(DAT_0001b778 + 4 * (i - 1))
+		if run == 0 or (C68kScript.u32(slot) != 0 and C68kScript.s32(slot) != i):
+			continue
+		var row: int = 0
+		while row < memory.read_s16(DAT_0001b828):
+			memory.write_u16(run, 0)
+			memory.write_u16(run + 2, 1)
+			memory.write_u16(run + 4, memory.read_u16(DAT_0001b82a))
+			memory.write_u16(run + 6, memory.read_u16(DAT_0001daa0))
+			run += 8
+			row += 1
+
+## 0x6ed6: per-view setup: reset_span_row_lists(0) (8 below), palette_changed = 1, 0x1da8c =
+## 0; the clip y max / view half height (0x1b73e / 0x20ae8) = view_rows / 2 toward zero and the
+## last scan row (0x20ae6) = view_rows, both 0x14 less with an inset (view_inset 0x20ae2 = 4)
+## when the view mode is neither 1 nor 8 and host word +0xa2 is set (else inset 0); 0x20ae4 /
+## 0x20ae0 = 0; the projection scales (0x20b28 / 0x20b26) from the tables at 0x20b14 / 0x20afc
+## - entry (word 0x20af4) in view mode 6 when it is non-zero, else entry 0; 0x1da8a = 0.
+func update_view_clip_bounds() -> void:
+	assert(memory != null, "update_view_clip_bounds requires original global memory")
+	var entry_a7: int = a7
+	a7 = entry_a7 - 8
+	reset_span_row_lists(0)
+	a7 = entry_a7
+	memory.write_u16(0x1daa2, 1)
+	memory.write_u16(0x1da8c, 0)
+	var rows: int = memory.read_s16(DAT_0001b828)
+	var half: int = C68kScript.s16((rows + 1 if rows < 0 else rows) >> 1)
+	memory.write_u16(DAT_0001b73e, C68kScript.u16(half))
+	memory.write_u16(0x20ae8, C68kScript.u16(half))
+	memory.write_u16(0x20ae6, C68kScript.u16(rows))
+	var view: int = memory.read_s16(DAT_0001d858)
+	if view != 1 and view != 8 and memory.read_u16(memory.read_u32(DAT_0001b5a0) + 0xa2) != 0:
+		var inset_half: int = C68kScript.u16(half - 0x14)
+		memory.write_u16(DAT_0001b73e, inset_half)
+		memory.write_u16(0x20ae8, inset_half)
+		memory.write_u16(0x20ae6, C68kScript.u16(memory.read_u16(0x20ae6) - 0x14))
+		memory.write_u16(0x20ae2, 4)
+	else:
+		memory.write_u16(0x20ae2, 0)
+	memory.write_u16(0x20ae4, 0)
+	memory.write_u16(0x20ae0, 0)
+	var index: int = 0
+	if view == 6 and memory.read_u16(0x20af4) != 0:
+		index = memory.read_s16(0x20af4)
+	memory.write_u16(0x20b28, memory.read_u16(0x20b14 + index * 2))
+	memory.write_u16(0x20b26, memory.read_u16(0x20afc + index * 2))
+	memory.write_u16(0x1da8a, 0)
+
+## 0x14af2: drops an object's fractal reference (+0x2c). A static scenery piece (byte +5 bit 3
+## without bit 4) first goes back to its template position (descriptor +2 / +6 / +0xa) through
+## apply_template_chain_xform(obj, 1, 0, 0) (0x34 below). A user (byte +6 bit 1 clear) counts the
+## shared block's users down (word +0), setting deferred_free_flag at 0. An owner walks its block
+## list (word count +0, longs from +4): a block still in use releases every object_pool object
+## pointing at it (recursively), still-used blocks print a warning through the host
+## (overlay_printf, unported; 0x28 below like the recursion), and each block and then the list
+## are freed. +0x2c = 0.
+func release_fractal_reference(obj: int) -> void:
+	assert(memory != null, "release_fractal_reference requires original global memory")
+	var entry_a7: int = a7
+	if (memory.read_u8(obj + 5) & 8) != 0 and (memory.read_u8(obj + 5) & 0x10) == 0:
+		var desc: int = C68kScript.u32(memory.read_u32(memory.read_u32(memory.read_u32(obj + 0x24) + 0x28) + 0x2e + memory.read_u8(obj + 1) * 0x18) + memory.read_u32(memory.read_u32(DAT_0001b5a0) + 0x8c))
+		for k in range(3):
+			memory.write_u32(obj + 0x18 + 4 * k, memory.read_u32(desc + 2 + 4 * k))
+		a7 = entry_a7 - 0x34
+		apply_template_chain_xform(obj, 1, 0, 0)
+		a7 = entry_a7
+	if (memory.read_u8(obj + 6) & 2) == 0:
+		var block: int = memory.read_u32(obj + 0x2c)
+		memory.write_u16(block, C68kScript.u16(memory.read_u16(block) - 1))
+		if memory.read_u16(block) == 0:
+			memory.write_u16(DAT_0001c1bc, 1)
+	else:
+		var list: int = memory.read_u32(obj + 0x2c)
+		if list != 0:
+			var left: int = memory.read_u16(list)
+			var cursor: int = list + 4
+			while true:
+				left = C68kScript.u16(left - 1)
+				if left == 0xffff:
+					break
+				var block2: int = memory.read_u32(cursor)
+				cursor += 4
+				if memory.read_u16(block2) != 0:
+					var n: int = memory.read_u16(DAT_0001b734 + 2)
+					var slot: int = DAT_0001b5a4
+					while true:
+						n = C68kScript.u16(n - 1)
+						if n == 0xffff:
+							break
+						var other: int = memory.read_u32(slot)
+						slot += 4
+						if memory.read_u32(other + 0x2c) == block2:
+							a7 = entry_a7 - 0x28
+							release_fractal_reference(other)
+							a7 = entry_a7
+				if memory.read_u16(block2) != 0:
+					a7 = entry_a7 - 0x28
+					_bsr_unported(0x1254, [0x14a9a])
+					a7 = entry_a7
+				heap_free_coalesce(block2)
+			heap_free_coalesce(memory.read_u32(obj + 0x2c))
+	memory.write_u32(obj + 0x2c, 0)
+
+## 0x137da: drops every contact record (contact_table 0x1bdbc, 256 slots) that names obj as
+## object a or b; when b is a fractal owner (byte +6 bit 1) and a holds a fractal reference
+## (byte +6 bit 5 and +0x2c), a releases it first (0x18 below); the record is freed and its
+## slot cleared.
+func drop_contact_records_for_object(obj: int) -> void:
+	assert(memory != null, "drop_contact_records_for_object requires original global memory")
+	var entry_a7: int = a7
+	for i in range(0x100):
+		var slot: int = DAT_0001bdbc + 4 * i
+		var rec: int = memory.read_u32(slot)
+		if rec == 0:
+			continue
+		if memory.read_u32(rec) != C68kScript.u32(obj) and memory.read_u32(rec + 4) != C68kScript.u32(obj):
+			continue
+		var obj_a: int = memory.read_u32(rec)
+		if (memory.read_u8(memory.read_u32(rec + 4) + 6) & 2) != 0 and (memory.read_u8(obj_a + 6) & 0x20) != 0 and memory.read_u32(obj_a + 0x2c) != 0:
+			a7 = entry_a7 - 0x18
+			release_fractal_reference(obj_a)
+			a7 = entry_a7
+		heap_free_coalesce(rec)
+		memory.write_u32(slot, 0)
+
+## 0x19430: spawn_mission_pool_object(parachute_template, x, y, z, sext pitch / heading / bank,
+## 0) (0x40 below); null -> 0. The controller: +0x610 = frame_counter, word +0x614 = the low word
+## of the first argument, words +0x20 / +0x22 / +0x24 = the angles; the 13 vertices are scaled
+## by 1/8 (asr) and give start velocities +0x622 / +0x656 / +0x68a + 4 v = x * 0x1c6, y * 0x1c6,
+## z * 0x255 (muls.l); +0x618 = 7, word +0x61c = 0x62. Returns the controller.
+func spawn_bailout_parachute(word_614: int, x: int, y: int, z: int, pitch: int, heading: int, bank: int) -> int:
+	assert(memory != null, "spawn_bailout_parachute requires original global memory")
+	var entry_a7: int = a7
+	a7 = entry_a7 - 0x40
+	var obj: int = spawn_mission_pool_object(memory.read_u32(DAT_00026780), x, y, z, C68kScript.s16(pitch), C68kScript.s16(heading), C68kScript.s16(bank), 0)
+	a7 = entry_a7
+	if obj == 0:
+		return 0
+	var ctl: int = memory.read_u32(obj + 8)
+	memory.write_u32(ctl + 0x610, memory.read_u32(DAT_0001b838))
+	memory.write_u16(ctl + 0x614, C68kScript.u16(word_614))
+	memory.write_u16(ctl + 0x20, C68kScript.u16(pitch))
+	memory.write_u16(ctl + 0x22, C68kScript.u16(heading))
+	memory.write_u16(ctl + 0x24, C68kScript.u16(bank))
+	var verts: int = memory.read_u32(obj + 0x44)
+	for v in range(13):
+		var p: int = verts + v * 0xc
+		for k in range(3):
+			memory.write_u32(p + 4 * k, C68kScript.u32(C68kScript.asr32(memory.read_u32(p + 4 * k), 3)))
+		memory.write_u32(ctl + 0x622 + v * 4, C68kScript.u32(memory.read_s32(p) * 0x1c6))
+		memory.write_u32(ctl + 0x656 + v * 4, C68kScript.u32(memory.read_s32(p + 4) * 0x1c6))
+		memory.write_u32(ctl + 0x68a + v * 4, C68kScript.u32(memory.read_s32(p + 8) * 0x255))
+	memory.write_u32(ctl + 0x618, 7)
+	memory.write_u16(ctl + 0x61c, 0x62)
+	return ctl
+
+## 0xe792: aircraft flight model (update_aircraft_entity), the +0x32 handler of the player
+## (runtime 0xe772) and the core of every AI state. Translated block by block from the bytes /
+## section-checked semantic C (blocks 0 .. 7c as named there).
+## Frame: link.w a6,#-0x4c and ten saved registers (body 0x78 below the entry). Locals kept in
+## frame memory where the bytes read them uninitialised or pass their address: -0x42 local_46
+## (power target), -0x3e local_42 (windmill term), -0x30 local_34 (thrust), -0x22 local_26,
+## -0x24 / -0x26 pitch / att_22 words, -0x1e matrix, -0xc velocity record.
+func update_aircraft_entity(ctl: int) -> void:
+	assert(memory != null, "update_aircraft_entity requires original global memory")
+	assert(a7 != 0, "update_aircraft_entity needs a7 (its frame holds the locals)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var body_a7: int = a6 - 0x4c - 40
+	var obj: int = memory.read_u32(ctl)
+	var rough: bool = false
+	memory.write_u32(DAT_00026004, memory.read_u32(ctl + 4))
+	var rec: int = memory.read_u32(DAT_00026004)
+	memory.write_u16(a6 - 0x24, memory.read_u16(ctl + 0x20))
+	memory.write_u16(a6 - 0x26, memory.read_u16(ctl + 0x22))
+	var heading: int = memory.read_u16(ctl + 0x24)
+	var speed: int = memory.read_s32(ctl + 0x62a)
+	var airspeed: int = speed >> 2
+	var adj: int = memory.read_s16(rec + 0x40)
+	if memory.read_u8(ctl + 0x679) != 0x2d:
+		if adj < 0:
+			adj += 1
+		adj = adj >> 1
+	var floor_y: int = C68kScript.s32(memory.read_u32(ctl + 0x2e) + adj)
+	var rpm_start: int = memory.read_s32(ctl + 0x66a)
+	var weight: int = C68kScript.s16(memory.read_s8(ctl + 0x67d) + memory.read_u16(ctl + 0x634) + memory.read_s8(ctl + 0x67e))
+	## Block 0: wrecked on the ground (damage word bit 0x800).
+	if (memory.read_u8(ctl + 0x684) & 8) != 0:
+		if memory.read_s32(ctl + 0x2e) < C68kScript.s32(memory.read_u32(obj + 0x1c) - 0x16):
+			memory.write_u32(ctl + 0xc, C68kScript.u32(-0x16))
+		else:
+			if memory.read_u8(ctl + 0x2c) == 0x10:
+				memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | 0x1000)
+				if ctl == memory.read_u32(DAT_0001b738):
+					memory.write_u16(0x1b850, 1)
+			memory.write_u32(ctl + 0xc, C68kScript.u32(floor_y - memory.read_u32(obj + 0x1c)))
+		memory.write_u16(ctl + 0x61e, C68kScript.u16(memory.read_u16(ctl + 0x61e) + (overlay_rng_next() & 0x7f)))
+		memory.write_u16(ctl + 0x24, (memory.read_u16(ctl + 0x61e) + memory.read_u16(ctl + 0x24)) & 0x3fff)
+		memory.write_u16(ctl + 0x61a, C68kScript.u16(memory.read_u16(ctl + 0x61a) - (overlay_rng_next() & 0x7f)))
+		memory.write_u16(ctl + 0x20, (memory.read_u16(ctl + 0x61a) + memory.read_u16(ctl + 0x20)) & 0x3fff)
+		memory.write_u8(ctl + 0x669, 0)
+		return
+	## Block 1: damaged elevator (0x4) / ailerons (0x8) jitter; 0x100 rolls the aircraft off.
+	for c in [[4, 0x662, 0x200], [8, 0x666, 0x140]]:
+		if (memory.read_u8(ctl + 0x685) & c[0]) != 0:
+			var v: int = C68kScript.s16(memory.read_u16(ctl + c[1]) + (overlay_rng_next() & 0x7f) - 0x40)
+			memory.write_u16(ctl + c[1], C68kScript.u16(v))
+			if abs_int(v) > c[2]:
+				memory.write_u16(ctl + c[1], C68kScript.u16(-c[2] if memory.read_s16(ctl + c[1]) < 0 else c[2]))
+	if (memory.read_u8(ctl + 0x684) & 1) != 0:
+		memory.write_u16(ctl + 0x662, 0)
+		memory.write_u16(ctl + 0x666, 0xff80)
+	## Block 1b: engine gate and the fuel-burn accumulator (+0x680).
+	var throttle: int = memory.read_s8(ctl + 0x668)
+	memory.write_u8(ctl + 0x669, 1)
+	var smoke_gate: bool = (memory.read_u8(ctl + 0x685) & 0x40) != 0 and memory.read_u16(ctl + 0x68c) == 0
+	if smoke_gate or (memory.read_u16(ctl + 0x684) & 0x300) != 0 or (memory.read_u8(ctl + 0x67d) == 0 and memory.read_u8(ctl + 0x67e) == 0):
+		memory.write_u8(ctl + 0x669, 0)
+		throttle = 0
+	elif memory.read_s8(ctl + 0x685) < 0:
+		if throttle < 0:
+			throttle += 1
+		throttle = throttle >> 1
+	memory.write_u16(ctl + 0x680, C68kScript.u16(throttle + memory.read_u16(ctl + 0x680)))
+	if memory.read_s16(ctl + 0x680) > memory.read_s16(rec + 0x1e):
+		memory.write_u16(ctl + 0x680, C68kScript.u16(memory.read_u16(ctl + 0x680) - memory.read_u16(rec + 0x1e)))
+		if (overlay_rng_next() & 1) != 0 and memory.read_u8(ctl + 0x67d) != 0:
+			memory.write_u8(ctl + 0x67d, memory.read_u8(ctl + 0x67d) - 1)
+		elif memory.read_u8(ctl + 0x67e) != 0:
+			memory.write_u8(ctl + 0x67e, memory.read_u8(ctl + 0x67e) - 1)
+	## Block 2a: air density, ground effect, rated power and the thrust term.
+	var density: int = C68kScript.s16(table_lerp_1b2c0(memory.read_u32(obj + 0x1c)))
+	var damped: int = C68kScript.s16(damp_short_if_below_0x200(C68kScript.s32(memory.read_u32(obj + 0x1c) - memory.read_u32(ctl + 0x2e)), density))
+	scale_template_field_38(density, a6 - 0x22)
+	var field38: int = memory.read_s32(a6 - 0x22)
+	var thrust: int = 0
+	if throttle != 0:
+		if memory.read_s16(rec + 0x3e) < airspeed:
+			thrust = C68kScript.divs_trunc(C68kScript.divs_trunc(C68kScript.s32(field38 * throttle), 9), airspeed)
+		else:
+			thrust = C68kScript.divs_trunc(throttle * memory.read_s16(rec + 0x3c), 9)
+	memory.write_u32(a6 - 0x30, C68kScript.u32(thrust))
+	## Block 2b: engine model (player / designated aircraft only).
+	if ctl == memory.read_u32(DAT_0001b738) or ctl == memory.read_u32(DAT_0001b888):
+		memory.write_u32(a6 - 0x3e, C68kScript.u32(C68kScript.divs_trunc(C68kScript.s32(C68kScript.lsl32(airspeed, 17)), 0x1c20)))
+		var q: int = C68kScript.divs_trunc(0x5e50, C68kScript.s16(C68kScript.asr32(density + 0xa25, 5)))
+		memory.write_u32(a6 - 0x42, C68kScript.u32(C68kScript.asr32(C68kScript.s32(q * C68kScript.s32(throttle * 0x666)), 5)))
+		var power_target: int = memory.read_s32(a6 - 0x42)
+		memory.write_u32(ctl + 0x66e, C68kScript.u32(memory.read_s32(ctl + 0x66e) + _ease8(C68kScript.s32(power_target - memory.read_s32(ctl + 0x66e)))))
+		var manifold: int = 0
+		if memory.read_u8(ctl + 0x669) != 0 and (memory.read_u16(ctl + 0x684) & 0x4300) == 0:
+			manifold = C68kScript.s16(C68kScript.asr32(field38, 9))
+		if memory.read_s8(ctl + 0x685) < 0:
+			if manifold < 0:
+				manifold += 1
+			manifold = manifold >> 1
+		memory.write_u16(ctl + 0x672, C68kScript.u16(memory.read_u16(ctl + 0x672) + _ease8(manifold - memory.read_s16(ctl + 0x672))))
+		var half: int = C68kScript.s32(memory.read_s32(a6 - 0x3e) - power_target)
+		if half < 0:
+			half += 1
+		var rpm_target: int = C68kScript.s32(power_target + (half >> 1))
+		memory.write_u32(ctl + 0x66a, C68kScript.u32(memory.read_s32(ctl + 0x66a) + _ease8(C68kScript.s32(rpm_target - rpm_start))))
+		if (memory.read_u8(ctl + 0x684) & 0x40) != 0 and memory.read_u32(ctl + 0x66e) == 0:
+			memory.write_u8(ctl + 0x669, 0)
+	## Block 3a: angle-of-attack step (+0x626) toward the stick.
+	var stick: int
+	var gain: int
+	var roll_cmd: int
+	var yaw_cmd: int
+	if airspeed < 0xca8:
+		if memory.read_s16(rec + 0x36) < airspeed:
+			var g: int = C68kScript.s32(memory.read_s16(ctl + 0x662) * (memory.read_s16(rec + 0x34) - 0x200))
+			if g < 0:
+				g += 0x1ff
+			stick = C68kScript.s16(memory.read_s16(ctl + 0x662) + C68kScript.divs_trunc(C68kScript.s32((g >> 9) * (0xca8 - airspeed)), 0xca8 - memory.read_s16(rec + 0x36)))
+		else:
+			var g2: int = C68kScript.s32(memory.read_s16(ctl + 0x662) * memory.read_s16(rec + 0x34))
+			if g2 < 0:
+				g2 += 0x1ff
+			stick = C68kScript.s16(g2 >> 9)
+		gain = _scale_by_speed(airspeed, 0x2a)
+		roll_cmd = C68kScript.s16(_scale_by_speed(airspeed, memory.read_s16(ctl + 0x664)))
+		yaw_cmd = C68kScript.s16(_scale_by_speed(airspeed, memory.read_s16(ctl + 0x666)))
+	else:
+		stick = memory.read_s16(ctl + 0x662)
+		gain = 0x2a
+		roll_cmd = memory.read_s16(ctl + 0x664)
+		yaw_cmd = memory.read_s16(ctl + 0x666)
+	var step: int = C68kScript.s32(gain * (stick - (memory.read_s16(ctl + 0x626) - memory.read_s16(rec + 0x44))))
+	if step < 0:
+		step += 0xff
+	memory.write_u16(ctl + 0x626, C68kScript.u16(memory.read_u16(ctl + 0x626) + (step >> 8)))
+	## Block 3b: on the ground with the gear down ('-' = 0x2d): AoA held to the three-point
+	## attitude, blended back up between ground speeds +0x46 and +0x48; the roll command becomes
+	## steering from the engine terms (local_46 / local_42 - stale for non-engine aircraft).
+	var on_ground_gear: bool = memory.read_u8(ctl + 0x63e) != 0 and memory.read_u8(ctl + 0x679) == 0x2d
+	if on_ground_gear:
+		if memory.read_s16(ctl + 0x626) > memory.read_s16(rec + 0x42):
+			memory.write_u16(ctl + 0x626, memory.read_u16(rec + 0x42))
+		if airspeed < memory.read_s16(rec + 0x48):
+			var t46: int = memory.read_s16(rec + 0x46)
+			if t46 < airspeed:
+				memory.write_u16(ctl + 0x626, C68kScript.u16(memory.read_s16(rec + 0x42) + C68kScript.divs_trunc(C68kScript.s32((memory.read_s16(ctl + 0x626) - memory.read_s16(rec + 0x42)) * (airspeed - t46)), memory.read_s16(rec + 0x48) - t46)))
+			else:
+				memory.write_u16(ctl + 0x626, memory.read_u16(rec + 0x42))
+		var mix: int = C68kScript.s32(memory.read_s32(a6 - 0x42) + C68kScript.s32(memory.read_s32(a6 - 0x3e) * 2))
+		if mix < 0:
+			mix += 1
+		mix = mix >> 1
+		if mix < 0x10000:
+			var m2: int = C68kScript.s32(mix * memory.read_s16(ctl + 0x666))
+			if m2 < 0:
+				m2 += 0xffff
+			roll_cmd = C68kScript.s16(m2 >> 16)
+		else:
+			roll_cmd = memory.read_s16(ctl + 0x666)
+		roll_cmd = roll_cmd >> 2
+		if ctl == memory.read_u32(DAT_0001b738):
+			memory.write_u16(0x1b858, 0)
+	heading = (yaw_cmd + heading) & 0x3fff
+	roll_cmd = roll_cmd & 0x3fff
+	if on_ground_gear:
+		memory.write_u16(a6 - 0x26, (roll_cmd + memory.read_u16(a6 - 0x26)) & 0x3fff)
+	## Block 4a: lift coefficient (+0x63a), eased over the post-stall frames (byte +0x678).
+	var lift: int = C68kScript.s16(compute_template_force_from_626(memory.read_s16(ctl + 0x626), memory.read_s8(ctl + 0x67b), ctl + 0x678))
+	if memory.read_u8(ctl + 0x678) != 0:
+		var d: int = lift - memory.read_s16(ctl + 0x63a)
+		if d < 0:
+			d += 7
+		lift = (d >> 3) + memory.read_s16(ctl + 0x63a)
+		memory.write_u8(ctl + 0x678, memory.read_u8(ctl + 0x678) - 1)
+	memory.write_u16(ctl + 0x63a, C68kScript.u16(lift))
+	## Block 4b: linear drag (long -0x4c) and the quadratic (induced) drag term.
+	var t22: int = memory.read_s16(rec + 0x22)
+	var lin: int = C68kScript.s32(airspeed * C68kScript.divs_trunc(C68kScript.s32(t22 * C68kScript.asr32(C68kScript.s32(airspeed * lift), 8)), damped))
+	if lin < 0:
+		lin += 7
+	lin = C68kScript.divs_trunc(C68kScript.divs_trunc(lin >> 3, 0xa0), weight)
+	memory.write_u32(a6 - 0x4c, C68kScript.u32(lin))
+	var quad_in: int = C68kScript.asr32(C68kScript.s32(memory.read_s16(rec + 0x24) * C68kScript.asr32(C68kScript.s32(lift * lift), 4)), 20)
+	var quad: int = C68kScript.s32(airspeed * C68kScript.divs_trunc(C68kScript.s32(t22 * C68kScript.asr32(C68kScript.s32(airspeed * quad_in), 8)), damped))
+	if quad < 0:
+		quad += 7
+	quad = C68kScript.divs_trunc(quad >> 3, 0xa0)
+	## Block 4c: parasite drag with gear (|+0x679| / 11) and flaps (|+0x67b| / 15), carried
+	## through the remainder +0x636; ground friction (12-bit carry +0x638); arrest braking.
+	var t20: int = memory.read_s16(rec + 0x20)
+	var gear_drag: int = 0
+	if memory.read_u8(ctl + 0x679) != 0:
+		gear_drag = C68kScript.divs_trunc(C68kScript.s32(abs_int(memory.read_s8(ctl + 0x679)) * t20), 0xb)
+	memory.write_u32(a6 - 0x48, C68kScript.u32(gear_drag))
+	var flap_drag: int = 0
+	if memory.read_u8(ctl + 0x67b) != 0:
+		flap_drag = C68kScript.divs_trunc(C68kScript.s32(abs_int(memory.read_s8(ctl + 0x67b)) * t20), 0xf)
+	var parasite: int = C68kScript.divs_trunc(C68kScript.s32(C68kScript.divs_trunc(C68kScript.asr32(C68kScript.s32((t20 + gear_drag + flap_drag) * airspeed), 8), density) * airspeed * 2), 0xa0)
+	var drag_sum: int = C68kScript.s32(quad + parasite + memory.read_s16(ctl + 0x636))
+	memory.write_u16(ctl + 0x636, C68kScript.u16(C68kScript.rems_trunc(drag_sum, weight)))
+	speed = C68kScript.s32(speed - C68kScript.divs_trunc(drag_sum, weight))
+	if memory.read_u8(ctl + 0x63e) != 0:
+		var base: int = 0
+		var surface_type: int = memory.read_u8(ctl + 0x2c)
+		if abs_int(memory.read_s8(ctl + 0x679)) == 0x2d:
+			base = memory.read_s16(rec + 0x2e) if (airspeed < memory.read_s16(rec + 0x46) or surface_type == 0x40) else memory.read_s16(rec + 0x30)
+			if memory.read_u8(ctl + 0x641) != 0 or surface_type == 0x50:
+				base += memory.read_s16(rec + 0x32)
+		elif (memory.read_u8(ctl + 0x684) & 0x10) != 0:
+			base = memory.read_s16(rec + 0x32) * 3
+			if base < 0:
+				base += 1
+			base = base >> 1
+			if ctl == memory.read_u32(DAT_0001b738):
+				memory.write_u16(0x1b850, 1)
+		var v: int = C68kScript.s32(base * (0x5b - lin) + memory.read_s16(ctl + 0x638))
+		memory.write_u16(ctl + 0x638, C68kScript.u16(C68kScript.rems_trunc(v, 0x1000)))
+		speed = C68kScript.s32(speed - C68kScript.divs_trunc(v, 0x1000))
+	if memory.read_u8(ctl + 0x640) == 1:
+		speed = C68kScript.s32(speed - 0xb6)
+	speed = C68kScript.s32(C68kScript.divs_trunc(C68kScript.s32(C68kScript.lsl32(memory.read_u32(a6 - 0x30), 2)), weight) + speed)
+	if speed <= 0:
+		speed = 0
+		memory.write_u8(ctl + 0x640, 2)
+		if memory.read_u32(ctl + 0x62a) != 0 and ctl == memory.read_u32(DAT_0001b738) and memory.read_u16(0x1b868) == 1:
+			memory.write_u16(0x1b868, 2)
+	## Block 5a: body-frame velocity (0, linear drag, speed) through the attitude matrix.
+	var vec: int = a6 - 0xc
+	var matrix: int = a6 - 0x1e
+	memory.write_u16(vec + 2, 0)
+	memory.write_u16(vec + 6, C68kScript.u16(lin))
+	memory.write_u16(vec + 10, C68kScript.u16(speed))
+	a7 = body_a7 - 0x18
+	build_attitude_matrix(C68kScript.s16(roll_cmd), memory.read_s16(a6 - 0x24), memory.read_s16(a6 - 0x26), C68kScript.s16(heading), matrix)
+	a7 = entry_a7
+	transform_vecs12_by_matrix3(1, vec, vec, matrix)
+	memory.write_u16(vec + 6, C68kScript.u16(memory.read_u16(vec + 6) + memory.read_u16(ctl + 0x630)))
+	memory.write_u16(ctl + 0x630, 0xffa5)
+	memory.write_u32(ctl + 8, C68kScript.u32(memory.read_s16(vec + 2) >> 6))
+	memory.write_u32(ctl + 0xc, C68kScript.u32(memory.read_s16(vec + 6) >> 6))
+	memory.write_u32(ctl + 0x10, C68kScript.u32(memory.read_s16(vec + 10) >> 6))
+	## Block 5b: touchdown / leaving the ground. The impact speed is the vertical word taken
+	## BEFORE the snap (the bytes load +0xe first).
+	var player: int = memory.read_u32(DAT_0001b738)
+	if memory.read_u8(ctl + 0x63e) == 0:
+		var world_y: int = memory.read_s32(obj + 0x1c)
+		if C68kScript.s32(memory.read_u32(ctl + 0xc) + world_y) < floor_y and floor_y <= world_y:
+			var impact: int = memory.read_s16(ctl + 0xe) << 4
+			memory.write_u8(ctl + 0x63e, 1)
+			memory.write_u32(ctl + 0xc, C68kScript.u32(floor_y - world_y))
+			if impact < -0x168:
+				memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | 0x400)
+				if memory.read_u32(ctl + 0x2e) == 0:
+					a7 = body_a7 - 8
+					memory.write_u8(ctl + 0x2c, C68kScript.u8(surface_type_under_object(obj)))
+					a7 = entry_a7
+				return
+			if impact < -0xd8:
+				rough = true
+			elif abs_int(fold_angle_pm_0x2000(heading)) > 0x200 or fold_angle_pm_0x2000(memory.read_s16(a6 - 0x24)) < -0x100:
+				rough = true
+			elif ctl == player:
+				memory.write_u16(0x1b856, 1)
+			memory.write_u16(ctl + 0x638, 0)
+			if ctl == player:
+				memory.write_u16(0x1b868, 1)
+	elif floor_y <= C68kScript.s32(memory.read_u32(ctl + 0xc) + memory.read_u32(obj + 0x1c)):
+		memory.write_u8(ctl + 0x63e, 0)
+		memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) & 0xefff)
+		if ctl == player:
+			memory.write_u16(0x1b868, 0)
+	## Block 6a: in flight the speed is |velocity| and the attitude follows the velocity.
+	var final_speed: int
+	if memory.read_u8(ctl + 0x63e) == 0:
+		var sum: int = 0
+		for off in [2, 6, 10]:
+			sum = C68kScript.s32(sum + memory.read_s16(vec + off) * memory.read_s16(vec + off))
+		final_speed = C68kScript.s16(isqrt_floor(sum))
+		attitude_from_velocity(memory.read_s16(vec + 2), memory.read_s16(vec + 6), memory.read_s16(vec + 10), final_speed, sum, a6 - 0x24, a6 - 0x26)
+		if memory.read_u8(ctl + 0x640) == 2:
+			memory.write_u8(ctl + 0x640, 0)
+	else:
+		## Block 6b: on the ground - horizontal speed, the surface type (byte +0x2c) decides
+		## the bank (d6), rough handling, sounds and the arrest latch.
+		if memory.read_u32(ctl + 0x2e) == 0:
+			a7 = body_a7 - 8
+			memory.write_u8(ctl + 0x2c, C68kScript.u8(surface_type_under_object(obj)))
+			a7 = entry_a7
+		final_speed = C68kScript.s16(isqrt_floor(C68kScript.s32(memory.read_s16(vec + 2) * memory.read_s16(vec + 2) + memory.read_s16(vec + 10) * memory.read_s16(vec + 10))))
+		memory.write_u32(ctl + 0xc, C68kScript.u32(floor_y - memory.read_u32(obj + 0x1c)))
+		var kind: int = memory.read_u8(ctl + 0x2c)
+		var quarter: int = final_speed >> 2
+		var gear_down: bool = abs_int(memory.read_s8(ctl + 0x679)) == 0x2d
+		if kind == 0x40:
+			if not gear_down:
+				rough = true
+			var bump: int = overlay_rng_next() & 0x7f
+			var wobble: int = C68kScript.s16((overlay_rng_next() & 0x7f) - 0x40)
+			if quarter < 0x438:
+				wobble = C68kScript.s16(C68kScript.divs_trunc(C68kScript.s32(quarter * wobble), 0x438))
+				bump = C68kScript.s16(C68kScript.divs_trunc(C68kScript.s32(quarter * bump), 0x438))
+			heading = wobble & 0x3fff
+			memory.write_u16(ctl + 0x630, C68kScript.u16(bump + memory.read_u16(ctl + 0x630)))
+			if ctl == player:
+				if memory.read_u16(0x1b856) != 0:
+					memory.write_u16(0x1b854, 1)
+					memory.write_u16(0x1b856, 0)
+				elif final_speed > 0x10e0:
+					if (overlay_rng_next() & 0xf) == 0:
+						memory.write_u16(0x1b854, 1)
+				elif final_speed > 0x2d0:
+					if (overlay_rng_next() & 0x1f) == 0:
+						memory.write_u16(0x1b854, 1)
+		elif kind == 0x20:
+			if (memory.read_u8(ctl + 0x684) & 8) == 0:
+				rough = true
+		elif kind == 0x10:
+			memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | 0x1000)
+			if memory.read_u8(ctl + 0x679) != 0 or fold_angle_pm_0x2000(memory.read_s16(ctl + 0x626)) < -0x80:
+				memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | 0x400)
+				return
+			var half_bank: int = fold_angle_pm_0x2000(heading)
+			if half_bank < 0:
+				half_bank += 1
+			var b: int = C68kScript.s16((overlay_rng_next() & 0x3f) + (half_bank >> 1) - 0x20)
+			if quarter < 0x438:
+				b = C68kScript.s16(C68kScript.divs_trunc(C68kScript.s32(quarter * b), 0x438))
+			heading = b & 0x3fff
+			if ctl == player:
+				memory.write_u16(0x1b856, 0)
+		elif kind == 0x30 or kind == 0x60 or kind == 0x70:
+			if not gear_down:
+				rough = true
+			heading = 0
+		elif kind == 0x50:
+			if not gear_down:
+				rough = true
+			if ctl == player and memory.read_u16(0x1b856) != 0:
+				memory.write_u16(0x1b856, 0)
+			heading = 0
+		if memory.read_s16(a6 - 0x24) > 0x2000:
+			memory.write_u16(a6 - 0x24, 0)
+		if not rough and memory.read_u8(ctl + 0x63f) != 0 and memory.read_u8(ctl + 0x640) == 0:
+			memory.write_u8(ctl + 0x640, 1)
+	## Block 6c: commit attitude, bank (with the turn coordination from the heading change)
+	## and speed; the player's 120-frame climb-rate sum.
+	memory.write_u8(ctl + 0x63f, 0)
+	var turn: int = fold_angle_pm_0x2000(memory.read_s16(a6 - 0x26) - memory.read_s16(ctl + 0x22))
+	memory.write_u16(ctl + 0x20, memory.read_u16(a6 - 0x24))
+	memory.write_u16(ctl + 0x22, memory.read_u16(a6 - 0x26))
+	memory.write_u16(ctl + 0x24, C68kScript.u16(heading + C68kScript.asr32(C68kScript.s32(C68kScript.s16(turn) * sin_fixed14(memory.read_s16(a6 - 0x24))), 12)) & 0x3fff)
+	memory.write_u32(ctl + 0x62a, C68kScript.u32(final_speed))
+	if ctl == player:
+		var climb: int = C68kScript.divs_trunc(C68kScript.s32(C68kScript.asr32(C68kScript.lsl32(sin_fixed14(memory.read_s16(ctl + 0x20)), 13), 12) * final_speed), 0x1ce)
+		climb = clampi(climb, -0x1d80, 0x1d80)
+		var index: int = memory.read_s16(0x1bc84)
+		memory.write_u16(0x1bc8c + index * 2, C68kScript.u16(climb))
+		memory.write_u32(0x1bc80, C68kScript.u32(memory.read_s32(0x1bc80) + C68kScript.s16(climb)))
+		index += 1
+		if index == 0x78:
+			index = 0
+		memory.write_u32(0x1bc80, C68kScript.u32(memory.read_s32(0x1bc80) - memory.read_s16(0x1bc8c + index * 2)))
+		memory.write_u16(0x1bc84, C68kScript.u16(index))
+	## Block 7a: flaps (+0x67b) and gear (+0x679) ramps.
+	var flaps: int = memory.read_s8(ctl + 0x67b)
+	if (flaps > 0 and flaps < 0xf) or flaps < 0:
+		memory.write_u8(ctl + 0x67b, C68kScript.u8(flaps + 1))
+	var gear: int = memory.read_s8(ctl + 0x679)
+	if gear >= 1 and gear <= 0x2c and (memory.read_u8(ctl + 0x685) & 0x20) == 0:
+		memory.write_u8(ctl + 0x679, C68kScript.u8(gear + 1))
+		memory.write_u8(ctl + 0x67a, memory.read_u8(ctl + 0x67a) | 2)
+		memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) & 0xdfff)
+	elif gear < 0:
+		memory.write_u8(ctl + 0x679, C68kScript.u8(gear + 1))
+		memory.write_u8(ctl + 0x67a, memory.read_u8(ctl + 0x67a) | 2)
+		memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | 0x2000)
+	## Block 7b: bombs (phase +0x674, count +0x67c), guns (phase +0x676, ammo +0x682), bail-out.
+	if memory.read_u8(ctl + 0x674) != 0 and memory.read_u8(ctl + 0x67c) != 0:
+		if memory.read_u8(ctl + 0x674) == 1:
+			a7 = body_a7 - 0x24
+			var bomb: int = spawn_weapon_entity(final_speed, 0, memory.read_u32(obj + 0x18), memory.read_u32(obj + 0x1c), memory.read_u32(obj + 0x20), memory.read_s16(ctl + 0x20), memory.read_s16(ctl + 0x22), memory.read_s16(ctl + 0x24))
+			a7 = entry_a7
+			if bomb != 0 and ctl == player:
+				memory.write_u32(DAT_0001b880, bomb)
+				memory.write_u16(bomb + 0x614, 1)
+				memory.write_u16(0x1b846, 1)
+			memory.write_u8(ctl + 0x67c, memory.read_u8(ctl + 0x67c) - 1)
+			if memory.read_s16(memory.read_u32(DAT_0001b5a0) + 0x90) != 2:
+				memory.write_u16(ctl + 0x634, C68kScript.u16(memory.read_u16(ctl + 0x634) - 0x10))
+		var phase: int = memory.read_u8(ctl + 0x674)
+		memory.write_u8(ctl + 0x674, (phase + 1) & 0xff)
+		if phase == 4:
+			memory.write_u8(ctl + 0x674, 0)
+	if memory.read_u8(ctl + 0x676) != 0:
+		if memory.read_u8(ctl + 0x676) == 1 and memory.read_s16(ctl + 0x682) > 1 and (memory.read_u8(ctl + 0x685) & 0x10) == 0:
+			memory.write_u16(a6 - 0x24, (memory.read_u16(ctl + 0x20) + 0x40) & 0x3fff)
+			a7 = body_a7 - 0x28
+			var round: int = spawn_ordnance_oriented(final_speed, 1, memory.read_u32(obj + 0x18), memory.read_u32(obj + 0x1c), memory.read_u32(obj + 0x20), memory.read_s16(ctl + 0x20), memory.read_s16(ctl + 0x22), memory.read_s16(ctl + 0x24), (memory.read_s16(ctl + 0x626) - memory.read_s16(memory.read_u32(ctl + 4) + 0x44)) & 0x3fff)
+			a7 = entry_a7
+			if round != 0 and ctl == player:
+				memory.write_u16(round + 0x36, 1)
+			memory.write_u16(ctl + 0x682, C68kScript.u16(memory.read_u16(ctl + 0x682) - 2))
+		var gun_phase: int = memory.read_u8(ctl + 0x676)
+		memory.write_u8(ctl + 0x676, (gun_phase + 1) & 0xff)
+		if gun_phase == 2:
+			memory.write_u8(ctl + 0x676, 0)
+	if memory.read_u8(ctl + 0x677) == 1 and (memory.read_u8(ctl + 0x685) & 1) == 0:
+		a7 = body_a7 - 0x20
+		var chute: int = spawn_bailout_parachute(memory.read_u32(ctl + 0x62a), memory.read_u32(obj + 0x18), memory.read_u32(obj + 0x1c), memory.read_u32(obj + 0x20), memory.read_s16(ctl + 0x20), memory.read_s16(ctl + 0x22), memory.read_s16(ctl + 0x24))
+		a7 = entry_a7
+		memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) | 1)
+		memory.write_u8(ctl + 0x677, 2)
+		if ctl == player:
+			memory.write_u16(0x1b874, 1)
+			memory.write_u16(0x1b872, 0)
+			memory.write_u16(DAT_0001d858, 9)
+			if (memory.read_u16(ctl + 0x684) & 0x3fe) == 0 and (memory.read_u8(ctl + 0x67d) != 0 or memory.read_u8(ctl + 0x67e) != 0):
+				memory.write_u16(0x1b87a, 1)
+			memory.write_u32(0x1b87c, chute)
+			var player_obj: int = memory.read_u32(player)
+			if (memory.read_u8(player_obj + 7) & 0x40) != 0:
+				memory.write_u32(player_obj + 4, memory.read_u32(player_obj + 4) & 0xffffffbf)
+				a7 = body_a7 - 8
+				drop_contact_records_for_object(player_obj)
+				a7 = entry_a7
+			a7 = body_a7 - 4
+			update_view_clip_bounds()
+			a7 = entry_a7
+	## Block 7c: fuel leak (damage word bit 0x2) and the crash after a rough landing.
+	if (memory.read_u8(ctl + 0x685) & 2) != 0:
+		if (overlay_rng_next() & 0x3f) == 0:
+			if (overlay_rng_next() & 1) != 0 and memory.read_u8(ctl + 0x67d) != 0:
+				memory.write_u8(ctl + 0x67d, memory.read_u8(ctl + 0x67d) - 1)
+			elif memory.read_u8(ctl + 0x67e) != 0:
+				memory.write_u8(ctl + 0x67e, memory.read_u8(ctl + 0x67e) - 1)
+	if rough:
+		if (memory.read_u8(ctl + 0x684) & 1) == 0:
+			memory.write_u16(ctl + 0x688, 0)
+		elif memory.read_s16(ctl + 0x688) > 0x16:
+			memory.write_u16(ctl + 0x688, 0x16)
+		memory.write_u16(ctl + 0x684, (memory.read_u16(ctl + 0x684) & 0x8000) | 0x900)
+		memory.write_u32(ctl + 0x32, 0xe772)
+		memory.write_u16(ctl + 0x61a, 0)
+		memory.write_u16(ctl + 0x61e, 0)
+
+## Ease toward a target: d / 8 (toward zero), or d itself when that is 0 (the engine model's
+## snap below 8).
+func _ease8(d: int) -> int:
+	var t: int = d
+	if t < 0:
+		t += 7
+	return d if (t >> 3) == 0 else (t >> 3)
+
+## (speed * v / 4096) * 0x143a / 4096, both divisions toward zero (the control scaling of blk 3a).
+func _scale_by_speed(airspeed: int, v: int) -> int:
+	var t: int = C68kScript.s32(airspeed * v)
+	if t < 0:
+		t += 0xfff
+	t = C68kScript.s32((t >> 12) * 0x143a)
+	if t < 0:
+		t += 0xfff
+	return t >> 12
+
+## 0x110f4: AI state 0x110d4 (attack). A target is dropped (target +3 count down, +0x692 = 0)
+## without ammo (word +0x682 <= 1), when it is dead (+7 bit 1) or has no vertices (+0x44);
+## otherwise +0x696 = approx_dist3_xyz(own, target) (0x20 below) and ai_pursue_target flies the
+## frame (0x24 below). Without a pursuit the kind's fly step runs (0xc below).
+func ai_attack_or_fly(ctl: int) -> void:
+	assert(memory != null, "ai_attack_or_fly requires original global memory")
+	var entry_a7: int = a7
+	var target: int = memory.read_u32(ctl + 0x692)
+	if target != 0:
+		if memory.read_s16(ctl + 0x682) <= 1 or (memory.read_u8(target + 7) & 2) != 0 or memory.read_u32(target + 0x44) == 0:
+			memory.write_u8(target + 3, C68kScript.u8(memory.read_u8(target + 3) - 1))
+			memory.write_u32(ctl + 0x692, 0)
+		else:
+			var own: int = memory.read_u32(ctl)
+			a7 = entry_a7 - 0x20
+			memory.write_u32(ctl + 0x696, C68kScript.u32(approx_dist3_xyz(memory.read_s32(own + 0x18), memory.read_s32(own + 0x1c), memory.read_s32(own + 0x20), memory.read_s32(target + 0x18), memory.read_s32(target + 0x1c), memory.read_s32(target + 0x20))))
+			a7 = entry_a7 - 0x24
+			ai_pursue_target(ctl)
+			a7 = entry_a7
+			return
+	_ai_fly_step(ctl, entry_a7, 0xc)
+
+## Waypoint offset for ai_pursue_target's manoeuvres: own coordinate + ((factor * airspeed
+## +0x62a) asr 6) * trig asr 12 (muls.l low longs).
+func _pursue_offset(ctl: int, base: int, factor: int, trig: int) -> int:
+	return C68kScript.u32(C68kScript.asr32(C68kScript.s32(C68kScript.asr32(C68kScript.s32(factor * memory.read_s32(ctl + 0x62a)), 6) * C68kScript.s16(trig)), 12) + base)
+
+## 0x1820a: pursue the AI target (+0x692) at distance +0x696, then fly (update_aircraft_entity,
+## 0x68 below). Link a6 -0x40 plus seven saved registers: the body sits 0x60 below the entry and
+## the locals passed by address live in the frame (range a6 - 0x10, vector a6 - 0xc, errors
+## a6 - 0x12 / - 0x14, relative vector a6 - 0x20, matrix a6 - 0x32, angles a6 - 0x34 / - 0x36).
+## Beyond 20000 it steers straight at the target (0x74 below), opens up (0x78 below) and clears
+## the manoeuvre byte +0x69a. Nearer it aims at the target's pose ring (75 entries of 0x14 at
+## target controller +0x36, index word +0x612) lag words back (0x1b876 for type key 1, else
+## 0x1b878), extrapolated (lag + 4) times the step to the next entry (build_relative_steer_sample,
+## 0x84 below; errors / 4 toward zero). A heading error beyond 0x53f outside manoeuvre 4 compares
+## headings: within 0x1000, or on an even rng, it manoeuvres (below); otherwise manoeuvre 4. The
+## attack: apply_relative_heading_steer (0x78 below, with the extrapolated z still in D2);
+## within 0x2fff the throttle tracks a speed from the target's airspeed (0x6c below), else full
+## (0x68 below); the target, shifted to fit 15 bits and turned into the own frame (attitude matrix
+## 0x74 below, transform 0x84, isqrt 0x68, attitude_from_velocity 0x84, folds 0x68 / 0x6c), sets
+## the gun phase byte +0x676 = 1 when both errors are within 0x7f; +0x69a is cleared unless it is
+## 4 and the rng & 0x1f is non-zero. A manoeuvre (full throttle, 0x68 below) picks a waypoint
+## +0x69c / +0x6a0 / +0x6a4 while +0x69a is 0: rng & 3 == 1 at airspeed above 0x32a0 with pitch
+## within 0x1ff -> 3 (loop), rng & 3 <= 1 -> 2 (break turn), else 1 (reverse); phase +0x69b and
+## best distance +0x6a8 reset. A waypoint reached (under 2000 and either receding from +0x6a8 or
+## under 400) advances the phase, and the steer goes to the waypoint (0x74 below).
+func ai_pursue_target(ctl: int) -> void:
+	assert(memory != null, "ai_pursue_target requires original global memory")
+	assert(a7 != 0, "ai_pursue_target needs a7 (its frame holds the steering locals)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var body: int = entry_a7 - 0x60
+	var target: int = memory.read_u32(ctl + 0x692)
+	if memory.read_s32(ctl + 0x696) > 0x4e20:
+		a7 = body - 0x14
+		steer_entity_toward_point(ctl, memory.read_u32(target + 0x18), memory.read_u32(target + 0x1c), memory.read_u32(target + 0x20))
+		a7 = body - 0x18
+		max_ai_throttle_maybe_invert_679(ctl)
+		memory.write_u8(ctl + 0x69a, 0)
+		a7 = body - 8
+		update_aircraft_entity(ctl)
+		a7 = entry_a7
+		return
+	var own: int = memory.read_u32(ctl)
+	var target_ctl: int = memory.read_u32(target + 8)
+	var lag: int = memory.read_s16(DAT_0001b876) if memory.read_s16(memory.read_u32(ctl + 4)) == 1 else memory.read_s16(DAT_0001b878)
+	var ring: int = C68kScript.s32(memory.read_s16(target_ctl + 0x612) - lag)
+	if ring < 0:
+		ring = C68kScript.s32(ring + 0x4b)
+	var pose_a: int = C68kScript.u32(target_ctl + 0x36 + ring * 0x14)
+	ring = C68kScript.s32(ring + 1)
+	if ring == 0x4b:
+		ring = 0
+	var pose_b: int = C68kScript.u32(target_ctl + 0x36 + ring * 0x14)
+	var steps: int = lag + 4
+	var aim: Array = []
+	for off in [0, 4, 8]:
+		aim.append(C68kScript.u32(C68kScript.s32(C68kScript.s32(memory.read_u32(pose_b + off) - memory.read_u32(pose_a + off)) * steps) + memory.read_u32(pose_a + off)))
+	a7 = body - 0x24
+	build_relative_steer_sample(ctl, aim[0], aim[1], aim[2], a6 - 0x10, a6 - 0xc, a6 - 0x12, a6 - 0x14)
+	for off in [0x12, 0x14]:
+		var e: int = memory.read_s16(a6 - off)
+		if e < 0:
+			e += 3
+		memory.write_u16(a6 - off, C68kScript.u16(e >> 2))
+	var manoeuvre: bool = false
+	if abs_int(memory.read_s16(a6 - 0x14)) > 0x53f and memory.read_s8(ctl + 0x69a) != 4:
+		a7 = body - 8
+		var fold: int = fold_angle_pm_0x2000(C68kScript.s32(memory.read_s16(target_ctl + 0x22) - memory.read_s16(ctl + 0x22)))
+		a7 = entry_a7
+		if abs_int(fold) <= 0x1000:
+			manoeuvre = true
+		else:
+			a7 = body - 4
+			var r: int = overlay_rng_next()
+			a7 = entry_a7
+			if (r & 1) == 0:
+				manoeuvre = true
+			else:
+				memory.write_u8(ctl + 0x69a, 4)
+	if manoeuvre:
+		_pursue_manoeuvre(ctl, own, body)
+	else:
+		_pursue_attack(ctl, own, target, target_ctl, a6, body, aim[2])
+	a7 = body - 8
+	update_aircraft_entity(ctl)
+	a7 = entry_a7
+
+## ai_pursue_target's attack branch (0x18372..0x1856a).
+func _pursue_attack(ctl: int, own: int, target: int, target_ctl: int, a6: int, body: int, d2: int) -> void:
+	var entry_a7: int = a7
+	a7 = body - 0x18
+	apply_relative_heading_steer(ctl, memory.read_s32(a6 - 0x10), a6 - 0xc, memory.read_s16(a6 - 0x12), memory.read_s16(a6 - 0x14), d2)
+	var dist: int = memory.read_s32(ctl + 0x696)
+	if dist <= 0x2fff:
+		var speed: int = C68kScript.asr32(memory.read_u32(target_ctl + 0x62a), 2)
+		if dist <= 0x7ff:
+			speed = 0
+		if dist <= 0xfff:
+			speed = C68kScript.s32(speed * dist)
+			if speed < 0:
+				speed = C68kScript.s32(speed + 0xfff)
+			speed = C68kScript.asr32(speed, 12)
+		else:
+			var blend: int = C68kScript.s32((0x1c21 - speed) * C68kScript.s32(dist - 0x2000))
+			if blend < 0:
+				blend = C68kScript.s32(blend + 0x1fff)
+			speed = C68kScript.s32(speed + C68kScript.asr32(blend, 13))
+		a7 = body - 0xc
+		adjust_ai_throttle_vs_speed(ctl, speed)
+	else:
+		a7 = body - 8
+		max_ai_throttle_maybe_invert_679(ctl)
+	var shift: int = 0
+	var d1: int = dist
+	while (C68kScript.u32(d1) & 0xffff8000) != 0:
+		shift = C68kScript.s16(shift + 1)
+		d1 = C68kScript.asr32(d1, 1)
+	shift = C68kScript.s16(shift + 1)
+	var offsets: Array = [[0x18, 0x1e], [0x1c, 0x1a], [0x20, 0x16]]
+	for pair in offsets:
+		memory.write_u16(a6 - pair[1], C68kScript.u16(C68kScript.asr32(C68kScript.s32(memory.read_u32(target + pair[0]) - memory.read_u32(own + pair[0])), shift)))
+	a7 = body - 0x14
+	build_attitude_matrix_3ang_alt(-memory.read_s16(ctl + 0x20) & 0x3fff, -memory.read_s16(ctl + 0x22) & 0x3fff, -memory.read_s16(ctl + 0x24) & 0x3fff, a6 - 0x32)
+	a7 = body - 0x24
+	transform_vecs12_by_matrix3(1, a6 - 0x20, a6 - 0x20, a6 - 0x32)
+	var rx: int = memory.read_s16(a6 - 0x1e)
+	var ry: int = memory.read_s16(a6 - 0x1a)
+	var rz: int = memory.read_s16(a6 - 0x16)
+	var sq: int = C68kScript.s32(C68kScript.s32(rx * rx + ry * ry) + rz * rz)
+	a7 = body - 8
+	var length: int = isqrt_floor(sq)
+	a7 = body - 0x24
+	attitude_from_velocity(rx, ry, rz, C68kScript.s16(length), sq, a6 - 0x34, a6 - 0x36)
+	a7 = body - 8
+	memory.write_u16(a6 - 0x12, C68kScript.u16(fold_angle_pm_0x2000(memory.read_s16(a6 - 0x34))))
+	a7 = body - 0xc
+	memory.write_u16(a6 - 0x14, C68kScript.u16(fold_angle_pm_0x2000(memory.read_s16(a6 - 0x36))))
+	a7 = entry_a7
+	var trim: int = C68kScript.s32(memory.read_s16(ctl + 0x626) - memory.read_s16(memory.read_u32(ctl + 4) + 0x44))
+	if abs_int(C68kScript.s32(memory.read_s16(a6 - 0x12) - trim)) <= 0x7f and abs_int(memory.read_s16(a6 - 0x14)) <= 0x7f and memory.read_u8(ctl + 0x676) == 0:
+		memory.write_u8(ctl + 0x676, 1)
+	if memory.read_s8(ctl + 0x69a) == 4:
+		a7 = body - 4
+		var r: int = overlay_rng_next()
+		a7 = entry_a7
+		if (r & 0x1f) != 0:
+			return
+	memory.write_u8(ctl + 0x69a, 0)
+
+## ai_pursue_target's manoeuvre loop (0x1856e..0x188a2): sin / cos run 0x68 / 0x6c below.
+func _pursue_manoeuvre(ctl: int, own: int, body: int) -> void:
+	var entry_a7: int = a7
+	a7 = body - 8
+	max_ai_throttle_maybe_invert_679(ctl)
+	a7 = entry_a7
+	var dist: int
+	var fresh: bool = memory.read_s8(ctl + 0x69a) == 0
+	while true:
+		if fresh:
+			memory.write_u32(ctl + 0x69c, memory.read_u32(own + 0x18))
+			memory.write_u32(ctl + 0x6a0, memory.read_u32(own + 0x1c))
+			memory.write_u32(ctl + 0x6a4, memory.read_u32(own + 0x20))
+			a7 = body - 4
+			var pick: int = overlay_rng_next() & 3
+			a7 = entry_a7
+			var loop_ok: bool = false
+			if pick == 1 and memory.read_s32(ctl + 0x62a) > 0x32a0:
+				a7 = body - 8
+				var pitch: int = fold_angle_pm_0x2000(memory.read_s16(ctl + 0x20))
+				a7 = body - 0xc
+				loop_ok = abs_int(pitch) <= 0x1ff
+				a7 = entry_a7
+			if loop_ok:
+				memory.write_u8(ctl + 0x69a, 3)
+			elif pick <= 1:
+				memory.write_u8(ctl + 0x69a, 2)
+			else:
+				memory.write_u8(ctl + 0x69a, 1)
+			memory.write_u8(ctl + 0x69b, 0)
+			memory.write_u32(ctl + 0x6a8, 0)
+			dist = 1
+		else:
+			a7 = body - 0x1c
+			dist = approx_dist3_xyz(memory.read_s32(own + 0x18), memory.read_s32(own + 0x1c), memory.read_s32(own + 0x20), memory.read_s32(ctl + 0x69c), memory.read_s32(ctl + 0x6a0), memory.read_s32(ctl + 0x6a4))
+			a7 = entry_a7
+		dist = C68kScript.s32(dist)
+		if dist <= 0x7cf and (dist > memory.read_s32(ctl + 0x6a8) or dist <= 0x18f):
+			_pursue_advance_phase(ctl, own, body)
+			dist = 0x7fffffff
+		if memory.read_s8(ctl + 0x69a) != 0:
+			break
+		fresh = true
+	memory.write_u32(ctl + 0x6a8, C68kScript.u32(dist))
+	a7 = body - 0x14
+	steer_entity_toward_point(ctl, memory.read_u32(ctl + 0x69c), memory.read_u32(ctl + 0x6a0), memory.read_u32(ctl + 0x6a4))
+	a7 = entry_a7
+
+## Set the waypoint x / z from an angle (sin 0x68, cos 0x6c below).
+func _pursue_waypoint(ctl: int, own: int, body: int, angle: int, factor: int) -> void:
+	var entry_a7: int = a7
+	a7 = body - 8
+	memory.write_u32(ctl + 0x69c, _pursue_offset(ctl, memory.read_u32(own + 0x18), factor, sin_fixed14(angle)))
+	a7 = body - 0xc
+	memory.write_u32(ctl + 0x6a4, _pursue_offset(ctl, memory.read_u32(own + 0x20), factor, cos_fixed14(angle)))
+	a7 = entry_a7
+
+## A reached waypoint: the next phase of manoeuvre +0x69a (0x18634..0x18878).
+func _pursue_advance_phase(ctl: int, own: int, body: int) -> void:
+	var entry_a7: int = a7
+	var state: int = memory.read_s8(ctl + 0x69a)
+	var phase: int = memory.read_s8(ctl + 0x69b)
+	if state == 1:
+		if phase != 0:
+			memory.write_u8(ctl + 0x69a, 0)
+			return
+		memory.write_u32(ctl + 0x6a0, memory.read_u32(own + 0x1c))
+		_pursue_waypoint(ctl, own, body, -memory.read_s16(ctl + 0x22) & 0x3fff, 0x4b)
+		memory.write_u8(ctl + 0x69b, 1)
+	elif state == 2:
+		var base: int
+		if phase == 0:
+			memory.write_u32(ctl + 0x6a0, memory.read_u32(own + 0x1c))
+			a7 = body - 4
+			base = 0xfe00 if (overlay_rng_next() & 1) != 0 else 0x200
+			a7 = entry_a7
+		else:
+			a7 = body - 4
+			if (overlay_rng_next() & 1) != 0:
+				memory.write_u8(ctl + 0x69a, 0)
+			a7 = entry_a7
+			base = 0xfc00 if memory.read_s8(ctl + 0x69b) == 1 else 0x400
+		memory.write_u8(ctl + 0x69b, 2 if base == 0xfe00 or base == 0xfc00 else 1)
+		_pursue_waypoint(ctl, own, body, (base - memory.read_u16(ctl + 0x22)) & 0x3fff, 0x2d)
+	elif state == 3:
+		if phase == 0:
+			_pursue_waypoint(ctl, own, body, -memory.read_s16(ctl + 0x22) & 0x3fff, 0x2d)
+			memory.write_u32(ctl + 0x6a0, C68kScript.u32(memory.read_u32(own + 0x1c) + 0x1388))
+			memory.write_u8(ctl + 0x69b, 1)
+		elif phase == 1:
+			a7 = body - 4
+			var angle: int = (overlay_rng_next() & 0xff) << 6
+			a7 = entry_a7
+			_pursue_waypoint(ctl, own, body, angle, 0x78)
+			memory.write_u32(ctl + 0x6a0, C68kScript.u32(memory.read_u32(own + 0x1c) + 0xbb8))
+			memory.write_u8(ctl + 0x69b, 2)
+		elif phase == 2:
+			memory.write_u8(ctl + 0x69a, 0)
+
+## 0x10b84: the take-off climb. Byte +0x67b (flaps) 0 -> 1; more than 200 above the ground a
+## lowering gear (byte +0x679 > 0) is raised (negated); throttle 9; pitch error = fold(0x2c0 -
+## pitch +0x20) (0x14 below), elevator = error + error asr 1 - previous (+0x61a, then = error),
+## clamped to +-0x200 when abs_int > 0x200; enqueue_control_inputs_avg4(ctl, 0, elevator, 0)
+## (0x20 below). Above 2000 the flaps are negated and 1 is returned, else 0.
+func ai_bootstrap_climb_phase(ctl: int) -> int:
+	assert(memory != null, "ai_bootstrap_climb_phase requires original global memory")
+	var entry_a7: int = a7
+	var obj: int = memory.read_u32(ctl)
+	if memory.read_u8(ctl + 0x67b) == 0:
+		memory.write_u8(ctl + 0x67b, 1)
+	if C68kScript.s32(memory.read_u32(obj + 0x1c) - memory.read_u32(ctl + 0x2e)) > 200 and memory.read_s8(ctl + 0x679) > 0:
+		memory.write_u8(ctl + 0x679, C68kScript.u8(-memory.read_s8(ctl + 0x679)))
+	memory.write_u8(ctl + 0x668, 9)
+	a7 = entry_a7 - 0x14
+	var err: int = C68kScript.s16(fold_angle_pm_0x2000(C68kScript.s32(0x2c0 - memory.read_s16(ctl + 0x20))))
+	a7 = entry_a7
+	var elevator: int = C68kScript.s16(C68kScript.s16((err >> 1) + err) - memory.read_s16(ctl + 0x61a))
+	memory.write_u16(ctl + 0x61a, C68kScript.u16(err))
+	if abs_int(elevator) > 0x200:
+		elevator = -0x200 if elevator < 0 else 0x200
+	a7 = entry_a7 - 0x20
+	enqueue_control_inputs_avg4(ctl, 0, elevator, 0)
+	a7 = entry_a7
+	if C68kScript.s32(memory.read_u32(obj + 0x1c) - memory.read_u32(ctl + 0x2e)) > 0x7d0:
+		memory.write_u8(ctl + 0x67b, C68kScript.u8(-memory.read_s8(ctl + 0x67b)))
+		return 1
+	return 0
+
+## Aim at a route point: its y, but at least 0x1000 above the ground (+0x2e).
+func _route_aim_y(ctl: int, point: int) -> int:
+	if C68kScript.s32(memory.read_u32(point + 4) - memory.read_u32(ctl + 0x2e)) <= 0xfff:
+		return C68kScript.u32(memory.read_u32(ctl + 0x2e) + 0x1000)
+	return memory.read_u32(point + 4)
+
+## 0x10ce8: route block +0x616 (word +0 phase, +2 speed, +4 route): phase 0 climbs
+## (ai_bootstrap_climb_phase, 0x14 below; done -> phase 1); otherwise the route point
+## (advance_route_waypoint(object, block + 4), 0x18 below), the throttle toward word +2 (0x20
+## below) and the steer at the point (0x20 below). Then update_aircraft_entity (0x14 below).
+func tick_ai_climb_then_waypoint(ctl: int) -> void:
+	assert(memory != null, "tick_ai_climb_then_waypoint requires original global memory")
+	var entry_a7: int = a7
+	var route: int = memory.read_u32(ctl + 0x616)
+	if memory.read_u16(route) == 0:
+		a7 = entry_a7 - 0x14
+		if ai_bootstrap_climb_phase(ctl) != 0:
+			memory.write_u16(route, C68kScript.u16(memory.read_u16(route) + 1))
+	else:
+		a7 = entry_a7 - 0x18
+		var point: int = advance_route_waypoint(memory.read_u32(ctl), route + 4)
+		a7 = entry_a7 - 0x20
+		adjust_ai_throttle_vs_speed(ctl, memory.read_s16(route + 2))
+		var aim_y: int = _route_aim_y(ctl, point)
+		a7 = entry_a7 - 0x20
+		steer_entity_toward_point(ctl, memory.read_u32(point), aim_y, memory.read_u32(point + 8))
+	a7 = entry_a7 - 0x14
+	update_aircraft_entity(ctl)
+	a7 = entry_a7
+
+## The route patrols 0x10d68 / 0x10da8 / 0x10de8: on first use the 4 points are moved into the
+## world by the aircraft's template pose (alloc_transformed_vertex_block(object, 8, 4, src), 0x18
+## below) and word +2 = speed; then tick_ai_climb_then_waypoint (0xc below).
+func _ensure_route_tick(ctl: int, src: int, speed: int) -> void:
+	var entry_a7: int = a7
+	if memory.read_u32(ctl + 0x616) == 0:
+		a7 = entry_a7 - 0x18
+		var block: int = alloc_transformed_vertex_block(memory.read_u32(ctl), 8, 4, src)
+		memory.write_u32(ctl + 0x616, block)
+		memory.write_u16(block + 2, speed)
+	a7 = entry_a7 - 0xc
+	tick_ai_climb_then_waypoint(ctl)
+	a7 = entry_a7
+
+## 0x10d68 (ai_fly_table kind 1, runtime 0x10d48): patrol route_1b2e0 at speed 0x9d8.
+func ensure_ai_script_1b2e0_tick(ctl: int) -> void:
+	assert(memory != null, "ensure_ai_script_1b2e0_tick requires original global memory")
+	_ensure_route_tick(ctl, DAT_0001b2e0, 0x9d8)
+
+## 0x10da8 (kind 5, runtime 0x10d88): patrol route_1b310 at speed 0xd5c.
+func ensure_ai_script_1b310_tick(ctl: int) -> void:
+	assert(memory != null, "ensure_ai_script_1b310_tick requires original global memory")
+	_ensure_route_tick(ctl, DAT_0001b310, 0xd5c)
+
+## 0x10de8 (kind 2, runtime 0x10dc8): patrol route_1b340 at speed 0x9d8.
+func ensure_ai_script_1b340_tick(ctl: int) -> void:
+	assert(memory != null, "ensure_ai_script_1b340_tick requires original global memory")
+	_ensure_route_tick(ctl, DAT_0001b340, 0x9d8)
+
+## 0x10e28: from frame +0x6ac on: no bombs (byte +0x67c) -> 1. Otherwise, with the bomb phase
+## +0x674 idle and rng & 7 == 0 (0x10 below): phase 2, heading = (+0x22 - 0x80 + (rng & 0xff))
+## & 0x3fff (0x14 below), pitch = (+0x20 + (rng & 0x7f)) & 0x3fff (0x18 below),
+## spawn_weapon_entity(+0x62a, 0, own position, pitch, heading, +0x24) (0x30 below), one bomb
+## less and word +0x634 - 6. Returns 0.
+func ai_script_try_fire_burst(ctl: int) -> int:
+	assert(memory != null, "ai_script_try_fire_burst requires original global memory")
+	var entry_a7: int = a7
+	if memory.read_s32(DAT_0001b838) < memory.read_s32(ctl + 0x6ac):
+		return 0
+	if memory.read_u8(ctl + 0x67c) == 0:
+		return 1
+	if memory.read_u8(ctl + 0x674) != 0:
+		return 0
+	a7 = entry_a7 - 0x10
+	var gate: int = overlay_rng_next()
+	a7 = entry_a7
+	if (gate & 7) != 0:
+		return 0
+	var obj: int = memory.read_u32(ctl)
+	memory.write_u8(ctl + 0x674, 2)
+	var bank: int = memory.read_s16(ctl + 0x24)
+	a7 = entry_a7 - 0x14
+	var heading: int = C68kScript.s32(memory.read_s16(ctl + 0x22) - 0x80 + (overlay_rng_next() & 0xff)) & 0x3fff
+	a7 = entry_a7 - 0x18
+	var pitch: int = C68kScript.s32(memory.read_s16(ctl + 0x20) + (overlay_rng_next() & 0x7f)) & 0x3fff
+	a7 = entry_a7 - 0x30
+	spawn_weapon_entity(memory.read_u32(ctl + 0x62a), 0, memory.read_u32(obj + 0x18), memory.read_u32(obj + 0x1c), memory.read_u32(obj + 0x20), pitch, heading, bank)
+	a7 = entry_a7
+	memory.write_u8(ctl + 0x67c, C68kScript.u8(memory.read_u8(ctl + 0x67c) - 1))
+	memory.write_u16(ctl + 0x634, C68kScript.u16(memory.read_u16(ctl + 0x634) - 6))
+	return 0
+
+## 0x10ecc (kind 4, runtime 0x10eac): the route_1b310 patrol (0x14 below), then the attack run
+## by phase: 1 -> 2 within 50000 horizontally of the fixed point (-0x40af3, 0x2b246a) (0x28
+## below) above 20000 while not burning (word +0x684 bit 0x100): +0x6ac = frame + 0x4b, host
+## word +0xce = -1 if it was 0. Phase 2 -> 3 when ai_script_try_fire_burst returns non-zero.
+func tick_ai_1b310_approach_fire(ctl: int) -> void:
+	assert(memory != null, "tick_ai_1b310_approach_fire requires original global memory")
+	var entry_a7: int = a7
+	var obj: int = memory.read_u32(ctl)
+	a7 = entry_a7 - 0x14
+	ensure_ai_script_1b310_tick(ctl)
+	a7 = entry_a7
+	var route: int = memory.read_u32(ctl + 0x616)
+	var phase: int = memory.read_s16(route)
+	if phase == 1:
+		a7 = entry_a7 - 0x28
+		var dist: int = approx_dist3_xyz(memory.read_s32(obj + 0x18), 0, memory.read_s32(obj + 0x20), -0x40af3, 0, 0x2b246a)
+		a7 = entry_a7
+		if dist <= 0xc34f and memory.read_s32(obj + 0x1c) > 0x4e20 and (memory.read_u8(ctl + 0x684) & 1) == 0:
+			memory.write_u16(route, 2)
+			memory.write_u32(ctl + 0x6ac, C68kScript.u32(memory.read_u32(DAT_0001b838) + 0x4b))
+			var host: int = memory.read_u32(DAT_0001b5a0)
+			if memory.read_u16(host + 0xce) == 0:
+				memory.write_u16(host + 0xce, 0xffff)
+	elif phase == 2:
+		a7 = entry_a7 - 0x14
+		var done: int = ai_script_try_fire_burst(ctl)
+		a7 = entry_a7
+		if done != 0:
+			memory.write_u16(route, 3)
+
+## 0x10f68 (kind 3, runtime 0x10f48): the scripted mission. On first use the 8 route_1b370
+## points are copied (alloc_copied_vertex_block(object, 8, 8, src), 0x20 below) with the route
+## index (word +4) at 3. Phase word +0 (jump table; other values steer at the player's object):
+## 0 climbs (0x14 below; done -> 1) and flies; 1 at point 4 -> 2 (+0x6ac = frame + 0x4b); 2 ->
+## 3 when ai_script_try_fire_burst (0x14 below) returns non-zero; 4 (in host mode 5 for type
+## key 2 sets host word +0xce = 1 if it was 0) -> 5; 5 glides: enqueue(ctl, 0, 0, 0x140 below
+## airspeed 0x5a0 else 0) (0x20 below), throttle 0, byte +0x641 = 1. Phases 1..3 then follow
+## the route (advance_route_waypoint, 0x18 below): phase 3 back at point 0 becomes 4, lowers the
+## gear (+0x679 = 1) and tries the landing approach (0x14 below); otherwise the throttle goes
+## toward route_1b370_speeds[index] (0x18 below) and it steers at the point (0x20 below).
+## Every phase ends in update_aircraft_entity (0x14 below).
+func tick_ai_1b370_mission(ctl: int) -> void:
+	assert(memory != null, "tick_ai_1b370_mission requires original global memory")
+	var entry_a7: int = a7
+	var obj: int = memory.read_u32(ctl)
+	if memory.read_u32(ctl + 0x616) == 0:
+		a7 = entry_a7 - 0x20
+		var block: int = alloc_copied_vertex_block(obj, 8, 8, DAT_0001b370)
+		a7 = entry_a7
+		memory.write_u32(ctl + 0x616, block)
+		memory.write_u16(block + 4, 3)
+	var route: int = memory.read_u32(ctl + 0x616)
+	var phase: int = memory.read_s16(route)
+	var follow: bool = false
+	if phase == 0:
+		a7 = entry_a7 - 0x14
+		if ai_bootstrap_climb_phase(ctl) != 0:
+			memory.write_u16(route, C68kScript.u16(memory.read_u16(route) + 1))
+	elif phase == 1:
+		if memory.read_s16(route + 4) == 4:
+			memory.write_u16(route, 2)
+			memory.write_u32(ctl + 0x6ac, C68kScript.u32(memory.read_u32(DAT_0001b838) + 0x4b))
+		follow = true
+	elif phase == 2:
+		a7 = entry_a7 - 0x14
+		if ai_script_try_fire_burst(ctl) != 0:
+			memory.write_u16(route, 3)
+		follow = true
+	elif phase == 3:
+		follow = true
+	elif phase == 4 or phase == 5:
+		if phase == 4:
+			var host: int = memory.read_u32(DAT_0001b5a0)
+			if memory.read_s16(host + 0x90) == 5 and memory.read_s16(memory.read_u32(ctl + 4)) == 2 and memory.read_u16(host + 0xce) == 0:
+				memory.write_u16(host + 0xce, 1)
+			memory.write_u16(route, 5)
+		a7 = entry_a7 - 0x20
+		enqueue_control_inputs_avg4(ctl, 0, 0, 0x140 if C68kScript.asr32(memory.read_u32(ctl + 0x62a), 2) <= 0x59f else 0)
+		memory.write_u8(ctl + 0x668, 0)
+		memory.write_u8(ctl + 0x641, 1)
+	else:
+		var player_obj: int = memory.read_u32(memory.read_u32(DAT_0001b738))
+		a7 = entry_a7 - 0x20
+		steer_entity_toward_point(ctl, memory.read_u32(player_obj + 0x18), memory.read_u32(player_obj + 0x1c), memory.read_u32(player_obj + 0x20))
+	if follow:
+		a7 = entry_a7 - 0x18
+		var point: int = advance_route_waypoint(obj, route + 4)
+		if memory.read_s16(route) == 3 and memory.read_u16(route + 4) == 0:
+			memory.write_u16(route, 4)
+			memory.write_u8(ctl + 0x679, 1)
+			a7 = entry_a7 - 0x14
+			try_begin_landing_approach(ctl)
+		else:
+			adjust_ai_throttle_vs_speed(ctl, memory.read_u32(DAT_0001b3d0 + memory.read_s16(route + 4) * 4))
+			var aim_y: int = _route_aim_y(ctl, point)
+			a7 = entry_a7 - 0x20
+			steer_entity_toward_point(ctl, memory.read_u32(point), aim_y, memory.read_u32(point + 8))
+	a7 = entry_a7 - 0x14
+	update_aircraft_entity(ctl)
+	a7 = entry_a7
+
+## 0x168d2: a cleared heap block of header + 12 * count bytes (heap_alloc_cleared, 0x1c below),
+## count word at header - 2, and the count points transformed into it by the object's template
+## chain (apply_template_chain_xform_always, 0x2c below). Returns the block.
+func alloc_transformed_vertex_block(obj: int, header: int, count: int, src: int) -> int:
+	assert(memory != null, "alloc_transformed_vertex_block requires original global memory")
+	var entry_a7: int = a7
+	count = C68kScript.s16(count)
+	a7 = entry_a7 - 0x1c
+	var block: int = heap_alloc_cleared(C68kScript.s32(header + count * 12))
+	memory.write_u16(block + header - 2, C68kScript.u16(count))
+	a7 = entry_a7 - 0x2c
+	apply_template_chain_xform_always(obj, count, src, C68kScript.u32(block + header))
+	a7 = entry_a7
+	return block
+
+## 0x1691c: as alloc_transformed_vertex_block, but the points are copied unchanged
+## (memmove_block, 0x28 below); the object is not used.
+func alloc_copied_vertex_block(_obj: int, header: int, count: int, src: int) -> int:
+	assert(memory != null, "alloc_copied_vertex_block requires original global memory")
+	var entry_a7: int = a7
+	count = C68kScript.s16(count)
+	a7 = entry_a7 - 0x1c
+	var block: int = heap_alloc_cleared(C68kScript.s32(header + count * 12))
+	memory.write_u16(block + header - 2, C68kScript.u16(count))
+	a7 = entry_a7 - 0x28
+	memmove_block(src, C68kScript.u32(block + header), C68kScript.s32(count * 12))
+	a7 = entry_a7
+	return block
+
+## 0x16966: route = word index, word count, 12-byte points. Within 4999 horizontally of the
+## current point (0x34 below) the index moves on (to 0 at the count) and the new point is pushed
+## away from the aircraft: d = 3D distance (0x34 below), s = asr steps until d & 0xffff8000 is
+## 0; each axis += muls.w((point - own) asr s, 5000) divs.l ext((d asr s) asr s). Returns the
+## current point.
+func advance_route_waypoint(obj: int, route: int) -> int:
+	assert(memory != null, "advance_route_waypoint requires original global memory")
+	var entry_a7: int = a7
+	var point: int = route + 4 + memory.read_s16(route) * 12
+	a7 = entry_a7 - 0x34
+	var dist: int = approx_dist3_xyz(memory.read_s32(obj + 0x18), 0, memory.read_s32(obj + 0x20), memory.read_s32(point), 0, memory.read_s32(point + 8))
+	a7 = entry_a7
+	if dist > 0x1387:
+		return point
+	memory.write_u16(route, C68kScript.u16(memory.read_u16(route) + 1))
+	if memory.read_s16(route + 2) <= memory.read_s16(route):
+		memory.write_u16(route, 0)
+	point = route + 4 + memory.read_s16(route) * 12
+	a7 = entry_a7 - 0x34
+	var d: int = C68kScript.s32(approx_dist3_xyz(memory.read_s32(obj + 0x18), memory.read_s32(obj + 0x1c), memory.read_s32(obj + 0x20), memory.read_s32(point), memory.read_s32(point + 4), memory.read_s32(point + 8)))
+	a7 = entry_a7
+	var shift: int = 0
+	while (C68kScript.u32(d) & 0xffff8000) != 0:
+		shift = C68kScript.s16(shift + 1)
+		d = C68kScript.asr32(d, 1)
+	var divisor: int = C68kScript.s16(C68kScript.asr32(d, shift))
+	assert(divisor != 0, "advance_route_waypoint: divs.l by zero traps")
+	for off in [0, 4, 8]:
+		var delta: int = C68kScript.s16(C68kScript.asr32(C68kScript.s32(memory.read_u32(point + off) - memory.read_u32(obj + 0x18 + off)), shift)) * 5000
+		memory.write_u32(point + off, C68kScript.u32(C68kScript.divs_trunc(delta, divisor) + memory.read_u32(point + off)))
+	return point
+
+## 0x19c26: out (register A1) = (x, y, z) asr shift (asr.l by the long count).
+func store_xyz_asr(x: int, y: int, z: int, shift: int, out: int) -> int:
+	assert(memory != null, "store_xyz_asr requires original global memory")
+	memory.write_u32(out, C68kScript.u32(C68kScript.asr32(C68kScript.s32(x), shift)))
+	memory.write_u32(out + 4, C68kScript.u32(C68kScript.asr32(C68kScript.s32(y), shift)))
+	memory.write_u32(out + 8, C68kScript.u32(C68kScript.asr32(C68kScript.s32(z), shift)))
+	return out
+
+## Halved sum of two frame points (+1 before asr when negative), into dst.
+func _runway_midpoint(a: int, b: int, dst: int) -> void:
+	for off in [0, 4, 8]:
+		var v: int = C68kScript.s32(memory.read_u32(a + off) + memory.read_u32(b + off))
+		if v < 0:
+			v += 1
+		memory.write_u32(dst + off, C68kScript.u32(v >> 1))
+
+## 0x19c5e: the nearest runway end. Link a6 -0x7c and ten registers: the body is 0xa8 below the
+## entry; the four pad corners are kept in the frame (a6 - 0xc / - 0x18 / - 0x24 / - 0x30) and
+## the midpoints at a6 - 0x48 / - 0x54. object_pool then entity_array_1 are walked from the end
+## (word counts, subq / bcc). For a shape (type byte 2) near a friendly facility (probe 0x200,
+## 0xb0 below) nearer than the best object so far (0xc4 below): each face with byte +0x16 'p'
+## and word +0x14 == 4 has its corners (vertex index words, 12-byte vertices +0x44) shifted by
+## word +0x34 (store_xyz_asr); the best object distance is taken; when the second side (P2P3,
+## horizontal, 0xdc below) is shorter than the first (P1P2, 0xc4 below) the corners rotate by
+## one; the midpoints of P1P2 and P3P4 are measured from the aircraft (0xc4 / 0xdc below) and
+## the nearer one, if it beats the best end, goes to *near_end and the other to *far_end.
+## Returns 1 when nothing was found within 0x40740, else 0.
+func find_nearest_runway_approach_ends(own: int, near_end: int, far_end: int) -> int:
+	assert(memory != null, "find_nearest_runway_approach_ends requires original global memory")
+	assert(a7 != 0, "find_nearest_runway_approach_ends needs a7 (its frame holds the corners)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var body: int = entry_a7 - 0xa8
+	var best_end: int = 0x7fffffff
+	var best_obj: int = 0x7fffffff
+	var ox: int = memory.read_s32(own + 0x18)
+	var oy: int = memory.read_s32(own + 0x1c)
+	var oz: int = memory.read_s32(own + 0x20)
+	var corners: Array = [a6 - 0xc, a6 - 0x18, a6 - 0x24, a6 - 0x30]
+	var tmp: int = a6 - 0x3c
+	var m12: int = a6 - 0x48
+	var m34: int = a6 - 0x54
+	for pass_index in 2:
+		var list: int = DAT_0001b5a4 if pass_index == 0 else DAT_0001d4a4
+		var count_addr: int = DAT_0001b734 if pass_index == 0 else DAT_0001c1e0
+		var slot: int = C68kScript.u32(memory.read_u32(count_addr) * 4 + list)
+		var count: int = memory.read_u16(count_addr + 2)
+		while count != 0:
+			count -= 1
+			slot -= 4
+			var cand: int = memory.read_u32(slot)
+			if memory.read_u8(cand) != 2:
+				continue
+			a7 = body - 8
+			var kind: int = probe_nearest_facility_kind(cand)
+			a7 = entry_a7
+			if kind != 0x200:
+				continue
+			var obj_dist: int = approx_dist3_xyz(ox, oy, oz, memory.read_s32(cand + 0x18), memory.read_s32(cand + 0x1c), memory.read_s32(cand + 0x20))
+			if obj_dist >= best_obj:
+				continue
+			var face: int = memory.read_u32(cand + 0x48)
+			var faces: int = memory.read_u16(cand + 0x3a)
+			while faces != 0:
+				faces -= 1
+				if memory.read_u8(face + 0x16) == 0x70 and memory.read_s16(face + 0x14) == 4:
+					var verts: int = memory.read_u32(cand + 0x44)
+					var vidx: int = memory.read_u32(face + 0x18)
+					best_obj = obj_dist
+					var shift: int = memory.read_s16(cand + 0x34)
+					for k in 4:
+						var v: int = C68kScript.u32(verts + memory.read_s16(vidx + 2 * k) * 12)
+						store_xyz_asr(memory.read_u32(v), memory.read_u32(v + 4), memory.read_u32(v + 8), shift, corners[k])
+					var side12: int = approx_dist3_xyz(memory.read_s32(a6 - 0xc), 0, memory.read_s32(a6 - 0x4), memory.read_s32(a6 - 0x18), 0, memory.read_s32(a6 - 0x10))
+					var side23: int = approx_dist3_xyz(memory.read_s32(a6 - 0x18), 0, memory.read_s32(a6 - 0x10), memory.read_s32(a6 - 0x24), 0, memory.read_s32(a6 - 0x1c))
+					if side23 < side12:
+						_copy_xyz(corners[0], tmp)
+						_copy_xyz(corners[1], corners[0])
+						_copy_xyz(corners[2], corners[1])
+						_copy_xyz(corners[3], corners[2])
+						_copy_xyz(tmp, corners[3])
+					_runway_midpoint(a6 - 0xc, a6 - 0x18, m12)
+					_runway_midpoint(a6 - 0x24, a6 - 0x30, m34)
+					var near_dist: int = approx_dist3_xyz(ox, oy, oz, memory.read_s32(m12), memory.read_s32(m12 + 4), memory.read_s32(m12 + 8))
+					var other: int = approx_dist3_xyz(ox, oy, oz, memory.read_s32(m34), memory.read_s32(m34 + 4), memory.read_s32(m34 + 8))
+					if near_dist > other:
+						near_dist = other
+						_copy_xyz(m12, tmp)
+						_copy_xyz(m34, m12)
+						_copy_xyz(tmp, m34)
+					if near_dist < best_end:
+						best_end = near_dist
+						_copy_xyz(m12, near_end)
+						_copy_xyz(m34, far_end)
+				face = C68kScript.u32(face + 0x20)
+	a7 = entry_a7
+	return 1 if best_end == 0x7fffffff or best_end > 0x40740 else 0
+
+## Copy three longs (the runway search's point moves).
+func _copy_xyz(src: int, dst: int) -> void:
+	for off in [0, 4, 8]:
+		memory.write_u32(dst + off, memory.read_u32(src + off))
+
+## 0x19fba: start the landing glide. Link a6 -0x28 and five registers (body 0x40 below). The
+## nearest runway ends (a6 - 0xc near, a6 - 0x18 far; 0x50 below) must exist and the near end be
+## 10000..0x26ac0 from the aircraft (0x5c below), else 1. glide_aim = near + 6 * (far - near) / 64
+## (x, z; toward zero), y = near y; glide_dir = (far - near) asr 3 as words, x / z normalised to
+## 4096 by the isqrt length (0x48 below, divs.l), y = -0x240; aim += dir * 10000 / 4096 (x, z;
+## toward zero), y + 0x43. Blend 0, flaps (+0x67b) negated if positive, word +0x684 bit 0x4000
+## cleared, +0x622 / +0x620 / 0x267a4 / 0x267a8 = 0, start = own x / z, height floor 0x11b when
+## aim y <= 0x43 else 0x181; the +0x32 handler is saved (0x26798) and becomes 0x1a186
+## (tick_landing_approach_glide). Returns 0.
+func try_begin_landing_approach(ctl: int) -> int:
+	assert(memory != null, "try_begin_landing_approach requires original global memory")
+	assert(a7 != 0, "try_begin_landing_approach needs a7 (its frame holds the runway ends)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var obj: int = memory.read_u32(ctl)
+	var near: int = a6 - 0xc
+	var far: int = a6 - 0x18
+	a7 = entry_a7 - 0x50
+	var missing: int = find_nearest_runway_approach_ends(obj, near, far)
+	a7 = entry_a7
+	if missing != 0:
+		return 1
+	var dist: int = approx_dist3_xyz(memory.read_s32(obj + 0x18), memory.read_s32(obj + 0x1c), memory.read_s32(obj + 0x20), memory.read_s32(near), memory.read_s32(near + 4), memory.read_s32(near + 8))
+	if dist <= 0x270f or dist > 0x26ac0:
+		return 1
+	var dx: int = C68kScript.s32(memory.read_u32(far) - memory.read_u32(near))
+	var dy: int = C68kScript.s32(memory.read_u32(far + 4) - memory.read_u32(near + 4))
+	var dz: int = C68kScript.s32(memory.read_u32(far + 8) - memory.read_u32(near + 8))
+	for pair in [[dx, 0, 0], [dz, 8, 8]]:
+		var v: int = C68kScript.s32(C68kScript.lsl32(C68kScript.s32(C68kScript.lsl32(pair[0], 1) + pair[0]), 1))
+		if v < 0:
+			v = C68kScript.s32(v + 0x3f)
+		memory.write_u32(DAT_000267bc + pair[2], C68kScript.u32(C68kScript.asr32(v, 6) + memory.read_u32(near + pair[1])))
+	memory.write_u32(DAT_000267bc + 4, memory.read_u32(near + 4))
+	memory.write_u16(DAT_000267b2, C68kScript.u16(C68kScript.asr32(dx, 3)))
+	memory.write_u16(DAT_000267b2 + 4, C68kScript.u16(C68kScript.asr32(dy, 3)))
+	memory.write_u16(DAT_000267b2 + 8, C68kScript.u16(C68kScript.asr32(dz, 3)))
+	var gx: int = memory.read_s16(DAT_000267b2)
+	var gy: int = memory.read_s16(DAT_000267b2 + 4)
+	var gz: int = memory.read_s16(DAT_000267b2 + 8)
+	a7 = entry_a7 - 0x48
+	var length: int = C68kScript.s16(isqrt_floor(C68kScript.s32(C68kScript.s32(gx * gx + gy * gy) + gz * gz)))
+	a7 = entry_a7
+	assert(length != 0, "try_begin_landing_approach: divs.l by zero traps")
+	memory.write_u16(DAT_000267b2, C68kScript.u16(C68kScript.divs_trunc(C68kScript.lsl32(gx, 12), length)))
+	memory.write_u16(DAT_000267b2 + 4, 0xfdc0)
+	memory.write_u16(DAT_000267b2 + 8, C68kScript.u16(C68kScript.divs_trunc(C68kScript.lsl32(gz, 12), length)))
+	for off in [0, 8]:
+		var v: int = memory.read_s16(DAT_000267b2 + off) * 10000
+		if v < 0:
+			v += 0xfff
+		memory.write_u32(DAT_000267bc + off, C68kScript.u32((v >> 12) + memory.read_u32(DAT_000267bc + off)))
+		if off == 0:
+			memory.write_u32(DAT_000267bc + 4, C68kScript.u32(memory.read_u32(DAT_000267bc + 4) + 0x43))
+	memory.write_u16(DAT_000267ac, 0)
+	if memory.read_s8(ctl + 0x67b) > 0:
+		memory.write_u8(ctl + 0x67b, C68kScript.u8(-memory.read_s8(ctl + 0x67b)))
+	memory.write_u16(ctl + 0x684, memory.read_u16(ctl + 0x684) & 0xbfff)
+	memory.write_u32(ctl + 0x622, 0)
+	memory.write_u16(ctl + 0x620, 0)
+	memory.write_u32(DAT_000267a8, 0)
+	memory.write_u32(DAT_000267a4, 0)
+	memory.write_u32(DAT_000267a0, memory.read_u32(obj + 0x18))
+	memory.write_u32(DAT_0002679c, memory.read_u32(obj + 0x20))
+	memory.write_u16(DAT_000267ae, 0x11b if memory.read_s32(DAT_000267bc + 4) <= 0x43 else 0x181)
+	memory.write_u32(DAT_00026798, memory.read_u32(ctl + 0x32))
+	memory.write_u32(ctl + 0x32, 0x1a186)
+	return 0
+
+## Truncating (x * word) / 4096 as the glide does it: muls.l, +0xfff when negative, asr 12.
+func _glide_scale(value: int, word: int) -> int:
+	var v: int = C68kScript.s32(value * word)
+	if v < 0:
+		v = C68kScript.s32(v + 0xfff)
+	return C68kScript.asr32(v, 12)
+
+## 0x1a1a6 (+0x32 handler 0x1a186): the landing glide. Link a6 -0x10 and ten registers (body 0x3c
+## below); the heading word lives at a6 - 2 (attitude_from_velocity may leave it unwritten).
+## +0x2e is held at -4000 and the gear byte +0x679 saved for the frame. Range d = 3D distance to
+## glide_aim (0x58 below); lead s = d - 13000 above 0xae30, (d - 10000) - (d - 0x8e30) * 3000 /
+## 8192 above 0x8e30, else d - 10000. Target = aim - s * glide_dir / 4096 (x, y, z); y at or
+## below aim y + floor (word 0x267ae) sits on the floor, else s > 40000 adds (own y - y) / 8 and
+## s > 0x8c40 adds ((s - 0x8c40) * (own y - y) / 4096) / 8. Throttle target 0x9d8 (s > 0x9ab0),
+## 0 (s < 4000) or 0x7bc. Heading to the target (k = 1 + asr steps of |dx| + |dz|, abs 0x44 /
+## 0x48 below, attitude 0x5c below); lateral offset = abs_int(word of ((own x - aim x) * dir z -
+## (own z - aim z) * dir x) / 4096) (0x60 below); x -= sin(heading) * off / 4096, z += cos *
+## off / 4096 (muls.w; sin 0x44 / cos 0x48 below). On the ground (+0x63e) +0x32 = the saved
+## handler. Blend word 0x267ac (1, 2 -> 0) mixes the target halfway with own position + 45 *
+## velocity (x / z stored in glide_start at 1). Height error e = y - own y feeds a 33 e - 32
+## e(prev, +0x622) controller with remainder 0x267a4 and integral 0x267a8 (/ 16, clamped to
+## +-0x4b0) added to y; glide_start x / z move 1/8 of the way to x / z and are the target, also
+## mirrored into the type10_controller object. adjust_ai_throttle_vs_speed (0x48 below),
+## steer_entity_toward_point (0x58 below). Within 15000..18000 an |e| > 100 (0x44 below) or a
+## speed error over 0x5a waves off: word 0x1b83c = 1, +0x32 = saved handler. +0x2e and the gear
+## byte are restored; update_aircraft_entity (0x44 below).
+func tick_landing_approach_glide(ctl: int) -> void:
+	assert(memory != null, "tick_landing_approach_glide requires original global memory")
+	assert(a7 != 0, "tick_landing_approach_glide needs a7 (its frame holds the heading word)")
+	var entry_a7: int = a7
+	var a6: int = entry_a7 - 4
+	var body: int = entry_a7 - 0x3c
+	var saved_floor: int = memory.read_u32(ctl + 0x2e)
+	var saved_gear: int = memory.read_u8(ctl + 0x679)
+	var obj: int = memory.read_u32(ctl)
+	var aim_x: int = memory.read_s32(DAT_000267bc)
+	var aim_y: int = memory.read_s32(DAT_000267bc + 4)
+	var aim_z: int = memory.read_s32(DAT_000267bc + 8)
+	a7 = body - 0x1c
+	var range_d: int = C68kScript.s32(approx_dist3_xyz(memory.read_s32(obj + 0x18), memory.read_s32(obj + 0x1c), memory.read_s32(obj + 0x20), aim_x, aim_y, aim_z))
+	a7 = entry_a7
+	memory.write_u32(ctl + 0x2e, 0xfffff060)
+	var lead: int
+	if range_d > 0xae30:
+		lead = C68kScript.s32(range_d - 13000)
+	elif range_d > 0x8e30:
+		var cut: int = C68kScript.s32(C68kScript.s32(range_d - 0x8e30) * 3000)
+		if cut < 0:
+			cut = C68kScript.s32(cut + 0x1fff)
+		lead = C68kScript.s32(C68kScript.s32(range_d - 10000) - C68kScript.asr32(cut, 13))
+	else:
+		lead = C68kScript.s32(range_d - 10000)
+	var tx: int = C68kScript.s32(aim_x - _glide_scale(memory.read_s16(DAT_000267b2), lead))
+	var ty: int = C68kScript.s32(aim_y - _glide_scale(memory.read_s16(DAT_000267b2 + 4), lead))
+	var floor_y: int = C68kScript.s32(memory.read_s16(DAT_000267ae) + memory.read_u32(DAT_000267bc + 4))
+	if floor_y >= ty:
+		ty = floor_y
+	else:
+		var rise: int = 0
+		var apply: bool = true
+		if lead > 0x9c40:
+			rise = C68kScript.s32(memory.read_u32(obj + 0x1c) - ty)
+		elif lead > 0x8c40:
+			rise = _glide_scale(C68kScript.s32(memory.read_u32(obj + 0x1c) - ty), C68kScript.s32(lead - 0x8c40))
+		else:
+			apply = false
+		if apply:
+			if rise < 0:
+				rise += 7
+			ty = C68kScript.s32(ty + (rise >> 3))
+	var tz: int = C68kScript.s32(aim_z - _glide_scale(memory.read_s16(DAT_000267b2 + 8), lead))
+	var throttle: int = 0x9d8 if lead > 0x9ab0 else (0 if lead <= 0xf9f else 0x7bc)
+	var sum: int = C68kScript.s32(abs_int(C68kScript.s32(memory.read_u32(obj + 0x18) - tx)) + abs_int(C68kScript.s32(memory.read_u32(obj + 0x20) - tz)))
+	var shift: int = 0
+	while (C68kScript.u32(sum) & 0xffff8000) != 0:
+		shift = C68kScript.s16(shift + 1)
+		sum = C68kScript.asr32(sum, 1)
+	shift = C68kScript.s16(shift + 1)
+	a7 = body - 0x20
+	attitude_from_velocity(C68kScript.asr32(C68kScript.s32(tx - memory.read_u32(obj + 0x18)), shift), 0, C68kScript.asr32(C68kScript.s32(tz - memory.read_u32(obj + 0x20)), shift), 0, 0, 0, a6 - 2)
+	a7 = entry_a7
+	var cross: int = C68kScript.s32(C68kScript.s32(memory.read_s16(DAT_000267b2 + 8) * C68kScript.s32(memory.read_u32(obj + 0x18) - aim_x)) - C68kScript.s32(memory.read_s16(DAT_000267b2) * C68kScript.s32(memory.read_u32(obj + 0x20) - aim_z)))
+	if cross < 0:
+		cross = C68kScript.s32(cross + 0xfff)
+	var offset: int = C68kScript.s16(abs_int(C68kScript.s16(C68kScript.asr32(cross, 12))))
+	var heading: int = memory.read_s16(a6 - 2)
+	a7 = body - 8
+	var turn: int = C68kScript.s16(sin_fixed14(heading)) * offset
+	if turn < 0:
+		turn += 0xfff
+	tx = C68kScript.s32(tx - (turn >> 12))
+	a7 = body - 0xc
+	turn = C68kScript.s16(cos_fixed14(heading)) * offset
+	a7 = entry_a7
+	if turn < 0:
+		turn += 0xfff
+	tz = C68kScript.s32(tz + (turn >> 12))
+	if memory.read_u8(ctl + 0x63e) != 0:
+		memory.write_u32(ctl + 0x32, memory.read_u32(DAT_00026798))
+	var blend: int = memory.read_s16(DAT_000267ac)
+	if blend != 0:
+		var px: int = C68kScript.s32(C68kScript.s32(0x2d * memory.read_s32(ctl + 8)) + memory.read_u32(obj + 0x18))
+		var py: int = C68kScript.s32(C68kScript.s32(0x2d * memory.read_s32(ctl + 0xc)) + memory.read_u32(obj + 0x1c))
+		var pz: int = C68kScript.s32(C68kScript.s32(0x2d * memory.read_s32(ctl + 0x10)) + memory.read_u32(obj + 0x20))
+		var mx: int = C68kScript.s32(C68kScript.s32(C68kScript.s32(px - aim_x) * (2 - blend)) + C68kScript.s32(C68kScript.s32(tx - aim_x) * blend))
+		if mx < 0:
+			mx += 1
+		var my: int = C68kScript.s32(C68kScript.s32((2 - blend) * py) + C68kScript.s32(blend * ty))
+		if my < 0:
+			my += 1
+		var mz: int = C68kScript.s32(C68kScript.s32(C68kScript.s32(pz - aim_z) * (2 - blend)) + C68kScript.s32(C68kScript.s32(tz - aim_z) * blend))
+		if mz < 0:
+			mz += 1
+		ty = my >> 1
+		tx = C68kScript.s32((mx >> 1) + memory.read_u32(DAT_000267bc))
+		tz = C68kScript.s32((mz >> 1) + memory.read_u32(DAT_000267bc + 8))
+		if blend == 1:
+			memory.write_u32(DAT_000267a0, C68kScript.u32(tx))
+			memory.write_u32(DAT_0002679c, C68kScript.u32(tz))
+		memory.write_u16(DAT_000267ac, C68kScript.u16(memory.read_u16(DAT_000267ac) + 1))
+		if memory.read_s16(DAT_000267ac) == 2:
+			memory.write_u16(DAT_000267ac, 0)
+	var err: int = C68kScript.s32(ty - memory.read_u32(obj + 0x1c))
+	var acc: int = C68kScript.s32(C68kScript.lsl32(C68kScript.s32(err - memory.read_u32(ctl + 0x622)), 5) + memory.read_u32(DAT_000267a4))
+	memory.write_u32(ctl + 0x622, C68kScript.u32(err))
+	acc = C68kScript.s32(err + acc)
+	var rounded: int = C68kScript.s32(acc + 0xf) if acc < 0 else acc
+	memory.write_u32(DAT_000267a4, C68kScript.u32(acc - (rounded & ~0xf)))
+	var integral: int = C68kScript.s32(memory.read_u32(DAT_000267a8) + C68kScript.asr32(rounded, 4))
+	integral = clampi(integral, -0x4b0, 0x4b0)
+	memory.write_u32(DAT_000267a8, C68kScript.u32(integral))
+	ty = C68kScript.s32(ty + integral)
+	var dx: int = C68kScript.s32(tx - memory.read_u32(DAT_000267a0))
+	if dx < 0:
+		dx += 7
+	var sx: int = C68kScript.s32((dx >> 3) + memory.read_u32(DAT_000267a0))
+	var dz: int = C68kScript.s32(tz - memory.read_u32(DAT_0002679c))
+	if dz < 0:
+		dz += 7
+	var sz: int = C68kScript.s32((dz >> 3) + memory.read_u32(DAT_0002679c))
+	memory.write_u32(DAT_000267a0, C68kScript.u32(sx))
+	memory.write_u32(DAT_0002679c, C68kScript.u32(sz))
+	var tracker: int = memory.read_u32(DAT_00020b40)
+	if tracker != 0:
+		memory.write_u32(memory.read_u32(tracker) + 0x18, C68kScript.u32(sx))
+		memory.write_u32(memory.read_u32(tracker) + 0x1c, C68kScript.u32(ty))
+		memory.write_u32(memory.read_u32(tracker) + 0x20, C68kScript.u32(sz))
+	a7 = body - 0xc
+	adjust_ai_throttle_vs_speed(ctl, throttle)
+	a7 = body - 0x1c
+	steer_entity_toward_point(ctl, C68kScript.u32(sx), C68kScript.u32(ty), C68kScript.u32(sz))
+	a7 = entry_a7
+	if range_d <= 0x464f and range_d > 0x3a98:
+		if abs_int(err) > 100 or abs_int(C68kScript.s32(throttle - C68kScript.asr32(memory.read_u32(ctl + 0x62a), 2))) > 0x5a:
+			memory.write_u16(DAT_0001b83c, 1)
+			memory.write_u32(ctl + 0x32, memory.read_u32(DAT_00026798))
+	memory.write_u32(ctl + 0x2e, saved_floor)
+	memory.write_u8(ctl + 0x679, saved_gear)
+	a7 = body - 8
+	update_aircraft_entity(ctl)
+	a7 = entry_a7
+
+## The AI fly step shared by the state handlers: ai_fly_table[word +0x614] (kind) when non-zero
+## (jsr), else update_aircraft_entity; entered `depth` below the caller's entry.
+func _ai_fly_step(ctl: int, entry_a7: int, depth: int) -> void:
+	var handler: int = memory.read_u32(DAT_0001b3f4 + memory.read_s16(ctl + 0x614) * 4)
+	a7 = entry_a7 - depth
+	if handler != 0:
+		_jsr(handler, [ctl])
+	else:
+		update_aircraft_entity(ctl)
+	a7 = entry_a7
+
+## 0x11182: AI state 0x11162 (no ammo left): just the kind's fly step (0xc below).
+func ai_fly(ctl: int) -> void:
+	assert(memory != null, "ai_fly requires original global memory")
+	_ai_fly_step(ctl, a7, 0xc)
+
+## 0x111ae: AI state 0x1118e (friendly bomber): the same fly step (0xc below).
+func ai_fly_bomber(ctl: int) -> void:
+	assert(memory != null, "ai_fly_bomber requires original global memory")
+	_ai_fly_step(ctl, a7, 0xc)
+
+## 0x111da: AI state 0x111ba (escort / dive). With a live target that has vertices: +0x696 =
+## horizontal distance (approx_dist3_xyz with y 0); aim at the target's height within 45000
+## (0xafc8), else 40000; throttle toward 0xd5c (0x1c below); with the ground lowered to -40000
+## (+0x2e) steer at the target (0x2c below), then fly with the ground at 0 (update_aircraft_entity,
+## 0x30 below) and restore +0x2e. Without a target, in host mode 7 while the target list word +4
+## is 0, it just flies on; otherwise (or with a dead target) the target is released and the state
+## becomes 0x110d4 with ammo (word +0x682 > 2) or 0x11162. A frame not flown by the dive takes
+## the kind's fly step (0x18 below).
+func ai_dive_at_target(ctl: int) -> void:
+	assert(memory != null, "ai_dive_at_target requires original global memory")
+	var entry_a7: int = a7
+	var target: int = memory.read_u32(ctl + 0x692)
+	if target != 0 and (memory.read_u8(target + 7) & 2) == 0 and memory.read_u32(target + 0x44) != 0:
+		var own: int = memory.read_u32(ctl)
+		memory.write_u32(ctl + 0x696, C68kScript.u32(approx_dist3_xyz(memory.read_s32(own + 0x18), 0, memory.read_s32(own + 0x20), memory.read_s32(target + 0x18), 0, memory.read_s32(target + 0x20))))
+		var aim_y: int = memory.read_u32(target + 0x1c) if memory.read_s32(ctl + 0x696) <= 0xafc8 else 0x9c40
+		a7 = entry_a7 - 0x1c
+		adjust_ai_throttle_vs_speed(ctl, 0xd5c)
+		var saved_floor: int = memory.read_u32(ctl + 0x2e)
+		memory.write_u32(ctl + 0x2e, 0xffff63c0)
+		a7 = entry_a7 - 0x2c
+		steer_entity_toward_point(ctl, memory.read_u32(target + 0x18), aim_y, memory.read_u32(target + 0x20))
+		memory.write_u32(ctl + 0x2e, 0)
+		a7 = entry_a7 - 0x30
+		update_aircraft_entity(ctl)
+		a7 = entry_a7
+		memory.write_u32(ctl + 0x2e, saved_floor)
+		return
+	var waiting: bool = target == 0 and memory.read_s16(memory.read_u32(DAT_0001b5a0) + 0x90) == 7 and memory.read_u16(memory.read_u32(DAT_00020adc) + 4) == 0
+	if not waiting:
+		a7 = entry_a7 - 0x18
+		release_ai_target(ctl)
+		a7 = entry_a7
+		memory.write_u32(ctl + 0x32, 0x110d4 if memory.read_s16(ctl + 0x682) > 2 else 0x11162)
+	_ai_fly_step(ctl, entry_a7, 0x18)
+
+## 0x112e0: AI state 0x112c0 (bombing run) on a live target with bombs (byte +0x67c): +0x696 =
+## horizontal distance. Stage byte +0x675: 0 approach - within 40000 and above 24999 it becomes
+## 1 (aiming at the target), else it heads for the target at 30000; 1 dive - below 5000 the
+## bombs are armed (+0x674 = 1) and the stage becomes 2; it steers at the target with the ground
+## lowered to -40000 and flies with the ground at 0 (restored after); 2 pull out - steers toward
+## its own position + 0x2000 * velocity at 30000 and, past 45000, resets the stage and releases the
+## target. Other stage values fly nothing here. Each stage steers 0x34 / flies 0x38 below; then
+## the throttle eases toward 0xd5c (0x2c below). Without a usable target the target is released
+## and the state becomes 0x110d4 (ammo > 2) or 0x11162. A frame not flown takes the kind's fly
+## step (0x28 below).
+func ai_bombing_run(ctl: int) -> void:
+	assert(memory != null, "ai_bombing_run requires original global memory")
+	var entry_a7: int = a7
+	var target: int = memory.read_u32(ctl + 0x692)
+	var flown: bool = false
+	if target == 0 or memory.read_u8(ctl + 0x67c) == 0 or (memory.read_u8(target + 7) & 2) != 0 or memory.read_u32(target + 0x44) == 0:
+		a7 = entry_a7 - 0x28
+		release_ai_target(ctl)
+		a7 = entry_a7
+		memory.write_u32(ctl + 0x32, 0x110d4 if memory.read_s16(ctl + 0x682) > 2 else 0x11162)
+	else:
+		var own: int = memory.read_u32(ctl)
+		memory.write_u32(ctl + 0x696, C68kScript.u32(approx_dist3_xyz(memory.read_s32(own + 0x18), 0, memory.read_s32(own + 0x20), memory.read_s32(target + 0x18), 0, memory.read_s32(target + 0x20))))
+		var aim_x: int = memory.read_u32(target + 0x18)
+		var aim_y: int = memory.read_u32(target + 0x1c)
+		var aim_z: int = memory.read_u32(target + 0x20)
+		var stage: int = memory.read_s8(ctl + 0x675)
+		if stage == 1:
+			if memory.read_s32(own + 0x1c) <= 0x1387:
+				memory.write_u8(ctl + 0x674, 1)
+				memory.write_u8(ctl + 0x675, 2)
+			var saved_floor: int = memory.read_u32(ctl + 0x2e)
+			memory.write_u32(ctl + 0x2e, 0xffff63c0)
+			a7 = entry_a7 - 0x34
+			steer_entity_toward_point(ctl, aim_x, aim_y, aim_z)
+			memory.write_u32(ctl + 0x2e, 0)
+			a7 = entry_a7 - 0x38
+			update_aircraft_entity(ctl)
+			a7 = entry_a7
+			flown = true
+			memory.write_u32(ctl + 0x2e, saved_floor)
+		elif stage == 0:
+			if memory.read_s32(ctl + 0x696) <= 0x9c40 and memory.read_s32(own + 0x1c) > 0x61a7:
+				memory.write_u8(ctl + 0x675, 1)
+			else:
+				aim_y = 0x7530
+			a7 = entry_a7 - 0x34
+			steer_entity_toward_point(ctl, aim_x, aim_y, aim_z)
+			a7 = entry_a7 - 0x38
+			update_aircraft_entity(ctl)
+			a7 = entry_a7
+			flown = true
+		elif stage == 2:
+			a7 = entry_a7 - 0x34
+			steer_entity_toward_point(ctl, C68kScript.u32(C68kScript.lsl32(memory.read_u32(ctl + 8), 13) + memory.read_u32(own + 0x18)), 0x7530, C68kScript.u32(C68kScript.lsl32(memory.read_u32(ctl + 0x10), 13) + memory.read_u32(own + 0x20)))
+			a7 = entry_a7 - 0x38
+			update_aircraft_entity(ctl)
+			a7 = entry_a7
+			flown = true
+			if memory.read_s32(ctl + 0x696) > 0xafc8:
+				memory.write_u8(ctl + 0x675, 0)
+				a7 = entry_a7 - 0x2c
+				release_ai_target(ctl)
+				a7 = entry_a7
+		a7 = entry_a7 - 0x2c
+		adjust_ai_throttle_vs_speed(ctl, 0xd5c)
+		a7 = entry_a7
+	if not flown:
+		_ai_fly_step(ctl, entry_a7, 0x28)
 
 func find_contact_record(param_1: int, param_2: int) -> int:
 	assert(memory != null, "find_contact_record requires original global memory")

@@ -554,6 +554,281 @@ value, as in the original, so the frame words live in simulated memory.
 `test_flak_gun.gd` checks the aim against the inverse-trig model and the shot against a
 twin RNG.
 
+The fighter wave spawner is ported: `spawn_enemy_fighter` (`0xe262`) and
+`tick_wave_spawner` (`0x180c8`, registered by runtime address). Each due wave spawns
+one fighter at a random bearing within ±0xa80 and a random distance, 40000 up, from a
+fixed point. Its heading points back across the bearing. The fighter gets damage bit
+0x20 and, while the mission-7 target list is unset, the 0x111ba handler. In host mode
+7 it is recorded in that list. The next wave is due 0x1356 frames later when five
+remain, otherwise 0x546, plus a random spread.
+
+`tick_aircraft_spawner` (`0x17dd4`) is ported and registered by runtime address. It
+keeps up to five launched aircraft, releasing the retired ones. Only when none of them
+is undamaged does one RNG draw in 512 launch a group of 1..min(left, 3). The group
+starts beside the player, toward the spawner (bearing from `attitude_from_velocity`,
+randomly turned) at two thirds of the spawner's range, at 30000 + 10 × (rng & 0xfff).
+Each aircraft moves a further random ±0x800 on x and z. The index scale (4) and the
+`divsl.l` remainder were decoded from the extension words; capstone omits both.
+`test_aircraft_spawner.gd` predicts a whole group with a twin RNG.
+
+Firing ships are ported: `spawn_weapon_entity` (`0x12840`) and
+`tick_firing_ship_controller` (`0x15356`, registered by runtime address). A sinking
+ship only steps its sinking. Otherwise its guns are found once: every face flagged 1
+gives a position (the vertex mean) and an aim (its normal). With shells left, one RNG
+draw in 256 fires a randomly picked gun (a `divsl.l` remainder) with ±0x80 of aim
+jitter. In live play it spawns a shell 10 above the gun, at speed 0x7fff − (rng & 0xff).
+`test_firing_ship.gd` predicts the shot with a twin RNG; the aims match the
+inverse-trig model.
+
+Scanning the data file for definition records (by their +6 factory pointers) listed
+the remaining handlers of those records. Seven small ones are now ported and
+registered by runtime address:
+- `spin_object_heading` (`0x114b4`) and `face_camera_heading` (`0x11ae6`);
+- `create_aircraft_spawner_controller` (`0x17d16`): the launch count depends on the
+  object's range variant;
+- `destroy_aircraft_spawner_controller` (`0x17db8`): it releases slots 0..2 only,
+  although the tick uses five, as in the bytes;
+- `create_wave_spawner_controller` (`0x18040`): in host mode 7 it allocates the
+  mission target list;
+- `destroy_flak_controller` (`0x18b98`);
+- `flak_notice_object` (`0x18bba`): target selection by a 1-in-64 roll and a
+  distance-based chance; a held target is replaced only by one under half its
+  distance.
+`test_small_handlers.gd` covers them.
+
+Aircraft destroy and collision handlers are ported, registered at the runtime
+addresses the aircraft definition records hold:
+- `aircraft_destroy` (`0xe0a4`): frees the +0x616 buffer and releases the AI target.
+- `aircraft_collision` (`0xfe0a`), in live play: damage bit 0x400 for this aircraft
+  and any aircraft it hits. Hitting a ship sets off a radius-10 blast at the aircraft,
+  raised to its ground; it is credited when the aircraft is the player's.
+Two helpers of the notice handlers are ported as well: `invert_ai_bias_67b_if_positive`
+(`0x10cd8`) and `add_radar_track` (`0x176b2`, at most six tracks within
+`radar_limit`). `test_aircraft_handlers.gd` covers them.
+
+`aircraft_notice_object` (`0xfe96`) and `release_ai_target` (`0x100bc`) are ported.
+- **Player's aircraft:** in view modes 1 / 7 / 8, aircraft it notices high above their
+  ground get radar tracks, and the nearest non-player one becomes `designated_entity_2`.
+- **AI aircraft:** they notice enemy aircraft (types 3 / 4) and ships (0x15..0x19,
+  decoded from the jump table) by a 1-in-64 roll and a chance from the target's range
+  over its distance.
+  - Aircraft targets need ammo.
+  - Ships need bombs and a friendly facility (0x100) nearby.
+  - A held target is replaced only by one under half its distance.
+  - Taking a ship switches the AI to its bombing state 0x112c0.
+`test_aircraft_notice.gd` covers both paths with a twin RNG.
+
+`enemy_fighter_notice_object` (`0x100d4`) is ported. Enemy fighters consider the
+player's side (types 1 / 2) and ships near an enemy facility (probe 0x200).
+- An escorting fighter (0x111ba) takes a ship only while it has no target.
+- Otherwise a ship sends a damaged fighter to escort and an armed one bombing (0x112c0);
+  an aircraft target needs ammo.
+The D0 these notice handlers leave is not modelled yet; their callers are not ported.
+`test_fighter_notice.gd` covers each branch with a twin RNG.
+
+`dispatch_overlap_collisions` (`0x5832`), the caller of the +0x16 notice handlers, is
+ported. It sweeps the object list and calls both notice handlers, (self, other) then
+(other, self), for every pair where a later entry's reach (metric + radius) passes an
+earlier entry's start (metric − radius). The backward scan stops at the first entry
+whose running minimum start (+0x28) is above that reach. It never uses the D0 the
+handlers return.
+
+The comparisons only make sense for a list in decreasing metric order: in increasing
+order every earlier entry would pair [STRONG INFERENCE]. `test_overlap_dispatch.gd`
+uses such a list.
+
+`animate_landing_gear` (`0xfb2a`) is ported and registered by runtime address
+(definition +0xe). While the gear moves, each gear face swings on its own side, with
+its normal and vertices rotated by one of two mirrored matrices. Fully up, the gear
+faces are hidden. Every call rebuilds the body matrix at `0x1d72c`.
+`test_landing_gear.gd` covers four cases:
+- gear down: angle 0, so every point lands back on the template;
+- gear up;
+- moving: the two legs come out mirrored;
+- at rest.
+
+The helpers that `update_aircraft_damage_state` calls are now all ported:
+`request_instant_replay` (`0x8784`), `attach_trailing_plume` (`0x11670`),
+`spawn_ground_fire_object` (`0x170ba`), `attach_ground_fire` (`0x17102`) and
+`remove_mission_target` (`0x17ffe`).
+- A trailing plume starts its eight-point trail at itself, clears object bit 0x100000,
+  and follows the aircraft.
+- A ground fire starts in state 1 with timer 0x2d.
+- Removing a mission target clears every slot that holds the aircraft. When none
+  remain, host word +0xce is set to 1 if it was still 0.
+`test_damage_helpers.gd` covers them.
+
+`update_aircraft_damage_state` (`0x10650`) is ported. It advances the damage stages:
+smoking 0x40 → 0x80 / 0x200, burning 0x100 → destroyed 0x400. The pass repeats on the
+newly set bits, with the newly cleared bits standing in as the "previous" state; the
+C's reading differs here, and the bytes win. Stage timers are 0x7f plus half a random
+byte. A newly destroyed aircraft triggers the player's replay request, the mission
+flags, the kill tally and cleanup; the destruction effect runs with `replay_state`
+forced to −1. The `btst` tests on byte +0x684 are word bits 0x800 / 0x400 / 0x1000 /
+0x100, the last of which arms the AI bail-out roll. The D0 it leaves is not used by
+`aircraft_tick` and is not modelled. `test_damage_state.gd` covers the stages, timers,
+destruction and bail-out flags with a twin RNG.
+
+`aircraft_tick` (`0xe5aa`) is ported and registered by runtime address (definition +2).
+It keeps a 75-entry pose ring:
+- In live play it runs the aircraft's handler at +0x32 (a wreck stops instead), takes
+  the damage step, and records the pose.
+- In a replay it jumps onto the recorded pose at the start frame or on a rewind;
+  otherwise it steps towards the pose and takes over the recorded damage word. A
+  recorded stage restarts as smoking.
+- Dead code kept as in the bytes: the gear-bit test after the damage step can never
+  fire, because the damage step ends with +0x686 = +0x684.
+Its mapping is blocked on the AI and flight handlers stored at +0x32, which are not
+ported. `test_aircraft_tick.gd` drives it with a stub handler.
+
+The flight model `update_aircraft_entity` (`0xe792`, 1184 lines) is next to
+everything at +0x32; its leaf helpers come first. Now ported:
+- `table_lerp_1b2c0` (`0xe42a`): the inverse-density altitude curve. Bands are clamped
+  at 7, which makes the curve a sawtooth above 0x70000.
+- `damp_short_if_below_0x200` (`0xe468`): ground effect.
+- `compute_template_force_from_626` (`0xe4a4`): lift from the angle of attack and the
+  flaps, fading over 0x20 past the stall.
+- `scale_template_field_38` (`0xe570`): engine power at density; sea level gives the
+  rated power.
+- The AI throttle controller `adjust_ai_throttle_vs_speed` (`0x10c2c`) and
+  `max_ai_throttle_maybe_invert_679` (`0x10cb2`).
+`test_flight_helpers.gd` checks them against an instruction-level Python model over the
+real altitude table and the player's type values.
+
+AI steering is ported:
+- `atan2_fixed14` (`0x102d6`). For a zero vector it returns the caller's D2,
+  unwritten, and that D2 is threaded through.
+- `enqueue_control_inputs_avg4` (`0x10558`): a clamped four-slot ring of
+  aileron / elevator / rudder commands.
+- `build_relative_steer_sample` (`0x10360`): the target in the aircraft's frame,
+  raised near the ground, with climbs limited when far away.
+- `apply_relative_heading_steer` (`0x109ba`): PD commands for small errors; otherwise
+  a bank toward the target, limited by height.
+- `steer_entity_toward_point` (`0x10b2e`). Its D2 holds the frame vector's address when
+  it calls the steer, which is what a zero-vector `atan2_fixed14` would return.
+`test_steering.gd` checks the angles against the inverse-trig model and works the
+control ring and steer commands by hand.
+
+The flight model's remaining callees are now ported. With them, everything
+`update_aircraft_entity` calls is strict code.
+- `reset_span_row_lists` (`0x6e74`) and `update_view_clip_bounds` (`0x6ed6`): view
+  inset, clip bounds and projection scales.
+- `release_fractal_reference` (`0x14af2`). Its "still has active objects" warning goes
+  through the unported host printer `overlay_printf`.
+- `drop_contact_records_for_object` (`0x137da`).
+- `spawn_bailout_parachute` (`0x19430`): 13 vertices scaled by 1/8, with start
+  velocities derived from them.
+`test_flight_misc.gd` covers them.
+
+`update_aircraft_entity` (`0xe792`), the flight model, is translated in full: blocks
+0..7c as the semantic C names them, using its section checks and the bytes. It is
+registered at its runtime address `0xe772`, the player's +0x32 handler.
+- It keeps the frame locals that the bytes read uninitialised in simulated frame
+  memory: `local_46` / `local_42` for aircraft without the engine model.
+- It follows the corrections the section checks record:
+  - the impact speed is taken before the touchdown snap;
+  - +0x640 is the carrier-arrest latch;
+  - the bomb / gun / leak tests use word bits 0x10 / 0x2;
+  - a crash sets 0x900 and +0x32 = `0xe772`.
+- `test_flight_model.gd` checks the wrecked-on-the-ground exit (block 0) by hand.
+- It checks the flight path against the original bytes themselves:
+  `tools/strict_port/m68k_emu.py`, a small 68020 interpreter on capstone, runs the
+  routine on the binary image (runtime = file − 0x20).
+  `tools/strict_port/gen_flight_model_cases.py` records every byte the original changes
+  outside the stack, for 15 states: AI and player cruising, a climbing turn,
+  flaps / gear ramps, damage jitter, fuel leak and burn, a gentle, a hard and a tilted
+  touchdown, rolling on the deck and on grass, arrest, ditching, and the engine
+  switched off.
+- The port, given the same image, RNG seed and writes, changes exactly the same bytes.
+- Not covered by these cases: the bomb, gun and bail-out branches (block 7b), which
+  need a spawnable scene.
+
+Interpreter notes: capstone leaves the base register empty for `(An)`, `(An)+`,
+`-(An)` and `movem`, and prints `divsl` / 64-bit `muls.l` without their register pair.
+The interpreter takes those from the opcode and extension words; a wrong `divsl` pair
+was the only difference it ever showed.
+
+All five AI state handlers that `aircraft_tick` reaches through +0x32 are ported:
+`ai_attack_or_fly` (`0x110f4`), `ai_fly` (`0x11182`), `ai_fly_bomber` (`0x111ae`),
+`ai_dive_at_target` (`0x111da`) and `ai_bombing_run` (`0x112e0`), registered at their
+runtime addresses `0x110d4` / `0x11162` / `0x1118e` / `0x111ba` / `0x112c0`.
+- Each ends in the fly step: `ai_fly_table` (`0x1b3f4`) indexed by the kind word +0x614,
+  `update_aircraft_entity` when the entry is 0. The table has six entries (kinds 0..5); the
+  words after it are `effect_init_table` (`0x1b40c`). Kinds 1..5 are the fly routines below.
+- The dive steers at the target with the ground word +0x2e lowered to -40000 and flies
+  with it at 0, then restores it; a lost target is released and the state falls back to
+  `0x110d4` (ammo word +0x682 > 2) or `0x11162`. In host mode 7 with no target and an
+  empty target list it just flies on.
+- The bombing run keeps its stage in byte +0x675 (approach, dive, pull-out); the dive
+  arms the bombs (+0x674 = 1) below 5000 and the pull-out releases the target past
+  45000. An unknown stage flies only the kind step.
+- `tools/strict_port/gen_ai_state_cases.py` runs the four handlers on the binary image
+  in the interpreter (kind 0); `test_ai_states.gd` requires the port to
+  change exactly the same bytes. In the bomb-arming case the bomb drop needs a live pool,
+  so `spawn_weapon_entity` answers 0 on both sides (an emulator stub and the test
+  subclass `helpers/no_weapon_port.gd`).
+- `ai_attack_or_fly` drops a target when out of ammo or when the target is dead, else
+  measures it (+0x696) and runs `ai_pursue_target` (`0x1820a`). Beyond 20000 that steers
+  straight at the target. Nearer, it aims at the target's pose ring (75 entries at its
+  controller +0x36) a lag back (word `0x1b876` for type key 1, else `0x1b878`),
+  extrapolated. It then either attacks (relative heading steer, throttle from the target's
+  speed, gun phase +0x676 when lined up within 0x7f) or, for a large heading error,
+  manoeuvres. The manoeuvres are a reverse (1), a break turn (2) and a loop (3), driven by
+  waypoints +0x69c..+0x6a4, phase +0x69b and best distance +0x6a8; manoeuvre 4 keeps
+  attacking until rng & 0x1f is 0. The frame locals passed by address live at their a6
+  offsets, and `apply_relative_heading_steer` gets the extrapolated z still in D2.
+- The interpreter cases now number 47 (28 for the attack state, every manoeuvre phase
+  included). A frame that fires the guns also stubs `spawn_ordnance_oriented`; the
+  fixture stores the zero fills as ranges. The fresh pick of the loop (rng & 3 == 1
+  above airspeed 0x32a0) is not reached by these seeds.
+
+The per-kind fly routines of `ai_fly_table` are ported with their helpers, registered at
+`0x10d48` (kind 1), `0x10dc8` (2), `0x10f48` (3), `0x10eac` (4) and `0x10d88` (5).
+- Kinds 1, 2 and 5 patrol a four-point route (`0x1b2e0` / `0x1b340` / `0x1b310`). On first
+  use, `alloc_transformed_vertex_block` copies the points into a cleared heap block, moved by
+  the aircraft's template pose, and sets a speed word (0x9d8 / 0x9d8 / 0xd5c).
+  `tick_ai_climb_then_waypoint` then climbs out (`ai_bootstrap_climb_phase`: full throttle,
+  gear up, pitch toward 0x2c0 until 2000 above the ground). After that it follows
+  `advance_route_waypoint`. Within 4999 of a point that moves to the next point and pushes
+  it 5000 further out (the divisor is shifted twice, as the bytes do), aiming at least
+  0x1000 above the ground.
+- Kind 4 flies the 0x1b310 patrol plus an attack run on a fixed point. Phase 2 releases
+  bombs through `ai_script_try_fire_burst` (one roll in eight once the release frame
+  +0x6ac is reached).
+- Kind 3 is the scripted mission. It copies eight world points (`alloc_copied_vertex_block`),
+  then: climb, bomb at point 4, return to point 0, lower the gear and try
+  `try_begin_landing_approach`, then glide. Other phase values chase the player.
+- The landing approach uses `find_nearest_runway_approach_ends`. It takes the nearest 'p'
+  quad of a shape near a friendly air base and turns the quad so its long sides run along
+  the runway. The approach starts 10000..0x26ac0 from the nearer end; it fills the glide
+  globals (`0x26798`..`0x267c4`) and installs `0x1a186` (`tick_landing_approach_glide`).
+- 26 more interpreter cases cover every phase. They include the first-use allocations (a
+  prepared large-block free list and a template parent), the bomb roll, and a runway
+  (found, rotated with shifted vertices, and too close). The spawn stubs record their
+  arguments, so the bomb and gun aims are compared too. The interpreter gained `addx`
+  (the 64-bit accumulations of the template transform).
+- A mutation check (glide aim + 0x44 instead of 0x43) fails both landing cases.
+
+`tick_landing_approach_glide` (`0x1a1a6`, the `0x1a186` handler) completes the +0x32 set, so
+`aircraft_tick` has nothing unported left behind it.
+- It holds the ground word at -4000 for the frame and keeps the gear byte. It aims down an
+  8-degree slope: the target slides back from the aim point by a lead taken from the range
+  in three bands. A height floor applies, and far out the target is pulled toward the
+  aircraft's height.
+- It corrects for drifting off the centre line (sin / cos of the heading toward the
+  target). The heading word sits at a6 - 2, because `attitude_from_velocity` may leave it
+  unwritten.
+- Word `0x267ac` optionally blends the target with the predicted position (1 -> 2 -> 0;
+  set to 2, it counts on to 3, as the bytes do). Height goes through a 33 e - 32 e(prev)
+  controller with a clamped integral (`0x267a4` / `0x267a8`). The x / z target eases 1/8
+  per frame (`0x267a0` / `0x2679c`) and is mirrored into the `type10_controller` object
+  (`0x20b40`).
+- Touchdown restores the saved handler. Between 15000 and 18000 a height error over 100 or
+  a speed error over 0x5a waves off (word `0x1b83c` = 1).
+- 14 interpreter cases cover each band, the floor, the lateral offset, a skewed runway,
+  both blend frames, touchdown, both wave-off tests, the integral clamp and the tracker. A
+  mutation check (height-controller asl 5 -> asl 4) fails 9 of them.
+
 `animate_ground_fire` (`0x17150`) and `tick_ground_fire` (`0x17380`) are ported. The
 fire keeps four vertices beside its owner, across the owner's velocity: offsets
 (±v asl 5) divs.l (|vx| + |vz|), stored / 8 toward zero as drift words. While the
