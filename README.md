@@ -66,7 +66,7 @@ remain valuable review evidence.
 
 ## Playable prototype
 
-Open `godot/project.godot` in Godot 4 and run
+Open `godot/project.godot` in Godot 4.7 and run
 `res://scenes/main/Main.tscn`. The prototype provides authored training
 objectives, keyboard flight controls, HUD feedback, restart, and success/failure
 flow. Its simplified flight model, world, and visuals are explicitly
