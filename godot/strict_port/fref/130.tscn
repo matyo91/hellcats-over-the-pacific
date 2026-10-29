@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://strict_port/ui/finder_view.gd" id="1"]
+
+[node name="FREF_130" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1")
+resource_type = "FREF"
+resource_id = 130

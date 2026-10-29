@@ -183,6 +183,10 @@ EXPECTED_RUNNER_PATHS = [
     "res://tests/strict_port/test_id02_sound.gd",
     "res://tests/strict_port/test_id02_startup.gd",
     "res://tests/strict_port/test_id02_flight.gd",
+    "res://tests/strict_port/test_resedit_dialogs.gd",
+    "res://tests/strict_port/test_resedit_interface.gd",
+    "res://tests/strict_port/test_resedit_text.gd",
+    "res://tests/strict_port/test_resedit_media.gd",
     "res://tests/unit/test_rng.gd",
     "res://tests/unit/test_rng_overlay_11564.gd",
     "res://tests/unit/test_flight_math.gd",
@@ -467,6 +471,14 @@ def check_optional_ghidra() -> str:
     return f"available ({root})"
 
 
+def check_resedit_mirror() -> None:
+    import subprocess
+    result = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "strict_port" / "import_resedit.py"), "--check"],
+                            capture_output=True, text=True)
+    if result.returncode != 0:
+        fail("the resource folders in godot/strict_port drifted from sources/resedit-1-0-3:\n" + result.stdout)
+
+
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
@@ -475,6 +487,7 @@ def main() -> int:
         ("mission-mvp-data", check_mission_mvp_data),
         ("01a48-kind2-jsr-bytes", check_01a48_kind2_jsr_bytes),
         ("global-alias-docs", check_global_alias_docs),
+        ("resedit-mirror", check_resedit_mirror),
     ]
     optional = [
         ("optional-capstone", check_optional_capstone),

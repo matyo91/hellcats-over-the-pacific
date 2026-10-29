@@ -2132,3 +2132,81 @@ The next smallest concrete slice is `set_view_distance` (`FUN_0001771a`), a
 verified three-global update adjacent to the radar reset. It can reuse the same
 packed-memory state and requires explicit signed 32-bit left-shift/wrap behavior
 for `param_1 << 1`.
+
+## Resource fork mirror and dialog scenes
+
+`godot/strict_port/` mirrors `sources/resedit-1-0-3/` type by type, each folder its source
+folder's name lower-cased (`ALRT` -> `alrt`, `ICN#` -> `icn#`, `icI4` -> `ici4`) beside `code/`,
+keeping each file name: the original payloads (`<id>.bin`, byte-identical), the media already
+derived next to them (the PICT and ICON PNGs so far), and one scene per dialog resource
+(`alrt/<id>.tscn`, `dlog/<id>.tscn`, `ditl/<id>.tscn`). CODE is not mirrored: its port is
+`code/`. `tools/strict_port/import_resedit.py` writes the mirror and `mappings/resources.json` (every file
+with its source and SHA-256); `--check` (also run by `tools/qa/test_regression.py`) fails on any
+missing, changed or extra file and prints the progress.
+
+The scenes do not carry decoded data: `ui/dialog_view.gd` reads the `.bin` at run time and
+`ui/dialog_templates.gd` decodes it field for field (AlertTemplate, DialogTemplate, the item list
+with its disabled bit and word padding; DITL 135's ninth item, cut short by the end of the
+resource, is left out as the decoder reports it). The view draws an ALRT or DLOG as its window at
+its global position on a 640 x 480 screen and a bare DITL in a plain box: the procID's frame (all
+dialogs here use 1, the modal box), 16 x 16 round-rect buttons with centred titles, check boxes and
+radio buttons, TextBox-wrapped static text (CR breaks, `^0`..`^3` shown literally), edit text framed
+3 pixels out, 1-bit ICONs from their bytes and PICTs from the derived PNGs scaled into their rects,
+the alert's default button outlined per stage 1, and items clipped to the window. User items are
+shown as ResEdit's editor shows them, grey boxes. The resource fork holds no FONT / NFNT, so the
+system font (Chicago 12) is stood in for by the nearest installed face; the window frame follows
+the System 7 modal box (outer line, white line, 2-pixel line, 4 white pixels) as the system WDEF
+itself is not in the file.
+
+`godot/tests/strict_port/test_resedit_dialogs.gd` checks the GDScript decoder against the resource
+evidence for all 40 dialog resources (`fixtures/resedit_dialogs.json`, written by the importer)
+and that every scene draws its window and items.
+
+The second import adds the controls, the Finder bundle and every icon and colour resource
+(`cntl/`, `bndl/`, `fref/`, `icn#/`, `ics#/`, `ici4/`, `ici8/`, `ics4/`, `ics8/`, `cicn/`, `clut/`,
+plus a scene for `icon/`). `ui/resource_canvas.gd` now holds the drawing the views share;
+`ui/resource_images.gd` decodes the one-bit families (icon and mask), the indexed ones through the
+system's default colour tables (clut 4 and clut 8: the 6 x 6 x 6 cube without black, the red,
+green, blue and grey ramps, black at 255) and a `cicn` through its own table; `ui/icon_view.gd`
+shows them as ResEdit's icon editors do (fat bits with the actual size, the mask beside), a `clut`
+as its entries; `ui/control_view.gd` draws a `CNTL` by its procID (CNTL 128 is an inactive vertical
+scroll bar: maximum not above minimum, so a white track without thumb); `ui/finder_view.gd` shows a
+`BNDL` as its signature and one row per file type with its six icons, and a `FREF` through the
+bundle that lists it. The folders are lower-cased copies of the source folder names (`ALRT` ->
+`alrt`, `ICN#` -> `icn#`, `icI4` -> `ici4`; callers still name types by their source folder and
+`resource_files.gd` makes the path).
+
+`godot/tests/strict_port/test_resedit_interface.gd` checks CNTL, BNDL and FREF against the
+resource evidence (`fixtures/resedit_interface.json`), every icon against the PNG derived next to
+it wherever that PNG is opaque (all but ics8, whose derived PNGs do not follow the default 8-bit
+table: entry 245 comes out dark blue and 255 mid grey, while the icl8 PNGs follow it exactly),
+every cicn against its PNG, and that every scene draws its resource.
+
+The third import adds the menus, strings and information resources (`menu/`, `str#/`, `text/`,
+`styl/`, `vers/`, `size/`), decoded by `ui/resource_text.gd`. `ui/menu_view.gd` shows a MENU pulled
+down from its highlighted title (character 0x14 is the system font's Apple logo), its items in
+16-pixel rows with the mark margin, the command keys and grey-pattern separators, dimmed by the
+enable flags (bit 0 the whole menu: MENU 3, Edit, has flags 0 and is drawn dimmed throughout).
+`ui/text_view.gd` shows a STR# as its numbered strings, a TEXT in the run of the styl with the same
+ID (TEXT 1000 in styl 1000's 10-point Geneva run, which the stand-in face draws at that size), a
+TEXT holding binary longs (TEXT 128) in ResEdit's hex layout, a styl as its runs, vers and SIZE as
+their fields. `godot/tests/strict_port/test_resedit_text.gd` checks them against the resource
+evidence (`fixtures/resedit_text.json`) and their drawings.
+
+The fourth import completes the mirror (29 of 29 types, 109 resources, 109 scenes): the sounds
+(`snds/`, each `.bin` with the MP3 derived next to it), a scene for every picture (`pict/`), and
+the application's own data types (`data/`, `drel/`, `hel1/`, `hell/`, `mdpl/`, `zero/`).
+`ui/resource_sound.gd` decodes a format 1 'snd ' (modifiers, the bufferCmd whose param2 is the
+sound header's offset, the header: length, 16.16 rate, loop, encoding 0, base note) and turns its
+8-bit offset-binary samples into an AudioStreamWAV at the header's rate rounded to the hertz;
+`ui/sound_view.gd` shows the header fields and the waveform (the loop span shaded) and plays the
+samples when the scene runs, as ResEdit's "Try Sound" does, rather than the derived MP3. A PICT
+scene shows the picture at its frame (picSize and picFrame read from the bytes; the opcodes are
+not replayed, the derived PNG is drawn at its own size: PICT 131's is 135 x 749 for a 137 x 751
+frame and PICT 1000's 425 x 88 for 438 x 93). The data types, which ResEdit has no template for,
+are shown in its hex layout. `godot/tests/strict_port/test_resedit_media.gd` checks the sounds
+against the resource evidence down to their samples' SHA-256 (`fixtures/resedit_media.json`),
+the pictures' sizes and versions, every data resource's bytes and hex rows, and every scene.
+
+The resource fork holds no FONT or NFNT: there is no font to import. Every view draws the system
+font with the nearest installed face.

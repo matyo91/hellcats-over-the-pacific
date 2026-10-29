@@ -1,0 +1,1789 @@
+{
+  "schema": "hellcats-strict-resedit-mirror-v1",
+  "source_root": "sources/resedit-1-0-3",
+  "imported_types": [
+    "ALRT",
+    "DITL",
+    "DLOG",
+    "ICON",
+    "PICT",
+    "CNTL",
+    "BNDL",
+    "FREF",
+    "ICN#",
+    "ics#",
+    "icI4",
+    "icI8",
+    "ics4",
+    "ics8",
+    "cicn",
+    "clut",
+    "MENU",
+    "STR#",
+    "TEXT",
+    "styl",
+    "vers",
+    "SIZE",
+    "snds",
+    "DATA",
+    "DREL",
+    "HEL1",
+    "HELL",
+    "MDPL",
+    "ZERO"
+  ],
+  "types": {
+    "ALRT": {
+      "status": "imported",
+      "resources": 7,
+      "files": [
+        {
+          "path": "godot/strict_port/alrt/1001.bin",
+          "sha256": "5b546eaafbefa2434198337711da6cac810339ed181451c4cccee94be2cc125f",
+          "source": "sources/resedit-1-0-3/ALRT/1001.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/alrt/1001.tscn",
+          "sha256": "bb7bb95311a247cf923fae4363c9339b56ca71d916c9c4047fe48a708e59430e",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/alrt/256.bin",
+          "sha256": "faa7e1ba523f855ee7eae4865be8922c4f4705325538e8355cbf72c86e5a1ea8",
+          "source": "sources/resedit-1-0-3/ALRT/256.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/alrt/256.tscn",
+          "sha256": "52d63f677cb6131bc0c601fdc42da77fc233e44184daa379c471cd72bb363789",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/alrt/257.bin",
+          "sha256": "3b2322e6f7a336b895be0eb31e876d858980150272433837cded4db971ac587c",
+          "source": "sources/resedit-1-0-3/ALRT/257.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/alrt/257.tscn",
+          "sha256": "6e992cceb35c0a03fba9dfc6a2f2b91183dc2f91b7d9a3c9d6ff45c2be9b11e3",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/alrt/258.bin",
+          "sha256": "f01fb35c3f45fc906bdde6dc121a50f8958895b67056cda1a3eb8037781d7ad9",
+          "source": "sources/resedit-1-0-3/ALRT/258.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/alrt/258.tscn",
+          "sha256": "0004add96c403aa90433931b45ec594b0aee8d3e794ed375e1bdf28951047ea2",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/alrt/259.bin",
+          "sha256": "73f6bbb22255124f0e15708b5170d694771cd2d0b6a5b0752f005180b4872865",
+          "source": "sources/resedit-1-0-3/ALRT/259.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/alrt/259.tscn",
+          "sha256": "dce7e78aae2693256795cee0caf0711861f90e5a039b58857ffded768be35588",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/alrt/260.bin",
+          "sha256": "97222e86925a3f8f67facae6336de3791c0396b373e191e0a98e118b17fb1bdf",
+          "source": "sources/resedit-1-0-3/ALRT/260.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/alrt/260.tscn",
+          "sha256": "4c63a252c09267eeb1110c7bdc4aa6458b45e43e3419cf41b8ae5938270cbe3d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/alrt/261.bin",
+          "sha256": "0fa1054cc4bf89c921f7d7cbcb792010313a83b6f7fb2c9217792e907138f649",
+          "source": "sources/resedit-1-0-3/ALRT/261.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/alrt/261.tscn",
+          "sha256": "903221dfa3f3ec53b49f2a9370681d414a370919f18ce5818333edc218a251a4",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "BNDL": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/bndl/132.bin",
+          "sha256": "aace99900579f07a25b4e787cf547108a340eb3d09518f77e5925e507ad99c34",
+          "source": "sources/resedit-1-0-3/BNDL/132.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/bndl/132.tscn",
+          "sha256": "02bb66a0f4b3efae3cecab83716d13acfc74161cab243e25e28d85253be26c19",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "CNTL": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/cntl/128.bin",
+          "sha256": "4ac7791b17115e52a68f54f81f202bb486874cf41347827d19f434fe29930e45",
+          "source": "sources/resedit-1-0-3/CNTL/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cntl/128.tscn",
+          "sha256": "fc36f41e665171fc043816c9bef4dfd910b5b61d70d90f554b2ab6160584bc89",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "DATA": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/data/0.bin",
+          "sha256": "e349cca624d4a06ec196ef2b18e1d5c4041e4070420816fb0741b3240b713073",
+          "source": "sources/resedit-1-0-3/DATA/0.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/data/0.tscn",
+          "sha256": "22bf6f4ab178f7aa9062362f3998203d7c9658b4921fd3af578e73141dbcdabd",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/data/128.bin",
+          "sha256": "312a2d52ae2d8b40bf3a4d0f858dbb4fbac88e6488841dc74c8806894d95151d",
+          "source": "sources/resedit-1-0-3/DATA/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/data/128.tscn",
+          "sha256": "7379c8f5df278f8c628b99e720a2ed8466ce46c731234f3a21b06e518b76cb5f",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "DITL": {
+      "status": "imported",
+      "resources": 21,
+      "files": [
+        {
+          "path": "godot/strict_port/ditl/1000.bin",
+          "sha256": "a2433bcf8c4a1bc76d8ee356fb1e7086517af65d161fd8d490b89f8cce1b2f2a",
+          "source": "sources/resedit-1-0-3/DITL/1000.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/1000.tscn",
+          "sha256": "d5049edf0555f84460924858ffeadf66ffc6a38a3c5891eea07d7ae9d2b67877",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/1001.bin",
+          "sha256": "66f5359139a02d80dd404556d95c39457b3d8cc382af61802c082beac155fa7c",
+          "source": "sources/resedit-1-0-3/DITL/1001.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/1001.tscn",
+          "sha256": "62922385129e91a318ab4510b70f2835a746f40d435a2e3f90e6fabc229d5a74",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/127.bin",
+          "sha256": "446cac7d096349eb704494145822fda0c4a387814d19335edd22c8b5f1f75953",
+          "source": "sources/resedit-1-0-3/DITL/127.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/127.tscn",
+          "sha256": "fc7b4e7ad885643dcd0805e9b5af8e53160d9dfed4f6d89e3fff7cf77903ee42",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/128.bin",
+          "sha256": "7d10615ab0be097b156e58e3a9bdc03b9b38d288352ebdb4d2b8224d005c341f",
+          "source": "sources/resedit-1-0-3/DITL/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/128.tscn",
+          "sha256": "46767e60355527944a8a6f6ccdcf83ec59a9b89ad2c764972fad2bc8c9835527",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/129.bin",
+          "sha256": "bf774e08456c5a3fd74bf832aa4773ba023898ad9732922323680fb1a3548b9c",
+          "source": "sources/resedit-1-0-3/DITL/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/129.tscn",
+          "sha256": "c7b250865426ac93dfe559a8338d752868c1065d30c7af4d2c8dd41c7e6b2d9a",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/130.bin",
+          "sha256": "a006b2a90ba621ffd622423500fd8263b8d0f925d80e3c1c8d391b4779e45ebb",
+          "source": "sources/resedit-1-0-3/DITL/130.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/130.tscn",
+          "sha256": "ff11b319f13d46ab75e4a95a7fb185cb93b45412b568a1d27ad27f44d2f59ff9",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/131.bin",
+          "sha256": "0348e507991320a0d86518af46edd77e6a3c05e5c02d847a967de2544ad4eff4",
+          "source": "sources/resedit-1-0-3/DITL/131.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/131.tscn",
+          "sha256": "16a2523e442cd84b939560425018784273aecf27504bd0880a20584ce893d4af",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/132.bin",
+          "sha256": "2e4bb733f91ee03ab26be077cecf366ea98fcd0f4996ae7c6f7c244043922266",
+          "source": "sources/resedit-1-0-3/DITL/132.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/132.tscn",
+          "sha256": "369190e69fa90eaf241844ca3ac98b3309690ae3ba873dcb79933da2f8c3ab8c",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/133.bin",
+          "sha256": "5890492aef3a4b0b46742108bd0a5ab1ec47dc835a953f7044a4cb3ca9c2985e",
+          "source": "sources/resedit-1-0-3/DITL/133.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/133.tscn",
+          "sha256": "a2be8c130d3cbd493c3c0990bbf2511545624505119d7a7568ad2ec26cf9dfa2",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/134.bin",
+          "sha256": "aaa60f79ff2b66d799b18cb4961f2e12762bb69f1cdced6eb1901f798bcc6e50",
+          "source": "sources/resedit-1-0-3/DITL/134.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/134.tscn",
+          "sha256": "b91d0cff1ec5d002fabb32956d1f196c5d455557c1a12e50c2c54290126f8990",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/135.bin",
+          "sha256": "839e12c46681eac1a1ff34899e448ebbe1f0bf4d7c9e298b10c7e3663c40b99f",
+          "source": "sources/resedit-1-0-3/DITL/135.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/135.tscn",
+          "sha256": "6e3dda1a7f1576f7e1518f362214bce7a9bb590555c5f081892ada204965e56b",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/136.bin",
+          "sha256": "7295ce86ead1fcdc1d3fddaae46a330ea3b57c05cd0b7e625a4053579f22d1a0",
+          "source": "sources/resedit-1-0-3/DITL/136.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/136.tscn",
+          "sha256": "053de7319ec6b5c64096228574d840b0d1667fe5bfe0646bde2634563d5167e6",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/137.bin",
+          "sha256": "eefdc52e90dd620997bb566c26128623a6df2039f9e910203847ba847b10c4e4",
+          "source": "sources/resedit-1-0-3/DITL/137.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/137.tscn",
+          "sha256": "515ea29af635d6c2a8d5d8fe4f1203e51aa91d2210a5ab8a7bde3abb6bd677e8",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/138.bin",
+          "sha256": "df629f590857deba13e493c7b4dcf95ae4fb8f695cebe852dac1811e93694d05",
+          "source": "sources/resedit-1-0-3/DITL/138.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/138.tscn",
+          "sha256": "db7f9001f97fa98311b2ee02798284b3b9c4432c3a1898f1ca5b8b148be10473",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/139.bin",
+          "sha256": "bbfba7355ac2ce0f07905fb3d33990d61bcf588c7c2c32be2e403b8354c145ae",
+          "source": "sources/resedit-1-0-3/DITL/139.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/139.tscn",
+          "sha256": "65d52e091e6a8de2b7a15d0e7dc98f03bad6d3713ff6e7c3c7fb02a650f18b51",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/256.bin",
+          "sha256": "faec433aaaf6b092b086db6f323a4d00cb06c4512ab7b44ee66a2a6456cc36b2",
+          "source": "sources/resedit-1-0-3/DITL/256.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/256.tscn",
+          "sha256": "5b44022a12c02d4f3504af38b01c7c1e2b65d9ac85b6dfe4d2c386c91f7ad7d8",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/257.bin",
+          "sha256": "757f8057e139c31d83e9c4ddac75f5a97d23ceb730ec4e89be7d6b3b45aa70ed",
+          "source": "sources/resedit-1-0-3/DITL/257.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/257.tscn",
+          "sha256": "f3ad77eea2e4832afacde7ed7d1947c0b1be14726d577c96ea0be6ed0ba0297e",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/258.bin",
+          "sha256": "b0af31c9b611ff22450b45c368b738395882fe9047215811e61c47d8ec652cb0",
+          "source": "sources/resedit-1-0-3/DITL/258.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/258.tscn",
+          "sha256": "2cc488a67606a273445c26b984dc019119ee9af331f3fa103bc80d34aaf1e183",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/259.bin",
+          "sha256": "262ee744f3f4f2a2677323c21b0c2f0bb0372ee9a355d1af97451a5809d6a08c",
+          "source": "sources/resedit-1-0-3/DITL/259.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/259.tscn",
+          "sha256": "41c6f99628521c329431b6ee8079ed25f67b4de5ae725356cc637efa867389a4",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/260.bin",
+          "sha256": "3eaad90b4ce27e38b726e29b04bfe3c398aff6c75b602b6cfa6603560300c36e",
+          "source": "sources/resedit-1-0-3/DITL/260.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/260.tscn",
+          "sha256": "9871c6a5fb3a1837cf98d5df7847a119c1205ab1556b16e99d8094f98a098b0f",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ditl/261.bin",
+          "sha256": "d1ccb5377f37fea3f6dca2a22ba747989afe9971ffb8add5095ba39b89428d20",
+          "source": "sources/resedit-1-0-3/DITL/261.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ditl/261.tscn",
+          "sha256": "4437973cb5f9dfb99915e811e8897c363df17a88fa0a66c2ba015258835cd6a1",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "DLOG": {
+      "status": "imported",
+      "resources": 12,
+      "files": [
+        {
+          "path": "godot/strict_port/dlog/1000.bin",
+          "sha256": "128fdcf906fd6751f3079a45ac231cdd34739c48a742f372d03458880d3fe975",
+          "source": "sources/resedit-1-0-3/DLOG/1000.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/1000.tscn",
+          "sha256": "61e0ab7e2b450d8fbd7f6f63ff4e1c093c889dd46d77c602bef55656692fcedb",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/127.bin",
+          "sha256": "bbb83325153e6c349493df5663fc3df3e941bb9f2b6747fbb0db65254124a045",
+          "source": "sources/resedit-1-0-3/DLOG/127.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/127.tscn",
+          "sha256": "f1212086345d1538041d00f4feece774d23cae3e497709eae5cccc149f63621e",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/128.bin",
+          "sha256": "f0a645da90cf17f6e9fc75c3ab771bd9885d4b4ef1e74895ee84cdaef68aa705",
+          "source": "sources/resedit-1-0-3/DLOG/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/128.tscn",
+          "sha256": "e0c14f9104478750fc7096075db4d560ba26eb77a8a4dde782982924a4251719",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/129.bin",
+          "sha256": "da050892f38071f889cc318af4af75075d80cf8a771b5eed0f6dcc937c57e662",
+          "source": "sources/resedit-1-0-3/DLOG/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/129.tscn",
+          "sha256": "67bc2a57046962d48f3f6a1dbeff1482cf46892a65e94f687c2a96bc13491e5c",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/130.bin",
+          "sha256": "2ac0dbdea0752c8f1d5911f37401a0e44b7e5645f6d2320af9daa67fc4581e6d",
+          "source": "sources/resedit-1-0-3/DLOG/130.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/130.tscn",
+          "sha256": "6b2a44502d36eccefefe06e2f94a91c6bb3472f6b94e32c0ce4003cf95e225bf",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/131.bin",
+          "sha256": "56f123570e59fad86438f4e2b8ff5a790c99e559e8085892a612531530193e1e",
+          "source": "sources/resedit-1-0-3/DLOG/131.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/131.tscn",
+          "sha256": "03e676fb836935a9d4a56eccb36fbc21a1e69fbe5a68ceb5ecc4bf9244744197",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/132.bin",
+          "sha256": "9808c1c67434eb2260a10e9613c551e3a2ff159ac15a92328ff60557e0431daa",
+          "source": "sources/resedit-1-0-3/DLOG/132.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/132.tscn",
+          "sha256": "917aaf84b18f83a887b106ec0f33f07e4aaa6246ff157c40e1361f5f98c75062",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/133.bin",
+          "sha256": "1fa39947262d0426428585ee077c5fc7b27b2f13bc89537499938dfcbb40a5b2",
+          "source": "sources/resedit-1-0-3/DLOG/133.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/133.tscn",
+          "sha256": "45935ec1d1d2a4341b77c09ce7a1338ff8397804ab6bdeac3213c128e1694003",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/134.bin",
+          "sha256": "9bec10c86e72594f71a4f567f418a0dafce48fde71d550d03b394955518599b7",
+          "source": "sources/resedit-1-0-3/DLOG/134.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/134.tscn",
+          "sha256": "ad4555bfd3973fb7a1c25320dcf9456adcf23f1f957392edc66fc895632a7186",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/137.bin",
+          "sha256": "bf415d2f46b469966a9c1aa58203153c6a9aa184d8910b11e8b05dbd8063de7f",
+          "source": "sources/resedit-1-0-3/DLOG/137.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/137.tscn",
+          "sha256": "3d18bd60dc2342eeeea3f25000c48fbe616b0db13ad67b378ccd1753ed3b9833",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/138.bin",
+          "sha256": "2d7f6b2fd961faaae8c9fd0f9c7789bca2b126d08f036988e55d072559579925",
+          "source": "sources/resedit-1-0-3/DLOG/138.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/138.tscn",
+          "sha256": "8f50eae5ae23a4f0846039de08109bd9bb2759a5767b32515248cb7ef37c529f",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/dlog/139.bin",
+          "sha256": "cb5553724130c954977acd112c0e4a423c16b1f9878c579dc326381c1ecb172f",
+          "source": "sources/resedit-1-0-3/DLOG/139.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/dlog/139.tscn",
+          "sha256": "4ef398a1b3c5f2acd4dd25bb3190c16a2817714dfcefa19146b94d2d40905130",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "DREL": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/drel/0.bin",
+          "sha256": "3d59055692498a5e5848be740189913637de592cfe0e37a73fb7fe44f6d45caf",
+          "source": "sources/resedit-1-0-3/DREL/0.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/drel/0.tscn",
+          "sha256": "c94e62eb3b904aef170eb0583e62b9ed7f96bb902abcc1d764a7b222a01f5038",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "FREF": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/fref/130.bin",
+          "sha256": "6ae70fda6b5f837884e8d6de071429e82370e929a86f133fd3c2b8775a9d594b",
+          "source": "sources/resedit-1-0-3/FREF/130.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/fref/130.tscn",
+          "sha256": "33f3d94d355e63439132cc91a4923519a8b942f351cc80e7c55090a915987dbf",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/fref/131.bin",
+          "sha256": "64118f850e77c49811b1cf18bb3d722f19513f040a7896e3578b60483bb2a36f",
+          "source": "sources/resedit-1-0-3/FREF/131.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/fref/131.tscn",
+          "sha256": "a7054c8c9de1571f122c547570415f8ce4361eac47c5319bf590749a08a2314e",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "HEL1": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/hel1/127.bin",
+          "sha256": "4b2a8187e593929d6c145cac3a34873765a434528c1d04dfed115b6f574f4cec",
+          "source": "sources/resedit-1-0-3/HEL1/127.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/hel1/127.tscn",
+          "sha256": "988a037f2c806ed9b9248bca32f540a783299bbc636223e6f1fd78bb9a9ae4ef",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/hel1/128.bin",
+          "sha256": "0a6869b91a99abb4534e1febd1eb286da6a9784ce5c0708d82bb2893dfad3201",
+          "source": "sources/resedit-1-0-3/HEL1/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/hel1/128.tscn",
+          "sha256": "a8fe44bd086a4980c5020b4203ff0987ad4bad7da8b4715801825e181ddf5d26",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "HELL": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/hell/0.bin",
+          "sha256": "3b868199dd6359d979f2782ad5d2fe209698c06e9059dde136fcd2ff8c600433",
+          "source": "sources/resedit-1-0-3/HELL/0.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/hell/0.tscn",
+          "sha256": "667b5af013e6ae3d898a8743bad3b492bcd5c893d1d43dd34c9cebde886bb3f8",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "ICN#": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/icn#/128.bin",
+          "sha256": "9c803c1d30e71993596276dd47a470c0c227cde3667379a2b6154652104b6ee8",
+          "source": "sources/resedit-1-0-3/ICN#/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/icn#/128.png",
+          "sha256": "edf2b14187b4ccb3aa382f9b6d0507148020f4a81940d928f258cfce18e3cfd7",
+          "source": "sources/resedit-1-0-3/ICN#/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/icn#/128.tscn",
+          "sha256": "7426360b32efd05b03c92cb4a30a0efcea03381ec3b5502b5e08aa79c747b392",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/icn#/129.bin",
+          "sha256": "2722b1cabda0910ecc11c6d029c2f559358ad5d70bbf17bc7704d5ed3b9e84bc",
+          "source": "sources/resedit-1-0-3/ICN#/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/icn#/129.png",
+          "sha256": "5abde23496077ddc697c5abd29d7b2a89295eac74acc5d38afbbe8b166a1285d",
+          "source": "sources/resedit-1-0-3/ICN#/129.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/icn#/129.tscn",
+          "sha256": "34c5661ba7a09cacf663e27b11beba6fa298ec67e55e81ec90416f6736e3cbd2",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "ICON": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/icon/128.bin",
+          "sha256": "b9dc2e989567ef4ec460f0d72f2e39fed230c14c46cf49d0c769f16c8236c28c",
+          "source": "sources/resedit-1-0-3/ICON/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/icon/128.png",
+          "sha256": "158f36cc4d497c42d01ec2716150cf555ff49e21742b7ce1d8dc896a8a60731e",
+          "source": "sources/resedit-1-0-3/ICON/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/icon/128.tscn",
+          "sha256": "c66cdde192875908cfc2d43d7106e29f4b366b01c9507c48732fac2fc5b38e3f",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "MDPL": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/mdpl/128.bin",
+          "sha256": "d3837bd42eb43128291042b0ccdc04f486aee6f49e4a048c3c1704ad73a615ab",
+          "source": "sources/resedit-1-0-3/MDPL/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/mdpl/128.tscn",
+          "sha256": "20002570f2fcb07a3a500413b67d916111ed06757b64eb948a65efd141964693",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "MENU": {
+      "status": "imported",
+      "resources": 5,
+      "files": [
+        {
+          "path": "godot/strict_port/menu/1.bin",
+          "sha256": "dd7814b6d1763f6e165f054886bf356d0ba41bd2d9ef499a3bd0227a327d5abb",
+          "source": "sources/resedit-1-0-3/MENU/1.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/menu/1.tscn",
+          "sha256": "7c9ee68f61592383691192889c053dc9af934d8e294a001de59f70afbf4241f8",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/menu/2.bin",
+          "sha256": "94009e2f0ff20f9b4fa22238bc4e51a4ae8b93f86684fceafe0baf675410f2fa",
+          "source": "sources/resedit-1-0-3/MENU/2.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/menu/2.tscn",
+          "sha256": "eeb3d28333615aea749ab54e9b2086967a307e8495a24f2c8167c751e338ca82",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/menu/3.bin",
+          "sha256": "b7c37cfd05c6c5dda23f4b0d20829512f53750326650b068168c4b18ab7d4ffe",
+          "source": "sources/resedit-1-0-3/MENU/3.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/menu/3.tscn",
+          "sha256": "cd11c249d3491312d29f0967da4123cef50c06fafeaceacfb7ed8393febd22c4",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/menu/4.bin",
+          "sha256": "e9f6b5a11f9aea00800d571c5f6736bbb80702b26f73047d62e10bc5ad7051aa",
+          "source": "sources/resedit-1-0-3/MENU/4.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/menu/4.tscn",
+          "sha256": "dcdfbefaec9dba7b8bf142af37c85fe4c4897048757e88f360cb84920b9b6949",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/menu/5.bin",
+          "sha256": "6ff162f2948b20801724a1c6aa27553066e364e5b61fe04c06be50d876cdd034",
+          "source": "sources/resedit-1-0-3/MENU/5.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/menu/5.tscn",
+          "sha256": "802f7e27d7ddcb58ef4a773d966764f645de50e931009c1607da4ff489ea54fb",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "PICT": {
+      "status": "imported",
+      "resources": 5,
+      "files": [
+        {
+          "path": "godot/strict_port/pict/1000.bin",
+          "sha256": "aa1b8e60d163cc5b0218e8769c3d9a71be759e55a056b585b311ad21c92d2ae0",
+          "source": "sources/resedit-1-0-3/PICT/1000.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/pict/1000.png",
+          "sha256": "e086d7201d0211810e89bfa8eac564c9a6d065b63a5df3abbbfe458b5804e5dc",
+          "source": "sources/resedit-1-0-3/PICT/1000.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/pict/1000.tscn",
+          "sha256": "d32c86998fa9d3957548b51a3c4d767781ef53f8dee62f51042858af32cc5d7c",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/pict/128.bin",
+          "sha256": "7501ac1783490a6fb1380e42542d8f4b1cdc88cefc02368bb6750fca66a98898",
+          "source": "sources/resedit-1-0-3/PICT/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/pict/128.png",
+          "sha256": "db56a5b4c6d0f9a414b3b69995b406a363221c5ed704b6c612bf3d184e551be0",
+          "source": "sources/resedit-1-0-3/PICT/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/pict/128.tscn",
+          "sha256": "2983887355e15c2261a900f88fe4fc3824f3324495b92506dddfaaa872d7b53d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/pict/129.bin",
+          "sha256": "806378df61d18913425258241e4bea9f2c398075875d93d3f6dc083e2ef7cfb1",
+          "source": "sources/resedit-1-0-3/PICT/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/pict/129.png",
+          "sha256": "0994f7a1bd6304c6b496b94d53ef061bb3c11f7de987d05905da8c9d1a6afa98",
+          "source": "sources/resedit-1-0-3/PICT/129.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/pict/129.tscn",
+          "sha256": "c7219c0e6028654c5129aa45b6bae933cbd51d5a4e969beae1320b3e951e2f28",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/pict/130.bin",
+          "sha256": "a59e0538231c02293ebf07ce321f94fa2a99ef5fb5b48d2a1e4a46e1565c9a1a",
+          "source": "sources/resedit-1-0-3/PICT/130.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/pict/130.png",
+          "sha256": "0ae04e6b4ef30c31eb21ac98018044b41038399c0df63bd4cde5185d54025cc4",
+          "source": "sources/resedit-1-0-3/PICT/130.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/pict/130.tscn",
+          "sha256": "de71b2898be0c9554bcaff0f0d1b8ef6fe91f8344c568be7781ec948a5fd7db6",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/pict/131.bin",
+          "sha256": "b46dfb31745c10cf1902e86c550c9de1f4527d791dc32edb4bd67c3e1395663d",
+          "source": "sources/resedit-1-0-3/PICT/131.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/pict/131.png",
+          "sha256": "7eda4d538601be83698a1cc4e153e1cce19ced56eafab5293c1330f95a8c3ab9",
+          "source": "sources/resedit-1-0-3/PICT/131.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/pict/131.tscn",
+          "sha256": "0f688066ed07405c33b84759ccc2194b4ec75d9d4f80111e078d79a029c3d2d8",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "SIZE": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/size/-1.bin",
+          "sha256": "8e1c0d6ca99e491cab13f7d5d9410ebf7b150d4c54222526f9094b64a0a0a74c",
+          "source": "sources/resedit-1-0-3/SIZE/-1.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/size/-1.tscn",
+          "sha256": "aebc98b7adcc587e893b3ff1c0ff5ef5e2a18b4998bc48ff9d16a38fe246029b",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "STR#": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/str#/129.bin",
+          "sha256": "5dcef38d03a5ea3793fb8611b8a92fefb9ac535c4253b1a0930f986ef480f563",
+          "source": "sources/resedit-1-0-3/STR#/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/str#/129.tscn",
+          "sha256": "9416c8206e40f8eb95bad60949c82f7b41d414daf9f6a6b99d83b10b38c11d4c",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "TEXT": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/text/1000.bin",
+          "sha256": "919b7c162f0e658569e262ac1e890ac595f292710ea84acb033a219cf3d6e417",
+          "source": "sources/resedit-1-0-3/TEXT/1000.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/text/1000.tscn",
+          "sha256": "a5c0376c24c99cf9f450da58754b85f0bd78a22fb95fd5c43d6052a25d6ff9f9",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/text/128.bin",
+          "sha256": "ac8331548074c4c4f45191b16d7aba8267e1c3c7c0df349e23ae6df4f2c087bc",
+          "source": "sources/resedit-1-0-3/TEXT/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/text/128.tscn",
+          "sha256": "27c17ab497b1d4a32a68cc3c8023fcedaaad02c699604434aa4762ea7672f835",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "ZERO": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/zero/0.bin",
+          "sha256": "f8765d796b57f88b6d836eb39559a6dd9190e25bf118212706958f6f53751cd4",
+          "source": "sources/resedit-1-0-3/ZERO/0.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/zero/0.tscn",
+          "sha256": "1d02e9c5699385ce253ad3023f312307cac6af294235f83a04881d3bd528bf0e",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "cicn": {
+      "status": "imported",
+      "resources": 14,
+      "files": [
+        {
+          "path": "godot/strict_port/cicn/256.bin",
+          "sha256": "fbbbdf644863299e9cf37b3bac7f8bd18af9ee97395afab4ca58b88217b15ec1",
+          "source": "sources/resedit-1-0-3/cicn/256.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/256.png",
+          "sha256": "f93e5fd3d4cf37b2ae1c7a954185703e6fdbca9445a2a2f670fa683d89afcba5",
+          "source": "sources/resedit-1-0-3/cicn/256.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/256.tscn",
+          "sha256": "b3c6a46aefea7d013dbda9c33bcbbe1ee6d7d00adbf5926187617bca37cce33d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/257.bin",
+          "sha256": "aff20ca1e6516454134926991cfe3a081006a27a36ad814dd8ee1b63e6539c31",
+          "source": "sources/resedit-1-0-3/cicn/257.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/257.png",
+          "sha256": "3161e98cdbd2b58afa5b17771fd1f7175d6d81d7c0a7bed461ec07dd6d239573",
+          "source": "sources/resedit-1-0-3/cicn/257.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/257.tscn",
+          "sha256": "25cc94a664de744e0434e3562af882e8e9dcade5986321cacd96b3130aa0424e",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/258.bin",
+          "sha256": "b8548f7610c83a47ea132e1c6812cf5fc7475ad64dc6f00200a5a895c60f945a",
+          "source": "sources/resedit-1-0-3/cicn/258.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/258.png",
+          "sha256": "b4ab43bc307b2f652b99b86e992a425aa94de547a8544ef929405d0ba31909d2",
+          "source": "sources/resedit-1-0-3/cicn/258.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/258.tscn",
+          "sha256": "77015d2db93ebb30226587e4ad10f2e95cd3d401bfd776fcbf62382458aa3668",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/259.bin",
+          "sha256": "b48942fbff245574608134226553616d0794bbb19ff6954fa45ef5fb804d2afd",
+          "source": "sources/resedit-1-0-3/cicn/259.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/259.png",
+          "sha256": "d2ac6ae3e4b2196983f6eabe9542ac943c492ad064d5785b140f0bf3587e0518",
+          "source": "sources/resedit-1-0-3/cicn/259.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/259.tscn",
+          "sha256": "becb8f62cdf02968fe2db6be05668c23070463824bbc59c4ba7b019990144b0b",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/260.bin",
+          "sha256": "273d0bf8ab384a65753bce7a0a66397f3419a84c7fd2dd78fa6d1f550e1f1f59",
+          "source": "sources/resedit-1-0-3/cicn/260.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/260.png",
+          "sha256": "461c56c310a7303badc0d3f31588f59eb751f0c2922dc88cab8c7817f898d099",
+          "source": "sources/resedit-1-0-3/cicn/260.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/260.tscn",
+          "sha256": "73349f33c2866c96a6e6168027659df685e81ac1a084c257dded0840901a6bd2",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/261.bin",
+          "sha256": "6cecd7970840a7f1a126c349330fd4c9563372398cf92c921f2f3ac4ed6379c7",
+          "source": "sources/resedit-1-0-3/cicn/261.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/261.png",
+          "sha256": "9c1b72b438a9e732f03fb3a2deaf60dda676fc167d6a3cb0e66e19c31223e797",
+          "source": "sources/resedit-1-0-3/cicn/261.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/261.tscn",
+          "sha256": "b7ec4f61f8f57b69dd12408e0f5a0d097ab04bdcd0fdb2bcda7ffd4664bfdee6",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/512.bin",
+          "sha256": "017105aaa5449a765d2979eb9a6e6545eea62db23f5c7ddf2e7ac8f0f24aab20",
+          "source": "sources/resedit-1-0-3/cicn/512.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/512.png",
+          "sha256": "eb90dedc430225c37b5f73f936bedc2e46c9fb481f33816c7fbfbd890076315c",
+          "source": "sources/resedit-1-0-3/cicn/512.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/512.tscn",
+          "sha256": "c66dd88b8115df3cc0fdb8f3eda6859c27f33e8405226c933dc95550b740b8d8",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/513.bin",
+          "sha256": "cfd8a97184f27fee70e7e010e35ca60e647d0e10e7e98fbf03b83e7702ddff6c",
+          "source": "sources/resedit-1-0-3/cicn/513.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/513.png",
+          "sha256": "8d18c1a50fb673469353463205ce8d95c7f2b03ee549990d8b15835b488aac71",
+          "source": "sources/resedit-1-0-3/cicn/513.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/513.tscn",
+          "sha256": "2f741a740f99eda36dc8f12689092a40546d5c6e0462221627b9c40d082d0c68",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/514.bin",
+          "sha256": "5a4624248ac886797eb726bdd47fc19558861b35255cf9ece812ac61d3864878",
+          "source": "sources/resedit-1-0-3/cicn/514.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/514.png",
+          "sha256": "26f4b23dc1b18e376048314105c49ebbdae98bbce8b5f01bb6bbfd624336d36b",
+          "source": "sources/resedit-1-0-3/cicn/514.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/514.tscn",
+          "sha256": "6181098cbb6a909b82617f5613cbc21f31976c32cb5f55e2f7087eeb1f40a903",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/515.bin",
+          "sha256": "0fefc3dd7d7a73e51163ba105afbc623c1e366c6d2d6800707449c3143ce8a1a",
+          "source": "sources/resedit-1-0-3/cicn/515.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/515.png",
+          "sha256": "ee0c96938ee90d2930b5ab8a470e8bafcd146c621496f027c23a6dfae340f5c4",
+          "source": "sources/resedit-1-0-3/cicn/515.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/515.tscn",
+          "sha256": "be10402892b4934027cb5de168f2a91420c5ded3b04d9c93ffa6cc98ce1b7ebb",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/516.bin",
+          "sha256": "481c8fb9ee2e2399cd05d18614d9a09bc209c302a2ff8c307c4455bd5ee13cf3",
+          "source": "sources/resedit-1-0-3/cicn/516.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/516.png",
+          "sha256": "9199a6e1d3aca703e5e58cd31bca78be34499b397ec77a4243065f48a8c126ac",
+          "source": "sources/resedit-1-0-3/cicn/516.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/516.tscn",
+          "sha256": "44b1ef2489890ef01deb51c8fcb15fcf65881e4da5042c6c166caea32a4a2806",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/517.bin",
+          "sha256": "a56ad532236be8d8411248f88e519aa7e58c5bd0314caaf62946be9d457c0d3e",
+          "source": "sources/resedit-1-0-3/cicn/517.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/517.png",
+          "sha256": "f2d614b30831a999ff6e012fabf2fcf998f70e965516f63681cd65d8ac8fd961",
+          "source": "sources/resedit-1-0-3/cicn/517.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/517.tscn",
+          "sha256": "bf4068b7ca3e855b846c2ed5e1512663b50372ffbbc4c68704b3d5093647a35d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/518.bin",
+          "sha256": "2d932af34bc906b893a8f00e11b67f1ad05bf6c99ac7043274f0f1f7d0a6bdc8",
+          "source": "sources/resedit-1-0-3/cicn/518.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/518.png",
+          "sha256": "f132dd3ffdd83582af724fe925c100f6444dcfb5d92f6d7807aed8b40ab76d7e",
+          "source": "sources/resedit-1-0-3/cicn/518.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/518.tscn",
+          "sha256": "909c1c752196f91031009281866920447e1a3443d3ecb270b9bd035f45248ec3",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/cicn/519.bin",
+          "sha256": "9eaead223ece8b116b6dce6f2ee375a7ad66cb46e2678a82c29a88fe43ef88d7",
+          "source": "sources/resedit-1-0-3/cicn/519.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/cicn/519.png",
+          "sha256": "13590ab6a3604af7d97dee9106cd0a24896a22e5c7a4c278c713499daaf465c0",
+          "source": "sources/resedit-1-0-3/cicn/519.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/cicn/519.tscn",
+          "sha256": "c2a9e6107079021b5728b174d412aed696ebdcd6525ebad7b0f3db9bf6367832",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "clut": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/clut/999.bin",
+          "sha256": "67ed7b8bf51b271f54f8a0ebe4d0b2bc509ad88e5e9970d9854cde50f47abd46",
+          "source": "sources/resedit-1-0-3/clut/999.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/clut/999.tscn",
+          "sha256": "1baaf1c1a3f2b5a826baad9a939b6917e756d7c047e33e5ef06c69e93233f17d",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "icI4": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/ici4/128.bin",
+          "sha256": "0d16550dbc180d82e0565c4a28abc5967dcfff579a8e7a8fc92b7cc0499c2bfa",
+          "source": "sources/resedit-1-0-3/icI4/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ici4/128.png",
+          "sha256": "00fe895fbafaa209cf5c48ebcb39919108702e48eda22ba9f4b27c6a47e00a52",
+          "source": "sources/resedit-1-0-3/icI4/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ici4/128.tscn",
+          "sha256": "55dea654d1104b282d4bad9f17d6286b5fc7c244d619a1c6b482fad34ee398d3",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ici4/129.bin",
+          "sha256": "66a02d9dcd366c128d0b6a244d8bbdffd6df5767bf633c28ebb12f94b5d91061",
+          "source": "sources/resedit-1-0-3/icI4/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ici4/129.png",
+          "sha256": "1b589b74604921fc3afb1ce0e2c86a14d6a51082594d1953e86d16482fbee98c",
+          "source": "sources/resedit-1-0-3/icI4/129.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ici4/129.tscn",
+          "sha256": "0c24f3944b9d6d75e2c9b0d25a1058393e2a4bcab4aefa1bec217bcaa8ad09a7",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "icI8": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/ici8/128.bin",
+          "sha256": "3d34539574743f7bdfd851bf15eaae53758623a2ed1ff7ad85020b4420562477",
+          "source": "sources/resedit-1-0-3/icI8/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ici8/128.png",
+          "sha256": "71aa716e24e3e36db0c89a22cee20f8b60f19527c5c2a641b87ab4ce218c97d3",
+          "source": "sources/resedit-1-0-3/icI8/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ici8/128.tscn",
+          "sha256": "d00ae849c4063a78f65c242100396c06f106ad9d87f4bf9f03a56c1da6153e9d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ici8/129.bin",
+          "sha256": "c6258b2af599590fb465f6912789d95ec71a9efbdf3a6f218b9e52102600dfa6",
+          "source": "sources/resedit-1-0-3/icI8/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ici8/129.png",
+          "sha256": "e9bee185eb574a07e9e9f3b45143eaf0390cf0d6a23988f6b678c7b5b605fd50",
+          "source": "sources/resedit-1-0-3/icI8/129.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ici8/129.tscn",
+          "sha256": "4ec35e2050f876e5d0993be863d7a42deb67114d8c57562d34778b241f021737",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "ics#": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/ics#/128.bin",
+          "sha256": "498daca56708725833060580b60a21b3f13020499f34e5918a358c83f96ad880",
+          "source": "sources/resedit-1-0-3/ics#/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ics#/128.png",
+          "sha256": "7ed527cf855d8205c737a322ffa49e2fdcadd2ea25c602a0cd778a1420efac8d",
+          "source": "sources/resedit-1-0-3/ics#/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ics#/128.tscn",
+          "sha256": "b13f3d7788404ffc178bc97d5d8402490a10d906b2ec1a54e1cc1e457b5e2f0d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ics#/129.bin",
+          "sha256": "1f6d219aa32ace71068ab95d450085e17767aa371594eae4b9bf01c63bb1de10",
+          "source": "sources/resedit-1-0-3/ics#/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ics#/129.png",
+          "sha256": "0386d453e0778f8c2cca830d71fe6602c70fec72c2d0ad6b81d82945fe3e3571",
+          "source": "sources/resedit-1-0-3/ics#/129.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ics#/129.tscn",
+          "sha256": "18150329755c496cf30d0d0fc91471d3a22790f9da09d23123758d10592a3120",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "ics4": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/ics4/128.bin",
+          "sha256": "4f2196b71467fe1d6e29a58298f83475a0b7051972e091588a1149e0c32de0b6",
+          "source": "sources/resedit-1-0-3/ics4/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ics4/128.png",
+          "sha256": "f19479c5b3ccc3e9b6a17d3b0c13dd7c8cfda758143847c56d93ba8e0a49dbc8",
+          "source": "sources/resedit-1-0-3/ics4/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ics4/128.tscn",
+          "sha256": "0b2a62f37177b0e40069139d670855aa6dcd3de9451219236c452e60e5d4668e",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ics4/129.bin",
+          "sha256": "4948c5674b66a70a31f6a7b386cf4a91faea6c49f85dd917926a9cffa5280550",
+          "source": "sources/resedit-1-0-3/ics4/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ics4/129.png",
+          "sha256": "6d82fd8b9e00967b529f1052806a32829a07aacfb9b53d5c7f16a3f8a8ce125e",
+          "source": "sources/resedit-1-0-3/ics4/129.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ics4/129.tscn",
+          "sha256": "d2ba7b35c399b94c8d87d3252210a166450cab6e26897357e02df8474e1517fe",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "ics8": {
+      "status": "imported",
+      "resources": 2,
+      "files": [
+        {
+          "path": "godot/strict_port/ics8/128.bin",
+          "sha256": "e3c450bff7fd6d37684780ac91d525b52c5fc6477ef3919dbf9f80c2ff94ee43",
+          "source": "sources/resedit-1-0-3/ics8/128.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ics8/128.png",
+          "sha256": "bbf34bfdd8fb0600066efa8879f3f669a74654fb507f3ce7922d949794c91c8d",
+          "source": "sources/resedit-1-0-3/ics8/128.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ics8/128.tscn",
+          "sha256": "fc507822324bca614c3275853855f79dabe11ec138ab015d2a396acf36f7987d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/ics8/129.bin",
+          "sha256": "816c7aad76e56f38d1e46d53564fddfcba216ea4060c6e912602f87505171cd6",
+          "source": "sources/resedit-1-0-3/ics8/129.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/ics8/129.png",
+          "sha256": "24d2d078c775589f3ead3af17db60338c315471cc1de46b348ddb406148fecb4",
+          "source": "sources/resedit-1-0-3/ics8/129.png",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/ics8/129.tscn",
+          "sha256": "39ade24c2d7b138d7ce8864a8870e7f5af520937696bd7589874832512d61110",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "snds": {
+      "status": "imported",
+      "resources": 13,
+      "files": [
+        {
+          "path": "godot/strict_port/snds/13493.bin",
+          "sha256": "0f32788987ec4e5a21e0d5d3459fcfeb2def3f442ebf29b04817d6ffbb65648f",
+          "source": "sources/resedit-1-0-3/snds/13493.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/13493.mp3",
+          "sha256": "ad29073ab4d9de64a0d5885b90ddf1ce02bd75df04a70417a12c90fd40eb856b",
+          "source": "sources/resedit-1-0-3/snds/13493.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/13493.tscn",
+          "sha256": "4600b6d712abb439ba2c48a9e6d672aee2c8c52629913c702bae368fe192d04d",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/15396.bin",
+          "sha256": "dcbb44827934e29aa76ac98f435eb7ab3587a018c1b5b78ecd9af53504d169f0",
+          "source": "sources/resedit-1-0-3/snds/15396.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/15396.mp3",
+          "sha256": "491f6eda5d6b63df48a63c64614704b89ee6f94d381039a0e8cc5c92f984c17e",
+          "source": "sources/resedit-1-0-3/snds/15396.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/15396.tscn",
+          "sha256": "241941eaef53edb4958712b964f8a8c61f2786e39859acdaa4e72ad5c6715f30",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/15490.bin",
+          "sha256": "33efcb2ac1994d07d4b72b7f0f1580ee6836a3aae1d8a539f8e6e99e8b5c69bd",
+          "source": "sources/resedit-1-0-3/snds/15490.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/15490.mp3",
+          "sha256": "9c297d75f40a9f3418ff837f48c706bb861252fe7e0f3fc220891b9abbb24262",
+          "source": "sources/resedit-1-0-3/snds/15490.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/15490.tscn",
+          "sha256": "0e4183b21d29f5737f4d716b0edcf4db78bca728104ee65579bf4b3be7d67f1c",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/16059.bin",
+          "sha256": "ce7dfa1dcdf9130cc8bbc9079732a0f0dd8f74db8f2f84fdd5292bb495cda1ff",
+          "source": "sources/resedit-1-0-3/snds/16059.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/16059.mp3",
+          "sha256": "cbc8462ae5da94c958c3571ddae0edf3900c7a4dd6ae001108c9fd949d433f36",
+          "source": "sources/resedit-1-0-3/snds/16059.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/16059.tscn",
+          "sha256": "09aebec51414714d2848334c6a728014f07a446f86dc4c5e2aea8ad0749d3c42",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/16737.bin",
+          "sha256": "76746b52017794456f50e0f7e738e8dbe9de81130e1a917f87234418c71d9248",
+          "source": "sources/resedit-1-0-3/snds/16737.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/16737.mp3",
+          "sha256": "b90cc9c4c60497be55a334e1a4c7d1d9854e08b24c54c735d1c1499f4fa4c02f",
+          "source": "sources/resedit-1-0-3/snds/16737.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/16737.tscn",
+          "sha256": "01708314d30249657dfc2ab802e60ca47eb670e85e84d71967e411e90ab41720",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/16815.bin",
+          "sha256": "ad2c5b7f8a32d4adb8c386f1f261ea83d5955e37ae8ca3f73ab2d71b020d20ba",
+          "source": "sources/resedit-1-0-3/snds/16815.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/16815.mp3",
+          "sha256": "bae23c107ba2fbd166fe51488cf24d96ca2a5e0b7c4e3b79feac1378372322ae",
+          "source": "sources/resedit-1-0-3/snds/16815.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/16815.tscn",
+          "sha256": "959d9ad8b9220f2882fad9ae337371a1adde11b12b535daff011ad044ee9249f",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/19330.bin",
+          "sha256": "e667bbdea77aec482a321dde3dd84ba82f140b9c0a3dd8ff2584c62db6024a72",
+          "source": "sources/resedit-1-0-3/snds/19330.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/19330.mp3",
+          "sha256": "060598ef31f7ffa1fcdec0ede653fdc330194a944c1b5cf8ea75141d2a5fac86",
+          "source": "sources/resedit-1-0-3/snds/19330.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/19330.tscn",
+          "sha256": "8bd351dca7a36c00a5ef36ee87f88b6fd60a8e916cabafd542ad226f9883be25",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/21266.bin",
+          "sha256": "0cc06b38f36a2d6647ee82007efa9bd51d156f5838529e865253f0901c99e573",
+          "source": "sources/resedit-1-0-3/snds/21266.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/21266.mp3",
+          "sha256": "23558c8ebc3bc21acef2f46788a56da612b643d0306a3342dd3f773787e9a9c7",
+          "source": "sources/resedit-1-0-3/snds/21266.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/21266.tscn",
+          "sha256": "7f7391ef4b0ae7bf3eda72cb68094e47f579c671bb153391c0ac35fc7e6879cf",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/2186.bin",
+          "sha256": "a8ff0be0a9bdc119ec470f5c2f7522c78c371954961d254a125109422dad759f",
+          "source": "sources/resedit-1-0-3/snds/2186.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/2186.mp3",
+          "sha256": "f458161027a3bd335a3a11c37b915f432d28368a1eb6c25b3aed4699d30058fa",
+          "source": "sources/resedit-1-0-3/snds/2186.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/2186.tscn",
+          "sha256": "ce642097be363c33785b692b567459a20caac4f064e7b1df671e73ae3e93f343",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/22599.bin",
+          "sha256": "0ceb0ebc138883350ecba9929b400e9002aad6521bb1c416d992a60b44a641e2",
+          "source": "sources/resedit-1-0-3/snds/22599.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/22599.mp3",
+          "sha256": "9c1185a71fe50ab34ddfa8be37fdeb4cd050a9778cdb35adfa504f3063b7e140",
+          "source": "sources/resedit-1-0-3/snds/22599.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/22599.tscn",
+          "sha256": "92d695f37e2ab3ca3fe1074afe6f3546fd9df47dd0110883b0b2b8ff3e1b5a1a",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/24100.bin",
+          "sha256": "13e356a1ba8d7cb25f8411d9cb7b669166f557b4883e8fc9a65ba14eb67dd539",
+          "source": "sources/resedit-1-0-3/snds/24100.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/24100.mp3",
+          "sha256": "caa93edb802ed43ba04516636cbeeb478306082623d96fca3b5fde80682966d1",
+          "source": "sources/resedit-1-0-3/snds/24100.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/24100.tscn",
+          "sha256": "212ad4c4d6ce1d74b66c75a6bb2d076544811f9a864ad320db693a47b0003d6e",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/25233.bin",
+          "sha256": "362890a260a3c95b68f2dab1f4ac56753cdd9e610a25a3bbab82b3e1aaee0dd4",
+          "source": "sources/resedit-1-0-3/snds/25233.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/25233.mp3",
+          "sha256": "29566b002c287e8d20d706c0fe24e9f114ba936cc30ccc77a6b06fb2a48b4ec7",
+          "source": "sources/resedit-1-0-3/snds/25233.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/25233.tscn",
+          "sha256": "03b59ba01274980b86517d0ea4623567124fdb43a332212b2f2266350a96c1a3",
+          "source": null,
+          "kind": "scene"
+        },
+        {
+          "path": "godot/strict_port/snds/30683.bin",
+          "sha256": "f16458e8e3b2d5efe77447b2549c1a605608865bce318fe8c06cbea470c04cee",
+          "source": "sources/resedit-1-0-3/snds/30683.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/snds/30683.mp3",
+          "sha256": "34044455d47717f554b4c434f77d7a347cbc9c38fb19fd9ecfe7191b1827871f",
+          "source": "sources/resedit-1-0-3/snds/30683.mp3",
+          "kind": "media"
+        },
+        {
+          "path": "godot/strict_port/snds/30683.tscn",
+          "sha256": "8dce9a4d50fb546c80e10ecfe2c35d7ea3f23462634f34826eb3b0726b18a486",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "styl": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/styl/1000.bin",
+          "sha256": "37c942bd07b6676c4f0fd7b2c2f6097ba25df00bfdcbe9a83470d15de586e1f6",
+          "source": "sources/resedit-1-0-3/styl/1000.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/styl/1000.tscn",
+          "sha256": "f7c6b63aa94f346fdb7bfc6e4b334ae2c0e847fd4e194a9284d83e8dfcd893b7",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    },
+    "vers": {
+      "status": "imported",
+      "resources": 1,
+      "files": [
+        {
+          "path": "godot/strict_port/vers/1.bin",
+          "sha256": "349a79d73cde33c03fa9901c60e43528339a4b9724d489a3af7c45b1bf4308f8",
+          "source": "sources/resedit-1-0-3/vers/1.bin",
+          "kind": "payload"
+        },
+        {
+          "path": "godot/strict_port/vers/1.tscn",
+          "sha256": "05f7277785495bcf237600fea76f78baa01aae53bf2ebd58c2ea1e6b26414ec1",
+          "source": null,
+          "kind": "scene"
+        }
+      ]
+    }
+  }
+}
