@@ -477,3 +477,236 @@ func _shift_edge_rows(delta: int, rows_sign: int) -> void:
 		var rows: int = memory.read_u16(_l(A5_ROWS) + 0xe)
 		memory.write_u16(e + 0x22, C68kScript.u16(memory.read_u16(e + 0x22) + delta + rows_sign * rows))
 		e = C68kScript.u32(e + 0x28)
+
+const SPANS_DATA: int = 0x39e   ## render_scanline_spans' data in its own code: active base, stride, head, tail
+const SPANS_REGS: int = 0x3ae   ## ... and D3-D7 / A2-A6 kept between bands
+const JT_PRESENT_BAND: int = 0x322  ## (C: dest, first row, rows, arg)
+
+## The segment's load address (render_scanline_spans keeps its state in its own code).
+var code_base: int = 0
+
+## A call through a code pointer (the row renderer of the row table, +0).
+func _call_address(address: int, args: Array) -> int:
+	assert(code_routines.has(address), "code address %x has no routine" % address)
+	return code_routines[address].call(args)
+
+static func _swap(v: int) -> int:
+	return ((v << 16) | (v >> 16)) & 0xffffffff
+
+static func _low(reg: int, word: int) -> int:
+	return (reg & 0xffff0000) | (word & 0xffff)
+
+## 0x318: `count` scan lines rendered from the row table (A5 - 0x1cd2 +4: per row the new edges,
+## a removal flag and the row's pattern table) into dest, `stride` bytes apart. The active edges are
+## kept sorted by x (16.16) from the pool's base (A5 - 0x1cd6 + 4) up to D7, the tail sentinel
+## (pool +0x89c) after them; each row inserts its new edges, drops those ending on it (word +0x22 =
+## the row counter), toggles each crossed polygon (+0x18, word +0x20) in or out of the depth-ordered
+## list from the head sentinel (pool +0x898; depth +0x24, colour +0x1c), and fills the 32-pixel
+## longwords between edges with the visible polygon's pattern (masks by (x >> 6) & 0x3e0). The
+## routine's data (0x39e) and registers (0x3ae) live in its own code: `first` = 0 starts, non-zero
+## continues from the registers kept by the previous call. Register-level, as the kept registers
+## are observable.
+func render_scanline_spans(first: int, count: int, dest: int, stride: int) -> void:
+	assert(a7 != 0 and code_base != 0, "render_scanline_spans needs a7 and code_base")
+	var data: int = code_base + SPANS_DATA
+	var regs: int = code_base + SPANS_REGS
+	var pool: int = memory.read_u32(_g(A5_POOL))
+	var base: int = C68kScript.u32(pool + 4)
+	var tail: int = memory.read_u32(pool + 0x89c)
+	var head: int = memory.read_u32(pool + 0x898)
+	var row_list: int = memory.read_u32(memory.read_u32(_g(A5_ROWS)) + 4)
+	var d0: int = C68kScript.u32(C68kScript.s16(count - 1))
+	var d1: int = 0
+	var d2: int = 0
+	var d3: int = 0
+	var d4: int = 0
+	var d5: int = 0
+	var d6: int = 0
+	var d7: int = 0
+	var a0: int = C68kScript.u32(dest)
+	var a1: int = 0
+	var a2: int = 0
+	var a3: int = 0
+	var a4: int = 0
+	var r5: int = 0
+	var r6: int = a7 - 4
+	if first & 0xffff != 0:
+		var kept: Array = []
+		for k in 10:
+			kept.append(memory.read_u32(regs + 4 * k))
+		d3 = kept[0]; d4 = kept[1]; d5 = kept[2]; d6 = kept[3]; d7 = kept[4]
+		a2 = kept[5]; a3 = kept[6]; a4 = kept[7]; r5 = kept[8]; r6 = kept[9]
+	else:
+		memory.write_u32(data, base)
+		memory.write_u32(data + 4, C68kScript.u32(stride))
+		memory.write_u32(data + 8, head)
+		memory.write_u32(data + 0xc, tail)
+		d7 = base
+		a2 = row_list
+		r5 = d7
+		a3 = 0
+		memory.write_u32(r5, memory.read_u32(data + 0xc))
+	while true:
+		a4 = memory.read_u32(a2)
+		a2 = C68kScript.u32(a2 + 4)
+		d2 = a4
+		while a4 != 0:
+			d3 = memory.read_u32(a4 + 8)
+			memory.write_u32(a4, d3)
+			a3 = d7
+			d7 = C68kScript.u32(d7 + 4)
+			while true:
+				a3 = C68kScript.u32(a3 - 4)
+				a1 = memory.read_u32(a3)
+				memory.write_u32(a3 + 4, a1)
+				if C68kScript.s32(d3) >= memory.read_s32(a1):
+					break
+			memory.write_u32(a3 + 4, a4)
+			a4 = memory.read_u32(a4 + 0xc)
+		d1 = memory.read_u32(a2)
+		a2 = C68kScript.u32(a2 + 4)
+		if d1 != 0:
+			r5 = memory.read_u32(data)
+			a3 = r5
+			while true:
+				a1 = memory.read_u32(r5)
+				r5 = C68kScript.u32(r5 + 4)
+				if memory.read_u16(a1 + 0x22) != d0 & 0xffff:
+					memory.write_u32(a3, a1)
+					a3 = C68kScript.u32(a3 + 4)
+				if r5 >= d7:
+					break
+			d7 = a3
+		d3 = a3 | d1 | d2
+		if d3 != 0:
+			r5 = memory.read_u32(data)
+			d1 = memory.read_u32(data + 8)
+			a1 = memory.read_u32(d1 + 0x10)
+			d2 = _low(d2, memory.read_u16(a1 + 0x1c))
+			while r5 < d7:
+				a4 = memory.read_u32(r5)
+				r5 = C68kScript.u32(r5 + 4)
+				memory.write_u16(a4 + 0x1e, d2)
+				a1 = memory.read_u32(a4 + 0x18)
+				var inside: int = (~memory.read_u16(a1 + 0x20)) & 0xffff
+				memory.write_u16(a1 + 0x20, inside)
+				if inside != 0:
+					a3 = d1
+					while true:
+						a3 = memory.read_u32(a3 + 0x10)
+						d4 = _low(d4, memory.read_u16(a3 + 0x24))
+						if C68kScript.s16(d4) <= memory.read_s16(a1 + 0x24):
+							break
+					memory.write_u32(a1 + 0x10, a3)
+					r6 = memory.read_u32(a3 + 0x14)
+					memory.write_u32(a1 + 0x14, r6)
+					memory.write_u32(a3 + 0x14, a1)
+					memory.write_u32(r6 + 0x10, a1)
+				else:
+					a3 = memory.read_u32(a1 + 0x14)
+					a1 = memory.read_u32(a1 + 0x10)
+					memory.write_u32(a3 + 0x10, a1)
+					memory.write_u32(a1 + 0x14, a3)
+				a1 = memory.read_u32(d1 + 0x10)
+				d2 = _low(d2, memory.read_u16(a1 + 0x1c))
+			a3 = 0
+			memory.write_u32(r5, memory.read_u32(data + 0xc))
+		a1 = memory.read_u32(a2)
+		a2 = C68kScript.u32(a2 + 4)
+		d4 = 0
+		d5 = 0
+		d1 = 0
+		r5 = memory.read_u32(data)
+		while true:
+			a4 = memory.read_u32(r5)
+			r5 = C68kScript.u32(r5 + 4)
+			d3 = d5
+			d5 = memory.read_u32(a4)
+			d2 = d5
+			d4 = _low(d4, d4 & 0x3e0)
+			d4 = memory.read_u32(C68kScript.u32(a1 + C68kScript.s16(d4)))
+			d2 = _swap(d2)
+			d2 = _low(d2, d2 - d1)
+			d1 = _low(d1, memory.read_u16(a4 + 0x1e))
+			d6 = d6 & d4
+			d4 = (~d4) & 0xffffffff
+			d1 = memory.read_u32(C68kScript.u32(a1 + C68kScript.s16(d1)))
+			d4 = d4 & d1
+			d6 = d6 | d4
+			while true:
+				d2 = _low(d2, d2 - 1)
+				if d2 & 0xffff == 0xffff:
+					break
+				memory.write_u32(a0, d6)
+				a0 = C68kScript.u32(a0 + 4)
+				d6 = d1
+			d4 = d5
+			d5 = C68kScript.u32(d5 + memory.read_u32(a4 + 4))
+			d1 = _swap(d4)
+			d4 = d4 >> 6
+			memory.write_u32(a4, d5)
+			if C68kScript.s32(d3) > C68kScript.s32(d5):
+				a3 = C68kScript.u32(r5 - 4)
+				while true:
+					a3 = C68kScript.u32(a3 - 4)
+					r6 = memory.read_u32(a3)
+					memory.write_u32(a3 + 4, r6)
+					if C68kScript.s32(d5) >= memory.read_s32(r6):
+						break
+				memory.write_u32(a3 + 4, a4)
+				d5 = d3
+			if r5 > d7:
+				break
+		a0 = C68kScript.u32(a0 + memory.read_u32(data + 4))
+		d0 = _low(d0, d0 - 1)
+		if d0 & 0xffff == 0xffff:
+			break
+	for pair in [[0, d3], [1, d4], [2, d5], [3, d6], [4, d7], [5, a2], [6, a3], [7, a4], [8, r5], [9, r6]]:
+		memory.write_u32(regs + 4 * pair[0], pair[1])
+
+## 0xe10 (C; A5 from CurrentA5 at 0x904): with a row table, the edge pool's head and tail sentinels
+## linked; without a destination the row renderer (row table +0) draws all rows (+0xe) into the
+## target's base; otherwise in bands of at most `band` rows: each band's edge rows rebased, the
+## renderer called (continuing after the first band) with the stride (A5 - 0x1372 * A5 - 0x137a
+## as a word, rounded up to 16 pixels, as bytes, minus a 1/8 of the word product), the rows
+## restored and JT $322 presenting the band.
+func rasterize_and_present(dest: int, band: int, arg: int) -> void:
+	var saved_a5: int = a5
+	a5 = memory.read_u32(LM_CURRENT_A5)
+	_rasterize(dest, band, arg)
+	a5 = saved_a5
+
+func _rasterize(dest: int, band: int, arg: int) -> void:
+	if memory.read_u32(_g(A5_ROWS)) == 0:
+		return
+	var pool: int = memory.read_u32(_g(A5_POOL))
+	memory.write_u32(memory.read_u32(pool + 0x898) + 0x10, memory.read_u32(pool + 0x89c))
+	pool = memory.read_u32(_g(A5_POOL))
+	memory.write_u32(memory.read_u32(pool + 0x89c) + 0x14, memory.read_u32(pool + 0x898))
+	var rows: int = memory.read_u32(_g(A5_ROWS))
+	if dest == 0:
+		_call_address(memory.read_u32(rows), [0, memory.read_u16(rows + 0xe), memory.read_u32(memory.read_u32(_g(A5_TARGET))),
+				C68kScript.u32(memory.read_s16(rows + 0xc))])
+		return
+	var product: int = C68kScript.u16(memory.read_s16(_g(-0x1372)) * memory.read_s16(_g(-0x137a)))
+	var words: int = C68kScript.u16(C68kScript.s16(C68kScript.u16(product + 0xf)) >> 4)
+	var row_bytes: int = C68kScript.s16(C68kScript.u16(words * 2))
+	var eighth: int = C68kScript.s16(C68kScript.u16(C68kScript.divs_trunc(C68kScript.s16(product), 8)))
+	var stride: int = C68kScript.u32(row_bytes - eighth)
+	var remaining: int = memory.read_s16(memory.read_u32(_g(A5_ROWS)) + 0xe)
+	var first: int = 0
+	while true:
+		var chunk: int = (band if C68kScript.s32(band) < remaining else remaining) & 0xffff
+		rows = memory.read_u32(_g(A5_ROWS))
+		var y: int = C68kScript.u16(memory.read_s16(rows + 0xe) - (remaining - C68kScript.s16(chunk)))
+		rebase_edge_rows_for_band(y)
+		rows = memory.read_u32(_g(A5_ROWS))
+		_call_address(memory.read_u32(rows), [first, chunk, C68kScript.u32(dest), stride])
+		first = 1
+		restore_edge_rows_after_band(y)
+		rows = memory.read_u32(_g(A5_ROWS))
+		_jt(JT_PRESENT_BAND, [C68kScript.u32(dest), C68kScript.u32(memory.read_s16(rows + 0xe) - remaining),
+				C68kScript.u32(C68kScript.s16(chunk)), C68kScript.u32(arg)])
+		remaining = C68kScript.s32(remaining - C68kScript.s16(chunk))
+		if remaining == 0:
+			break

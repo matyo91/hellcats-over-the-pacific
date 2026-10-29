@@ -325,6 +325,23 @@ class Emulator:
         self.write_op(ops[1], size, v)
         self.logic_flags(v, size)
 
+    def op_movep(self, ins, ops, size, nxt):
+        # Decoded from the opcode (0000 ddd 1mm 001 aaa, then d16): the bytes at every other
+        # address, high byte first; mode 4/5 memory to register (word / long), 6/7 the reverse.
+        opcode = self.read(self.cur, 2)
+        dreg, mode, areg = (opcode >> 9) & 7, (opcode >> 6) & 7, opcode & 7
+        address = (self.a[areg] + sext(self.read(self.cur + 2, 2), 2)) & 0xFFFFFFFF
+        count = 2 if mode in (4, 6) else 4
+        if mode >= 6:
+            value = self.d[dreg]
+            for k in range(count):
+                self.write(address + 2 * k, 1, (value >> (8 * (count - 1 - k))) & 0xFF)
+        else:
+            value = 0
+            for k in range(count):
+                value = (value << 8) | self.read(address + 2 * k, 1)
+            self.set_reg(M.M68K_REG_D0 + dreg, value, count)
+
     def op_movea(self, ins, ops, size, nxt):
         v = self.read_op(ops[0], size)
         self.set_reg(ops[1].reg, sext(v, size) & 0xFFFFFFFF)

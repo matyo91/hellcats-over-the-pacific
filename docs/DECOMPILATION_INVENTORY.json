@@ -1805,7 +1805,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:574",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:829-847"
@@ -1818,7 +1818,23 @@
         "validation": "dis.py on ID02.bin / ID09 glue; token diff = renames"
       },
       "source_revision": "34400ff2ea08c76cc4b25824aa75f2bcc0b33b120323ba509ca9fb76c300348f",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "begin_overlay_session",
+        "original_function": "FUN_0000045a",
+        "source_address": "0x45a",
+        "source_sha256": "34400ff2ea08c76cc4b25824aa75f2bcc0b33b120323ba509ca9fb76c300348f",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "begin_overlay_session",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+        "renamed_from": "FUN_0000045a",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000004c6",
@@ -1841,7 +1857,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:583",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:859-873"
@@ -1854,7 +1870,23 @@
         "validation": "dis.py on ID02.bin / ID09 glue; token diff = renames"
       },
       "source_revision": "724fa262b674cdef8a59e3add651987640011e85b77e85293daccfdf518b1d6c",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "ensure_free_memory_and_init_sound",
+        "original_function": "FUN_000004c6",
+        "source_address": "0x4c6",
+        "source_sha256": "724fa262b674cdef8a59e3add651987640011e85b77e85293daccfdf518b1d6c",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "ensure_free_memory_and_init_sound",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+        "renamed_from": "FUN_000004c6",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000004fc",
@@ -1877,7 +1909,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:615",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:919-1099"
@@ -1890,7 +1922,23 @@
         "validation": "dis.py on ID02.bin; token diff = renames"
       },
       "source_revision": "a1f6d11feb8c40587d0a90f4d543c499fe8955d71ebc988b1e0d705f855ff603",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "run_flight_session",
+        "original_function": "FUN_000004fc",
+        "source_address": "0x4fc",
+        "source_sha256": "a1f6d11feb8c40587d0a90f4d543c499fe8955d71ebc988b1e0d705f855ff603",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "run_flight_session",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_flight.gd",
+        "renamed_from": "FUN_000004fc",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00000930",
@@ -1913,7 +1961,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:624",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:1110-1120"
@@ -1926,7 +1974,23 @@
         "validation": "dis.py on ID02.bin / ID09 glue; token diff = renames"
       },
       "source_revision": "3879e1e27adb370390f975cd132ce7f44ebf98f31a4cc65a290bff1c15701784",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "call_overlay_session_hooks",
+        "original_function": "FUN_00000930",
+        "source_address": "0x930",
+        "source_sha256": "3879e1e27adb370390f975cd132ce7f44ebf98f31a4cc65a290bff1c15701784",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "call_overlay_session_hooks",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+        "renamed_from": "FUN_00000930",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00000a42",
@@ -4118,7 +4182,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1339",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:2752-2767"
@@ -4129,7 +4193,23 @@
         "validation": "dis.py on ID02.bin; token diff = renames"
       },
       "source_revision": "d824935ca4e46056cf00da65995bdf57b6839afa957710a936b786402377b294",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "reset_overlay_state",
+        "original_function": "FUN_0000212a",
+        "source_address": "0x212a",
+        "source_sha256": "d824935ca4e46056cf00da65995bdf57b6839afa957710a936b786402377b294",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "reset_overlay_state",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+        "renamed_from": "FUN_0000212a",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00002192",
@@ -4204,7 +4284,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1370",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:2868-3012"
@@ -4217,7 +4297,23 @@
         "validation": "dis.py on ID02.bin; token diff = renames"
       },
       "source_revision": "ba00460b5142ef09d32999eec606610ff681413488a36c5effcb155b2a791660",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "layout_game_window_and_view",
+        "original_function": "FUN_00002334",
+        "source_address": "0x2334",
+        "source_sha256": "ba00460b5142ef09d32999eec606610ff681413488a36c5effcb155b2a791660",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "layout_game_window_and_view",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
+        "renamed_from": "FUN_00002334",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000027e4",
@@ -4240,7 +4336,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1384",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3033-3100"
@@ -4253,7 +4349,23 @@
         "validation": "dis.py; STR# dump; token diff = renames"
       },
       "source_revision": "a6b5e1d3df29c9202a4e7a67150f56a166b13d3c34aa4195de8e129a4fa2c52b",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "configure_display_from_main_device",
+        "original_function": "FUN_000027e4",
+        "source_address": "0x27e4",
+        "source_sha256": "a6b5e1d3df29c9202a4e7a67150f56a166b13d3c34aa4195de8e129a4fa2c52b",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "configure_display_from_main_device",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
+        "renamed_from": "FUN_000027e4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000029f2",
@@ -4276,7 +4388,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1478",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3113-3131"
@@ -4287,7 +4399,23 @@
         "validation": "dis.py; token diff = renames"
       },
       "source_revision": "f9a0378de5f4ae8b81527f73203d98bcad84f2f5624057e428938a76d0e78b4b",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "refresh_display_if_changed",
+        "original_function": "FUN_000029f2",
+        "source_address": "0x29f2",
+        "source_sha256": "f9a0378de5f4ae8b81527f73203d98bcad84f2f5624057e428938a76d0e78b4b",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "refresh_display_if_changed",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+        "renamed_from": "FUN_000029f2",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00002a44",
@@ -4310,7 +4438,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1487",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3178-3237"
@@ -4323,7 +4451,23 @@
         "validation": "Token diff = rename only; entry bytes match C; 6 callers by byte scan; 32 hashes OK"
       },
       "source_revision": "002d0e25268b425a1b7daa0a6b6a6ac00d1398f980d300c9b1f7aeeaa3b5b457",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "apply_settings_to_live_options",
+        "original_function": "FUN_00002a44",
+        "source_address": "0x2a44",
+        "source_sha256": "002d0e25268b425a1b7daa0a6b6a6ac00d1398f980d300c9b1f7aeeaa3b5b457",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "apply_settings_to_live_options",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
+        "renamed_from": "FUN_00002a44",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00002bbc",
@@ -4346,7 +4490,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1552",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3295-3364"
@@ -4359,7 +4503,23 @@
         "validation": "Token diff = rename only; Capstone + JT resolution; 32 hashes OK"
       },
       "source_revision": "51a6cdc4b011e42c2f649d08d0413f3b37f8a43ed2a3a98ef1fb5f12e6715eb4",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "initialize_application",
+        "original_function": "FUN_00002bbc",
+        "source_address": "0x2bbc",
+        "source_sha256": "51a6cdc4b011e42c2f649d08d0413f3b37f8a43ed2a3a98ef1fb5f12e6715eb4",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "initialize_application",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_startup.gd",
+        "renamed_from": "FUN_00002bbc",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00002db8",
@@ -4382,7 +4542,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1570",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3390-3420"
@@ -4393,7 +4553,23 @@
         "validation": "Capstone + table"
       },
       "source_revision": "665bd6131545aa7a3c08983eb37ff791001761334556f9d174003789fa2978b9",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "wait_for_click_or_key",
+        "original_function": "FUN_00002db8",
+        "source_address": "0x2db8",
+        "source_sha256": "665bd6131545aa7a3c08983eb37ff791001761334556f9d174003789fa2978b9",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "wait_for_click_or_key",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+        "renamed_from": "FUN_00002db8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00002e36",
@@ -4416,7 +4592,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1581",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3453-3471"
@@ -4429,7 +4605,23 @@
         "validation": "Capstone + resource dump"
       },
       "source_revision": "aa519fdf192702bfb5d9a846b2da9feffd292b0f924a8bb2500801cdae83b356",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "show_resource_file_error_box",
+        "original_function": "FUN_00002e36",
+        "source_address": "0x2e36",
+        "source_sha256": "aa519fdf192702bfb5d9a846b2da9feffd292b0f924a8bb2500801cdae83b356",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "show_resource_file_error_box",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+        "renamed_from": "FUN_00002e36",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00002ee4",
@@ -4502,7 +4694,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1613",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3524-3547"
@@ -4513,7 +4705,23 @@
         "validation": "Switch table parsed; token diff = renames"
       },
       "source_revision": "ad2b47176e44fb2f8639cf321f51b4fe93d755edde5a23a023c0f98e15924e9a",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "handle_mouse_down",
+        "original_function": "FUN_00002f1e",
+        "source_address": "0x2f1e",
+        "source_sha256": "ad2b47176e44fb2f8639cf321f51b4fe93d755edde5a23a023c0f98e15924e9a",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "handle_mouse_down",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+        "renamed_from": "FUN_00002f1e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00002fa0",
@@ -4586,7 +4794,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1641",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3622-3661"
@@ -4599,7 +4807,23 @@
         "validation": "Token diff = rename only; Capstone 000+020 decode; 32 hashes OK"
       },
       "source_revision": "3e385bc8bb091ee9a338833d87ecd678bdaccec198cf0631f0c70dcd8aa44196",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "poll_and_dispatch_event",
+        "original_function": "FUN_00002fd4",
+        "source_address": "0x2fd4",
+        "source_sha256": "3e385bc8bb091ee9a338833d87ecd678bdaccec198cf0631f0c70dcd8aa44196",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "poll_and_dispatch_event",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+        "renamed_from": "FUN_00002fd4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_0000309a",
@@ -4622,7 +4846,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1652",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3699-3723"
@@ -4635,7 +4859,23 @@
         "validation": "Token diff = rename only; Capstone + JT resolution; 32 hashes OK"
       },
       "source_revision": "b3ffd88d5a83681e029e3e61e9e67bf564b922bdf9961793d92a55311a8ef1a0",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "main",
+        "original_function": "FUN_0000309a",
+        "source_address": "0x309a",
+        "source_sha256": "b3ffd88d5a83681e029e3e61e9e67bf564b922bdf9961793d92a55311a8ef1a0",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "main",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_startup.gd",
+        "renamed_from": "FUN_0000309a",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000030fa",
@@ -4808,7 +5048,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1702",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3875-3885"
@@ -4819,7 +5059,23 @@
         "validation": "dis.py on ID02.bin; token diff = renames"
       },
       "source_revision": "f3b649796c6a075ac8e5bafbf410fae05256fe9c22a89f0ee2ee715b475a2a4d",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "set_view_size_option",
+        "original_function": "FUN_000035bc",
+        "source_address": "0x35bc",
+        "source_sha256": "f3b649796c6a075ac8e5bafbf410fae05256fe9c22a89f0ee2ee715b475a2a4d",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "set_view_size_option",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+        "renamed_from": "FUN_000035bc",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000035e4",
@@ -4842,7 +5098,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1718",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:3900-3938"
@@ -4853,7 +5109,23 @@
         "validation": "dis.py on ID02.bin; token diff = renames"
       },
       "source_revision": "9e3444a4fb203af6f23289149a7570738aa7ed0b13d9d074e370de613325ab31",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "start_new_mission",
+        "original_function": "FUN_000035e4",
+        "source_address": "0x35e4",
+        "source_sha256": "9e3444a4fb203af6f23289149a7570738aa7ed0b13d9d074e370de613325ab31",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "start_new_mission",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_commands.gd",
+        "renamed_from": "FUN_000035e4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000036a2",
@@ -4876,7 +5148,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1759",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:4009-4160"
@@ -4889,7 +5161,23 @@
         "validation": "Token diff = rename only; switch tables parsed; 32 hashes OK"
       },
       "source_revision": "8973fe0179fdc6c5efafb9fbe16818ef8aa70baa1f15b29edc57d06d6cc129ed",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "do_menu_command",
+        "original_function": "FUN_000036a2",
+        "source_address": "0x36a2",
+        "source_sha256": "8973fe0179fdc6c5efafb9fbe16818ef8aa70baa1f15b29edc57d06d6cc129ed",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "do_menu_command",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_commands.gd",
+        "renamed_from": "FUN_000036a2",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_000039a8",
@@ -4912,7 +5200,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1768",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:4193-4292"
@@ -4925,7 +5213,23 @@
         "validation": "Capstone feature scan; token diff = renames"
       },
       "source_revision": "85c0c6a808c2877a4eac95a9a41ed4e2ea10e83d37982f994f37d1de2707a1d0",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "vbl_sound_handler_ch0_unrolled",
+        "original_function": "FUN_000039a8",
+        "source_address": "0x39a8",
+        "source_sha256": "85c0c6a808c2877a4eac95a9a41ed4e2ea10e83d37982f994f37d1de2707a1d0",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "vbl_sound_handler_ch0_unrolled",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+        "renamed_from": "FUN_000039a8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00003aae",
@@ -4948,7 +5252,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1868",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:4323-4441"
@@ -4961,7 +5265,23 @@
         "validation": "Capstone feature scan; token diff = renames"
       },
       "source_revision": "ae914ef54212c2543d8e80710d395bcd25e19b9ff96f694e09d439a3039df916",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "vbl_sound_handler_ch0_variant",
+        "original_function": "FUN_00003aae",
+        "source_address": "0x3aae",
+        "source_sha256": "ae914ef54212c2543d8e80710d395bcd25e19b9ff96f694e09d439a3039df916",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "vbl_sound_handler_ch0_variant",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+        "renamed_from": "FUN_00003aae",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00003bc4",
@@ -4984,7 +5304,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:1990",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:4476-4593"
@@ -4997,7 +5317,23 @@
         "validation": "Capstone feature scan; token diff = renames"
       },
       "source_revision": "9727ab94f2f00f1bcc65b1e4d7e964d95325b333cec790f93a50e6970091552b",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "vbl_sound_handler_two_channel",
+        "original_function": "FUN_00003bc4",
+        "source_address": "0x3bc4",
+        "source_sha256": "9727ab94f2f00f1bcc65b1e4d7e964d95325b333cec790f93a50e6970091552b",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "vbl_sound_handler_two_channel",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+        "renamed_from": "FUN_00003bc4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00003d36",
@@ -5174,7 +5510,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:2170",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:4728-4785"
@@ -5187,7 +5523,23 @@
         "validation": "C + bytes"
       },
       "source_revision": "ba092820f39441e77ff4c17be7cb946a7bfc6a86fbb9bc785b2d8399d0c84618",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "init_sound_system",
+        "original_function": "FUN_00003dd0",
+        "source_address": "0x3dd0",
+        "source_sha256": "ba092820f39441e77ff4c17be7cb946a7bfc6a86fbb9bc785b2d8399d0c84618",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "init_sound_system",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+        "renamed_from": "FUN_00003dd0",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00003f54",
@@ -6177,7 +6529,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:2693",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:5656-5669"
@@ -6188,7 +6540,23 @@
         "validation": "Capstone"
       },
       "source_revision": "7addda70290e5a056de27761ae7a516c4038458275ebefde4c66b71e679e0f4a",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "process_pending_update_events",
+        "original_function": "FUN_00004d34",
+        "source_address": "0x4d34",
+        "source_sha256": "7addda70290e5a056de27761ae7a516c4038458275ebefde4c66b71e679e0f4a",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "process_pending_update_events",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+        "renamed_from": "FUN_00004d34",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00004d6a",
@@ -6211,7 +6579,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:2704",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:5682-5694"
@@ -6222,7 +6590,23 @@
         "validation": "dis.py on ID02.bin; token diff = renames"
       },
       "source_revision": "ccf3cf120bf53c491b68757698a412d7ae4a4f6e81a8e230bb1f2c387e2af62e",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "handle_update_event",
+        "original_function": "FUN_00004d6a",
+        "source_address": "0x4d6a",
+        "source_sha256": "ccf3cf120bf53c491b68757698a412d7ae4a4f6e81a8e230bb1f2c387e2af62e",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "handle_update_event",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+        "renamed_from": "FUN_00004d6a",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID02::FUN_00004db0",
@@ -6245,7 +6629,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID02.c:2721",
         "sources/resedit-1-0-3/CODE/ID02.decomp.c:5724-5747"
@@ -6258,7 +6642,23 @@
         "validation": "Capstone; token diff = renames"
       },
       "source_revision": "f8386d8c2e5568e963806e44ab555c18c36c4376ffb432ef0a3f45bb7e14ee22",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
+        "source_function": "redraw_main_window",
+        "original_function": "FUN_00004db0",
+        "source_address": "0x4db0",
+        "source_sha256": "f8386d8c2e5568e963806e44ab555c18c36c4376ffb432ef0a3f45bb7e14ee22",
+        "target_file": "godot/strict_port/code/ID02.gd",
+        "target_function": "redraw_main_window",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+        "renamed_from": "FUN_00004db0",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00000006",
@@ -6281,7 +6681,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:12",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:25-40"
@@ -6292,7 +6692,23 @@
         "validation": "Capstone (Ghidra truncated); token diff = renames"
       },
       "source_revision": "39782a18963b9e960c5b445f4f5f5fb47258bf65210cc24a797cffbe91c61612",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "set_scaled_text_style",
+        "original_function": "FUN_00000006",
+        "source_address": "0x6",
+        "source_sha256": "39782a18963b9e960c5b445f4f5f5fb47258bf65210cc24a797cffbe91c61612",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "set_scaled_text_style",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_00000006",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00000056",
@@ -6315,7 +6731,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:27",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:53-64"
@@ -6328,7 +6744,23 @@
         "validation": "C complete; token diff = renames"
       },
       "source_revision": "c9c5ede7503a7c8d4fd4f58e5b3548fe1fd794db9622ecdfc97f17abd95ba3d0",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "scale_design_480_min10",
+        "original_function": "FUN_00000056",
+        "source_address": "0x56",
+        "source_sha256": "c9c5ede7503a7c8d4fd4f58e5b3548fe1fd794db9622ecdfc97f17abd95ba3d0",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "scale_design_480_min10",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_00000056",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_0000008a",
@@ -6351,7 +6783,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:45",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:76-82"
@@ -6364,7 +6796,23 @@
         "validation": "C complete; token diff = renames"
       },
       "source_revision": "581e00fb69076a8b706ad4e94f4c6d40de20027626d3e21b9c84e84c908bf33e",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "scale_design_4800",
+        "original_function": "FUN_0000008a",
+        "source_address": "0x8a",
+        "source_sha256": "581e00fb69076a8b706ad4e94f4c6d40de20027626d3e21b9c84e84c908bf33e",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "scale_design_4800",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_0000008a",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000000a6",
@@ -6387,7 +6835,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:55",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:94-101"
@@ -6400,7 +6848,23 @@
         "validation": "C complete; token diff = renames"
       },
       "source_revision": "cd645dcb150762002b56dd512f072dc5239bbef85d11200d6d0e7ecde8ecf9eb",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "scale_design_4800_pen_centred",
+        "original_function": "FUN_000000a6",
+        "source_address": "0xa6",
+        "source_sha256": "cd645dcb150762002b56dd512f072dc5239bbef85d11200d6d0e7ecde8ecf9eb",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "scale_design_4800_pen_centred",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_000000a6",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000000c8",
@@ -6423,7 +6887,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:68",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:112-122"
@@ -6436,7 +6900,23 @@
         "validation": "C complete; token diff = renames"
       },
       "source_revision": "66f1f8c204a1c83ee24e4f66a2f64bc8b75967af1a0a2eb083aa7f0a838a5648",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "max3_int",
+        "original_function": "FUN_000000c8",
+        "source_address": "0xc8",
+        "source_sha256": "66f1f8c204a1c83ee24e4f66a2f64bc8b75967af1a0a2eb083aa7f0a838a5648",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "max3_int",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_000000c8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000000f4",
@@ -6459,7 +6939,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:82",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:146-200"
@@ -6472,7 +6952,23 @@
         "validation": "C complete; token diff = renames"
       },
       "source_revision": "5f2b46e7e7f06c18b8eacd6a1cf57facdacd0f50ac1b347d69fcbeffd5f652be",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "nearest_palette_index_rgb",
+        "original_function": "FUN_000000f4",
+        "source_address": "0xf4",
+        "source_sha256": "5f2b46e7e7f06c18b8eacd6a1cf57facdacd0f50ac1b347d69fcbeffd5f652be",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "nearest_palette_index_rgb",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_000000f4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000002a8",
@@ -6495,7 +6991,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:148",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:222-244"
@@ -6506,7 +7002,23 @@
         "validation": "Capstone (Ghidra truncated); token diff = renames"
       },
       "source_revision": "ca238f18e1f0e2a99332b8fa4674343d92efc6ee2dd3831d08e95cda788bd260",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "new_offscreen_bw_port",
+        "original_function": "FUN_000002a8",
+        "source_address": "0x2a8",
+        "source_sha256": "ca238f18e1f0e2a99332b8fa4674343d92efc6ee2dd3831d08e95cda788bd260",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "new_offscreen_bw_port",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_000002a8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_0000033c",
@@ -6529,7 +7041,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:164",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:258-265"
@@ -6540,7 +7052,23 @@
         "validation": "Capstone (Ghidra truncated); token diff = renames"
       },
       "source_revision": "cd8826d10466e8c852772166432f882f4622353c34c1753f6dc8ed513e2a5dd0",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "dispose_offscreen_bw_port",
+        "original_function": "FUN_0000033c",
+        "source_address": "0x33c",
+        "source_sha256": "cd8826d10466e8c852772166432f882f4622353c34c1753f6dc8ed513e2a5dd0",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "dispose_offscreen_bw_port",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_0000033c",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_0000035e",
@@ -6563,7 +7091,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:175",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:302-352"
@@ -6576,7 +7104,23 @@
         "validation": "Full Capstone decode"
       },
       "source_revision": "5395c45debfae4dc5bcc1d14476163c725e78fc53177eac70c465165604df263",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_spinning_disc_indicator",
+        "original_function": "FUN_0000035e",
+        "source_address": "0x35e",
+        "source_sha256": "5395c45debfae4dc5bcc1d14476163c725e78fc53177eac70c465165604df263",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_spinning_disc_indicator",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
+        "renamed_from": "FUN_0000035e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00000514",
@@ -6599,7 +7143,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:186",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:380-426"
@@ -6612,7 +7156,23 @@
         "validation": "Capstone"
       },
       "source_revision": "60553047b8751150e17809d3df3e76393412b6b94b5d3e648740c6b7b8526807",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_ring_with_status_indicators",
+        "original_function": "FUN_00000514",
+        "source_address": "0x514",
+        "source_sha256": "5576c0bb968ec7e8ba611c812420ce543f0fec820b78c056cd755ab8221d2774",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_ring_with_status_indicators",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
+        "renamed_from": "FUN_00000514",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_0000077e",
@@ -6635,7 +7195,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:206",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:438-481"
@@ -6646,7 +7206,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "68be02ba0bd498e73dd5d7691cc3ab884bbbbed81f06a51990d656b418ff7fd6",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_vector_glyph_string_centred",
+        "original_function": "FUN_0000077e",
+        "source_address": "0x77e",
+        "source_sha256": "68be02ba0bd498e73dd5d7691cc3ab884bbbbed81f06a51990d656b418ff7fd6",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_vector_glyph_string_centred",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+        "renamed_from": "FUN_0000077e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00000912",
@@ -6669,7 +7245,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:253",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:506-543"
@@ -6682,7 +7258,23 @@
         "validation": "C (truncated)"
       },
       "source_revision": "5af9ae17d91fc125faa39a4551f85e21ab1e5511c51f05f3305e5e5d66eb1f07",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_vector_number",
+        "original_function": "FUN_00000912",
+        "source_address": "0x912",
+        "source_sha256": "5af9ae17d91fc125faa39a4551f85e21ab1e5511c51f05f3305e5e5d66eb1f07",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_vector_number",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+        "renamed_from": "FUN_00000912",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00000a3c",
@@ -6705,7 +7297,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:294",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:581-653"
@@ -6718,7 +7310,23 @@
         "validation": "Full Capstone decode"
       },
       "source_revision": "f1d8e5d886ff8bf61f800033b43369833b7f433eefe8247dd1ff193d2ae8297f",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "antialias_downsample_bw_3x",
+        "original_function": "FUN_00000a3c",
+        "source_address": "0xa3c",
+        "source_sha256": "64428428c065481ac37cbaab6f0803606148c125a931f109d6939ad8765fd3a5",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "antialias_downsample_bw_3x",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_downsample.gd",
+        "renamed_from": "FUN_00000a3c",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_0000146a",
@@ -6741,7 +7349,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:305",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:665-693"
@@ -6752,7 +7360,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "c9169cef1e6bc3c81d585035d29c4c5296b7ec7792eca45232b4b289b485e1cb",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "composite_instrument_bitmap",
+        "original_function": "FUN_0000146a",
+        "source_address": "0x146a",
+        "source_sha256": "c9169cef1e6bc3c81d585035d29c4c5296b7ec7792eca45232b4b289b485e1cb",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "composite_instrument_bitmap",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+        "renamed_from": "FUN_0000146a",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00001538",
@@ -6775,7 +7399,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:327",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:725-802"
@@ -6786,7 +7410,23 @@
         "validation": "C (truncated)"
       },
       "source_revision": "d30913012f3da247de63b7645ce247d39bbc3b89b5bbd64dbf8e093b4f113ea6",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "begin_instrument_supersample",
+        "original_function": "FUN_00001538",
+        "source_address": "0x1538",
+        "source_sha256": "3a1dc1330b3a9a92a5d43024ab0cc0a02bde8aeb522ecf8ffcf5c3de2abc1759",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "begin_instrument_supersample",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
+        "renamed_from": "FUN_00001538",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00001844",
@@ -6809,7 +7449,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:366",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:812-821"
@@ -6820,7 +7460,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "8771a20946316691a11afe067c96fbb0db0ddff6a246f394fce75affd95a3234",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "finish_instrument_supersample",
+        "original_function": "FUN_00001844",
+        "source_address": "0x1844",
+        "source_sha256": "8771a20946316691a11afe067c96fbb0db0ddff6a246f394fce75affd95a3234",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "finish_instrument_supersample",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+        "renamed_from": "FUN_00001844",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00001876",
@@ -6843,7 +7499,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:379",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:857-921"
@@ -6856,7 +7512,23 @@
         "validation": "Capstone + resource dump"
       },
       "source_revision": "1a3ea11312b274b24a5e4194f59bd6e2e99c3d4a88d833c26f73b5c913ff17c5",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_altimeter",
+        "original_function": "FUN_00001876",
+        "source_address": "0x1876",
+        "source_sha256": "1a3ea11312b274b24a5e4194f59bd6e2e99c3d4a88d833c26f73b5c913ff17c5",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_altimeter",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00001876",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00001b48",
@@ -6879,7 +7551,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:394",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:950-1041"
@@ -6892,7 +7564,23 @@
         "validation": "STR#129 label scan"
       },
       "source_revision": "a33bc43141288c1ab5be7d24bca6f470a35b8495def071708c8cd64be47232c0",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_airspeed_indicator",
+        "original_function": "FUN_00001b48",
+        "source_address": "0x1b48",
+        "source_sha256": "a33bc43141288c1ab5be7d24bca6f470a35b8495def071708c8cd64be47232c0",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_airspeed_indicator",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00001b48",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00001fee",
@@ -6915,7 +7603,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:427",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1065-1131"
@@ -6928,7 +7616,23 @@
         "validation": "STR#129 label scan"
       },
       "source_revision": "eb15445f97abb5403dd6616c33e66b041c23cea261c4fa47b69ffc3c21ce2641",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_climb_indicator",
+        "original_function": "FUN_00001fee",
+        "source_address": "0x1fee",
+        "source_sha256": "eb15445f97abb5403dd6616c33e66b041c23cea261c4fa47b69ffc3c21ce2641",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_climb_indicator",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00001fee",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000022fe",
@@ -6951,7 +7655,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:458",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1156-1221"
@@ -6964,7 +7668,23 @@
         "validation": "STR#129 label scan"
       },
       "source_revision": "8a4c9d938926f2770ef168d4d8dfd3cf586299d0672e11e950f6015689594f17",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_tachometer",
+        "original_function": "FUN_000022fe",
+        "source_address": "0x22fe",
+        "source_sha256": "8a4c9d938926f2770ef168d4d8dfd3cf586299d0672e11e950f6015689594f17",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_tachometer",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_000022fe",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00002600",
@@ -6987,7 +7707,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:473",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1245-1315"
@@ -7000,7 +7720,23 @@
         "validation": "STR#129 label scan"
       },
       "source_revision": "5716ad54cbc5f5ed979d5397ea51e5cec69d1c78045528333d5ee6b00485a9d0",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_manifold_pressure_gauge",
+        "original_function": "FUN_00002600",
+        "source_address": "0x2600",
+        "source_sha256": "5716ad54cbc5f5ed979d5397ea51e5cec69d1c78045528333d5ee6b00485a9d0",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_manifold_pressure_gauge",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00002600",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00002950",
@@ -7023,7 +7759,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:504",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1345-1429"
@@ -7036,7 +7772,23 @@
         "validation": "STR#129 label scan"
       },
       "source_revision": "1f586a872a9378a03e3485c1de1458db8402c18f203d85655cc033fa42e7cc97",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_direction_indicator",
+        "original_function": "FUN_00002950",
+        "source_address": "0x2950",
+        "source_sha256": "1f586a872a9378a03e3485c1de1458db8402c18f203d85655cc033fa42e7cc97",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_direction_indicator",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00002950",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00002d1c",
@@ -7059,7 +7811,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:519",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1460-1555"
@@ -7072,7 +7824,23 @@
         "validation": "STR#129 label scan"
       },
       "source_revision": "de5c48ec012ee3896df5f9844153dcb767513fb3d218b02a945ecc2635f2759e",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_turn_and_bank_indicator",
+        "original_function": "FUN_00002d1c",
+        "source_address": "0x2d1c",
+        "source_sha256": "de5c48ec012ee3896df5f9844153dcb767513fb3d218b02a945ecc2635f2759e",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_turn_and_bank_indicator",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00002d1c",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000032b8",
@@ -7095,7 +7863,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:534",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1569-1686"
@@ -7108,7 +7876,23 @@
         "validation": "dis.py on ID03.bin; AddResource names in ID03 0x5b5e..0x5d44; token diff = renames"
       },
       "source_revision": "75caae7d153f264a976dfeca638b66ccbc728107638ef289707b159082902d4a",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_gyro_instrument",
+        "original_function": "FUN_000032b8",
+        "source_address": "0x32b8",
+        "source_sha256": "75caae7d153f264a976dfeca638b66ccbc728107638ef289707b159082902d4a",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_gyro_instrument",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_000032b8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00003832",
@@ -7131,7 +7915,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:545",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1697-1715"
@@ -7144,7 +7928,23 @@
         "validation": "dis.py on ID03.bin; AddResource names in ID03 0x5b5e..0x5d44; token diff = renames"
       },
       "source_revision": "8ef8d27fe6a24a77178c2e7c744bd2f34d5933b4e03a0b10d218114fcae902ad",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "make_inset_face_oval_region",
+        "original_function": "FUN_00003832",
+        "source_address": "0x3832",
+        "source_sha256": "8ef8d27fe6a24a77178c2e7c744bd2f34d5933b4e03a0b10d218114fcae902ad",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "make_inset_face_oval_region",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+        "renamed_from": "FUN_00003832",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000038fc",
@@ -7167,7 +7967,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:556",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1728-1812"
@@ -7180,7 +7980,23 @@
         "validation": "dis.py on ID03.bin; AddResource names in ID03 0x5b5e..0x5d44; token diff = renames"
       },
       "source_revision": "4749f0f230738a401858944143cc9658d96e1433aaad55e7d2555a30df18ae63",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_artificial_horizon",
+        "original_function": "FUN_000038fc",
+        "source_address": "0x38fc",
+        "source_sha256": "7521c4da6696627b7de578cdda24f80277987e37e2abdfc93dd211e6d8066a8d",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_artificial_horizon",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_000038fc",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00003c02",
@@ -7203,7 +8019,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:567",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1849-1910"
@@ -7216,7 +8032,23 @@
         "validation": "Capstone + switch table parsed"
       },
       "source_revision": "02a9108308672f23d8982362ad03365f1d515f06fbfa7dff6af7f7a6edca04fb",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_instrument",
+        "original_function": "FUN_00003c02",
+        "source_address": "0x3c02",
+        "source_sha256": "02a9108308672f23d8982362ad03365f1d515f06fbfa7dff6af7f7a6edca04fb",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_instrument",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00003c02",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00003f24",
@@ -7239,7 +8071,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:596",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1922-1973"
@@ -7250,7 +8082,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "6f1761ee6a24fc119d7924e0d1bb297a239c5fccf25e92a6b0756df6e69372ba",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_bevelled_frame",
+        "original_function": "FUN_00003f24",
+        "source_address": "0x3f24",
+        "source_sha256": "26046a678aa2448e177e0d55e1f35397e947f1302c8acff0cdfb984abd2aa113",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_bevelled_frame",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
+        "renamed_from": "FUN_00003f24",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00004110",
@@ -7273,7 +8121,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:613",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:1985-2041"
@@ -7284,7 +8132,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "b0bbdab3a28aa21367116489a3fd950b6a3a24fbb07e00209d6bb571a91b0ab4",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_numbered_bevel_box",
+        "original_function": "FUN_00004110",
+        "source_address": "0x4110",
+        "source_sha256": "b0bbdab3a28aa21367116489a3fd950b6a3a24fbb07e00209d6bb571a91b0ab4",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_numbered_bevel_box",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
+        "renamed_from": "FUN_00004110",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00004304",
@@ -7307,7 +8171,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:630",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2054-2148"
@@ -7320,7 +8184,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "8f66c57622638d40cefd0676321f48fe506f8453b67ca69f06318e89317e74b6",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_panel_section_with_numbered_boxes",
+        "original_function": "FUN_00004304",
+        "source_address": "0x4304",
+        "source_sha256": "8f66c57622638d40cefd0676321f48fe506f8453b67ca69f06318e89317e74b6",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_panel_section_with_numbered_boxes",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00004304",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00004790",
@@ -7343,7 +8223,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:649",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2161-2239"
@@ -7356,7 +8236,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "9e55ce1d03585805dcc3f63736258b926490aba0f4812a6177e905773fc3e7be",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_percent_scale_gauge",
+        "original_function": "FUN_00004790",
+        "source_address": "0x4790",
+        "source_sha256": "9e55ce1d03585805dcc3f63736258b926490aba0f4812a6177e905773fc3e7be",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_percent_scale_gauge",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00004790",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00004b32",
@@ -7379,7 +8275,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:660",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2250-2277"
@@ -7392,7 +8288,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "d51b2c17ab4d6763065882dc2bab117c14fb508e7314e2c7f54d668e599e658e",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_split_display_box",
+        "original_function": "FUN_00004b32",
+        "source_address": "0x4b32",
+        "source_sha256": "d51b2c17ab4d6763065882dc2bab117c14fb508e7314e2c7f54d668e599e658e",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_split_display_box",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
+        "renamed_from": "FUN_00004b32",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00004c42",
@@ -7415,7 +8327,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:673",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2305-2361"
@@ -7428,7 +8340,23 @@
         "validation": "STR#129 slot scan"
       },
       "source_revision": "82a92e937372c467e4b366360ca82a1d84ca4fe1b51d4861e7c41617941549f7",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_flaps_indicator",
+        "original_function": "FUN_00004c42",
+        "source_address": "0x4c42",
+        "source_sha256": "82a92e937372c467e4b366360ca82a1d84ca4fe1b51d4861e7c41617941549f7",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_flaps_indicator",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00004c42",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00004ecc",
@@ -7451,7 +8379,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:691",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2387-2444"
@@ -7464,7 +8392,23 @@
         "validation": "STR#129 slot scan"
       },
       "source_revision": "08b929631ee649f206ec8fdd2d707af192db7c6dfe3dad9185f2832ecade4a6e",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_ammo_counter",
+        "original_function": "FUN_00004ecc",
+        "source_address": "0x4ecc",
+        "source_sha256": "08b929631ee649f206ec8fdd2d707af192db7c6dfe3dad9185f2832ecade4a6e",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_ammo_counter",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_00004ecc",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00005158",
@@ -7487,7 +8431,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:709",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2460-2500"
@@ -7498,7 +8442,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "bc3b5bb71c7afcdcf57ff08ce90f0eb8b50a3599f701809714916ce34ee5e43f",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_arc_scale_ticks",
+        "original_function": "FUN_00005158",
+        "source_address": "0x5158",
+        "source_sha256": "bc3b5bb71c7afcdcf57ff08ce90f0eb8b50a3599f701809714916ce34ee5e43f",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_arc_scale_ticks",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
+        "renamed_from": "FUN_00005158",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_0000532e",
@@ -7521,7 +8481,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:720",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2527-2565"
@@ -7534,7 +8494,23 @@
         "validation": "STR#129 slot scan"
       },
       "source_revision": "020604819014fab86ba97672dfadcee538c95ad6346e70a98a49f05e24579ada",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_fuel_gauge",
+        "original_function": "FUN_0000532e",
+        "source_address": "0x532e",
+        "source_sha256": "020604819014fab86ba97672dfadcee538c95ad6346e70a98a49f05e24579ada",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_fuel_gauge",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_0000532e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000054fe",
@@ -7557,7 +8533,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:738",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2578-2632"
@@ -7568,7 +8544,23 @@
         "validation": "Ghidra C + dis.py; token diff = renames"
       },
       "source_revision": "d34efe72d47c5e811bfaee858f13cef86364253717e51499a82659dd68633492",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "draw_landing_gear_indicator",
+        "original_function": "FUN_000054fe",
+        "source_address": "0x54fe",
+        "source_sha256": "d34efe72d47c5e811bfaee858f13cef86364253717e51499a82659dd68633492",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "draw_landing_gear_indicator",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+        "renamed_from": "FUN_000054fe",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00005718",
@@ -7591,7 +8583,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:755",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2647-2692"
@@ -7602,7 +8594,23 @@
         "validation": "Ghidra C + dis.py; token diff = renames"
       },
       "source_revision": "14d0c8b704bd3144e5547021e8d9f63a77d8a9010aed84c9d5ca5a4bc147bbb2",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "dial_point_at_angle",
+        "original_function": "FUN_00005718",
+        "source_address": "0x5718",
+        "source_sha256": "983f4725d6e7e204e34f8db0fb5a7b8dda82212c998066fa2d30d3a67c8adaad",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "dial_point_at_angle",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_00005718",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00005860",
@@ -7625,7 +8633,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:798",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2704-2747"
@@ -7636,7 +8644,23 @@
         "validation": "Ghidra C / dis.py; token diff = renames"
       },
       "source_revision": "525ff55ed27a23fdad60250cbf33b1155192e5441d8e425ce0946449aa66b2bf",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "compute_panel_screen_addresses",
+        "original_function": "FUN_00005860",
+        "source_address": "0x5860",
+        "source_sha256": "525ff55ed27a23fdad60250cbf33b1155192e5441d8e425ce0946449aa66b2bf",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "compute_panel_screen_addresses",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
+        "renamed_from": "FUN_00005860",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00005ab6",
@@ -7659,7 +8683,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:852",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2760-2809"
@@ -7670,7 +8694,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "974aa954b957e2d8955892179fa7ca994b2fe09aa53cb5c35740de3fb846e631",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "store_panel_bitmaps_as_resources",
+        "original_function": "FUN_00005ab6",
+        "source_address": "0x5ab6",
+        "source_sha256": "974aa954b957e2d8955892179fa7ca994b2fe09aa53cb5c35740de3fb846e631",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "store_panel_bitmaps_as_resources",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
+        "renamed_from": "FUN_00005ab6",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00005c36",
@@ -7693,7 +8733,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:863",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2822-2838"
@@ -7706,7 +8746,23 @@
         "validation": "dis.py on ID03.bin; CODE0 JT; token diff = renames"
       },
       "source_revision": "c045bbaa1875bee47cedf30bcba0f62254e3ba5bac68bc1e4d0f97c606229383",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "open_cport_on_buffer",
+        "original_function": "FUN_00005c36",
+        "source_address": "0x5c36",
+        "source_sha256": "c045bbaa1875bee47cedf30bcba0f62254e3ba5bac68bc1e4d0f97c606229383",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "open_cport_on_buffer",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_00005c36",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00005cb6",
@@ -7729,7 +8785,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:877",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2848-2853"
@@ -7742,7 +8798,23 @@
         "validation": "dis.py on ID03.bin; CODE0 JT; token diff = renames"
       },
       "source_revision": "f22964e0ebce00eb51fa16e779deebe8890f11cd703f5966865ef16473609f2b",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "close_port_glue",
+        "original_function": "FUN_00005cb6",
+        "source_address": "0x5cb6",
+        "source_sha256": "f22964e0ebce00eb51fa16e779deebe8890f11cd703f5966865ef16473609f2b",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "close_port_glue",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_00005cb6",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00005cc4",
@@ -7765,7 +8837,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:888",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:2869-3117"
@@ -7778,7 +8850,23 @@
         "validation": "dis.py on ID03.bin; CODE0 JT; token diff = renames"
       },
       "source_revision": "bd66ee1bcf022fb100d6c729b06ab84908e66b0c6f44f77606068da70e9defdc",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "prepare_instrument_panel",
+        "original_function": "FUN_00005cc4",
+        "source_address": "0x5cc4",
+        "source_sha256": "bd66ee1bcf022fb100d6c729b06ab84908e66b0c6f44f77606068da70e9defdc",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "prepare_instrument_panel",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_prepare.gd",
+        "renamed_from": "FUN_00005cc4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_00006c1c",
@@ -7801,7 +8889,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:899",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:3130-3234"
@@ -7812,7 +8900,23 @@
         "validation": "Ghidra C / dis.py; token diff = renames"
       },
       "source_revision": "3f179942a6e822b1ede94cf4515433ea53e0b58e3db430a217669dacf1ab2f7e",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "remap_cached_panel_colours",
+        "original_function": "FUN_00006c1c",
+        "source_address": "0x6c1c",
+        "source_sha256": "3f179942a6e822b1ede94cf4515433ea53e0b58e3db430a217669dacf1ab2f7e",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "remap_cached_panel_colours",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_remap.gd",
+        "renamed_from": "FUN_00006c1c",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID03::FUN_000071a2",
@@ -7835,7 +8939,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID03.c:932",
         "sources/resedit-1-0-3/CODE/ID03.decomp.c:3245-3257"
@@ -7846,7 +8950,23 @@
         "validation": "dis.py on ID03.bin; token diff = renames"
       },
       "source_revision": "e435126de351ef53c0578b47e1d52cc932a1da264b235e885a179b9f94aee7ee",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID03.decomp.c",
+        "source_function": "remap_panel_colours_identity",
+        "original_function": "FUN_000071a2",
+        "source_address": "0x71a2",
+        "source_sha256": "e435126de351ef53c0578b47e1d52cc932a1da264b235e885a179b9f94aee7ee",
+        "target_file": "godot/strict_port/code/ID03.gd",
+        "target_function": "remap_panel_colours_identity",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+        "renamed_from": "FUN_000071a2",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00000006",
@@ -8621,7 +9741,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:194",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:415-435"
@@ -8632,7 +9752,23 @@
         "validation": "dis.py; CODE0 JT; ALRT/DLOG/DITL dump; token diff = renames"
       },
       "source_revision": "1abd3c8dbd9d48d3c91f1f30d849415f012cea305c2eeac0ebcca60ade127c29",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "show_paused_dialog",
+        "original_function": "FUN_00000478",
+        "source_address": "0x478",
+        "source_sha256": "1abd3c8dbd9d48d3c91f1f30d849415f012cea305c2eeac0ebcca60ade127c29",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "show_paused_dialog",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_about.gd",
+        "renamed_from": "FUN_00000478",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_000004f0",
@@ -8857,7 +9993,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:278",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:567-584"
@@ -8868,7 +10004,23 @@
         "validation": "dis.py; CODE0 JT; ALRT/DLOG/DITL dump; token diff = renames"
       },
       "source_revision": "39fb9b728e36830abc5f82e4e6a7a922678db66322e31ec48dd346981ee228a4",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "duty_roster_filter_proc",
+        "original_function": "FUN_000005e4",
+        "source_address": "0x5e4",
+        "source_sha256": "39fb9b728e36830abc5f82e4e6a7a922678db66322e31ec48dd346981ee228a4",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "duty_roster_filter_proc",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_000005e4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_000009ee",
@@ -8941,7 +10093,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:302",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:638-688"
@@ -8952,7 +10104,23 @@
         "validation": "dis.py; CODE0 JT; DLOG/DITL 129 / 132 dump; token diff = renames"
       },
       "source_revision": "f3414452c5cab2461c9a43305f84e3da3001d33c4e023fcf819e75b4779b07de",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "fuel_slider_dialog_filter",
+        "original_function": "FUN_00000a8e",
+        "source_address": "0xa8e",
+        "source_sha256": "f3414452c5cab2461c9a43305f84e3da3001d33c4e023fcf819e75b4779b07de",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "fuel_slider_dialog_filter",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00000a8e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00000bda",
@@ -8975,7 +10143,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:321",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:732-737"
@@ -8986,7 +10154,23 @@
         "validation": "dis.py; CODE0 JT; DLOG/DITL 129 / 132 dump; token diff = renames"
       },
       "source_revision": "e313bcc2181edcb52efd402c42a543edbd5b257ed8ce0dc443614f08995d735e",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "scenario_selection_filter_proc",
+        "original_function": "FUN_00000bda",
+        "source_address": "0xbda",
+        "source_sha256": "e313bcc2181edcb52efd402c42a543edbd5b257ed8ce0dc443614f08995d735e",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "scenario_selection_filter_proc",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00000bda",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00000e48",
@@ -9009,7 +10193,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:338",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:770-775"
@@ -9020,7 +10204,23 @@
         "validation": "dis.py; CODE0 JT; DLOG/DITL 129 / 132 dump; token diff = renames"
       },
       "source_revision": "507856abd6bd6f8e0fc5d8f2be7dbc7bf9106a1bd2fa325b389fa575e0e5708a",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "refuel_dialog_filter_proc",
+        "original_function": "FUN_00000e48",
+        "source_address": "0xe48",
+        "source_sha256": "507856abd6bd6f8e0fc5d8f2be7dbc7bf9106a1bd2fa325b389fa575e0e5708a",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "refuel_dialog_filter_proc",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00000e48",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00000f4e",
@@ -9197,7 +10397,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:484",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:915-962"
@@ -9208,7 +10408,23 @@
         "validation": "dis.py; CODE0 JT; DLOG/DITL 134; token diff = renames"
       },
       "source_revision": "999553681f4de4180c5c3874ba478154222b3f78e354c77e497e14835a8b30b8",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "draw_high_scores_table",
+        "original_function": "FUN_00001200",
+        "source_address": "0x1200",
+        "source_sha256": "999553681f4de4180c5c3874ba478154222b3f78e354c77e497e14835a8b30b8",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "draw_high_scores_table",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+        "renamed_from": "FUN_00001200",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_000014a0",
@@ -9789,7 +11005,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:674",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1302-1335"
@@ -9802,7 +11018,23 @@
         "validation": "dis.py on ID04.bin; STR# 129 / DITL 133 dump; token diff = renames"
       },
       "source_revision": "07dd7155c29ca98ebef7db8950a23353eef77c12e67d9e2cb83bec305da023dc",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "update_summary_dialog_buttons",
+        "original_function": "FUN_0000192e",
+        "source_address": "0x192e",
+        "source_sha256": "07dd7155c29ca98ebef7db8950a23353eef77c12e67d9e2cb83bec305da023dc",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "update_summary_dialog_buttons",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_0000192e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00001a0e",
@@ -9825,7 +11057,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:699",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1372-1406"
@@ -9838,7 +11070,23 @@
         "validation": "C"
       },
       "source_revision": "60061e30300099925e4e4bc56d51fd7cebbd647e58e67cb1c237ef3446613b7d",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "build_rank_and_name_string",
+        "original_function": "FUN_00001a0e",
+        "source_address": "0x1a0e",
+        "source_sha256": "60061e30300099925e4e4bc56d51fd7cebbd647e58e67cb1c237ef3446613b7d",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "build_rank_and_name_string",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00001a0e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00001bc8",
@@ -9861,7 +11109,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:728",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1426-1479"
@@ -9874,7 +11122,23 @@
         "validation": "dis.py; token diff = renames"
       },
       "source_revision": "7f11b20861c40922e0d938a918a41196b0f0a8754cc914554331671ad936e0d5",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "draw_targets_destroyed_row",
+        "original_function": "FUN_00001bc8",
+        "source_address": "0x1bc8",
+        "source_sha256": "7f11b20861c40922e0d938a918a41196b0f0a8754cc914554331671ad936e0d5",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "draw_targets_destroyed_row",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+        "renamed_from": "FUN_00001bc8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00001d9e",
@@ -9897,7 +11161,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:740",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1492-1502"
@@ -9908,7 +11172,23 @@
         "validation": "dis.py; CODE0 JT; DITL/cicn dump"
       },
       "source_revision": "7795de9d074f7a3fe6a745b9de9b994cadf484425ace1872b6bf358dc41514fa",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "draw_targets_destroyed_list",
+        "original_function": "FUN_00001d9e",
+        "source_address": "0x1d9e",
+        "source_sha256": "7795de9d074f7a3fe6a745b9de9b994cadf484425ace1872b6bf358dc41514fa",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "draw_targets_destroyed_list",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+        "renamed_from": "FUN_00001d9e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00001f5e",
@@ -9931,7 +11211,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:760",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1514-1576"
@@ -9944,7 +11224,23 @@
         "validation": "dis.py; DITL 133 placement; token diff = renames"
       },
       "source_revision": "8e29dde608890d132cd50f5eba926615a2a3a8732507cba90482318667292250",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "draw_aircraft_kill_markers",
+        "original_function": "FUN_00001f5e",
+        "source_address": "0x1f5e",
+        "source_sha256": "8e29dde608890d132cd50f5eba926615a2a3a8732507cba90482318667292250",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "draw_aircraft_kill_markers",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+        "renamed_from": "FUN_00001f5e",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_000020e8",
@@ -9967,7 +11263,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:770",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1588-1593"
@@ -9978,7 +11274,23 @@
         "validation": "dis.py; CODE0 JT"
       },
       "source_revision": "9d3b9d39bb94527f9aea5bf40c599f9645e397ef0847368928ee0298725008ba",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "aircraft_kill_markers_user_item_proc",
+        "original_function": "FUN_000020e8",
+        "source_address": "0x20e8",
+        "source_sha256": "9d3b9d39bb94527f9aea5bf40c599f9645e397ef0847368928ee0298725008ba",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "aircraft_kill_markers_user_item_proc",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+        "renamed_from": "FUN_000020e8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00002d86",
@@ -10001,7 +11313,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:784",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1762-1775"
@@ -10012,7 +11324,23 @@
         "validation": "dis.py; STR# dump; token diff = renames"
       },
       "source_revision": "e4dd2913687c95d1432e04a31c47f4cff2f5d28ad6d0eb6f8f57f2ca168d93d1",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "set_score_item_text",
+        "original_function": "FUN_00002d86",
+        "source_address": "0x2d86",
+        "source_sha256": "e4dd2913687c95d1432e04a31c47f4cff2f5d28ad6d0eb6f8f57f2ca168d93d1",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "set_score_item_text",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00002d86",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00002de6",
@@ -10035,7 +11363,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:809",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:1804-1900"
@@ -10048,7 +11376,23 @@
         "validation": "Capstone + DLOG/DITL dump"
       },
       "source_revision": "ec8660463f4d99303e8af5c04e18b7f42d32c5f606272d0df1ea80a07fc6ec56",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "show_mission_summary_dialog",
+        "original_function": "FUN_00002de6",
+        "source_address": "0x2de6",
+        "source_sha256": "ec8660463f4d99303e8af5c04e18b7f42d32c5f606272d0df1ea80a07fc6ec56",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "show_mission_summary_dialog",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_summary.gd",
+        "renamed_from": "FUN_00002de6",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00003124",
@@ -10173,7 +11517,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:864",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:2000-2032"
@@ -10186,7 +11530,23 @@
         "validation": "C + JT callers"
       },
       "source_revision": "270d095d34e34e1ec8b1ce1f79a1ff2c234f4f0238c6689672dc64fa7b17402c",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "conclude_mission",
+        "original_function": "FUN_000031aa",
+        "source_address": "0x31aa",
+        "source_sha256": "270d095d34e34e1ec8b1ce1f79a1ff2c234f4f0238c6689672dc64fa7b17402c",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "conclude_mission",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_000031aa",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00003260",
@@ -10209,7 +11569,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:898",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:2043-2077"
@@ -10222,7 +11582,23 @@
         "validation": "dis.py; CODE0 JT; STR# 59; token diff = renames"
       },
       "source_revision": "4677b83944e3178cefec87cb94f9bc4e7e2154059988e77991e8c9d289955ddb",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "draw_map_grid_and_centre_mark",
+        "original_function": "FUN_00003260",
+        "source_address": "0x3260",
+        "source_sha256": "4677b83944e3178cefec87cb94f9bc4e7e2154059988e77991e8c9d289955ddb",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "draw_map_grid_and_centre_mark",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00003260",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00003352",
@@ -10245,7 +11621,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:909",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:2088-2105"
@@ -10258,7 +11634,23 @@
         "validation": "dis.py; CODE0 JT; STR# 59; token diff = renames"
       },
       "source_revision": "8b2cadffb00dff44925445d882192bfc87fb24d8b53af8ef18eefddbf5b8ba0a",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "plot_map_symbol_callback",
+        "original_function": "FUN_00003352",
+        "source_address": "0x3352",
+        "source_sha256": "8b2cadffb00dff44925445d882192bfc87fb24d8b53af8ef18eefddbf5b8ba0a",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "plot_map_symbol_callback",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00003352",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_000033d6",
@@ -10281,7 +11673,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:923",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:2118-2187"
@@ -10294,7 +11686,23 @@
         "validation": "dis.py; CODE0 JT; STR# 59; token diff = renames"
       },
       "source_revision": "ea17f33b103e19d34e124114c180de164394f2164fb8353cd457d5f9344bbf68",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "draw_map_view_item",
+        "original_function": "FUN_000033d6",
+        "source_address": "0x33d6",
+        "source_sha256": "ea17f33b103e19d34e124114c180de164394f2164fb8353cd457d5f9344bbf68",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "draw_map_view_item",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+        "renamed_from": "FUN_000033d6",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_000035f8",
@@ -10317,7 +11725,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:936",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:2200-2205"
@@ -10328,7 +11736,23 @@
         "validation": "dis.py; CODE0 JT; DLOG/DITL dump; token diff = renames"
       },
       "source_revision": "997e95d906cdb297beb8c93459d80c4846fcaed57f325671f16ec0372743b226",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "map_view_user_item_proc",
+        "original_function": "FUN_000035f8",
+        "source_address": "0x35f8",
+        "source_sha256": "997e95d906cdb297beb8c93459d80c4846fcaed57f325671f16ec0372743b226",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "map_view_user_item_proc",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+        "renamed_from": "FUN_000035f8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00003902",
@@ -10351,7 +11775,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:952",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:2219-2241"
@@ -10362,7 +11786,23 @@
         "validation": "dis.py; CODE0 JT; DLOG/DITL dump; token diff = renames"
       },
       "source_revision": "0ebdf643633a823f2c8a3f06774955c0d2d20df0aa2600040ada46d3c486e983",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "map_dialog_filter_proc",
+        "original_function": "FUN_00003902",
+        "source_address": "0x3902",
+        "source_sha256": "0ebdf643633a823f2c8a3f06774955c0d2d20df0aa2600040ada46d3c486e983",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "map_dialog_filter_proc",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+        "renamed_from": "FUN_00003902",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00003a56",
@@ -10435,7 +11875,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID04.c:978",
         "sources/resedit-1-0-3/CODE/ID04.decomp.c:2279-2376"
@@ -10446,7 +11886,23 @@
         "validation": "dis.py; CODE0 JT; DLOG/DITL dump; token diff = renames"
       },
       "source_revision": "b3c37b3c3034ce090b009467cd0367f6472a3ae9e0d6533dd731ed6aa32d2152",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
+        "source_function": "show_about_dialog",
+        "original_function": "FUN_00003a8c",
+        "source_address": "0x3a8c",
+        "source_sha256": "b3c37b3c3034ce090b009467cd0367f6472a3ae9e0d6533dd731ed6aa32d2152",
+        "target_file": "godot/strict_port/code/ID04.gd",
+        "target_function": "show_about_dialog",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id04_about.gd",
+        "renamed_from": "FUN_00003a8c",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID04::FUN_00003d42",
@@ -10519,7 +11975,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:14",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:37-59"
@@ -10532,7 +11988,23 @@
         "validation": "Capstone; token diff = renames"
       },
       "source_revision": "f76d2011dbddb51c2cf879801cb554102d71dda586180f68634a6dbbf41fec4b",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "center_template_rect_on_screen",
+        "original_function": "FUN_00000006",
+        "source_address": "0x6",
+        "source_sha256": "f76d2011dbddb51c2cf879801cb554102d71dda586180f68634a6dbbf41fec4b",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "center_template_rect_on_screen",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_00000006",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_000000c8",
@@ -10555,7 +12027,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:25",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:93-118"
@@ -10566,7 +12038,23 @@
         "validation": "Capstone; truncated colour branch documented"
       },
       "source_revision": "82c1604bb69da21e289eae4253d68df77d7fd60594fb51ef172d29738c325278",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "get_machine_screen_fingerprint",
+        "original_function": "FUN_000000c8",
+        "source_address": "0xc8",
+        "source_sha256": "82c1604bb69da21e289eae4253d68df77d7fd60594fb51ef172d29738c325278",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "get_machine_screen_fingerprint",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_000000c8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_00000160",
@@ -10589,7 +12077,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:51",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:139-155"
@@ -10602,7 +12090,23 @@
         "validation": "Capstone; JT/BSR scan; token diff = renames"
       },
       "source_revision": "a0b7ee82387e82dd2f74d0514eb411e5a51cbf21a12e910cbfa826466c90031c",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "read_DATA128_pair",
+        "original_function": "FUN_00000160",
+        "source_address": "0x160",
+        "source_sha256": "a0b7ee82387e82dd2f74d0514eb411e5a51cbf21a12e910cbfa826466c90031c",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "read_DATA128_pair",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_00000160",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_000001bc",
@@ -10625,7 +12129,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:64",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:177-193"
@@ -10638,7 +12142,23 @@
         "validation": "Capstone; JT/BSR scan; token diff = renames"
       },
       "source_revision": "ee695f10e3594c55f0ae274a71e150094a6b264fc01122a23329f72839425a4b",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "write_DATA128_pair",
+        "original_function": "FUN_000001bc",
+        "source_address": "0x1bc",
+        "source_sha256": "ee695f10e3594c55f0ae274a71e150094a6b264fc01122a23329f72839425a4b",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "write_DATA128_pair",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_000001bc",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_00000214",
@@ -10661,7 +12181,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:75",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:214-230"
@@ -10674,7 +12194,23 @@
         "validation": "Capstone; JT/BSR scan; token diff = renames"
       },
       "source_revision": "104174b1a41b2b5565655f865e1dad640a7bd68a657e7ea51659832fd1fe47e8",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "read_TEXT128_pair",
+        "original_function": "FUN_00000214",
+        "source_address": "0x214",
+        "source_sha256": "104174b1a41b2b5565655f865e1dad640a7bd68a657e7ea51659832fd1fe47e8",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "read_TEXT128_pair",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_00000214",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_00000270",
@@ -10697,7 +12233,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:88",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:253-269"
@@ -10710,7 +12246,23 @@
         "validation": "Capstone; JT/BSR scan; token diff = renames"
       },
       "source_revision": "5b2c87383c2190ec81f6d3043f5ca50bfcfd9fee94457ea676d0b45a9d828af9",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "write_TEXT128_pair",
+        "original_function": "FUN_00000270",
+        "source_address": "0x270",
+        "source_sha256": "5b2c87383c2190ec81f6d3043f5ca50bfcfd9fee94457ea676d0b45a9d828af9",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "write_TEXT128_pair",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_00000270",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_000002c8",
@@ -10733,7 +12285,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:99",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:331-367"
@@ -10746,7 +12298,23 @@
         "validation": "Capstone 68020; token diff = renames; 32 hashes OK"
       },
       "source_revision": "19eb5e55d216540d3586713843b5dadc6e6e2c2ff08d8a33d92a3b69afe49735",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "code_dialog_filter",
+        "original_function": "FUN_000002c8",
+        "source_address": "0x2c8",
+        "source_sha256": "19eb5e55d216540d3586713843b5dadc6e6e2c2ff08d8a33d92a3b69afe49735",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "code_dialog_filter",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_000002c8",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_000004e4",
@@ -10769,7 +12337,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:110",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:391-410"
@@ -10782,7 +12350,23 @@
         "validation": "Capstone; token diff = renames"
       },
       "source_revision": "2aaa6e44c30beb779726830e13b69a1db010d9727ef6c5ff2e7b38c3d8876bfc",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "get_dialog_item_text_upper",
+        "original_function": "FUN_000004e4",
+        "source_address": "0x4e4",
+        "source_sha256": "2aaa6e44c30beb779726830e13b69a1db010d9727ef6c5ff2e7b38c3d8876bfc",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "get_dialog_item_text_upper",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_000004e4",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_00000560",
@@ -10805,7 +12389,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID05.c:121",
         "sources/resedit-1-0-3/CODE/ID05.decomp.c:464-522"
@@ -10818,7 +12402,23 @@
         "validation": "Capstone; JT resolution; token diff = renames"
       },
       "source_revision": "146ac6f42c172e5aff4d38f27ffeb1b6c334f1458ab0062806cb6db3eba607a8",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
+        "source_function": "run_protection_dialog",
+        "original_function": "FUN_00000560",
+        "source_address": "0x560",
+        "source_sha256": "146ac6f42c172e5aff4d38f27ffeb1b6c334f1458ab0062806cb6db3eba607a8",
+        "target_file": "godot/strict_port/code/ID05.gd",
+        "target_function": "run_protection_dialog",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+        "renamed_from": "FUN_00000560",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID05::FUN_00000728",
@@ -12161,7 +13761,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID06.c:236",
         "sources/resedit-1-0-3/CODE/ID06.decomp.c:390-532"
@@ -12174,7 +13774,23 @@
         "validation": "C + bytes (BRA over data)"
       },
       "source_revision": "79265aa441a24e2ff5865898bba36f20855c949325a5112b395612ed5b97ebc1",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID06.decomp.c",
+        "source_function": "render_scanline_spans",
+        "original_function": "FUN_00000318",
+        "source_address": "0x318",
+        "source_sha256": "79265aa441a24e2ff5865898bba36f20855c949325a5112b395612ed5b97ebc1",
+        "target_file": "godot/strict_port/code/ID06.gd",
+        "target_function": "render_scanline_spans",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id06_render.gd",
+        "renamed_from": "FUN_00000318",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID06::FUN_00000512",
@@ -12863,7 +14479,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID06.c:842",
         "sources/resedit-1-0-3/CODE/ID06.decomp.c:1191-1249"
@@ -12876,7 +14492,23 @@
         "validation": "C complete; JT confirmed; token diff = renames"
       },
       "source_revision": "55a91d0116f35e11404c30b0d0d0364a2946220c6ddf208cc0c372117f6312f9",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID06.decomp.c",
+        "source_function": "rasterize_and_present",
+        "original_function": "FUN_00000e10",
+        "source_address": "0xe10",
+        "source_sha256": "55a91d0116f35e11404c30b0d0d0364a2946220c6ddf208cc0c372117f6312f9",
+        "target_file": "godot/strict_port/code/ID06.gd",
+        "target_function": "rasterize_and_present",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id06_render.gd",
+        "renamed_from": "FUN_00000e10",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID07::FUN_00000006",
@@ -13003,7 +14635,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": false,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID08.c:11",
         "sources/resedit-1-0-3/CODE/ID08.decomp.c:51-158"
@@ -13016,7 +14648,23 @@
         "validation": "Capstone ID08.bin; LOADER_CHAIN"
       },
       "source_revision": "49e349d880976e28dfcdc0390e95703cd731cf5096679ca3dc7f19664bbc024d",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID08.decomp.c",
+        "source_function": "load_overlay_from_resource",
+        "original_function": "FUN_00000006",
+        "source_address": "0x6",
+        "source_sha256": "49e349d880976e28dfcdc0390e95703cd731cf5096679ca3dc7f19664bbc024d",
+        "target_file": "godot/strict_port/code/ID08.gd",
+        "target_function": "load_overlay_from_resource",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id08_loader.gd",
+        "renamed_from": "FUN_00000006",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID08::FUN_00000338",
@@ -13143,7 +14791,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID08.c:275",
         "sources/resedit-1-0-3/CODE/ID08.decomp.c:262-290"
@@ -13156,7 +14804,23 @@
         "validation": "Capstone; completes ID08"
       },
       "source_revision": "cec135fcc7d5df8ff68cf76fd0ce8ad4b4e9db2e4175bf6eef03ecc5bf73edaa",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID08.decomp.c",
+        "source_function": "bootstrap_window_and_load_overlay",
+        "original_function": "FUN_0000039c",
+        "source_address": "0x39c",
+        "source_sha256": "cec135fcc7d5df8ff68cf76fd0ce8ad4b4e9db2e4175bf6eef03ecc5bf73edaa",
+        "target_file": "godot/strict_port/code/ID08.gd",
+        "target_function": "bootstrap_window_and_load_overlay",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id08_09_glue.gd",
+        "renamed_from": "FUN_0000039c",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID09::FUN_00000048",
@@ -13179,7 +14843,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID09.c:26",
         "sources/resedit-1-0-3/CODE/ID09.decomp.c:87-169"
@@ -13192,7 +14856,23 @@
         "validation": "Token diff = rename only; Capstone decode; 32 protected hashes unchanged"
       },
       "source_revision": "af2397059d6e83d439bc71adcd2e825152e30c6bf6a3e884225183264b12cb66",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID09.decomp.c",
+        "source_function": "sysenvirons_glue_fallback",
+        "original_function": "FUN_00000048",
+        "source_address": "0x48",
+        "source_sha256": "af2397059d6e83d439bc71adcd2e825152e30c6bf6a3e884225183264b12cb66",
+        "target_file": "godot/strict_port/code/ID09.gd",
+        "target_function": "sysenvirons_glue_fallback",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id08_09_glue.gd",
+        "renamed_from": "FUN_00000048",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID09::FUN_000002a6",
@@ -13215,7 +14895,7 @@
       "reconstruction_status": "VERIFIED",
       "name_verified": true,
       "semantically_verified": true,
-      "behavioral_verification_status": "NOT_PORTED",
+      "behavioral_verification_status": "VERIFIED",
       "evidence_references": [
         "sources/resedit-1-0-3/CODE/ID09.c:109",
         "sources/resedit-1-0-3/CODE/ID09.decomp.c:211-225"
@@ -13228,7 +14908,23 @@
         "validation": "Token diff = rename only; Capstone decode; 32 hashes OK"
       },
       "source_revision": "4c7cb6594b54007db9d40e263548bcd243b521502ece2581b202f6ab339b0492",
-      "strict_port": null
+      "strict_port": {
+        "source_file": "sources/resedit-1-0-3/CODE/ID09.decomp.c",
+        "source_function": "fsopen_glue",
+        "original_function": "FUN_000002a6",
+        "source_address": "0x2a6",
+        "source_sha256": "4c7cb6594b54007db9d40e263548bcd243b521502ece2581b202f6ab339b0492",
+        "target_file": "godot/strict_port/code/ID09.gd",
+        "target_function": "fsopen_glue",
+        "translation_status": "VERIFIED",
+        "structurally_verified": true,
+        "behaviorally_verified": true,
+        "integrated": false,
+        "runtime_verified": false,
+        "deterministic_test": "godot/tests/strict_port/test_id08_09_glue.gd",
+        "renamed_from": "FUN_000002a6",
+        "blocked_by": []
+      }
     },
     {
       "identity": "ID09::FUN_000003c2",

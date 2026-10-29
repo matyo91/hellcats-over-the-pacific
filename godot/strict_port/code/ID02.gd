@@ -28,6 +28,9 @@ var code_routines: Dictionary = {}
 ## The stack pointer at entry, for routines that hand buffers in their own frame to callees (the
 ## frames land below it, in the stack the original uses too).
 var a7: int = 0
+## Where the segment's code is loaded: the VBL sound handlers keep their A5 in a long inside their own
+## code (0x39c4 / 0x3aca / 0x3be0).
+var code_base: int = 0
 
 func _init(memory_68k = null, a5_value: int = 0) -> void:
 	memory = memory_68k
@@ -694,6 +697,7 @@ const TRAP_SET_ENTRIES: int = 0xaa3f
 const TRAP_COPY_BITS: int = 0xa8ec
 const TRAP_PAINT_RECT: int = 0xa8a2
 const TRAP_UNLOAD_SEG: int = 0xa9f1
+const TRAP_GET_NEXT_EVENT: int = 0xa970
 const TRAP_INVAL_RECT: int = 0xa928
 const TRAP_ENABLE_ITEM: int = 0xa939
 const TRAP_DISABLE_ITEM: int = 0xa93a
@@ -1655,3 +1659,1220 @@ func update_menu_items() -> void:
 		_trap(TRAP_CHECK_ITEM, [1 if memory.read_s16(settings + 0x10) == k else 0, k, view_menu])
 	for pair in [[7, 0x13], [9, 0x15], [8, 0x17], [0xb, 0x1b], [0xa, 0x19]]:
 		_trap(TRAP_CHECK_ITEM, [memory.read_u8(settings + pair[1]), pair[0], view_menu])
+
+const TRAP_BEGIN_UPDATE: int = 0xa922
+const TRAP_END_UPDATE: int = 0xa923
+const TRAP_HIDE_CURSOR: int = 0xa852
+const TRAP_SHOW_CURSOR: int = 0xa853
+const A5_HOOK_PREPARE: int = -0x1082   ## the overlay's session hooks (code pointers)
+const A5_HOOK_START: int = -0x107e
+const A5_HOOK_RUN: int = -0x107a       ## (C: two longs)
+const A5_HOOK_FINISH: int = -0x1076
+const A5_GAME_WINDOW: int = -0x14ca
+const LOCAL_SESSION_SETUP: int = 0x95a       ## not exported
+const LOCAL_SYNC_SCREEN_GLOBALS: int = 0x4d96 ## not exported: DisposCTable-like refresh of the screen globals
+const LOCAL_AFTER_REDRAW: int = 0xa26        ## not exported
+
+## A call to a routine of this segment not ported yet (or not exported), by its segment offset.
+func _local(offset: int, args: Array) -> int:
+	assert(code_routines.has(offset), "segment routine %x has no stand-in" % offset)
+	return code_routines[offset].call(args)
+
+func _hook(slot: int, args: Array = []) -> int:
+	return _call_address(memory.read_u32(C68kScript.u32(a5 + slot)), args)
+
+## 0x45a: an overlay session begun: this code's segment unloaded (UnloadSeg A5 + 0xa2), memory and
+## sound made ready, the prepare hook, the game sounds loaded, MaxMem when under 100 000 bytes are
+## free, the start hook, 0x95a, the sound slots locked.
+func begin_overlay_session() -> void:
+	assert(a7 != 0, "begin_overlay_session needs a7 (MaxMem's grow is in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	memory.write_u32(a6 - 4, 0)
+	_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0xa2)])
+	a7 = entry - 4 - 4 - 4
+	ensure_free_memory_and_init_sound()
+	a7 = entry
+	_hook(A5_HOOK_PREPARE)
+	load_game_sounds()
+	if C68kScript.s32(_jt(JT_FREE_MEM, [])) < 0x186a0:
+		_jt(JT_MAX_MEM, [[]])
+	_hook(A5_HOOK_START)
+	_local(LOCAL_SESSION_SETUP, [])
+	lock_sound_slots()
+
+## 0x4c6: MaxMem when under 500 000 bytes are free; with sound on (A5 - 0x12ee) the sound system
+## set up (init_sound_system(0)).
+func ensure_free_memory_and_init_sound() -> void:
+	assert(a7 != 0, "ensure_free_memory_and_init_sound needs a7 (MaxMem's grow is in its frame)")
+	memory.write_u32(a7 - 4 - 4, 0)
+	if C68kScript.s32(_jt(JT_FREE_MEM, [])) < 0x7a120:
+		_jt(JT_MAX_MEM, [[]])
+	if memory.read_u16(C68kScript.u32(a5 - 0x12ee)) != 0:
+		init_sound_system(0)
+
+## 0x930 (C, two longs): the overlay's hooks in turn: prepare, start, run(a, b), finish.
+func call_overlay_session_hooks(a: int, b: int) -> void:
+	_hook(A5_HOOK_PREPARE)
+	_hook(A5_HOOK_START)
+	_hook(A5_HOOK_RUN, [C68kScript.u32(a), C68kScript.u32(b)])
+	_hook(A5_HOOK_FINISH)
+
+## 0x4d34: pending update events (GetNextEvent, update mask) for the game window (A5 - 0x14ca)
+## handled: BeginUpdate, redraw_main_window, EndUpdate; stops at the first other or none.
+func process_pending_update_events() -> void:
+	assert(a7 != 0, "process_pending_update_events needs a7 (the event record is in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	while (_trap(TRAP_GET_NEXT_EVENT, [a6 - 0x10, 0x40]) >> 8) & 0xff != 0:
+		if memory.read_u32(a6 - 0xe) != memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW)):
+			return
+		_redraw_window_update(entry, 0x10)
+
+func _redraw_window_update(entry: int, locals: int) -> void:
+	_trap(TRAP_BEGIN_UPDATE, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+	a7 = entry - 4 - locals - 4
+	redraw_main_window()
+	a7 = entry
+	_trap(TRAP_END_UPDATE, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+
+## 0x4d6a (C, the event): an update of the game window, while it is up (A5 - 0x14c6), redrawn.
+func handle_update_event(event: int) -> void:
+	if memory.read_u16(C68kScript.u32(a5 - 0x14c6)) == 0:
+		return
+	if memory.read_u32(C68kScript.u32(event + 2)) != memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW)):
+		return
+	_redraw_window_update(a7, 0)
+
+## 0x4db0: the game window redrawn while it is up with a frame buffer (A5 - 0x1006) in a running game
+## (A5 - 0x12f8): A5 - 0x12ea set (its old value to A5 - 0x103c), the cursor hidden, the device
+## colours checked, UnloadSeg (A5 + 0x18a), the redraw hook (A5 - 0x109e), the screen globals
+## refreshed (0x4d96), the overlay hooks run (0, 1), 0xa26, the cursor shown.
+func redraw_main_window() -> void:
+	assert(a7 != 0, "redraw_main_window needs a7")
+	var entry: int = a7
+	var a6: int = entry - 4
+	var flag: bool = memory.read_u16(C68kScript.u32(a5 - 0x12d4)) != 0 and memory.read_u16(C68kScript.u32(a5 - 0x1032)) != 0
+	memory.write_u16(a6 - 4, 1 if flag else 0)
+	if memory.read_u16(C68kScript.u32(a5 - 0x14c6)) == 0 or memory.read_u32(C68kScript.u32(a5 - 0x1006)) == 0 \
+			or memory.read_u16(C68kScript.u32(a5 - 0x12f8)) == 0:
+		return
+	if memory.read_u16(C68kScript.u32(a5 - 0x12ea)) == 0:
+		memory.write_u16(C68kScript.u32(a5 - 0x103c), memory.read_u16(C68kScript.u32(a5 - 0x12ea)))
+		memory.write_u16(C68kScript.u32(a5 - 0x12ea), 1)
+	_trap(TRAP_HIDE_CURSOR, [])
+	a7 = entry - 4 - 4 - 4
+	check_device_color_state_changed()
+	a7 = entry
+	_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0x18a)])
+	_call_address(memory.read_u32(C68kScript.u32(a5 - 0x109e)), [])
+	_local(LOCAL_SYNC_SCREEN_GLOBALS, [])
+	call_overlay_session_hooks(0, 1)
+	_local(LOCAL_AFTER_REDRAW, [])
+	_trap(TRAP_SHOW_CURSOR, [])
+
+const TRAP_HIDE_WINDOW: int = 0xa916
+const TRAP_SIZE_WINDOW: int = 0xa91d
+const TRAP_NEW_CWINDOW: int = 0xaa45
+const TRAP_NEW_PALETTE: int = 0xaa91
+const TRAP_SET_ORIGIN: int = 0xa878
+const JT_VIEW_BUFFER_1BIT: int = 0x1aa  ## C routine (buffer, count word, 0x7f, width, height): word result, 0 when it failed
+const JT_VIEW_BUFFER_COLOUR: int = 0x1b2 ## C routine, no arguments
+const JT_VIEW_BUFFER_BASE: int = 0x1d2  ## C routine, no arguments: long result
+const LOCAL_CLOSE_OFFSCREEN_PORT: int = 0xd24  ## not exported (C, the port at A5 - 0x103a)
+const MBAR_HEIGHT: int = 0xbaa
+
+## The menu-bar shift of the device records (A5 - 0x136e + 0x16 * 1..3, those with a device): their
+## base (+0xa) moved by MBarHeight rows of their row bytes (+0xe), down (`sign` 1) or back up (-1).
+func _shift_device_bases(mbar: int, sign: int) -> void:
+	for i in range(1, 4):
+		var rec: int = C68kScript.u32(a5 - 0x136e + 0x16 * i)
+		if memory.read_u32(rec) != 0:
+			var delta: int = C68kScript.u32(memory.read_s16(rec + 0xe) * C68kScript.s16(mbar))
+			memory.write_u32(rec + 0xa, C68kScript.u32(memory.read_u32(rec + 0xa) + sign * delta))
+
+## 0x2334 (C, the screen rect by value: top, left, bottom, right): the game window and view laid out.
+## The view width (in the frame at -0xe) is the screen width (A5 - 0x137e) by the size option (the
+## settings' +0xe, or 1 for a two-screen session: settings +0x1c and A5 - 0x1032): 1 whole, 2 half,
+## 3 three quarters (of the word product), 4 a quarter; ID01's dense switch leaves the frame word
+## for any other. The device bases come back up a menu bar when it was skipped (A5 - 0x1028). A
+## whole 512-wide view on a screen of 342 less the menu bar skips the menu bar (bases down, the
+## height and the rect top grown by it, A5 - 0x1028 set); otherwise the width is rounded down to
+## longs of pixels and the height is 480/640 of it, shrunk while it does not fit the rect (in steps
+## of four longs when the aspect test fails). An odd height loses a row; the view rect is centred
+## (left rounded down to longs), each device's view base (+0x12) its base plus the offset rows and
+## the left offset in bytes, A5 - 0x1370 / - 0x1372 the size. The window is made the first time
+## (NewCWindow over the rect, invisible, procID 2, in front; NewPalette 13 and 0xd9 configured for
+## depth 4 and 8; the palette selected; SetPort) or moved and sized (hidden around it when it was
+## visible). The origin is the screen width to the left for a two-screen session with a left
+## device, else 0 / 0. The offscreen port is closed; the view buffers rebuilt (JT $1b2, or at depth 1
+## JT $1aa then JT $1d2 into A5 - 0x1300, the out-of-memory exit when $1aa fails), with the
+## overlay's resize hook (A5 - 0x10a2) in a running game.
+func layout_game_window_and_view(top: int, left: int, bottom: int, right: int) -> void:
+	assert(a7 != 0, "layout_game_window_and_view needs a7 (NewCWindow's bounds are in its frame)")
+	var a6: int = a7 - 4
+	var settings: int = memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac)))
+	var two_screens: bool = memory.read_u16(settings + 0x1c) != 0 and memory.read_u16(C68kScript.u32(a5 - 0x1032)) != 0
+	var option: int = 1 if two_screens else memory.read_u16(settings + 0xe)
+	var screen_w: int = memory.read_s16(C68kScript.u32(a5 - 0x137e))
+	var w: int
+	match C68kScript.s16(option):
+		1: w = C68kScript.u16(screen_w)
+		2: w = C68kScript.u16(screen_w / 2)
+		3: w = C68kScript.u16(C68kScript.s16(screen_w * 3) / 4)
+		4: w = C68kScript.u16(screen_w / 4)
+		_: w = memory.read_u16(a6 - 0xe)
+	var mbar: int = memory.read_u16(MBAR_HEIGHT)
+	if memory.read_u16(C68kScript.u32(a5 - 0x1028)) != 0:
+		_shift_device_bases(mbar, 1)
+		memory.write_u16(C68kScript.u32(a5 - 0x137c), memory.read_u16(C68kScript.u32(a5 - 0x137c)) - mbar)
+	var h: int = memory.read_u16(C68kScript.u32(a5 - 0x137c))
+	var depth: int = memory.read_s16(C68kScript.u32(a5 - 0x137a))
+	if C68kScript.s16(option) == 1 and w == 0x200 and C68kScript.u16(0x156 - mbar) == h:
+		if memory.read_u16(C68kScript.u32(a5 - 0x1028)) == 0:
+			_shift_device_bases(mbar, -1)
+			memory.write_u16(C68kScript.u32(a5 - 0x137c), memory.read_u16(C68kScript.u32(a5 - 0x137c)) + mbar)
+			memory.write_u16(C68kScript.u32(a5 - 0x1028), 1)
+			top = C68kScript.u16(top - mbar)
+		h = memory.read_u16(C68kScript.u32(a5 - 0x137c))
+	else:
+		var step: int = 8 / depth
+		w = C68kScript.u16((C68kScript.s16(C68kScript.s16(w) / step) & 0xfffc) * step)
+		while true:
+			h = C68kScript.u16(C68kScript.s32(C68kScript.u32(C68kScript.s16(w) * 0x1e0)) / 0x280)
+			var avail: int = C68kScript.u16(bottom - top)
+			if C68kScript.s16(avail) >= C68kScript.s16(h):
+				break
+			var c: int = C68kScript.u16(C68kScript.s16(C68kScript.u16(C68kScript.s16(w) / 2 + w)) / 2)
+			var scaled: int = C68kScript.s32(C68kScript.u32(C68kScript.s16(c) * 0x8d4)) / 0x12c0
+			c = C68kScript.u16(C68kScript.s16(avail) / 2 + scaled)
+			if C68kScript.s16(c) <= C68kScript.s16(avail):
+				h = avail
+				break
+			w = C68kScript.u16(w - ((8 / depth) << 2))
+	if h & 1:
+		h = C68kScript.u16(h - 1)
+	var vtop: int = C68kScript.u16(C68kScript.s16(top + bottom) / 2 - C68kScript.s16(h) / 2)
+	var vbottom: int = C68kScript.u16(vtop + h)
+	var vleft: int = C68kScript.u16(C68kScript.s16(left + right) / 2 - C68kScript.s16(w) / 2)
+	var step2: int = 8 / depth
+	vleft = C68kScript.u16((C68kScript.s16(C68kScript.s16(vleft) / step2) & 0xfffc) * step2)
+	var vright: int = C68kScript.u16(vleft + w)
+	memory.write_u16(a6 - 8, vtop)
+	memory.write_u16(a6 - 6, vleft)
+	memory.write_u16(a6 - 4, vbottom)
+	memory.write_u16(a6 - 2, vright)
+	for i in range(1, 4):
+		var rec: int = C68kScript.u32(a5 - 0x136e + 0x16 * i)
+		if memory.read_u32(rec) != 0:
+			var rows: int = C68kScript.u32(memory.read_s16(rec + 0xe) * C68kScript.s16(vtop - top))
+			var bytes: int = C68kScript.s16(C68kScript.s16(vleft - left) / step2)
+			memory.write_u32(rec + 0x12, C68kScript.u32(rows + memory.read_u32(rec + 0xa) + bytes))
+	memory.write_u16(C68kScript.u32(a5 - 0x1370), h)
+	memory.write_u16(C68kScript.u32(a5 - 0x1372), w)
+	var window: int = memory.read_u32(C68kScript.u32(a5 - 0x14ca))
+	if window == 0:
+		window = C68kScript.u32(_trap(TRAP_NEW_CWINDOW, [0, 0, 0xffffffff, 2, 0, _pstr_at(C68kScript.u32(a5 - 0xc92)),
+				[memory.read_u32(a6 - 8), memory.read_u32(a6 - 4)], 0]))
+		memory.write_u32(C68kScript.u32(a5 - 0x14ca), window)
+		memory.write_u32(C68kScript.u32(a5 - 0x14ae), C68kScript.u32(_trap(TRAP_NEW_PALETTE, [0, 0, 0, 0xd])))
+		configure_palette_entries(4)
+		memory.write_u32(C68kScript.u32(a5 - 0x14aa), C68kScript.u32(_trap(TRAP_NEW_PALETTE, [0, 0, 0, 0xd9])))
+		configure_palette_entries(8)
+		select_palette_for_depth()
+		_trap(TRAP_SET_PORT, [memory.read_u32(C68kScript.u32(a5 - 0x14ca))])
+	else:
+		var visible: int = C68kScript.s8(memory.read_u8(window + 0x6e))
+		if visible != 0:
+			_trap(TRAP_HIDE_WINDOW, [window])
+		_trap(TRAP_MOVE_WINDOW, [0, vtop, vleft, memory.read_u32(C68kScript.u32(a5 - 0x14ca))])
+		_trap(TRAP_SIZE_WINDOW, [1, h, C68kScript.u16(vright - vleft), memory.read_u32(C68kScript.u32(a5 - 0x14ca))])
+		select_palette_for_depth()
+		if visible != 0:
+			_trap(TRAP_SHOW_WINDOW, [memory.read_u32(C68kScript.u32(a5 - 0x14ca))])
+	if two_screens and memory.read_u32(C68kScript.u32(a5 - 0x1342)) != 0:
+		_trap(TRAP_SET_ORIGIN, [0, C68kScript.u16(-memory.read_u16(C68kScript.u32(a5 - 0x137e)))])
+	else:
+		_trap(TRAP_SET_ORIGIN, [0, 0])
+	var offscreen: int = memory.read_u32(C68kScript.u32(a5 - 0x103a))
+	if offscreen != 0:
+		_local(LOCAL_CLOSE_OFFSCREEN_PORT, [offscreen])
+		memory.write_u32(C68kScript.u32(a5 - 0x103a), 0)
+	if memory.read_u16(C68kScript.u32(a5 - 0x137a)) != 1:
+		_jt(JT_VIEW_BUFFER_COLOUR, [])
+	if memory.read_u32(C68kScript.u32(a5 - 0x10a2)) != 0 and memory.read_u16(C68kScript.u32(a5 - 0x102e)) != 0:
+		_hook(-0x10a2)
+	if memory.read_u16(C68kScript.u32(a5 - 0x137a)) == 1:
+		var ok: int = _jt(JT_VIEW_BUFFER_1BIT, [memory.read_u32(C68kScript.u32(a5 - 0x1346)), memory.read_u16(C68kScript.u32(a5 - 0x134a)),
+				0x7f, w, h])
+		if (ok & 0xffff) == 0:
+			fatal_memory_error_exit()
+		memory.write_u32(C68kScript.u32(a5 - 0x1300), C68kScript.u32(_jt(JT_VIEW_BUFFER_BASE, [])))
+	else:
+		_jt(JT_VIEW_BUFFER_COLOUR, [])
+
+func _depth_supported(depth: int) -> bool:
+	return depth == 1 or depth == 4 or depth == 8
+
+func _main_pixmap() -> int:
+	return memory.read_u32(memory.read_u32(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x1036))) + 0x16))
+
+## 0x27e4: the display configured from the main device (scan_display_devices). An unsupported depth
+## (not 1 / 4 / 8) hides a visible game window (A5 - 0xd10 set), shows the caution alert (message A5 -
+## 0xd76), rescans and records the old depth in A5 - 0x137a; still unsupported clears A5 - 0x102e.
+## Otherwise a window hidden that way is shown again in a running game, and A5 - 0x102e is set. With
+## it set the screen globals come from the pixmap (scenery index - 0x13ae = -1, base, depth, height,
+## width, row bytes, the two-screen option from the settings). HasDeepScreens (byte in A5 - 0x1000)
+## and the device's flag bit 0 give A5 - 0x1312, then A5 - 0x1000 = 1; the device bases go down a
+## menu bar, the height loses it, A5 - 0x1028 is cleared and the window is laid out over (MBarHeight,
+## 0, MBarHeight + height, width).
+func configure_display_from_main_device() -> void:
+	assert(a7 != 0, "configure_display_from_main_device needs a7 (its callee's frame)")
+	var entry: int = a7
+	scan_display_devices()
+	var depth: int = memory.read_u16(_main_pixmap() + 0x20)
+	var ok: bool = _depth_supported(depth)
+	if not ok:
+		var window: int = memory.read_u32(C68kScript.u32(a5 - 0x14ca))
+		if window != 0 and memory.read_u8(window + 0x6e) != 0:
+			memory.write_u16(C68kScript.u32(a5 - 0xd10), 1)
+			_trap(TRAP_HIDE_WINDOW, [memory.read_u32(C68kScript.u32(a5 - 0x14ca))])
+		show_caution_alert_with_number(memory.read_u32(C68kScript.u32(a5 - 0xd76)), 0)
+		scan_display_devices()
+		memory.write_u16(C68kScript.u32(a5 - 0x137a), depth)
+		depth = memory.read_u16(_main_pixmap() + 0x20)
+		ok = _depth_supported(depth)
+		if not ok:
+			memory.write_u16(C68kScript.u32(a5 - 0x102e), 0)
+	if ok:
+		if memory.read_u16(C68kScript.u32(a5 - 0xd10)) != 0 and memory.read_u32(C68kScript.u32(a5 - 0x14ca)) != 0 \
+				and memory.read_u16(C68kScript.u32(a5 - 0x12f8)) != 0:
+			_trap(TRAP_SHOW_WINDOW, [memory.read_u32(C68kScript.u32(a5 - 0x14ca))])
+		memory.write_u16(C68kScript.u32(a5 - 0xd10), 0)
+		memory.write_u16(C68kScript.u32(a5 - 0x102e), 1)
+	if memory.read_u16(C68kScript.u32(a5 - 0x102e)) != 0:
+		memory.write_u16(C68kScript.u32(a5 - 0x13ae), 0xffff)
+		var pm: int = _main_pixmap()
+		memory.write_u32(C68kScript.u32(a5 - 0x1386), memory.read_u32(pm))
+		memory.write_u16(C68kScript.u32(a5 - 0x137a), memory.read_u16(pm + 0x20))
+		pm = _main_pixmap()
+		memory.write_u16(C68kScript.u32(a5 - 0x137c), C68kScript.u16(memory.read_u16(pm + 0xa) - memory.read_u16(pm + 6)))
+		memory.write_u16(C68kScript.u32(a5 - 0x137e), C68kScript.u16(memory.read_u16(pm + 0xc) - memory.read_u16(pm + 8)))
+		memory.write_u16(C68kScript.u32(a5 - 0x1378), memory.read_u16(_main_pixmap() + 4) & 0x1fff)
+		memory.write_u16(C68kScript.u32(a5 - 0x12d4), memory.read_u16(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + 0x1c))
+	var deep: int = (_jt(JT_HAS_DEEP_SCREENS, []) >> 8) & 0xff
+	memory.write_u8(C68kScript.u32(a5 - 0x1000), deep)
+	var flag: bool = deep == 0 and (memory.read_u8(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x1036))) + 0x14) & 1) != 0
+	memory.write_u16(C68kScript.u32(a5 - 0x1312), 1 if flag else 0)
+	memory.write_u8(C68kScript.u32(a5 - 0x1000), 1)
+	var mbar: int = memory.read_u16(MBAR_HEIGHT)
+	_shift_device_bases(mbar, 1)
+	memory.write_u16(C68kScript.u32(a5 - 0x137c), C68kScript.u16(memory.read_u16(C68kScript.u32(a5 - 0x137c)) - mbar))
+	memory.write_u16(C68kScript.u32(a5 - 0x1028), 0)
+	a7 = entry - 0x30
+	layout_game_window_and_view(mbar, 0, C68kScript.u16(mbar + memory.read_u16(C68kScript.u32(a5 - 0x137c))),
+			memory.read_u16(C68kScript.u32(a5 - 0x137e)))
+	a7 = entry
+
+## 0x2a44: the settings (handle A5 - 0x13ac) copied to the live options: sound (+2), +4, the drawn-
+## once flag (+0xc, also A5 - 0x103c). A change of any of +0x10 / +0x18 / +8 / +0x14 with a frame
+## buffer (A5 - 0x1006) runs the overlay's hook A5 - 0x1092, of +0x16 the hook A5 - 0x104e, and at
+## depth 8 of +0x12 the hook A5 - 0x1096 (+0x1a copied; at other depths both cleared). The rest are
+## copied (+0x22, +0x24, +6, +0x1c, +0xa) and the window redrawn when a hook ran.
+func apply_settings_to_live_options() -> void:
+	assert(a7 != 0, "apply_settings_to_live_options needs a7 (its callee's frame)")
+	var entry: int = a7
+	var changed: bool = false
+	var s: Callable = func(off: int) -> int:
+		return memory.read_u16(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + off)
+	var g: Callable = func(off: int) -> int:
+		return memory.read_u16(C68kScript.u32(a5 + off))
+	var put: Callable = func(off: int, v: int) -> void:
+		memory.write_u16(C68kScript.u32(a5 + off), v)
+	put.call(-0x12ee, s.call(2))
+	put.call(-0x12ec, s.call(4))
+	var drawn: int = s.call(0xc)
+	put.call(-0x12ea, drawn)
+	put.call(-0x103c, drawn)
+	var old: Array = [g.call(-0x12e0), g.call(-0x12d8), g.call(-0x12e6), g.call(-0x12dc)]
+	put.call(-0x12e0, s.call(0x10))
+	put.call(-0x12d8, s.call(0x18))
+	put.call(-0x12e6, s.call(8))
+	put.call(-0x12dc, s.call(0x14))
+	var buffer: bool = memory.read_u32(C68kScript.u32(a5 - 0x1006)) != 0
+	if (g.call(-0x12e0) != old[0] or g.call(-0x12d8) != old[1] or g.call(-0x12e6) != old[2] or g.call(-0x12dc) != old[3]) and buffer:
+		_hook(-0x1092)
+		changed = true
+	var prev: int = g.call(-0x12da)
+	put.call(-0x12da, s.call(0x16))
+	if prev != g.call(-0x12da) and memory.read_u32(C68kScript.u32(a5 - 0x1006)) != 0:
+		_hook(-0x104e)
+		changed = true
+	if g.call(-0x137a) == 8:
+		prev = g.call(-0x12de)
+		put.call(-0x12de, s.call(0x12))
+		if g.call(-0x12de) != prev and memory.read_u32(C68kScript.u32(a5 - 0x1006)) != 0:
+			_hook(-0x1096)
+			changed = true
+		put.call(-0x12d6, s.call(0x1a))
+	else:
+		put.call(-0x12de, 0)
+		put.call(-0x12d6, 0)
+	put.call(-0x12d2, s.call(0x22))
+	put.call(-0x12d0, s.call(0x24))
+	put.call(-0x12e8, s.call(6))
+	put.call(-0x12d4, s.call(0x1c))
+	put.call(-0x12e4, s.call(0xa))
+	if changed:
+		a7 = entry - 0x12
+		redraw_main_window()
+		a7 = entry
+
+const TRAP_SYSTEM_TASK: int = 0xa9b4
+const TRAP_SYSTEM_CLICK: int = 0xa9b3
+const TRAP_FIND_WINDOW: int = 0xa92c
+const TRAP_MENU_SELECT: int = 0xa93d
+const TRAP_MENU_KEY: int = 0xa93e
+const TRAP_TRACK_GO_AWAY: int = 0xa91e
+const TRAP_HILITE_MENU: int = 0xa938
+const TRAP_NEW_WINDOW: int = 0xa913
+const TRAP_TEXT_FONT: int = 0xa887
+const TRAP_TICK_COUNT: int = 0xa975
+const JT_GET_PTR_SIZE: int = 0x242    ## GetPtrSize: Pascal, function result long
+const JT_IDLE_HOOK: int = 0x172       ## C routine, no arguments
+const LOCAL_SYNC_OVERLAY_GLOBALS: int = 0x4d24  ## not exported
+
+## The EventRecord in a frame at `at` as handle_activate_event's arguments (what, message, when,
+## where, modifiers).
+func _activate_from_frame(at: int) -> void:
+	handle_activate_event(memory.read_u16(at), memory.read_u32(at + 2), memory.read_u32(at + 6), memory.read_u32(at + 0xa),
+			memory.read_u16(at + 0xe))
+
+## 0x29f2: a new main device (GetMainDevice against A5 - 0x1036) is rescanned; a depth that no longer
+## matches A5 - 0x137a reconfigures the display, reapplies the settings, syncs the overlay globals
+## (0x4d24, not exported) and, in a running game with a frame buffer and the window up, runs the
+## overlay's depth hook (A5 - 0x1096).
+func refresh_display_if_changed() -> void:
+	assert(a7 != 0, "refresh_display_if_changed needs a7 (its callees' frames)")
+	var entry: int = a7
+	if C68kScript.u32(_trap(TRAP_GET_MAIN_DEVICE, [])) != memory.read_u32(C68kScript.u32(a5 - 0x1036)):
+		scan_display_devices()
+	if memory.read_u16(C68kScript.u32(a5 - 0x137a)) == memory.read_u16(_main_pixmap() + 0x20):
+		return
+	a7 = entry - 0xc
+	configure_display_from_main_device()
+	a7 = entry - 0xc
+	apply_settings_to_live_options()
+	a7 = entry
+	_local(LOCAL_SYNC_OVERLAY_GLOBALS, [])
+	if memory.read_u16(C68kScript.u32(a5 - 0x102e)) != 0 and memory.read_u32(C68kScript.u32(a5 - 0x1006)) != 0 \
+			and memory.read_u16(C68kScript.u32(a5 - 0x14c6)) != 0:
+		_hook(-0x1096)
+
+## 0x212a: the overlay's state reset: its bss (after code and data: A5 - 0x1006 + - 0x1022 + -
+## 0x101e, A5 - 0x101a bytes) and the block A5 - 0x1040 (GetPtrSize long) cleared with memset, its
+## entry (A5 - 0x1006 + - 0x1012) called with (A5 - 0x1388, TickCount), then the overlay globals
+## synced (0x4d24, not exported) and the settings applied.
+func reset_overlay_state() -> void:
+	assert(a7 != 0, "reset_overlay_state needs a7 (its callee's frame)")
+	var entry: int = a7
+	var g: Callable = func(off: int) -> int: return memory.read_u32(C68kScript.u32(a5 + off))
+	ansi_memset(C68kScript.u32(g.call(-0x1006) + g.call(-0x1022) + g.call(-0x101e)), 0, g.call(-0x101a))
+	ansi_memset(g.call(-0x1040), 0, C68kScript.u32(_jt(JT_GET_PTR_SIZE, [g.call(-0x1040)])))
+	var target: int = C68kScript.u32(g.call(-0x1006) + g.call(-0x1012))
+	var ticks: int = C68kScript.u32(_trap(TRAP_TICK_COUNT, []))
+	_call_address(target, [C68kScript.u32(a5 - 0x1388), ticks])
+	_local(LOCAL_SYNC_OVERLAY_GLOBALS, [])
+	a7 = entry - 0xc
+	apply_settings_to_live_options()
+	a7 = entry
+
+## 0x35bc (C, the option word): a new view-size option (settings +0xe) is stored and the display
+## reconfigured.
+func set_view_size_option(option: int) -> void:
+	assert(a7 != 0, "set_view_size_option needs a7 (its callee's frame)")
+	var entry: int = a7
+	var settings: int = memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac)))
+	if memory.read_u16(settings + 0xe) == (option & 0xffff):
+		return
+	memory.write_u16(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + 0xe, option & 0xffff)
+	a7 = entry - 8
+	configure_display_from_main_device()
+	a7 = entry
+
+## 0x2db8: SystemTask and GetNextEvent(every event) into the frame, the display refreshed, until a
+## mouse-down, key-down or auto-key (ID01's dense switch on 1..8). Updates of the game window (while
+## it is up) are redrawn between BeginUpdate / EndUpdate; activates go to handle_activate_event.
+func wait_for_click_or_key() -> void:
+	assert(a7 != 0, "wait_for_click_or_key needs a7 (the event record is in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	while true:
+		_trap(TRAP_SYSTEM_TASK, [])
+		var got: int = C68kScript.s8((_trap(TRAP_GET_NEXT_EVENT, [a6 - 0x12, 0xffff]) >> 8) & 0xff)
+		a7 = entry - 0x1a
+		refresh_display_if_changed()
+		a7 = entry
+		if got == 0:
+			continue
+		match C68kScript.s16(memory.read_u16(a6 - 0x12)):
+			1, 3, 5:
+				return
+			6:
+				if memory.read_u16(C68kScript.u32(a5 - 0x14c6)) != 0 \
+						and memory.read_u32(a6 - 0x10) == memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW)):
+					_redraw_window_update(entry, 0x12)
+			8:
+				_activate_from_frame(a6 - 0x12)
+
+## 0x2e36: the resource-file error box: a window (NewWindow over SetRect 0x98 / 0x3c / 0x164 / 0x84,
+## title A5 - 0xc50, visible, procID 1, in front) with the two messages (Pascal strings at A5 -
+## 0xd72 / - 0xd6e) drawn in the system font at 4 / 20 and 4 / 40, until the button is down.
+func show_resource_file_error_box() -> void:
+	assert(a7 != 0, "show_resource_file_error_box needs a7 (its rect is in its frame)")
+	var a6: int = a7 - 4
+	_trap(TRAP_SET_RECT, [0x84, 0x164, 0x3c, 0x98, a6 - 8])
+	var window: int = C68kScript.u32(_trap(TRAP_NEW_WINDOW, [0, 0, 0xffffffff, 1, 1, _pstr_at(C68kScript.u32(a5 - 0xc50)), a6 - 8, 0]))
+	_trap(TRAP_SET_PORT, [window])
+	_trap(TRAP_TEXT_FONT, [0])
+	_trap(TRAP_MOVE_TO, [0x14, 4])
+	_trap(TRAP_DRAW_STRING, [_pstr_at(memory.read_u32(C68kScript.u32(a5 - 0xd72)))])
+	_trap(TRAP_MOVE_TO, [0x28, 4])
+	_trap(TRAP_DRAW_STRING, [_pstr_at(memory.read_u32(C68kScript.u32(a5 - 0xd6e)))])
+	while (_trap(TRAP_BUTTON, []) >> 8) & 0xff == 0:
+		pass
+
+## 0x2f1e (C, the EventRecord pointer): a mouse-down by FindWindow part (ID01's dense switch on
+## 1..6): the menu bar runs MenuSelect's choice through do_menu_command, a system window
+## gets SystemClick, the game window's close box (TrackGoAway) hides it.
+func handle_mouse_down(event: int) -> void:
+	assert(a7 != 0, "handle_mouse_down needs a7 (FindWindow's window is in its frame)")
+	var a6: int = a7 - 4
+	var part: int = _trap(TRAP_FIND_WINDOW, [a6 - 4, memory.read_u32(C68kScript.u32(event + 0xa))])
+	match C68kScript.s16(part):
+		1:
+			var choice: int = C68kScript.u32(_trap(TRAP_MENU_SELECT, [memory.read_u32(C68kScript.u32(event + 0xa))]))
+			var entry: int = a7
+			a7 = entry - 0x12
+			do_menu_command(choice)
+			a7 = entry
+		2:
+			_trap(TRAP_SYSTEM_CLICK, [memory.read_u32(a6 - 4), C68kScript.u32(event)])
+		6:
+			var window: int = memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))
+			if memory.read_u32(a6 - 4) == window:
+				if (_trap(TRAP_TRACK_GO_AWAY, [memory.read_u32(C68kScript.u32(event + 0xa)), window]) >> 8) & 0xff != 0:
+					_trap(TRAP_HIDE_WINDOW, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+
+## 0x2fd4: one pass of the application's event loop: HiliteMenu(0), SystemTask, the menus updated,
+## the JT $172 idle routine, GetNextEvent(every event) into the frame and the display refreshed.
+## Then by kind (ID01's dense switch on 1..8): mouse-down to handle_mouse_down, a command key
+## (modifiers bit 8) through MenuKey(character) to do_menu_command, an update of the game window
+## (after another refresh) redrawn while it is up, an activate to handle_activate_event.
+func poll_and_dispatch_event() -> void:
+	assert(a7 != 0, "poll_and_dispatch_event needs a7 (the event record is in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	_trap(TRAP_HILITE_MENU, [0])
+	_trap(TRAP_SYSTEM_TASK, [])
+	update_menu_items()
+	_jt(JT_IDLE_HOOK, [])
+	var got: int = C68kScript.s8((_trap(TRAP_GET_NEXT_EVENT, [a6 - 0x12, 0xffff]) >> 8) & 0xff)
+	a7 = entry - 0x1a
+	refresh_display_if_changed()
+	a7 = entry
+	if got == 0:
+		return
+	match C68kScript.s16(memory.read_u16(a6 - 0x12)):
+		1:
+			a7 = entry - 0x1e
+			handle_mouse_down(a6 - 0x12)
+			a7 = entry
+		3, 5:
+			if (memory.read_u16(a6 - 4) & 0x100) != 0:
+				var ch: int = C68kScript.u16(C68kScript.s8(memory.read_u32(a6 - 0x10) & 0xff))
+				var choice: int = C68kScript.u32(_trap(TRAP_MENU_KEY, [ch]))
+				a7 = entry - 0x1e
+				do_menu_command(choice)
+				a7 = entry
+		6:
+			a7 = entry - 0x1a
+			refresh_display_if_changed()
+			a7 = entry
+			if memory.read_u16(C68kScript.u32(a5 - 0x14c6)) != 0 \
+					and memory.read_u32(a6 - 0x10) == memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW)):
+				_redraw_window_update(entry, 0x12)
+		8:
+			_activate_from_frame(a6 - 0x12)
+
+const TRAP_HI_WORD: int = 0xa86a
+const TRAP_LO_WORD: int = 0xa86b
+const TRAP_GET_PORT: int = 0xa874
+const TRAP_GET_ITEM: int = 0xa946
+const TRAP_OPEN_DESK_ACC: int = 0xa9b6
+const TRAP_SYSTEM_EDIT: int = 0xa9c2
+const TRAP_SYS_BEEP: int = 0xa9c8
+const JT_MISSION_READY: int = 0x132     ## C routine, no arguments: word result, 0 when no mission can start
+const JT_MISSION_CHECK: int = 0x82      ## C routine, no arguments: word result, 0 to stay
+const JT_ABOUT_BOX: int = 0x162         ## C routine, no arguments
+const JT_FILE_NEW: int = 0x1da          ## C routine, no arguments (File item 1)
+const JT_CONCLUDE_MISSION: int = 0xda   ## C routine (message long, mode word): word result
+const JT_FILE_ITEM_6: int = 0x10a       ## C routine, no arguments
+const JT_SAVE_CHANGES: int = 0x13a      ## C routine, no arguments: word result, 2 to close
+const JT_FILE_ITEM_11: int = 0x102      ## C routine, no arguments
+const LOCAL_SAVE_SETTINGS: int = 0x2da0         ## not exported: the settings resource written when changed
+const LOCAL_QUIT_APPLICATION: int = 0x2eaa      ## not exported: quit_application
+
+## 0x35e4: a new mission when the JT $132 and JT $82 checks allow it: the overlay's mission hook
+## (A5 - 0x109a) with the game flag (A5 - 0x12f8, sign-extended), the game window's port rect
+## invalidated while it is up (the port A5 - 0x160c restored), pause (A5 - 0x12f0) and the twelve
+## counters at A5 - 0x13a2 / - 0x12ce cleared with A5 - 0x12b4 / - 0x12b6 / - 0x12b2 / - 0x14c4 /
+## - 0x14c2 / - 0x14c0, the 1-bit hook A5 - 0x1096 in a running game with a frame buffer and the
+## window up, then run_flight_session.
+func start_new_mission() -> void:
+	if (_jt(JT_MISSION_READY, []) & 0xffff) == 0:
+		return
+	if (_jt(JT_MISSION_CHECK, []) & 0xffff) == 0:
+		return
+	_hook(-0x109a, [C68kScript.u32(memory.read_s16(C68kScript.u32(a5 - 0x12f8)))])
+	if memory.read_u16(C68kScript.u32(a5 - 0x14c6)) != 0:
+		var saved: int = memory.read_u32(C68kScript.u32(a5 - 0x160c))
+		_trap(TRAP_SET_PORT, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+		_trap(TRAP_INVAL_RECT, [C68kScript.u32(memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW)) + 0x10)])
+		_trap(TRAP_SET_PORT, [saved])
+	memory.write_u16(C68kScript.u32(a5 - 0x12f0), 0)
+	for i in 0xc:
+		memory.write_u16(C68kScript.u32(a5 - 0x13a2 + 2 * i), 0)
+		memory.write_u16(C68kScript.u32(a5 - 0x12ce + 2 * i), 0)
+	for off in [-0x12b4, -0x12b6, -0x12b2, -0x14c4, -0x14c2, -0x14c0]:
+		memory.write_u16(C68kScript.u32(a5 + off), 0)
+	if memory.read_u16(C68kScript.u32(a5 - 0x102e)) != 0 and memory.read_u32(C68kScript.u32(a5 - 0x1006)) != 0 \
+			and memory.read_u16(C68kScript.u32(a5 - 0x137a)) == 1 and memory.read_u16(C68kScript.u32(a5 - 0x14c6)) != 0:
+		_hook(-0x1096)
+	assert(a7 != 0, "start_new_mission needs a7 (run_flight_session's frame)")
+	var entry: int = a7
+	a7 = entry - 0xa - 4
+	run_flight_session()
+	a7 = entry
+
+## Bit 0 of the settings byte at `offset` toggled and the settings marked changed (A5 - 0x138a).
+func _toggle_setting(offset: int) -> void:
+	var at: int = memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + offset
+	memory.write_u8(at, memory.read_u8(at) ^ 1)
+	memory.write_u16(C68kScript.u32(a5 - 0x138a), 1)
+
+## 0x36a2 (C, MenuSelect's long): the menu (HiWord) and item (LoWord) through ID01's dense switches.
+## Apple (1): item 1 the About box (JT $162), others the desk accessory of that name (GetItem of
+## A5 - 0xc4e into the frame, OpenDeskAcc, the port kept). File (2): 1 JT $1da and the two sound
+## segments unloaded, 2 the settings saved (0x2da0), 4 start_new_mission, 5 JT $da(A5 - 0xd6a, 3), 6
+## JT $10a, 7 run_flight_session, 8 the same paused, 9 JT $13a closing the game window on 2, 11 JT
+## $102, 13 quit (0x2eaa). Edit (3): SystemEdit(item - 1), a beep when not taken. Options (4): bit 0
+## of settings +3 / +5 / +7 / +9 toggled, A5 - 0x102f's flipped, view size 1 / 3 / 2. Detail (5): 1..5
+## into settings +0x10, bit 0 of +0x13 / +0x17 / +0x15 / +0x19 / +0x1b toggled. The settings are
+## marked changed (A5 - 0x138a) where set, and always applied at the end.
+func do_menu_command(choice: int) -> void:
+	assert(a7 != 0, "do_menu_command needs a7 (GetPort and the item name are in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	var menu: int = C68kScript.s16(_trap(TRAP_HI_WORD, [C68kScript.u32(choice)]))
+	var item: int = C68kScript.s16(_trap(TRAP_LO_WORD, [C68kScript.u32(choice)]))
+	var settings: int = memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac)))
+	match menu:
+		1:
+			if item == 1:
+				_jt(JT_ABOUT_BOX, [])
+			else:
+				_trap(TRAP_GET_PORT, [a6 - 0x108])
+				_trap(TRAP_GET_ITEM, [a6 - 0x104, C68kScript.u16(item), memory.read_u32(C68kScript.u32(a5 - 0xc4e))])
+				_trap(TRAP_OPEN_DESK_ACC, [a6 - 0x104])
+				_trap(TRAP_SET_PORT, [memory.read_u32(a6 - 0x108)])
+		2:
+			match item:
+				1:
+					_jt(JT_FILE_NEW, [])
+					_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0x1ea)])
+					_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0x56a)])
+				2:
+					_local(LOCAL_SAVE_SETTINGS, [])
+				4:
+					a7 = entry - 0x114
+					start_new_mission()
+					a7 = entry
+				5:
+					_jt(JT_CONCLUDE_MISSION, [3, memory.read_u32(C68kScript.u32(a5 - 0xd6a))])
+				6:
+					_jt(JT_FILE_ITEM_6, [])
+				7:
+					a7 = entry - 0x114
+					run_flight_session()
+					a7 = entry
+				8:
+					memory.write_u16(C68kScript.u32(a5 - 0x12f0), 1)
+					a7 = entry - 0x114
+					run_flight_session()
+					a7 = entry
+				9:
+					if (_jt(JT_SAVE_CHANGES, []) & 0xffff) == 2:
+						memory.write_u16(C68kScript.u32(a5 - 0x12f8), 0)
+						_trap(TRAP_HIDE_WINDOW, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+						memory.write_u16(C68kScript.u32(a5 - 0x14c6), 0)
+				11:
+					_jt(JT_FILE_ITEM_11, [])
+				13:
+					_local(LOCAL_QUIT_APPLICATION, [])
+		3:
+			if (_trap(TRAP_SYSTEM_EDIT, [C68kScript.u16(item - 1)]) >> 8) & 0xff == 0:
+				_trap(TRAP_SYS_BEEP, [5])
+		4:
+			match item:
+				1: _toggle_setting(3)
+				2: _toggle_setting(5)
+				4:
+					var at: int = C68kScript.u32(a5 - 0x102f)
+					memory.write_u8(at, memory.read_u8(at) ^ 1)
+				5: _toggle_setting(7)
+				6: _toggle_setting(9)
+				8, 9, 10:
+					a7 = entry - 0x116
+					set_view_size_option({8: 1, 9: 3, 10: 2}[item])
+					a7 = entry
+					memory.write_u16(C68kScript.u32(a5 - 0x138a), 1)
+		5:
+			match item:
+				1, 2, 3, 4, 5:
+					memory.write_u16(settings + 0x10, item)
+					memory.write_u16(C68kScript.u32(a5 - 0x138a), 1)
+				7: _toggle_setting(0x13)
+				8: _toggle_setting(0x17)
+				9: _toggle_setting(0x15)
+				10: _toggle_setting(0x19)
+				11: _toggle_setting(0x1b)
+	a7 = entry - 0x114
+	apply_settings_to_live_options()
+	a7 = entry
+
+const VBL_A5_SLOT_UNROLLED: int = 0x39c4
+const VBL_A5_SLOT_VARIANT: int = 0x3aca
+const VBL_A5_SLOT_TWO_CHANNEL: int = 0x3be0
+const SOUND_FRAME: int = 0x172   ## samples per VBL frame (370)
+const TRAP_SND_NEW_CHANNEL: int = 0xa807
+
+## A VBL handler's entry: the first call stores CurrentA5 in its code slot and returns (-1 here);
+## later calls return that A5.
+func _vbl_world(slot: int) -> int:
+	assert(code_base != 0, "the VBL sound handlers need code_base")
+	var at: int = C68kScript.u32(code_base + slot)
+	if memory.read_u32(at) == 0:
+		memory.write_u32(at, memory.read_u32(LM_CURRENT_A5))
+		return -1
+	return memory.read_u32(at)
+
+## Channel 0's resampling state as the handlers keep it in registers.
+class _Voice:
+	var node: int
+	var pos: int
+	var frac: int
+	var sample: int
+	var end: int
+
+func _voice(world: int) -> _Voice:
+	var v := _Voice.new()
+	v.node = memory.read_u32(C68kScript.u32(world + A5_SOUND_CHANNELS))
+	v.pos = memory.read_u32(v.node)
+	v.frac = memory.read_u32(v.node + 4)
+	v.sample = memory.read_u32(v.node + 8)
+	v.end = memory.read_u32(v.node + 0x10)
+	return v
+
+## One source byte (the sample base indexed by the position long), then the step: the fraction
+## (ADD.L) carries into the position (ADDX.L).
+func _voice_byte(world: int, v: _Voice) -> int:
+	var b: int = memory.read_u8(C68kScript.u32(v.sample + v.pos))
+	var sum: int = v.frac + memory.read_u32(C68kScript.u32(world + A5_RATE_STEP_FRAC))
+	v.frac = C68kScript.u32(sum)
+	v.pos = C68kScript.u32(v.pos + memory.read_u32(C68kScript.u32(world + A5_RATE_STEP_INT)) + (1 if sum > 0xffffffff else 0))
+	return b
+
+## At or past the node's end (signed), the next node (+0x18) becomes channel 0's: its sample, loop
+## start (+0xc) with fraction 0, and end.
+func _voice_wrap(world: int, v: _Voice) -> void:
+	if C68kScript.s32(v.end) > C68kScript.s32(v.pos):
+		return
+	v.node = memory.read_u32(v.node + 0x18)
+	v.sample = memory.read_u32(v.node + 8)
+	v.pos = memory.read_u32(v.node + 0xc)
+	v.frac = 0
+	v.end = memory.read_u32(v.node + 0x10)
+	memory.write_u32(C68kScript.u32(world + A5_SOUND_CHANNELS), v.node)
+
+## The k-th sample's place in the sound buffer: 368 from SoundBase + 4, the last 2 at SoundBase.
+func _sound_slot(k: int) -> int:
+	var base: int = memory.read_u32(LM_SOUND_BASE)
+	return C68kScript.u32(base + 4 + 2 * k) if k < 0x170 else C68kScript.u32(base + 2 * (k - 0x170))
+
+## Whether the frame fits in the node: end - position (signed) above A5 - 0xc2a.
+func _voice_fast(world: int, v: _Voice) -> bool:
+	return C68kScript.s32(v.end - v.pos) > C68kScript.s32(memory.read_u32(C68kScript.u32(world + A5_RATE_FRAME_SPAN)))
+
+func _voice_store(v: _Voice) -> void:
+	memory.write_u32(v.node, v.pos)
+	memory.write_u32(v.node + 4, v.frac)
+
+## 0x39a8 (a VBL task, all registers kept): channel 0 resampled into the sound buffer, 370 samples:
+## while the frame fits in the node without checks (four per loop pass), else each sample after the
+## end test (_voice_wrap); the position / fraction stored back, then the previous sound hook (A5 -
+## 0xc36) runs, as the handler returns through it.
+func vbl_sound_handler_ch0_unrolled() -> void:
+	var world: int = _vbl_world(VBL_A5_SLOT_UNROLLED)
+	if world == -1:
+		return
+	var chain: int = memory.read_u32(C68kScript.u32(world - 0xc36))
+	var v: _Voice = _voice(world)
+	var fast: bool = _voice_fast(world, v)
+	for k in SOUND_FRAME:
+		if not fast:
+			_voice_wrap(world, v)
+		memory.write_u8(_sound_slot(k), _voice_byte(world, v))
+	_voice_store(v)
+	_call_address(chain, [])
+
+## 0x3aae (a VBL task): as vbl_sound_handler_ch0_unrolled, but a frame that fits is copied straight
+## (370 bytes from the position, longs through MOVEP after an odd byte; the position advanced by
+## 370, the fraction register reused for those longs, so the last one is stored as the fraction).
+func vbl_sound_handler_ch0_variant() -> void:
+	var world: int = _vbl_world(VBL_A5_SLOT_VARIANT)
+	if world == -1:
+		return
+	var chain: int = memory.read_u32(C68kScript.u32(world - 0xc36))
+	var v: _Voice = _voice(world)
+	if _voice_fast(world, v):
+		var src: int = C68kScript.u32(v.sample + v.pos)
+		for k in SOUND_FRAME:
+			memory.write_u8(_sound_slot(k), memory.read_u8(C68kScript.u32(src + k)))
+		v.pos = C68kScript.u32(v.pos + SOUND_FRAME)
+		# D1 carried the MOVEP longs: the stored fraction is the last one read.
+		v.frac = memory.read_u32(C68kScript.u32(src + (0x169 if (src & 1) != 0 else 0x16c)))
+	else:
+		for k in SOUND_FRAME:
+			_voice_wrap(world, v)
+			memory.write_u8(_sound_slot(k), _voice_byte(world, v))
+	_voice_store(v)
+	_call_address(chain, [])
+
+## 0x3bc4 (a VBL task): channel 0 resampled as in vbl_sound_handler_ch0_unrolled, each sample mixed
+## with channel 1's next byte (its node at A5 - 0x598 played straight from its position) as the low
+## byte of a + b - 0x80. Channel 1's position moves 370 on; at or past its end (signed) its next node
+## (+0x18) takes over from its loop start, and reaching the silence buffer (A5 - 0xc26) puts the
+## single-channel handler (A5 - 0x360) back in the sound hook. Then the previous hook runs.
+func vbl_sound_handler_two_channel() -> void:
+	var world: int = _vbl_world(VBL_A5_SLOT_TWO_CHANNEL)
+	if world == -1:
+		return
+	var chain: int = memory.read_u32(C68kScript.u32(world - 0xc36))
+	var other: int = memory.read_u32(C68kScript.u32(world - 0x598))
+	var opos: int = memory.read_u32(other)
+	var src: int = C68kScript.u32(memory.read_u32(other + 8) + opos)
+	opos = C68kScript.u32(opos + SOUND_FRAME)
+	var v: _Voice = _voice(world)
+	var fast: bool = _voice_fast(world, v)
+	for k in SOUND_FRAME:
+		if not fast:
+			_voice_wrap(world, v)
+		var a: int = _voice_byte(world, v)
+		memory.write_u8(_sound_slot(k), (a + memory.read_u8(C68kScript.u32(src + k)) - 0x80) & 0xff)
+	_voice_store(v)
+	if C68kScript.s32(opos) >= C68kScript.s32(memory.read_u32(other + 0x10)):
+		other = memory.read_u32(other + 0x18)
+		opos = memory.read_u32(other + 0xc)
+		memory.write_u32(C68kScript.u32(world - 0x598), other)
+		if memory.read_u32(other + 8) == C68kScript.u32(world + A5_SILENCE_BUFFER):
+			memory.write_u32(LM_SOUND_HOOK, memory.read_u32(C68kScript.u32(world - 0x360)))
+	memory.write_u32(other, opos)
+	_call_address(chain, [])
+
+## 0x3dd0 (C, a long): the sound system (re)started: shut down first when ready; each channel's
+## nineteen nodes (0x1c apart from record +8) linked through +0x14 with the playing, free and first
+## pointers (+0, +4, +0x230) at the first; 0x456 bytes of silence at A5 - 0xc26 and the buffer
+## silenced; rate 1.0 (A5 - 0xc32 = 1, - 0xc2e = 0, frame span 0x172); a silence node on each
+## channel. The single-channel handler (A5 - 0x360) is slot $412 when `flag` is set, else $41a; the
+## two-channel one slot $422 (A5 - 0x35c). The first time (A5 - 0x352) the three handlers are
+## called once so they record A5. The sound hook's old value goes to A5 - 0xc36, the handler in;
+## SndNewChannel(A5 - 0x356, sampled synth 5, 0, nil). Returns 1 (and sets the ready flag) when it
+## succeeded, else 0.
+func init_sound_system(flag: int) -> int:
+	if memory.read_u16(C68kScript.u32(a5 + A5_SOUND_READY)) != 0:
+		shutdown_sound()
+	for ch in 2:
+		var rec: int = _channel_record(a5, ch)
+		var first: int = C68kScript.u32(rec + 8)
+		memory.write_u32(rec + 0x230, first)
+		memory.write_u32(rec + 4, first)
+		memory.write_u32(rec, first)
+		for i in 0x13:
+			memory.write_u32(C68kScript.u32(rec + i * 0x1c + 0x1c), C68kScript.u32(rec + (i + 1) * 0x1c + 8))
+	for k in 0x456:
+		memory.write_u8(C68kScript.u32(a5 + A5_SILENCE_BUFFER + k), 0x80)
+	clear_sound_buffer_to_silence()
+	memory.write_u32(C68kScript.u32(a5 + A5_RATE_STEP_INT), 1)
+	memory.write_u32(C68kScript.u32(a5 + A5_RATE_STEP_FRAC), 0)
+	memory.write_u32(C68kScript.u32(a5 + A5_RATE_FRAME_SPAN), SOUND_FRAME)
+	alloc_sound_buffer_node(0, C68kScript.u32(a5 + A5_SILENCE_BUFFER), 0, SOUND_FRAME, 0)
+	alloc_sound_buffer_node(1, C68kScript.u32(a5 + A5_SILENCE_BUFFER), 0, SOUND_FRAME, 0)
+	memory.write_u32(C68kScript.u32(a5 - 0x360), C68kScript.u32(a5 + (0x412 if C68kScript.u32(flag) != 0 else 0x41a)))
+	memory.write_u32(C68kScript.u32(a5 + A5_TWO_CHANNEL_HANDLER), C68kScript.u32(a5 + 0x422))
+	if memory.read_u16(C68kScript.u32(a5 - 0x352)) == 0:
+		memory.write_u16(C68kScript.u32(a5 - 0x352), 1)
+		vbl_sound_handler_ch0_variant()
+		vbl_sound_handler_ch0_unrolled()
+		vbl_sound_handler_two_channel()
+	memory.write_u32(C68kScript.u32(a5 - 0xc36), memory.read_u32(LM_SOUND_HOOK))
+	memory.write_u32(LM_SOUND_HOOK, memory.read_u32(C68kScript.u32(a5 - 0x360)))
+	memory.write_u32(C68kScript.u32(a5 - 0x356), 0)
+	if (_trap(TRAP_SND_NEW_CHANNEL, [0, 0, 5, C68kScript.u32(a5 - 0x356)]) & 0xffff) != 0:
+		return 0
+	memory.write_u16(C68kScript.u32(a5 + A5_SOUND_READY), 1)
+	return 1
+
+const JT_MORE_MASTERS: int = 0x222     ## C routine, no arguments
+const JT_INIT_STEP: int = 0x292        ## C routine, no arguments (called twice)
+const JT_FLUSH_EVENTS: int = 0x202     ## FlushEvents(whichMask, stopMask): Pascal
+const JT_EVENT_GLUE: int = 0x1fa       ## Pascal (word): the ID09 event glue
+const JT_INIT_TOOLS: int = 0x592       ## C routine, no arguments
+const JT_CHECK_SYSTEM: int = 0xf2      ## C routine, no arguments: word result, 0 to quit
+const JT_SYS_ENVIRONS: int = 0x1f2     ## SysEnvirons(version, VAR rec): Pascal, word result
+const JT_GET_SETTINGS_FLAG: int = 0x1e2 ## C routine, no arguments: word result
+const TRAP_CUR_RES_FILE: int = 0xa994
+const TRAP_INIT_GRAF: int = 0xa86e
+const TRAP_INIT_FONTS: int = 0xa8fe
+const TRAP_INIT_WINDOWS: int = 0xa912
+const TRAP_INIT_MENUS: int = 0xa930
+const TRAP_TE_INIT: int = 0xa9cc
+const TRAP_INIT_DIALOGS: int = 0xa97b
+const TRAP_INIT_CURSOR: int = 0xa850
+const TRAP_GET_CTSEED: int = 0xaa28
+const TRAP_ADD_RESOURCE: int = 0xa9ab
+const TRAP_WRITE_RESOURCE: int = 0xa9b0
+const TRAP_LOAD_RESOURCE: int = 0xa9a2
+const RES_MENU: int = 0x4d454e55       ## 'MENU'
+const RES_HEL1: int = 0x48454c31       ## 'HEL1'
+const LOCAL_MAIN_SETUP: int = 0x1b42   ## not exported
+
+## A settings resource ('HEL1' `id`) into A5 + `slot`: loaded when present, else a new handle of
+## `size` added (named by the Pascal string at A5 + `name`), passed to `fill`, marked changed and
+## written.
+func _settings_resource(slot: int, id: int, size: int, name: int, fill: Callable) -> void:
+	var h: int = C68kScript.u32(_trap(TRAP_GET_RESOURCE, [id, RES_HEL1]))
+	memory.write_u32(C68kScript.u32(a5 + slot), h)
+	if h != 0:
+		_trap(TRAP_LOAD_RESOURCE, [memory.read_u32(C68kScript.u32(a5 + slot))])
+		return
+	memory.write_u32(C68kScript.u32(a5 + slot), C68kScript.u32(_jt(JT_NEW_HANDLE_CLEAR, [size])))
+	_trap(TRAP_ADD_RESOURCE, [C68kScript.u32(a5 + name), id, RES_HEL1, memory.read_u32(C68kScript.u32(a5 + slot))])
+	fill.call()
+	_trap(TRAP_CHANGED_RESOURCE, [memory.read_u32(C68kScript.u32(a5 + slot))])
+	_trap(TRAP_WRITE_RESOURCE, [memory.read_u32(C68kScript.u32(a5 + slot))])
+
+## 0x2bbc: the application set up: JT $222 and twice JT $292, the resource file (CurResFile into A5
+## - 0x1002), the Toolbox managers (InitGraf on A5 - 0x160c, fonts, FlushEvents(all, 0), windows,
+## menus, TextEdit, dialogs, cursor), the ID09 event glue(-1), JT $592, its segment unloaded, JT $f2
+## (0: ExitToShell). SysEnvirons(1) in the frame gives Color QuickDraw (A5 - 0x1388) and a 68020 /
+## 68030 (A5 - 0x1387); with colour the devices are scanned and a colour table header made (NewPtr
+## 0x6d8: GetCTSeed, flags 0x8000; A5 - 0x14b2 and - 0x1316). Without MENU 2 a beep, the resource
+## error box and quit (0x2eaa, not exported). The settings 'HEL1' 127 (0x12a bytes: options 2 / 1,
+## +0x24 = 2, +0x26 = 1, the name copied from A5 - 0xc78 to +0x2a) and 'HEL1' 128 (0x500 bytes, A5 -
+## 0x13a8) are made when missing; then the display is configured and the game window's port set.
+func initialize_application() -> void:
+	assert(a7 != 0, "initialize_application needs a7 (SysEnvirons' record is in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	_jt(JT_MORE_MASTERS, [])
+	for i in 2:
+		memory.write_u16(a6 - 2, i)
+		_jt(JT_INIT_STEP, [])
+	memory.write_u16(a6 - 2, 2)
+	memory.write_u16(C68kScript.u32(a5 - 0x1002), _trap(TRAP_CUR_RES_FILE, []) & 0xffff)
+	_trap(TRAP_INIT_GRAF, [C68kScript.u32(a5 - 0x160c)])
+	_trap(TRAP_INIT_FONTS, [])
+	_jt(JT_FLUSH_EVENTS, [0, 0xffff])
+	_trap(TRAP_INIT_WINDOWS, [])
+	_trap(TRAP_INIT_MENUS, [])
+	_trap(TRAP_TE_INIT, [])
+	_trap(TRAP_INIT_DIALOGS, [0])
+	_trap(TRAP_INIT_CURSOR, [])
+	_jt(JT_EVENT_GLUE, [0xffff])
+	_jt(JT_INIT_TOOLS, [])
+	_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0x58a)])
+	if (_jt(JT_CHECK_SYSTEM, []) & 0xffff) == 0:
+		_trap(TRAP_EXIT_TO_SHELL, [])
+	_jt(JT_SYS_ENVIRONS, [a6 - 0x1e, 1])
+	memory.write_u8(C68kScript.u32(a5 - 0x1388), memory.read_u8(a6 - 0x15))
+	var cpu: int = memory.read_u16(a6 - 0x18)
+	memory.write_u8(C68kScript.u32(a5 - 0x1387), 1 if cpu == 1 or cpu == 2 else 0)
+	if memory.read_u8(C68kScript.u32(a5 - 0x1388)) != 0:
+		scan_display_devices()
+		memory.write_u32(C68kScript.u32(a5 - 0x14b2), C68kScript.u32(_jt(JT_NEW_PTR, [0x6d8])))
+		var seed: int = C68kScript.u32(_trap(TRAP_GET_CTSEED, []))
+		memory.write_u32(memory.read_u32(C68kScript.u32(a5 - 0x14b2)), seed)
+		memory.write_u16(memory.read_u32(C68kScript.u32(a5 - 0x14b2)) + 4, 0x8000)
+		memory.write_u32(C68kScript.u32(a5 - 0x1316), memory.read_u32(C68kScript.u32(a5 - 0x14b2)))
+	if C68kScript.u32(_trap(TRAP_GET_RESOURCE, [2, RES_MENU])) == 0:
+		_trap(TRAP_SYS_BEEP, [0x14])
+		a7 = entry - 0x26
+		show_resource_file_error_box()
+		a7 = entry
+		_local(LOCAL_QUIT_APPLICATION, [])
+	_settings_resource(-0x13ac, 0x7f, 0x12a, -0xc90, func() -> void:
+		var put: Callable = func(off: int, v: int) -> void:
+			memory.write_u16(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + off, v)
+		put.call(0x10, 2)
+		put.call(0xe, 1)
+		put.call(0x24, 2)
+		put.call(0x26, 1)
+		copy_pascal_string(C68kScript.u32(a5 - 0xc78), memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + 0x2a))
+	_settings_resource(-0x13a8, 0x80, 0x500, -0xc66, func() -> void: pass)
+	a7 = entry - 0x26
+	configure_display_from_main_device()
+	a7 = entry
+	_trap(TRAP_SET_PORT, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+
+## The passes of main's event loop a harness lets run before main returns (the original never
+## returns: -1 keeps it so).
+var event_loop_passes: int = -1
+
+## 0x309a: the program: A5 - 0x13ae = -1, initialize_application, its segment unloaded, MaxMem
+## (grow in the frame), the unexported set-up 0x1b42, A5 - 0x14c4 = 1, JT $1e2's flag, the two sound
+## segments unloaded, the menus installed, a new mission at once when the flag and A5 - 0x102e are
+## set, then poll_and_dispatch_event for ever.
+func main() -> void:
+	assert(a7 != 0, "main needs a7 (MaxMem's grow is in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	memory.write_u32(a6 - 6, 0)
+	memory.write_u16(C68kScript.u32(a5 - 0x13ae), 0xffff)
+	a7 = entry - 0xe
+	initialize_application()
+	a7 = entry
+	_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0xa2)])
+	_jt(JT_MAX_MEM, [[]])
+	_local(LOCAL_MAIN_SETUP, [])
+	memory.write_u16(C68kScript.u32(a5 - 0x14c4), 1)
+	var flag: int = _jt(JT_GET_SETTINGS_FLAG, []) & 0xffff
+	memory.write_u16(a6 - 2, flag)
+	_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0x1ea)])
+	_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0x56a)])
+	install_menus()
+	if flag != 0 and memory.read_u16(C68kScript.u32(a5 - 0x102e)) != 0:
+		a7 = entry - 0xe
+		start_new_mission()
+		a7 = entry
+	while event_loop_passes != 0:
+		if event_loop_passes > 0:
+			event_loop_passes -= 1
+		a7 = entry - 0xe
+		poll_and_dispatch_event()
+		a7 = entry
+
+const TRAP_SELECT_WINDOW: int = 0xa91f
+const TRAP_GET_MOUSE: int = 0xa972
+const TRAP_UPDATE_RES_FILE: int = 0xa999
+const JT_SESSION_CLEANUP: int = 0x9a    ## C routine, no arguments
+const JT_SHOW_PAUSED_DIALOG: int = 0x122 ## C routine, no arguments
+const LOCAL_END_OVERLAY_SESSION: int = 0x4a4  ## not exported: end_overlay_session
+const FLIGHT_KEYS_MASK: int = 0x18      ## keyDown | keyUp
+const FLIGHT_OTHER_EVENTS_MASK: int = 0xffe7
+
+## The pilot's roster record: 'HEL1' 128 (A5 - 0x13a8) + 0x40 * the pilot (A5 - 0x13a4, signed).
+func _pilot_record() -> int:
+	return C68kScript.u32(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13a8))) + (memory.read_s16(C68kScript.u32(a5 - 0x13a4)) << 6))
+
+## The overlay's key hook (A5 - 0x106a) with (character, what) longs: its word result.
+func _key_hook(ch: int, what: int) -> int:
+	return _hook(-0x106a, [C68kScript.u32(ch), C68kScript.u32(what)]) & 0xffff
+
+## A setting changed during flight: applied with the window marked down (A5 - 0x14c6) around it.
+func _apply_in_flight(entry: int) -> void:
+	memory.write_u16(C68kScript.u32(a5 - 0x14c6), 0)
+	a7 = entry - 0x30
+	apply_settings_to_live_options()
+	a7 = entry
+	memory.write_u16(C68kScript.u32(a5 - 0x14c6), 1)
+
+## 0x4fc: a flight. Set-up (also the restart point): HiliteMenu(0), the screen base / row bytes /
+## flag copied (A5 - 0x1346 / - 0x134a / - 0x1348 into - 0x1382 / - 0x1378 / - 0x1312), SetGDevice on
+## the main device, run_segment3_entry_and_unload_a5safe, the window shown (or selected with its
+## updates processed), begin_overlay_session, HideCursor, the drawn-once flags reset together, the
+## ID09 event glue(-7) and the overlay's pilot hook (A5 - 0x106e) with the pilot record's +0x22, the
+## start ticks and frame counters. Each frame (at least 4 ticks after the last, A5 - 0x1044): the mouse
+## (GetMouse in the frame; a move stored with the vertical offset by half the menu bar) and button,
+## then one key event: a command key-up through ID01's sparse switch (T: A5 - 0x102f's bit 0; 1..5:
+## the detail setting; Q: result 5; S: sound toggled around the session; E: settings +5's bit 0),
+## then, still without a result, the key hook (A5 - 0x106a) with (0, 0); a plain key goes to the hook
+## with (character, what), no key to the hook with (0, 0). Every other event pending: updates and
+## activates handled around the session (ID01's dense switch on 6..8). With A5 - 0x1030 the hook A5 -
+## 0x1086 may ask for the key hook (twice when the first answers 0); the step hook (A5 - 0x107a) runs
+## with (1, 1) and, without a result, the frame count (A5 - 0x14fc) goes up. The end: the session
+## closed, the screen globals synced (0x4d96), the glue(-1), InitCursor, the pilot status (A5 -
+## 0x12b4) written back to the roster when it changed (ChangedResource, UpdateResFile), then by the
+## result's low byte (dense switch on -1..10): 1 and 6..10 conclude the mission (JT $da with A5 -
+## 0xde6) and, when it answers 3, restart (9 at once; else JT $9a and the hook A5 - 0x108e, then 1 at
+## once, others after the hook A5 - 0x108a and a redraw); 2 restarts after JT $9a and A5 - 0x108e; 4
+## after the paused dialog (JT $122); 5 quits (0x2eaa); the rest return.
+func run_flight_session() -> void:
+	assert(a7 != 0, "run_flight_session needs a7 (its event record and mouse point are in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	var event: int = a6 - 0x22
+	memory.write_u32(a6 - 0xe, 0)
+	var two: bool = memory.read_u16(C68kScript.u32(a5 - 0x12d4)) != 0 and memory.read_u16(C68kScript.u32(a5 - 0x1032)) != 0
+	memory.write_u16(a6 - 0x24, 1 if two else 0)
+	while true:
+		_trap(TRAP_HILITE_MENU, [0])
+		memory.write_u32(C68kScript.u32(a5 - 0x1382), memory.read_u32(C68kScript.u32(a5 - 0x1346)))
+		memory.write_u16(C68kScript.u32(a5 - 0x1378), memory.read_u16(C68kScript.u32(a5 - 0x134a)))
+		memory.write_u16(C68kScript.u32(a5 - 0x1312), memory.read_u16(C68kScript.u32(a5 - 0x1348)))
+		_trap(TRAP_SET_GDEVICE, [memory.read_u32(C68kScript.u32(a5 - 0x1036))])
+		run_segment3_entry_and_unload_a5safe()
+		if memory.read_u16(C68kScript.u32(a5 - 0x14c6)) == 0:
+			_trap(TRAP_SHOW_WINDOW, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+			memory.write_u16(C68kScript.u32(a5 - 0x14c6), 1)
+		else:
+			_trap(TRAP_SELECT_WINDOW, [memory.read_u32(C68kScript.u32(a5 + A5_GAME_WINDOW))])
+			a7 = entry - 0x30
+			process_pending_update_events()
+			a7 = entry
+		a7 = entry - 0x30
+		begin_overlay_session()
+		a7 = entry
+		_trap(TRAP_HIDE_CURSOR, [])
+		_reset_drawn_once()
+		memory.write_u16(C68kScript.u32(a5 - 0x1046), 0)
+		_jt(JT_EVENT_GLUE, [0xfff9])
+		_hook(-0x106e, [C68kScript.u32(memory.read_s16(_pilot_record() + 0x22))])
+		memory.write_u32(C68kScript.u32(a5 - 0x1504), C68kScript.u32(_trap(TRAP_TICK_COUNT, [])))
+		memory.write_u32(C68kScript.u32(a5 - 0x14fc), 0)
+		memory.write_u32(C68kScript.u32(a5 - 0x1500), 0)
+		var result: int = 0
+		memory.write_u16(a6 - 0xa, 0)
+		var half_bar: int = C68kScript.u16(C68kScript.s16(memory.read_u16(LM_MBAR_HEIGHT)) / 2)
+		memory.write_u16(a6 - 4, half_bar)
+		while true:
+			while C68kScript.s32(C68kScript.u32(_trap(TRAP_TICK_COUNT, [])) - memory.read_u32(C68kScript.u32(a5 - 0x1044))) < 4:
+				pass
+			memory.write_u32(C68kScript.u32(a5 - 0x1044), C68kScript.u32(_trap(TRAP_TICK_COUNT, [])))
+			_trap(TRAP_GET_MOUSE, [a6 - 0x28])
+			if memory.read_u16(a6 - 0x26) != memory.read_u16(C68kScript.u32(a5 - 0x14f6)) \
+					or memory.read_u16(a6 - 0x28) != memory.read_u16(C68kScript.u32(a5 - 0x14f8)):
+				memory.write_u32(C68kScript.u32(a5 - 0x14f8), memory.read_u32(a6 - 0x28))
+				memory.write_u16(C68kScript.u32(a5 - 0x104a), memory.read_u16(a6 - 0x26))
+				memory.write_u16(C68kScript.u32(a5 - 0x1048), C68kScript.u16(memory.read_u16(a6 - 0x28) + half_bar))
+			memory.write_u16(C68kScript.u32(a5 - 0x1046), C68kScript.u16(C68kScript.s8((_trap(TRAP_BUTTON, []) >> 8) & 0xff)))
+			if (_trap(TRAP_GET_NEXT_EVENT, [event, FLIGHT_KEYS_MASK]) >> 8) & 0xff != 0:
+				if (memory.read_u16(a6 - 0x14) & 0x100) != 0:
+					if memory.read_u16(event) == 4:
+						result = _flight_command_key(entry, memory.read_u32(event + 2) & 0xff, result)
+						if result == 0:
+							result = _key_hook(0, 0)
+					else:
+						result = _key_hook(0, 0)
+				else:
+					result = _key_hook(memory.read_u32(event + 2) & 0xff, memory.read_s16(event))
+			else:
+				result = _key_hook(0, 0)
+			memory.write_u16(a6 - 0xa, result)
+			while (_trap(TRAP_GET_NEXT_EVENT, [event, FLIGHT_OTHER_EVENTS_MASK]) >> 8) & 0xff != 0:
+				match memory.read_s16(event):
+					6:
+						_local(LOCAL_END_OVERLAY_SESSION, [])
+						a7 = entry - 0x34
+						handle_update_event(event)
+						a7 = entry
+						_reset_drawn_once()
+						_trap(TRAP_HIDE_CURSOR, [])
+						a7 = entry - 0x30
+						begin_overlay_session()
+						a7 = entry
+					8:
+						_local(LOCAL_END_OVERLAY_SESSION, [])
+						_activate_from_frame(event)
+						a7 = entry - 0x30
+						begin_overlay_session()
+						a7 = entry
+			if memory.read_u16(C68kScript.u32(a5 - 0x1030)) != 0 and _hook(-0x1086) != 0:
+				if result == 0:
+					result = _key_hook(0, 0)
+				if result == 0:
+					result = _key_hook(0, 0)
+				memory.write_u16(a6 - 0xa, result)
+			_hook(-0x107a, [1, 1])
+			if result != 0:
+				break
+			memory.write_u32(C68kScript.u32(a5 - 0x14fc), C68kScript.u32(memory.read_u32(C68kScript.u32(a5 - 0x14fc)) + 1))
+		_local(LOCAL_END_OVERLAY_SESSION, [])
+		_local(LOCAL_SYNC_SCREEN_GLOBALS, [])
+		_jt(JT_EVENT_GLUE, [0xffff])
+		_trap(TRAP_INIT_CURSOR, [])
+		if memory.read_u16(_pilot_record() + 0x20) != memory.read_u16(C68kScript.u32(a5 - 0x12b4)):
+			memory.write_u16(_pilot_record() + 0x20, memory.read_u16(C68kScript.u32(a5 - 0x12b4)))
+			_trap(TRAP_CHANGED_RESOURCE, [memory.read_u32(C68kScript.u32(a5 - 0x13a8))])
+			_trap(TRAP_UPDATE_RES_FILE, [memory.read_u16(C68kScript.u32(a5 - 0x1002))])
+		var low: int = result & 0xff
+		match low:
+			1, 6, 7, 8, 9, 10:
+				if (_jt(JT_CONCLUDE_MISSION, [result, memory.read_u32(C68kScript.u32(a5 - 0xde6))]) & 0xffff) != 3:
+					return
+				if low == 9:
+					continue
+				_jt(JT_SESSION_CLEANUP, [])
+				_hook(-0x108e)
+				if low == 1:
+					continue
+				_hook(-0x108a)
+				a7 = entry - 0x30
+				redraw_main_window()
+				a7 = entry
+			2:
+				_jt(JT_SESSION_CLEANUP, [])
+				_hook(-0x108e)
+			4:
+				_jt(JT_SHOW_PAUSED_DIALOG, [])
+			5:
+				_local(LOCAL_QUIT_APPLICATION, [])
+				return
+			_:
+				return
+
+## Both drawn-once flags (A5 - 0x103c and - 0x12ea) cleared when the first is clear and the second set.
+func _reset_drawn_once() -> void:
+	if memory.read_u16(C68kScript.u32(a5 - 0x103c)) == 0 and memory.read_u16(C68kScript.u32(a5 - 0x12ea)) != 0:
+		memory.write_u16(C68kScript.u32(a5 - 0x103c), 0)
+		memory.write_u16(C68kScript.u32(a5 - 0x12ea), 0)
+
+## A command key-up during flight (ID01's sparse switch on the character): its result, the one given
+## when it sets none.
+func _flight_command_key(entry: int, ch: int, result: int) -> int:
+	var settings: int = memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac)))
+	match ch:
+		0x54, 0x74:
+			var at: int = C68kScript.u32(a5 - 0x102f)
+			memory.write_u8(at, memory.read_u8(at) ^ 1)
+		0x31, 0x32, 0x33, 0x34, 0x35:
+			memory.write_u16(settings + 0x10, ch - 0x30)
+			_apply_in_flight(entry)
+		0x51, 0x71:
+			return 5
+		0x53, 0x73:
+			_local(LOCAL_END_OVERLAY_SESSION, [])
+			_toggle_setting_bit(3)
+			_apply_in_flight(entry)
+			a7 = entry - 0x30
+			begin_overlay_session()
+			a7 = entry
+		0x45, 0x65:
+			_toggle_setting_bit(5)
+			_apply_in_flight(entry)
+	return result
+
+## Bit 0 of the settings byte at `offset` toggled (without marking the settings changed).
+func _toggle_setting_bit(offset: int) -> void:
+	var at: int = memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + offset
+	memory.write_u8(at, memory.read_u8(at) ^ 1)

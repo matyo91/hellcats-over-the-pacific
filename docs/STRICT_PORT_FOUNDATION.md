@@ -1864,6 +1864,213 @@ so the "out" stand-ins now take a size or a list of longs (`["out", value, size]
   three prunes, TextEdit scroll states, all four scroll parts, nine event kinds, five machines).
   `scroll_bar_action_proc` asserts on parts outside 20..23, where the original reads an unset
   frame word.
+- `ID04.gd` batch 3 adds 11 routines: the ModalDialog filters (`duty_roster_filter_proc`,
+  `scenario_selection_filter_proc`, `refuel_dialog_filter_proc`, `map_dialog_filter_proc`) and
+  `fuel_slider_dialog_filter`, `update_summary_dialog_buttons`, `build_rank_and_name_string`,
+  `set_score_item_text`, `conclude_mission`, `draw_map_grid_and_centre_mark` and
+  `plot_map_symbol_callback`. `tools/strict_port/gen_id04_filter_cases.py` runs ID01's sparse
+  word / long switch helpers (slots $2a / $32) for real; their tables end by comparing the next
+  instruction word, so the last offset is the default. The two segment routines not ported yet
+  (track_map_bearing_and_distance 0x3614, show_mission_summary_dialog 0x2de6) are stand-ins the
+  port reaches through `_local(offset)`. Each case records the original's entry stack pointer
+  (`a7`), so frame buffers passed to the jump-table string calls log the same addresses.
+  `test_id04_filter.gd` replays 68 cases (seven event kinds per filter, seven slider drags, ten
+  summary button states, fourteen mission endings, four grids, three plots).
+- `ID04.gd` batch 4 adds 7 drawing routines: `draw_high_scores_table`,
+  `draw_targets_destroyed_row`, `draw_targets_destroyed_list`, `draw_aircraft_kill_markers` and
+  `draw_map_view_item` with the user item procedures of the markers and the map.
+  `tools/strict_port/gen_id04_draw_cases.py` extends the filter batch's set-up; the map's plotting
+  service (*(A5 - 0x1052)) is reached through `_call_address`. Frame buffers and rects are logged
+  where the original passes them (the colour record's second long reaches the saved-port local, so
+  the port keeps it in its frame). `test_id04_draw.gd` replays 24 cases (three rankings, every
+  target row and the list, four kill counts, day / night / scaled maps).
+- `ID04.gd` batch 5 adds `show_paused_dialog` and `show_about_dialog`.
+  `tools/strict_port/gen_id04_about_cases.py` scripts the sessions: the stubs gained an "outseq"
+  VAR result (GetNextEvent's event kind changes call by call; both `segment_stubs.py` and
+  `helpers/segment_cases.gd`), and TickCount, Button and GetResource answer sequences (the ticks
+  advance every scroll step; the original polls forever when they stop and the button never goes
+  down). `test_id04_about.gd` replays 9 cases (key down and up among stray events; the About box
+  scrolled until the button, scrolled out at night, cut short by a key or a click, another version,
+  no picture, no dialog). The version string keeps the original's "M.0.F" (the minor digit masked
+  0xf0 and shifted by 8).
+- `ID04.gd` batch 6 adds `show_mission_summary_dialog`, completing ID04 (59 routines).
+  `tools/strict_port/gen_id04_summary_cases.py` runs it with the dialog helpers already ported
+  running on both sides and the two unexported ones (the default-ring installer 0x1b8,
+  advance_mission_summary_text 0x21d6) as offset-keyed stand-ins; ModalDialog's item hits are an
+  "outseq" list. The routine stores its frame's tally buffer in A5 - 0x2226, so the case's entry
+  stack pointer matters beyond the guard. `test_id04_summary.gd` replays 10 cases (a pilot's
+  summary, the mission's in phases 0, 1 and 3, an early death, a running mission confirmed or with
+  nothing to report, game state 2 skipped).
+- `ID05.gd` gains its last 9 routines, completing ID05 (26): `center_template_rect_on_screen`,
+  `get_machine_screen_fingerprint`, the 'DATA' / 'TEXT' 128 pair readers and writers,
+  `code_dialog_filter`, `get_dialog_item_text_upper` and `run_protection_dialog`.
+  `tools/strict_port/gen_id05_dialog_cases.py` reuses the protection batch's challenge table;
+  GetIText writes C strings from an "outseq" list and the passing response is the one for the
+  record ansi_rand picks from the seed, so the dialog loop ends. The code-string builder (0x3ba,
+  not exported) is an offset-keyed stand-in. `test_id05_dialog.gd` replays 27 cases (templates
+  centred or missing, colour and black-and-white machines, present and missing pairs, seven filter
+  events, two item texts, five protection sessions: already matching, right first time and stored,
+  wrong then right, quit pressed, no dialog).
+- `ID09.gd` gains `sysenvirons_glue_fallback` and `fsopen_glue` (ID09 complete) and `ID08.gd`
+  gains `bootstrap_window_and_load_overlay`. `tools/strict_port/gen_id08_09_glue_cases.py` sets low
+  memory per case; the stubs gained a "trap_a0" kind for parameter-block OS traps (D0 and the
+  block logged, VAR fields written into the block, the flags set from the result as the trap
+  dispatcher leaves them; `segment_stubs.a0_trap` and `helpers/segment_cases.gd`). Both glues
+  build their blocks on the stack, so cases record the entry stack pointer; the logged block stops
+  short of the return address. ID08's load_overlay_from_resource (0x6) is an offset-keyed
+  stand-in until it is ported. `test_id08_09_glue.gd` replays 13 cases (nine machines and HFS
+  failures, FSOpen and its failure, a chosen and a cancelled Get File).
+- `ID08.gd` gains `load_overlay_from_resource`, completing ID08 (4).
+  `tools/strict_port/gen_id08_loader_cases.py` plays the overlay file back through FSRead's buffer
+  argument (an "outseq" list of long lists: the 32-byte header, code, data, each 8-byte relocation
+  entry, the payload) with an unaligned image block, and runs alloc_and_read_resource_payload for
+  real. `test_id08_loader.gd` replays 12 cases (a load with relocations in both tables and a
+  skipped entry, a previous image replaced, the default-volume retry, no file, a failed header
+  read, no memory, no data part, both relocation errors, the image checks either way, the locked
+  volume). The bootstrap's test keeps the loader as a stand-in.
+- `ID06.gd` gains `render_scanline_spans` and `rasterize_and_present`, completing ID06 (24). The
+  renderer keeps its data (0x39e) and D3-D7 / A2-A6 (0x3ae) in its own code between bands, so it
+  is ported register by register and writes them at `code_base` (set from the fixture's new
+  "port_vars"; `helpers/segment_cases.gd`). `tools/strict_port/gen_id06_render_cases.py` renders
+  scenes the original built (no polygons, two, overlapping with depth order, a first band and a
+  band continued from a scene captured after it) and runs rasterize_and_present with the row
+  table's renderer pointer (A5 + 0x192) and JT $322 as stand-ins (whole target, one band, bands
+  of 0x20 and 0x25, no row table). `test_id06_render.gd` replays 10 cases.
+- `ID03.gd` (new) starts with 12 helpers: `set_scaled_text_style`, the `scale_design_*` trio,
+  `max3_int`, `nearest_palette_index_rgb`, `new_offscreen_bw_port` / `dispose_offscreen_bw_port`,
+  `dial_point_at_angle`, `open_cport_on_buffer`, `close_port_glue` and
+  `remap_panel_colours_identity`. ID02's abs_long (JT $4da) and memset (JT $4f2) run for real on both
+  sides (ID02.bin loaded behind the slots; the port calls StrictID02); the sine / cosine routines
+  are scripted "addr" stand-ins and remap_cached_panel_colours (0x6c1c) an offset-keyed one.
+  `tools/strict_port/gen_id03_helpers_cases.py` / `test_id03_helpers.gd`: 41 cases (four text
+  styles, five scales each way, five max3, six palette searches across modes and extras, three
+  offscreen ports, four dial arcs, the colour port, close, the identity remap). A clamped
+  scale_design_480_min10 returns MOVEQ #10's whole D0.
+- `ID03.gd` batch 2 adds `make_inset_face_oval_region`, `composite_instrument_bitmap`,
+  `finish_instrument_supersample`, `draw_vector_glyph_string_centred` and `draw_vector_number`.
+  `tools/strict_port/gen_id03_glyph_cases.py` extends the helper batch's set-up with seeded vector
+  glyphs and digits, scripted panel-coordinate slots ($3ca / $382) and
+  antialias_downsample_bw_3x (0xa3c) as an offset-keyed stand-in. `test_id03_glyph.gd` replays 17
+  cases (two ovals, composite and finish in 1- and 8-bit modes, six strings including unknown
+  characters and a negative scale, five numbers).
+- `ID03.gd` batch 3 adds `draw_bevelled_frame` (four polygons: light top and left, dark bottom and
+  right filled with the panel pattern, the face painted), `draw_split_display_box` (its halves kept
+  at A5 - 0x119c / -0x1194) and `draw_arc_scale_ticks` (13 ticks, every fourth long).
+  `tools/strict_port/gen_id03_panel_cases.py` adds the panel colour slots ($45a / $36a / $3a2 /
+  $3e2) and the polygon and rect traps as logging stand-ins. `test_id03_panel.gd` replays 10 cases.
+- `ID03.gd` batch 4 adds `draw_numbered_bevel_box` (on the ported bevelled frame and vector
+  number), `compute_panel_screen_addresses` and `store_panel_bitmaps_as_resources` ('HEL2').
+  `tools/strict_port/gen_id03_boxes_cases.py` adds the Resource Manager traps (GetResource and
+  ResError scripted). `test_id03_boxes.gd` replays 8 cases (three boxes across modes and scales,
+  the addresses at depths 1 / 4 / 8, storing with and without a resource error).
+- `ID03.gd` batch 5 adds `begin_instrument_supersample` (the offscreen port at 1x or 3x, clipped to
+  the face oval, the face geometry computed with the design scale held at 480 and restored from its
+  low word), `draw_spinning_disc_indicator` (four spoke phases) and
+  `draw_ring_with_status_indicators` (a disc per status bit). `tools/strict_port/gen_id03_supersample_cases.py`
+  runs new_offscreen_bw_port for real on both sides; `test_id03_supersample.gd` replays 15 cases
+  (four supersamples across modes, five phases and a too-small disc, five flag sets).
+- `ID03.gd` gauges start with `draw_fuel_gauge` and `draw_landing_gear_indicator`, on shared
+  helpers (`_gauge_begin`: the arguments written to their stack slots, since
+  begin_instrument_supersample updates them in place, the ring, the supersample; `_gauge_label`;
+  `_gauge_finish`), then `draw_flaps_indicator` and `draw_ammo_counter` (face ticks via
+  `_face_tick`, hotspots via `_gauge_hotspots`), `draw_climb_indicator` and `draw_tachometer`
+  (scale numbers via `_face_number`; the tachometer's frame differs, so the helpers read their
+  offsets from `_layout`: `SMALL_GAUGE` / `WIDE_GAUGE` / `ALTIMETER_GAUGE`), then
+  `draw_manifold_pressure_gauge` (two stacked labels), `draw_altimeter` (3 x major ticks),
+  `draw_airspeed_indicator` (three pen weights; `_face_stroke` split out of `_face_tick`) and
+  `draw_direction_indicator` (compass letters in vector glyphs; `_face_label_point`),
+  `draw_percent_scale_gauge` and `draw_panel_section_with_numbered_boxes` (SetRect is a
+  stand-in, so the boxes start from the frame rect as the original's would under it).
+  `draw_instrument` dispatches through ID01's dense switch (now loaded for every ID03 fixture);
+  every gauge runs for real: `draw_turn_and_bank_indicator` (two shapes rotated by the routine at
+  *(A5 - 0x105e), an "addr" stand-in; the rotated points show in the strokes drawn), `draw_artificial_horizon` (row spans
+  scanned with scripted PtInRgn answers) and `draw_gyro_instrument` (the heading card through a
+  colour port from JT $402) run for real.
+  `tools/strict_port/gen_id03_gauges_cases.py` / `test_id03_gauges.gd`: 59 cases (the gauges in 1-,
+  8- and 4-bit modes, the horizon with and without spans, the gyro with and without its card,
+  draw_instrument for kinds -1..10).
+- `ID03.gd` gains `remap_cached_panel_colours` (the cached panel and gyro card recoloured nibble- or
+  byte-wise through an inverse map of the panel slots, picked with ID01's sparse switch, slot $2a,
+  now installed for every ID03 fixture); `remap_panel_colours_identity` calls it for real instead of
+  a stand-in. `tools/strict_port/gen_id03_remap_cases.py` / `test_id03_remap.gd`: 8 cases (4-, 8-,
+  2- and 1-bit panels, another geometry, no scenery, the identity remap at 4 and 8 bits).
+- `ID03.gd` gains `antialias_downsample_bw_3x` (a 7 x 7 Gaussian window, 969 in all, over a 1-bit 3x
+  image, each non-blank output pixel a grey put through nearest_palette_index_rgb and plotted); its
+  callers (composite, percent scale, gyro) call it for real, so their extra pushed words go unread
+  as in the original. As it plots pixel by pixel, MoveTo / Line / JT $36a keep digest logs (a new
+  stub option: the count and a running hash; `segment_stubs.py`, `helpers/segment_cases.gd`) and
+  the gauge fixture runs at a quarter of the design scale. `gen_id03_downsample_cases.py` /
+  `test_id03_downsample.gd`: 5 cases (sparse, dense, blank, 4-bit, one row; with and without the
+  drawn-column flags).
+- `ID03.gd` gains `prepare_instrument_panel`, completing ID03 (45): the panel scale and the "Bitmap
+  Cache" ('HEL2' 127); a cache entry of this display configuration used when current or stored (a
+  stored one loaded and recoloured), otherwise the whole panel drawn afresh (frame and edge regions,
+  outline, every instrument at its design place) into the least recently used entry; the gyro tape
+  port and horizon face region after. The bitmap release helper (0x59f4, not exported) is an
+  offset-keyed stand-in. `tools/strict_port/gen_id03_prepare_cases.py` keeps every stand-in on a
+  digest log (the panel calls them hundreds of times; LineTo is digest-logged in every ID03 fixture
+  now) with the panel-coordinate slots fixed so the panel stays a few pixels across;
+  `test_id03_prepare.gd` replays 4 cases (current entry, stored entry loaded, redraws at depths 4
+  and 1 without a cache).
+- `ID02.gd` gains `begin_overlay_session`, `ensure_free_memory_and_init_sound`,
+  `call_overlay_session_hooks`, `process_pending_update_events`, `handle_update_event` and
+  `redraw_main_window` (load_game_sounds, lock_sound_slots and the device colour check run for real).
+  init_sound_system (until it was ported, below) and three unexported helpers (0x95a, 0x4d96,
+  0xa26) are offset-keyed stand-ins through `_local`; the overlay hooks are "addr" stand-ins.
+  `tools/strict_port/gen_id02_session_cases.py` / `test_id02_session.gd`: 14 cases.
+- `ID02.gd` gains `layout_game_window_and_view` (the view size through ID01's dense switch, the
+  menu-bar skip of a 512 x 342 screen, the aspect shrink loop, the device view bases, the window
+  made or moved and sized), `configure_display_from_main_device` and `apply_settings_to_live_options`
+  (scan_display_devices, the palette set-up, the caution alert, the out-of-memory exit and
+  redraw_main_window run for real). The offscreen-port close (0xd24, not exported) is an
+  offset-keyed stand-in; the palette entry traps are digest-logged. ID01's switch helper sits behind
+  slot $3a. `tools/strict_port/gen_id02_display_cases.py` / `test_id02_display.gd`: 29 cases.
+- `ID02.gd` gains `refresh_display_if_changed`, `reset_overlay_state`, `set_view_size_option`,
+  `wait_for_click_or_key`, `show_resource_file_error_box`, `handle_mouse_down` and
+  `poll_and_dispatch_event` (the display configuration, settings, redraw, menu update and activate
+  handler run for real, and do_menu_command since it was ported). The overlay-globals sync
+  (0x4d24, not exported) is an offset-keyed stand-in; GetNextEvent answers scripted event records
+  and FindWindow a scripted part and window per case, with the main device in 1-bit mode so the
+  redraws stay in their tested path. `tools/strict_port/gen_id02_events_cases.py` /
+  `test_id02_events.gd`: 36 cases.
+- `ID02.gd` gains `do_menu_command` (HiWord / LoWord through ID01's dense switches: the Apple, File,
+  Edit, options and detail menus, the settings toggled and marked changed, always applied at the
+  end) and `start_new_mission`; handle_mouse_down and poll_and_dispatch_event now call the port.
+  run_flight_session (until it was ported, below) and the unexported settings save (0x2da0) and quit
+  (0x2eaa) are offset-keyed stand-ins; HiWord / LoWord are scripted per case.
+  `tools/strict_port/gen_id02_commands_cases.py` / `test_id02_commands.gd`: 48 cases (every item of
+  the five menus).
+- `ID02.gd` gains the three VBL sound handlers (`vbl_sound_handler_ch0_unrolled`,
+  `vbl_sound_handler_ch0_variant`, `vbl_sound_handler_two_channel`) and `init_sound_system`. The
+  handlers keep their A5 in a long inside their own code, so the port reads and writes it at
+  `code_base` + 0x39c4 / 0x3aca / 0x3be0 (the first call records CurrentA5 and returns). Channel 0 is
+  resampled with the ADD.L / ADDX.L fraction carry into 370 sound-buffer bytes (368 from SoundBase +
+  4, the last two at SoundBase), with node wrapping only when the frame does not fit; the variant
+  copies a fitting frame straight (its MOVEP scratch long ends up as the stored fraction); the
+  two-channel handler mixes channel 1 in and falls back to the single-channel hook at the silence
+  node. Each returns through the previous sound hook (A5 - 0xc36, an "addr" stand-in).
+  ensure_free_memory_and_init_sound now calls init_sound_system, so the session, display, events
+  and commands fixtures were regenerated with "code_base". m68k_emu gains MOVEP.
+  `tools/strict_port/gen_id02_sound_cases.py` / `test_id02_sound.gd`: 30 cases.
+- `ID02.gd` gains `initialize_application` (the Toolbox set-up, SysEnvirons in the frame, the colour
+  table header, the MENU check with the resource error box, the two 'HEL1' settings resources made
+  when missing, the display configured) and `main`. main never returns, so the port has
+  `event_loop_passes` (-1, the default, loops for ever): `tools/strict_port/gen_id02_startup_cases.py`
+  stops the original when its loop reaches the poll a third time and gives the port 2.
+  install_menus, configure_display_from_main_device, start_new_mission and poll_and_dispatch_event
+  run for real; the unexported set-up 0x1b42 and quit 0x2eaa are offset-keyed stand-ins.
+  `test_id02_startup.gd`: 8 cases.
+- `ID02.gd` gains `run_flight_session`, the last of the 740: the restart-point set-up, the frame
+  timing (4 ticks), mouse and button, one key event per frame (command key-ups through ID01's
+  sparse long switch $32: T, 1..5, Q, S, E), the other events (updates / activates around the
+  session), the mouse and step hooks, the roster write-back and the ending switch (conclude and
+  restart, paused dialog, quit). end_overlay_session (0x4a4), the screen-globals sync (0x4d96) and
+  quit (0x2eaa) are offset-keyed stand-ins; the overlay's flight hooks are "addr" stand-ins. The key
+  hook ends a flight on its first non-zero result, so every case finishes on its own. start_new_mission
+  and do_menu_command now call the port: the events / commands / start-up generators share the
+  flight stand-ins (their key hook answers 5, quit, by default; slot $32 now points at ID01) in a
+  0x70000 memory, and their fixtures were regenerated. `tools/strict_port/gen_id02_flight_cases.py` /
+  `test_id02_flight.gd`: 19 cases.
 
 `animate_ground_fire` (`0x17150`) and `tick_ground_fire` (`0x17380`) are ported. The
 fire keeps four vertices beside its owner, across the owner's velocity: offsets
