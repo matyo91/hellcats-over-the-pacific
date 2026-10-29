@@ -27,10 +27,12 @@ def sext(v: int, size: int) -> int:
 
 
 class Emulator:
-    def __init__(self, memory_size: int = 0x40000, binary_path: str = BINARY):
+    def __init__(self, memory_size: int = 0x40000, binary_path: str = BINARY, file_delta: int = FILE_DELTA):
+        """file_delta: the file offset loaded at address 0 (0x20 for the Pacific Conflict image, 0 for
+        an IDnn.bin CODE segment, whose Ghidra addresses are file offsets)."""
         self.mem = bytearray(memory_size)
         data = open(binary_path, "rb").read()
-        image = data[FILE_DELTA:]
+        image = data[file_delta:]
         self.mem[: min(len(image), memory_size)] = image[:memory_size]
         self.d = [0] * 8
         self.a = [0] * 8
@@ -39,6 +41,9 @@ class Emulator:
         self.md = capstone.Cs(capstone.CS_ARCH_M68K, capstone.CS_MODE_BIG_ENDIAN | capstone.CS_MODE_M68K_020)
         self.md.detail = True
         self.stubs: dict[int, callable] = {}
+        # A-line trap word -> handler(emu); the trap word has been consumed (pc past it) and A7
+        # points at the arguments (Toolbox traps take them on the stack, OS traps in registers).
+        self.traps: dict[int, callable] = {}
         self.steps = 0
         self._cache: dict[int, object] = {}
 
@@ -108,7 +113,9 @@ class Emulator:
             return (self.cur + 2 + m.disp) & 0xFFFFFFFF
         if am in (M.M68K_AM_PCI_INDEX_8_BIT_DISP, M.M68K_AM_PCI_INDEX_BASE_DISP):
             return (self.cur + 2 + m.disp + self._index(m)) & 0xFFFFFFFF
-        if am in (M.M68K_AM_ABSOLUTE_DATA_LONG, M.M68K_AM_ABSOLUTE_DATA_SHORT):
+        if am == M.M68K_AM_ABSOLUTE_DATA_SHORT:
+            return sext(op.imm, 2) & 0xFFFFFFFF          # (xxx).W is sign-extended
+        if am == M.M68K_AM_ABSOLUTE_DATA_LONG:
             return op.imm & 0xFFFFFFFF
         raise NotImplementedError(f"address mode {am} at {self.pc:#x}")
 
@@ -269,6 +276,14 @@ class Emulator:
         return self.d[0]
 
     def step(self) -> None:
+        word = self.read(self.pc, 2)
+        if word >> 12 == 0xA:
+            handler = self.traps.get(word)
+            if handler is None:
+                raise NotImplementedError(f"A-line trap {word:#06x} at {self.pc:#x} has no stub")
+            self.pc += 2
+            handler(self)
+            return
         ins = self.decode(self.pc)
         mn = ins.mnemonic
         base, _, suffix = mn.partition(".")
@@ -498,6 +513,17 @@ class Emulator:
             self.v = 0 if (ext & 0x0400) or -0x80000000 <= v <= 0x7FFFFFFF else 1
 
     def op_mulu(self, ins, ops, size, nxt):
+        if size == 4:
+            # Long form (as op_muls): Dl / Dh from the extension word, 64-bit product when bit 10.
+            ext = self.read(ins.address + 2, 2)
+            dl, dh = M.M68K_REG_D0 + ((ext >> 12) & 7), M.M68K_REG_D0 + (ext & 7)
+            v = self.get_reg(dl) * self.read_op(ops[0], 4)
+            if ext & 0x0400:
+                self.set_reg(dh, (v >> 32) & 0xFFFFFFFF)
+            self.set_reg(dl, v & 0xFFFFFFFF)
+            self.logic_flags(v & 0xFFFFFFFF, 4)
+            self.v = 0 if (ext & 0x0400) or v <= 0xFFFFFFFF else 1
+            return
         s = self.read_op(ops[0], 2)
         r = ops[1].reg
         v = ((self.get_reg(r) & 0xFFFF) * s) & 0xFFFFFFFF
@@ -693,6 +719,27 @@ class Emulator:
 
     def op_lsr(self, ins, ops, size, nxt):
         self._shift(ops, size, "lsr")
+
+    def op_bfextu(self, ins, ops, size, nxt):
+        """BFEXTU <ea>{offset:width},Dn with an immediate offset and width (decoded from the
+        extension word: bit 11 Do, 6..10 offset, bit 5 Dw, 0..4 width with 0 = 32, 12..14 Dn); the
+        field counts from the most significant bit of the register or of the byte at <ea>."""
+        ext = self.read(ins.address + 2, 2)
+        if ext & 0x0820:
+            raise NotImplementedError(f"bfextu with a register offset / width at {ins.address:#x}")
+        offset, width = (ext >> 6) & 0x1F, (ext & 0x1F) or 32
+        dn = M.M68K_REG_D0 + ((ext >> 12) & 7)
+        if ops[0].type == M.M68K_OP_REG:
+            src = self.get_reg(ops[0].reg)
+            value = ((((src << 32) | src) >> (64 - offset - width)) & ((1 << width) - 1))
+        else:
+            addr = self.ea(ops[0], 4)
+            raw = int.from_bytes(bytes(self.mem[addr:addr + 5]), "big")
+            value = (raw >> (40 - offset - width)) & ((1 << width) - 1)
+        self.set_reg(dn, value)
+        self.n = 1 if value >> (width - 1) else 0
+        self.z = 1 if value == 0 else 0
+        self.v = self.c = 0
 
     def _rotate_x(self, ops, size, left):
         """roxl / roxr: rotate through X; C = X = the last bit out (count 0: C = X)."""

@@ -1612,6 +1612,259 @@ split inside the classifier and maps to the same target.
   replay transitions, every classifier outcome including four RNG states, and the camera for
   views 1, 2, 5, 6, 7 and 9), comparing memory, the host sound calls and the returned result.
 
+With that, every Pacific Conflict function is ported and verified against the original bytes.
+The CODE segments come next, starting with ID01's 32-bit divide runtime in
+`godot/strict_port/code/ID01.gd` (it replaces the earlier untested pseudo-GDScript draft). The
+stack entries `rt_udiv32` / `rt_umod32` / `rt_sdiv32` / `rt_smod32` pop their own arguments and
+preserve D1; the register cores `rt_sdivmod32_core` / `rt_udivmod32_core` return [D0, D1]. The
+port keeps the core's word-sized estimate, its `SUBQ.W` corrections and the multiply-back that
+adds both halves of the swapped high product. `m68k_emu.Emulator` takes `file_delta=0` to load an
+`IDnn.bin` segment at address = file offset.
+
+- `tools/strict_port/gen_id01_divide_cases.py` runs 5,658 calls (every path of the unsigned core,
+  every sign combination, 0x80000000, edge and random operands; D1 preservation asserted on the
+  original); `test_id01_divide.gd` compares D0 (and D1 for the cores).
+
+ID02's C runtime follows in `godot/strict_port/code/ID02.gd` (`abs_long` .. `ansi_strncat`, the
+31 exported routines; the unexported memcmp / memchr / strlen / strncmp bodies between them are
+not counted). The port holds `memory` and `a5`: the ctype table is at A5 - 0x1608 and strtok's
+saved position at A5 - 0x1508. MPW C passes int as a 16-bit word, so the character and memset
+value arguments are the pushed words. `ansi_div` keeps the DIVS.W overflow (-0x8000 / -1 leaves
+the register unchanged: quot = the numerator, rem = -1), and `ansi_ldiv` calls ID01 through
+JT $5a / $62. `helpers/segment_cases.gd` replays segment fixtures on fresh memory with the
+fixture's A5.
+
+- `tools/strict_port/gen_id02_crt_cases.py` covers 1,261 calls: every character class on a seeded
+  table (and words with a high byte), the overflowing div, ldiv through the real ID01 bytes (JMPs in
+  the jump-table slots), overlapping memmoves, and the string routines on matches, misses,
+  empty strings / sets, terminators and every strtok state.
+
+Next, the 17 ID02 routines that make no Toolbox calls: `set_back_color_index`,
+`design_x_to_screen` / `design_y_to_screen`, `format_int_decimal_pstring` (DIVSL.L #10, with
+0x80000000 kept negative), `copy_pascal_string` (signed length byte), the sound channel engine
+(`clear_sound_buffer_to_silence`, `alloc_sound_buffer_node`, `select_two_channel_sound_handler`,
+`play_sample_on_channel`, `enqueue_sample_on_channel`, `set_sound_playback_rate`,
+`release_channel_loop`, `silence_sound_channel`, `is_channel_playing`), and the palette helpers
+(`clear_ctab_size_callback`, `lookup_palette_index_for_rgb_level`,
+`init_standard_colour_indices`). The interrupt-level sound routines reload A5 from CurrentA5
+(0x904), and the port reads it from there too. The palette lookup returns the index at depths 1
+and 4 and the index + 0xc8 at depth 8; at any other depth it returns whatever D0 last held, and
+the port tracks that. The three VBL handlers (self-modifying, `movep`) are left for later.
+`m68k_emu` gained the long `mulu.l` form (it used to run every `mulu` as the word form; nothing
+in Pacific Conflict uses `mulu.l`, and the earlier fixtures regenerate unchanged).
+
+- `tools/strict_port/gen_id02_trapfree_cases.py` loads ID02 at 0x30000 so low memory is free for
+  SoundBase / the sound hook / CurrentA5, and covers 99 calls: both channels and bad ones, the
+  sound system off, looping and one-shot samples, a playing loop released and silenced, rate
+  clamps, every depth of the palette lookup (including an empty extra table), and the
+  coordinate, colour and string edge values.
+
+Calls that leave a segment now have stand-ins on both sides. `m68k_emu.Emulator.traps` handles
+A-line trap words (the trap is consumed and A7 points at its arguments), and
+`tools/strict_port/segment_stubs.py` logs jump-table slots and traps. Each log entry gives the
+argument sizes in stack order, Pascal (callee pops, result written in the caller's slot) or C (D0),
+the result size, and the arguments whose buffers are logged by value. The segment ports call
+`_jt(offset, args)` / `_trap(word, args)`, and `helpers/segment_cases.gd` installs the same loggers
+from the fixture. The first 12 such ID02 routines are ported this way:
+- `close_and_dispose_port`, `close_port_a5safe` and `swap_port_a5safe` (ClosePort, DisposPtr,
+  SetPort);
+- `swap_mmu_mode_a5safe` and the five handle wrappers `dispose_handle_a5safe`, `hlock_a5safe`,
+  `hunlock_a5safe`, `hpurge_a5safe` and `hnopurge_a5safe`, through the ID09 glue slots;
+- `get_blended_fill_pattern` and `set_draw_color_index`, through the C RGB-to-pattern slot $1ca
+  and PenPat;
+- `new_offscreen_cport`: NewPtr, OpenCPort, SetPort, the pixmap fields and RectRgn of the bounds.
+
+- `tools/strict_port/gen_id02_glue_cases.py` covers 39 calls (null and real handles / ports,
+  both depths, fixed and extra colour entries and a negative index, two offscreen ports), with
+  every stand-in's log compared byte for byte.
+
+17 more leaf routines that call the Toolbox follow the same pattern:
+- the thick and XOR lines;
+- `apply_pending_color_entries_a5safe` (SetEntries);
+- `blit_pixels_via_port_a5safe` (CopyBits) and `open_offscreen_cport_a5safe`;
+- `paint_rect_color_index_a5safe` (it reuses `set_draw_color_index` with A5 from CurrentA5);
+- `run_segment3_entry_and_unload_a5safe`;
+- the sound slots `release_sound_slots` (RecoverHandle, HPurge, HUnlock) and `lock_sound_slots`;
+- `handle_activate_event` (the EventRecord passed by value);
+- `set_menu_item_enabled`;
+- `shutdown_sound` (SndDisposeChannel);
+- the window / alert placement routines `position_window_on_screen`, `position_alert_template`
+  (GetResource 'ALRT', SetRect) and `centre_window_on_screen`, with their DIVS.W halves / thirds
+  and MBarHeight;
+- `detach_window_palette` and `select_palette_for_depth` (SetPalette).
+
+Bytes pushed with MOVE.B -(A7) (the MoveWindow and SndDisposeChannel flags) take a stack word
+whose high byte alone is defined, so the stand-ins log them with size 1.
+
+- `tools/strict_port/gen_id02_toolbox_cases.py` covers 40 calls (every branch of each routine,
+  odd screen and window sizes, missing windows and handles) with every trap and slot logged.
+
+The next eight: `blit_offscreen_frame_to_window` (it makes its offscreen port with
+`new_offscreen_cport` the first time), `build_notched_frame_poly` (it rewrites its own argument
+words), `draw_view_frame_outline` (design coordinates), `freemem_a5safe`,
+`show_caution_alert_with_number`, `show_sound_error_dialog_once` (it waits for a click),
+`show_creating_panel_dialog` and `install_menus`. The stand-ins gained scripted results (Button
+goes up, down, down, up so the waits end) and Pascal-string arguments logged by content (the
+caution alert's number string is built in its frame; the port computes it without writing
+memory). Two corrections came out of this batch:
+- `m68k_emu` now sign-extends absolute short addresses: `PEA $FFFF.W` is -1, the "in front"
+  window. Only data words in Pacific Conflict have such operands, and every ID fixture
+  regenerates and passes.
+- `format_int_decimal_pstring` keeps the original's forward byte copy: a string longer than 10
+  bytes overlaps its destination and repeats its first bytes.
+
+- `tools/strict_port/gen_id02_dialog_cases.py` covers 23 calls (first and later blits in every
+  mode and at depth 4, three polygons, both outlines, the alert with and without a number, a
+  nil message and -32768, both dialog states, the menu bar).
+
+Then the sound loading, palette and display routines:
+- `load_named_sound_into_slot`: GetNamedResource, the FreeMem / MaxMem check, the purgeable
+  resource attribute.
+- `configure_palette_entries`: the SetEntryUsage / SetEntryColor loops of depths 4 and 8.
+- `build_palette_index_map`: the index map and its reverse; a colour hit twice selects the
+  alternate service.
+- `rebuild_all_palette_index_maps`: it hands `build_palette_index_map` buffers in its own frame,
+  so segment ports now model A7, and `helpers/segment_cases.gd` passes the fixture's stack top.
+- `scan_display_devices`: the original picks a neighbour record for a matching side screen but
+  fills a record only for the main device, and the port keeps that.
+
+`build_palette_index_map`'s count is a frame word that is set only at palette depths 4 and 8, so
+the port asserts those depths. It returns the count with MOVE.W, so only the low word of D0 is
+compared.
+
+- `tools/strict_port/gen_id02_palette_cases.py` covers 19 calls (every memory outcome of the sound
+  load, both palette depths, maps with duplicate colours, rebuilds at each depth and with the
+  offscreen port, device walks with neighbours, an existing map, the deep-screen test and
+  mismatched devices). Its logs are 0x1000 bytes (the depth-8 palette makes 234 calls per trap),
+  above the code in a 0x60000 memory.
+
+Then five drawing and colour-state routines:
+- `paint_polygon_rgb_a5safe`: points as longs, -y; FillPoly with the RGB pattern at depth 1, else
+  RGBForeColor + PaintPoly. RGBForeColor's record is logged by content, together with the loop
+  counter word that follows it in the frame.
+- `draw_notched_frame_pair_a5safe`: two passes over the polygons from `build_notched_frame_poly`; the
+  second pass uses the colour argument copied over the first.
+- `blit_image_clipped_to_region` and `blit_image_clipped_to_region_a5safe`: the clip is the view
+  frame region, and the image is locked only when HGetState says it was not.
+- `check_device_color_state_changed`: maps rebuilt in its frame, compared, reported and stored.
+  It calls a service through the pointer at A5 - 0x1096, so the stand-ins gained an "addr" kind
+  (a code address reached indirectly) and the ports a `code_routines` table.
+
+- `tools/strict_port/gen_id02_draw_cases.py` covers 20 calls (polygons of 4 / 1 / 0 / -2 points
+  at both depths, painted and filled frames, the image blit with the handle locked or not, colour
+  states changed on one or both devices, unchanged, without the service, at palette depth 4 and
+  at depth 1).
+
+Then the memory, sound-set and horizon routines:
+- `fatal_memory_error_exit`: frees the frame buffer, shuts sound down, shows the caution alert,
+  then ExitToShell. The stand-in returns into the RTS that follows the trap.
+- `new_handle_clear_or_die_a5safe` and `realloc_and_clear_handle_a5safe`: on a MemError they
+  call the exit; otherwise the resize clears the block with the ported `ansi_memset`.
+- `load_game_sounds`: the engine sound depends on FreeMem, and slot 8 has a fallback name whose
+  miss still counts as a failure.
+- `paint_view_horizon_bands_a5safe`: nine long arguments of which it uses the low words (the
+  third is never read); the frame rects are logged by value.
+
+- `tools/strict_port/gen_id02_memory_cases.py` covers 15 calls (both exit paths, the handle
+  calls succeeding and failing, the sound set with plenty / little / middle memory and a scripted
+  missing sound, and the bands for a <= b, a > b and a = b at both depths).
+
+`draw_text_in_columns_a5safe` lays out the status line: four labels, the column starts measured
+with GetPen and the column widths in digit widths, or it draws one column's text. It reads back
+the pen point that GetPen writes into its frame, so the stand-ins gained `["out", value]`, which
+writes a long through a VAR pointer argument instead of logging it. `update_menu_items` enables
+and checks the File / Edit / Options / View items from the game-state words, the front window's
+kind (a desk accessory enables Edit and redraws the bar once) and the settings record, through
+the ported `set_menu_item_enabled` and CheckItem.
+
+- `tools/strict_port/gen_id02_menu_cases.py` covers 15 calls (both layouts, three columns, and ten
+  menu states: idle, playing, paused, state 2 / 3, busy, depth 4, a desk accessory in front
+  (new and unchanged), no front window, not playing).
+
+ID05 starts in `godot/strict_port/code/ID05.gd` with its 17 trap-free routines:
+- `ansi_rand` / `ansi_srand` (LCG 0x41c64e6d / 0x3039 at A5 - 0x6c; the result is
+  BFEXTU {1:15});
+- the six-letter base-26 codes (DIVSL.L #26 signed, decoded with MULU.L);
+- overlay poisoning and restore (twelve random bytes set to 0xff and recorded);
+- the challenge table (init, a random pick by DIVU.W remainder, the index check);
+- the response check: key-shifted letters compared as bytes from the last, strlen through
+  JT $522, the low word of the match count returned;
+- the 28-bit code packing and unpacking with its DIVS.W fields.
+
+`m68k_emu` gained BFEXTU with an immediate offset and width (register or memory field).
+
+- `tools/strict_port/gen_id05_protection_cases.py` loads ID05 at 0x30000 and covers 61 calls:
+  seeds including 0 and 0x80000000, edge and negative codes, letters outside A..Z, poisoning with
+  three sizes and a null base, every restore condition, four valid responses and three
+  rejections, and packing with negative and capped fields.
+
+ID06's software rasteriser follows in `godot/strict_port/code/ID06.gd`: 22 of its 24 routines.
+- Patterns and colours: the pattern and colour-map tables, the grey pattern of an RGB colour,
+  the colour map lookups.
+- Memory: the long-aligned blocks (NewPtr + 12, the size and allocation kept below them).
+- The raster target, the row table and its fields, and the edge pool with its sentinel edges;
+  the row count, band rebasing, and the edge-table reset.
+- `add_polygon_edges`: the clipper. Edges are taken top to bottom, clipped to row 0 with a 64-bit
+  MULS.L / DIVS.L and cut at the left and right borders into vertical pieces. On a DIVS.L overflow
+  the registers are left as they were, so the port keeps the low long of the product.
+- `add_rect_polygon`: it builds its four points in its own frame (the port models A7).
+- `set_active_row_count`: it reads the row count through the row-table pointer even when that
+  pointer is null (the original does too).
+
+`render_scanline_spans` keeps register state in its own code bytes and `rasterize_and_present`
+calls it through a code pointer; both are left for later.
+
+- `tools/strict_port/gen_id06_raster_cases.py` covers 61 calls. Most start from a scene the
+  ORIGINAL built (init_raster_target, plus polygons), captured as writes. NewPtr is scripted, and
+  a preset call count makes it fail. The polygons cover inside, crossing both sides, crossing
+  top and bottom, wholly left / right, flat edges, a corner-to-corner sliver and a full pool.
+
+The small segments start in `ID07.gd`, `ID08.gd` and `ID09.gd`:
+- ID07 rewrites STR# 129 in place into 120 strings: "\r" / "\t" escapes resolved (ID01's dense
+  switch helper, JT $3a, on the next character; any other backslash kept), "\p" strings kept
+  Pascal and the others made C. It then copies four groups of its pointers. Its moves go through
+  ID02's memmove, so the port calls the ported `ansi_memmove`.
+- ID08's beep-and-exit, and the payload read: GetFPos / GetEOF write into its frame, then NewPtr
+  and FSRead.
+- ID09's SwapMMUMode glue (an OS trap on D0) and its Pascal-to-C conversion.
+
+The stand-ins gained "trap_d0" for OS traps that take and return D0.
+
+- `tools/strict_port/gen_id07_09_cases.py` writes one fixture per segment (15 calls). ID07 runs
+  the real ID01 switch helper and ID02 memmove behind JMPs in their jump-table slots over three
+  prepared STR# layouts; the others cover a failing NewPtr, both MMU modes and strings of 0, 1,
+  12 and 254 bytes.
+
+ID04 starts in `godot/strict_port/code/ID04.gd` with 20 routines:
+- the dialog-item helpers (hilite, hide / show, text, title, user-item procedure, framed box);
+- the user-item procedures (default-button outline, grey item, percent bar), which are Pascal:
+  the callee pops its arguments;
+- the radio-group search and the temporary window;
+- the scenery-error, save, end-mission and erase-scores alerts;
+- the kill-report state and the weighted pilot score.
+
+Most start with GetDItem, which writes the item's type, handle and box into the caller's frame,
+so the "out" stand-ins now take a size or a list of longs (`["out", value, size]`,
+`["out", [long, ...]]`).
+
+- `tools/strict_port/gen_id04_dialog_cases.py` covers 40 calls (every helper, percent bars at 0 /
+  37 / 100 / -10 / 250 %, three radio groups with GetCtlValue scripted 0, 0, 1, the temporary
+  window made and reused, the alerts, six mission states for the end-mission check and the kill
+  report, four pilots' scores).
+- `ID04.gd` batch 2 adds 18 routines: `rank_pilots_by_score`, `reset_pilot_record`,
+  `prune_inactive_pilots_beyond_ten`, the scrolling text item (`create_` / `draw_` /
+  `dispose_scrolling_text_item`, its user item procedure, `sync_text_scroll_to_control`,
+  `update_scroll_bar_maximum`, `scroll_text_to_show_selection`, `fit_text_view_to_box`,
+  `scroll_bar_action_proc`, `append_line_to_scrolling_text`), `play_named_sound_async`,
+  `stop_named_sound`, `poll_click_or_key_event`, `check_system_requirements` and
+  `draw_select_mission_title`. `tools/strict_port/gen_id04_scroll_cases.py` runs the original
+  bytes with ID01's dense switch helper for real (scroll bar parts, event kinds) and every trap
+  logged; a case may carry its own call logs, so GetNextEvent's event and SysEnvirons' record vary
+  per case. `test_id04_scroll.gd` replays 54 cases (two rankings with ties and name ordering,
+  three prunes, TextEdit scroll states, all four scroll parts, nine event kinds, five machines).
+  `scroll_bar_action_proc` asserts on parts outside 20..23, where the original reads an unset
+  frame word.
+
 `animate_ground_fire` (`0x17150`) and `tick_ground_fire` (`0x17380`) are ported. The
 fire keeps four vertices beside its owner, across the owner's velocity: offsets
 (±v asl 5) divs.l (|vx| + |vz|), stored / 8 toward zero as drift words. While the
