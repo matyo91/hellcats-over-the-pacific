@@ -31022,7 +31022,7 @@ void parachute_descend /* Original: FUN_0001952e */ (undefined4 *ctl /* parachut
     tmp = table_lerp_1b2c0(*(uint *)(obj + 0x1c)); /* Original: FUN_0000e42a */
     drag = (int)*(short *)((int)ctl + 0x616) +
             (vi * ((vi * drag) / (int)(short)tmp) * 2) / 0xa0;
-    *(short *)((int)ctl + 0x616) = (short)tmp; /* CORRECTED [PROVEN]: 0x196d4 divs.l d7,d1 has ext 0x1801 (Dr == Dq == d1, quotient only, no remainder) and 0x196d8 stores D0, which still holds ext.l(table_lerp_1b2c0) from 0x196b6; Ghidra's iVar8 % 10 was wrong */
+    *(short *)((int)ctl + 0x616) = (short)(drag % 10); /* RE-CORRECTED [PROVEN]: the bytes at 0x196d4 are 4c47 1800, i.e. divsl.l d7,d0:d1 (ext 0x1800: Dq = d1, Dr = d0), so D0 receives the remainder and 0x196d8 stores drag % 10 (truncating), as Ghidra's iVar8 % 10 had it; the earlier note misread the extension word as 0x1801. Confirmed by the m68k_emu run of the original bytes (test_parachute.gd). */
     vy = 0;
     vx = 0;
     vz = speed - (short)(drag / 10);

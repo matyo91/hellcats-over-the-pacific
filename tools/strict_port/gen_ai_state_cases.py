@@ -10,7 +10,8 @@ update_aircraft_entity; other kinds run the per-kind fly routines of ai_fly_tabl
 the attack run, the scripted mission with its landing approach); the landing glide (0x1a1a6) is run directly. A frame that drops a bomb or
 fires the guns needs a live object pool, so spawn_weapon_entity (file 0x12840) and
 spawn_ordnance_oriented (file 0x15d20) are stubbed on both sides: they record their arguments
-(longs at ARGS_WEAPON / ARGS_ORDNANCE) and return 0 (no object). test_ai_states.gd replays the cases through the strict port.
+(longs at ARGS_WEAPON / ARGS_ORDNANCE) and return 0 (no object). test_ai_states.gd replays the
+cases through the strict port (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_ai_state_cases.py  (writes the fixture JSON)
 """
@@ -244,9 +245,12 @@ CASES = [
 
 
 def record_args(emu: Emulator, out: int, count: int) -> int:
-    """The spawn stub: copy its long arguments to out and return 0 (no object)."""
+    """The spawn stub: append its long arguments to the log at out (long call count, then count
+    longs per call) and return 0 (no object)."""
+    calls = emu.read(out, 4)
     for i in range(count):
-        emu.write(out + 4 * i, 4, emu.read(emu.a[7] + 4 * i, 4))
+        emu.write(out + 4 + 4 * (calls * count + i), 4, emu.read(emu.a[7] + 4 * i, 4))
+    emu.write(out, 4, calls + 1)
     return 0
 
 
@@ -294,11 +298,11 @@ def compact(writes: list[list[int]]) -> tuple[list[list[int]], list[list[int]]]:
 
 def main() -> None:
     out = {"memory_size": MEMORY_SIZE, "stack_top": STACK_TOP, "stack_guard": list(STACK_GUARD),
-           "ctl": CTL, "cases": []}
+           "stubs": {"spawn_weapon_entity": ARGS_WEAPON, "spawn_ordnance_oriented": ARGS_ORDNANCE}, "cases": []}
     for c in CASES:
         changes = run_case(c)
         zero, writes = compact(c["writes"])
-        out["cases"].append({"name": c["name"], "routine": c["routine"], "zero": zero, "writes": writes, "changes": changes})
+        out["cases"].append({"name": c["name"], "routine": c["routine"], "args": [CTL], "zero": zero, "writes": writes, "changes": changes})
         print(f"{c['name']}: {len(changes)} bytes changed")
     FIXTURE.write_text(json.dumps(out, separators=(",", ":")) + "\n")
 

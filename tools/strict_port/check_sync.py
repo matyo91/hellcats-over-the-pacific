@@ -32,7 +32,11 @@ def extract_function(source: str, name: str) -> str:
         rf"^[^\n]*\b{re.escape(name)}\b[^\n]*\((?:/\*.*?\*/|[^;{{}}/])*?\)[^\n;{{}}]*$(?=\s*\{{)",
         re.MULTILINE | re.DOTALL,
     )
-    for pattern in (signature, wrapped, commented):
+    # Parameter list starting on the line after the name (tried last, so existing hashes are
+    # unchanged).
+    next_line = re.compile(
+        rf"^[^\n]*\b{re.escape(name)}\b[^\n(]*\n\s*\([^;{{}}]*?\)[^\n;{{}}]*$(?=\s*\{{)", re.MULTILINE)
+    for pattern in (signature, wrapped, commented, next_line):
         found = _extract_with(source, pattern)
         if found is not None:
             return found

@@ -24,7 +24,7 @@ func run() -> bool:
 
 	ok = Assertions.assert_equal(memory.read_u32(BLIPS_TO_ERASE_COUNT), 0, "clears 32-bit radar blip count") and ok
 	ok = Assertions.assert_equal(memory.read_u32(TRACK_COUNT), 0, "clears 32-bit radar track count") and ok
-	ok = Assertions.assert_equal(memory.read_u8(CHANGED_FLAG), 1, "sets 8-bit radar changed flag") and ok
-	ok = Assertions.assert_equal(memory.read_u8(CHANGED_FLAG - 1), 0xa5, "flag store preserves preceding byte") and ok
-	ok = Assertions.assert_equal(memory.read_u8(CHANGED_FLAG + 1), 0x5a, "flag store preserves following byte") and ok
+	## moveq #1,d0 / move.l d0,$2666e (0x17776): the flag is a LONG set to 1, overwriting all four bytes.
+	ok = Assertions.assert_equal(memory.read_u32(CHANGED_FLAG), 1, "sets the 32-bit radar changed flag") and ok
+	ok = Assertions.assert_equal(memory.read_u8(CHANGED_FLAG - 1), 0xa5, "flag store preserves the preceding byte") and ok
 	return ok

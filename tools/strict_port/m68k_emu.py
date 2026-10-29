@@ -247,7 +247,9 @@ class Emulator:
         return ins
 
     def call(self, address: int, args: list[int], a7: int, max_steps: int = 5_000_000) -> int:
-        """Call the routine at a runtime address with long arguments (pushed right to left)."""
+        """Call the routine at a runtime address with long arguments (pushed right to left). The step
+        limit applies to this call alone."""
+        self.steps = 0
         self.a[7] = a7
         for value in reversed(args):
             self.push(value)
@@ -527,11 +529,23 @@ class Emulator:
         # plain divs.l, so it is decoded here.
         ext = self.read(ins.address + 2, 2)
         dq, dr = M.M68K_REG_D0 + ((ext >> 12) & 7), M.M68K_REG_D0 + (ext & 7)
-        if ext & 0x0400:
-            raise NotImplementedError(f"64-bit dividend at {ins.address:#x}")
         s = sext(self.read_op(ops[0], 4), 4)
         if s == 0:
             raise ZeroDivisionError(f"divs.l by zero at {self.pc:#x}")
+        if ext & 0x0400:
+            # 64-bit dividend Dr:Dq (Dr high); quotient to Dq, remainder to Dr; overflow sets V
+            # and leaves both registers unchanged.
+            dividend = (self.get_reg(dr) << 32) | self.get_reg(dq)
+            if dividend & (1 << 63):
+                dividend -= 1 << 64
+            q, rem = self._tdiv(dividend, s)
+            if not -0x80000000 <= q <= 0x7FFFFFFF:
+                self.v = 1
+                return
+            self.set_reg(dr, rem & 0xFFFFFFFF)
+            self.set_reg(dq, q & 0xFFFFFFFF)
+            self.logic_flags(q & 0xFFFFFFFF, 4)
+            return
         q, rem = self._tdiv(sext(self.get_reg(dq), 4), s)
         if not -0x80000000 <= q <= 0x7FFFFFFF:
             self.v = 1
@@ -544,6 +558,22 @@ class Emulator:
     op_divsl = op_divs
 
     def op_divu(self, ins, ops, size, nxt):
+        if size != 2:
+            # Long form (as op_divs): Dq / Dr from the extension word, 32-bit dividend only.
+            ext = self.read(ins.address + 2, 2)
+            dq, dr = M.M68K_REG_D0 + ((ext >> 12) & 7), M.M68K_REG_D0 + (ext & 7)
+            if ext & 0x0400:
+                raise NotImplementedError(f"64-bit divu dividend at {ins.address:#x}")
+            s = self.read_op(ops[0], 4)
+            if s == 0:
+                raise ZeroDivisionError(f"divu.l by zero at {self.pc:#x}")
+            d = self.get_reg(dq)
+            q, rem = d // s, d % s
+            if dr != dq:
+                self.set_reg(dr, rem)
+            self.set_reg(dq, q)
+            self.logic_flags(q, 4)
+            return
         s = self.read_op(ops[0], 2)
         r = ops[1].reg
         if s == 0:
@@ -663,6 +693,39 @@ class Emulator:
 
     def op_lsr(self, ins, ops, size, nxt):
         self._shift(ops, size, "lsr")
+
+    def _rotate_x(self, ops, size, left):
+        """roxl / roxr: rotate through X; C = X = the last bit out (count 0: C = X)."""
+        if len(ops) == 1:
+            count, dst = 1, ops[0]
+        else:
+            count = self.read_op(ops[0], 4)
+            count = count % 64 if ops[0].type == M.M68K_OP_REG else count
+            dst = ops[1]
+
+        def apply(d):
+            v = d & MASK[size]
+            x = self.x
+            for _ in range(count):
+                if left:
+                    out = 1 if v & SIGN[size] else 0
+                    v = ((v << 1) | x) & MASK[size]
+                else:
+                    out = v & 1
+                    v = (v >> 1) | (SIGN[size] if x else 0)
+                x = out
+            self.nz(v, size)
+            self.v = 0
+            self.x = x
+            self.c = x
+            return v
+        self.rmw(dst, size, apply)
+
+    def op_roxl(self, ins, ops, size, nxt):
+        self._rotate_x(ops, size, True)
+
+    def op_roxr(self, ins, ops, size, nxt):
+        self._rotate_x(ops, size, False)
 
     # flow
     def op_bra(self, ins, ops, size, nxt):

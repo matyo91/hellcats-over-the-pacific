@@ -829,6 +829,789 @@ The per-kind fly routines of `ai_fly_table` are ported with their helpers, regis
   both blend frames, touchdown, both wave-off tests, the integral clamp and the tracker. A
   mutation check (height-controller asl 5 -> asl 4) fails 9 of them.
 
+The ordnance controller (definition key 0xc, record `0x1a988`: tick +2 = `0x12a0a`, collision
++0x12 = `0x12f32`) is ported: `ordnance_tick`, `ordnance_ballistic_step`,
+`ordnance_detonation` and `ordnance_collision`.
+- Each live frame turns the speed word +0x610 into a velocity through the attitude, adds
+  gravity (-0x5b) and stores the velocity / 64. The attitude follows the velocity, and the
+  bank turns with the heading change times sin(pitch). The frame words are kept at their a6
+  offsets, because `attitude_from_velocity` may leave them unwritten. Reaching the ground
+  sets the impact flag 0x400, and a direct hit on land surfaces 0x30 / 0x60 / 0x70.
+- On impact a direct hit splashes at sea or blasts on land; otherwise
+  `spawn_destruction_effect` decides. A credited bomb on a 'p' surface counts against an
+  enemy facility (host +0xcc, and the mission flag +0xce near the mode 3 / 4 targets) or a
+  friendly one (+0xd2). The blast lands 5 or 15 frames later through `apply_blast_damage`.
+- Replays follow the 75-entry pose ring instead.
+- `helpers/original_cases.gd` now replays every interpreter fixture (routine, arguments,
+  zero ranges, writes). Stubs come from the fixture (`helpers/stubbed_port.gd`): the
+  ordnance cases stub `spawn_mission_pool_object`, recording its arguments.
+- `tools/strict_port/gen_ordnance_cases.py` covers 25 states: falling, ring wrap, sea /
+  land / non-runway impacts, every detonation branch including both mission targets, the
+  blast frame, the burning trail, the three replay paths and four collisions. A mutation
+  check (gravity -0x5a) fails 15 of them.
+
+The parachute controller is ported (record `0x1ab1e`: tick +2 = `0x19918`, destroy +0xa =
+`0x194fa`): `parachute_tick`, `parachute_descend` and `destroy_parachute_controller`.
+- The fall works like the ordnance step, slowed by a drag term over the air density
+  (`table_lerp_1b2c0`). From age 16 the canopy opens: a shadow, 13 vertices drifting with
+  decaying velocities, and a growing drag. Within 0x17f of the ground it lands, and the
+  canopy then collapses toward heading 0x588 until nothing stands and the object is
+  cleaned up.
+- The interpreter run corrected the semantic C. At 0x196d4 the bytes are `4c47 1800`, a
+  `divsl.l d7,d0:d1` whose remainder goes to D0, so +0x616 keeps (sum % 10). That is
+  Ghidra's original reading; the earlier "CORRECTED [PROVEN]" note had misread the
+  extension word as `0x1801`, and is withdrawn in the C and in `DECOMPILATION_SYMBOLS.md`.
+- `tools/strict_port/gen_parachute_cases.py` covers 18 states: early fall, canopy opening,
+  untracking, landing on the ground and on a deck, collapse (plain, shifted shape, folded
+  heading, nothing left), ring wrap, the three replay paths and both destroy cases.
+
+Ten small controller routines are ported and registered by their definition-record slots.
+Records are 0x1e bytes: +0 type, +2 tick, +6 create, +0xa destroy, +0xe pre-render,
++0x12 collision, +0x16 notice.
+- **Destroy hooks:** the plume, ground fire and shadow destroy hooks each release the
+  owner's reference byte.
+- **Pre-render:** `effect_pre_render_hook` dispatches through `effect_pre_render_table`
+  (`0x1b42c`). Kind 2 is `face_object_to_camera`; kinds 0, 1 and 3 are the "clr.l d0; rts"
+  tails inside it.
+- **Cloud tick:** `follow_camera_offset`.
+- **Singleton factory:** `create_singleton_type10_controller` publishes `0x20b40`.
+- **Collision:** `impact_one_time_in_16` is a collision pair handler (one rng in 16
+  becomes an ordnance hit; it returns the masked rng).
+- **Pose ring fills:** `fill_pose_history_angles` / `_flags`.
+- `tools/strict_port/gen_controller_misc_cases.py` covers 20 states. The replay helper now
+  also compares a returned D0 where a case records one, and calls a port function by name
+  for routines no dispatch table reaches.
+
+The twelve template registration hooks are ported: the first +6 create hook of the effect /
+smoke / ordnance / bullet / trail / ground fire / debris / ground mark / shadow / turret /
+parachute / cloud records.
+- **Single records:** store the template object and redirect +6 to their controller
+  factory.
+- **Slot records:** fill the first empty slot of their table (unsigned word index) and
+  redirect once the index passes a threshold:
+  - effect: 4 slots, index > 2;
+  - trail: 2 slots, index != 0;
+  - shadow: 4 slots from `0x2676c`, i.e. `shadow_templates[1..4]`, so kind 0 stays empty;
+  - cloud: 5 slots, index > 3.
+- A full table stores nothing but still redirects.
+- `tools/strict_port/gen_template_registration_cases.py` runs every hook and every fill
+  level (28 cases, D0 = 0 checked).
+
+The view distance and radar routines are ported: `set_view_distance`,
+`cycle_view_distance`, `update_radar_range_buttons` and `update_radar_scope`.
+- **Ranges:** the radar range cycles 0xce40 -> 0xc15c0 -> 0x26ac0.
+- **Range buttons:** the scale is the range per half scope width (in 1/8 pixels). The three
+  range buttons are drawn lit or unlit through host +0x28e.
+- **Scope:** last frame's blips are erased on colour screens. Each track is scaled and
+  rotated by the camera heading into scope coordinates; inside the scope it is drawn as a
+  blip, or on black and white as two host lines (at the scaled offsets, not the screen
+  position, as the bytes do). The track lists then swap.
+- **Call logs:** these routines draw through code pointers, so the fixture names those
+  pointers. The test points them at logging stubs on both sides, and the call order and
+  arguments are compared with the memory (`call_logs` in `helpers/original_cases.gd`).
+- **Fix to an older port:** the interpreter case showed that `reset_radar_tracks` wrote the
+  radar-changed flag as one byte. The bytes (`moveq #1,d0; move.l d0,$2666e`) write a long,
+  so the port and `test_reset_radar_tracks.gd` now use the long.
+- `tools/strict_port/gen_radar_cases.py` covers 16 states.
+
+The effect log and the sound routines are ported: `replay_logged_effects`,
+`mark_effect_log_end`, `stop_all_sound_channels`, `play_game_sound` and `stop_game_sound`.
+- **Effect log:** replaying holds `replay_state` at -1, consumes every entry up to this
+  frame, re-spawns those of exactly this frame, and stops at a later frame or the
+  0x7fffffff end mark.
+- **Sound:** channel 1 takes a sound only when it is free or the new id is lower (higher
+  priority).
+  - Ids up to 99 need their record.
+  - Ids 1..4, 6, 8, 9 and 12 play once; the others loop at the record's loop points.
+  - Id 100 plays the record at table +0x1c from offset 0x48c0.
+  - Ids above 100 never load a record and play with the caller's A1, which the port takes
+    as `a1_in`; this is not exercised by the test.
+- **Call logs:** a logging stub now returns the long just before its log, so host
+  queries (channel playing) can take both branches.
+- `tools/strict_port/gen_sound_effect_log_cases.py` covers 28 states, including every
+  play-once / loop id class and the priority rule.
+
+The smoke plume shapes are ported: `plume_pre_render` (the plume record's +0xe hook,
+`0x11a70`), `shape_free_plume` and `shape_trailing_plume`.
+- **Free plume:**
+  - It can face the camera.
+  - A pending width lays the vertex x out at -1/2 .. 1/2 of it.
+  - Once per frame four vertex heights get rng-scaled jitter, shrunk by age / 45 while the
+    object is under 45 frames old. The age test is a word compare, so ages wrap at 65536.
+- **Trailing plume:** builds its eight vertices from the owner's 8-point trail ring around
+  the newest point. Random picks (rng & 3) roughen its edges.
+- `tools/strict_port/gen_plume_cases.py` covers 15 states.
+
+The shadow, turret and bullet pre-render hooks (record +0xe, `0x18a14` / `0x19374` /
+`0x15e42`) are ported.
+- **Shadow:** an aircraft's shadow stretches its first face along x by |cos(bank)| from its
+  template vertices, never narrower than 0x32 << shift. A dead owner returns 4.
+- **Turret:** an aimed, idle turret shows its aim heading.
+- **Bullet:** a bullet joins the dot list (up to 30, word `0x265d0`), turning its two
+  vertices by its matrix in phase 2, and returns 4 (not drawn as a shape).
+- `tools/strict_port/gen_pre_render_cases.py` covers 14 states, with the returned D0.
+
+The remaining polygon helpers are ported, completing the family:
+- `point_in_polygon_xy` is the xz test with the second coordinate at +6; the shared helper
+  now takes both offsets.
+- `project_face_vertices_yz` writes words +6 / +10.
+- `point_over_face_xz` projects a face relative to the object, shifted by the record's
+  position shift (asr when negative, asl otherwise), into a 0x690-byte frame buffer and
+  tests (0, 0).
+- `tools/strict_port/gen_polygon_cases.py` covers 15 states (edges, a concave polygon,
+  slanted edges, word-wrapping origins, both shift signs).
+
+The bullet dot routines are ported: `plot_dot_depth8` / `erase_dots_depth8`,
+`plot_dot_depth4` / `erase_dots_depth4` and `plot_dot_bw`.
+- **8-bit:** a dot covers 1..4 bytes (2 x 2), saving what it covers in its 14-byte record
+  (`0x26288`). Erasing restores only the pixels that still show the dot colour.
+- **4-bit:** two pixels share a byte, so a record keeps its phase (the nibble it starts on)
+  and plotting and erasing work on nibbles. The phase-0 erase restores both nibbles of a
+  row from the same saved byte, as the bytes do.
+- **1-bit:** a dot is a 4-point polygon from the corner tables (`0x1b48c` / `0x1b4cc`),
+  filled through host +0x7c.
+- **Call logs** can now also record a buffer passed by address. The 1-bit fill's polygon is
+  logged with its 8 point longs.
+- **Replay helper fix:** the helper enters each routine with its arguments and return
+  address pushed, as the interpreter does. Before, frame addresses were offset by that
+  amount. It never showed until a frame address (the polygon pointer) left the stack; all
+  earlier fixtures still match.
+- `tools/strict_port/gen_dot_cases.py` covers 19 states. The screen bytes are the binary
+  image's own, the same on both sides.
+
+`copy_object_vertex_buffer`, `deactivate_object` and `collect_near_objects` are ported.
+- **Deactivation:** a shape frees its vertex buffers, face index lists and face table,
+  unlinks its controller, goes through cleanup when its bytes +1 / +2 differ, and drops the
+  0x80000 flag. A group marks, unreferences and unlinks its children, then frees its child
+  table.
+- **Near list:**
+  - Objects in range are kept. Visible shapes also get a detail shift, a camera-relative
+    view point (unless +4 bit 2) and a place in the visible list.
+  - Objects slightly out of range, and shapes seen in the last 0x4b frames, are kept too.
+  - The rest retire (when +0x3c is set), are deactivated and move to `entity_array_3`.
+- **Real heap in the cases:** `tools/strict_port/gen_object_list_cases.py` builds each
+  case's heap by running the original `heap_alloc` in the interpreter. Every long that setup
+  changed becomes a starting write, so `heap_free_coalesce` works on an identical heap.
+  Allocations are at least 32 bytes, because the small size classes would need the host's
+  sbrk. It covers 10 cases.
+
+`collect_far_objects`, `build_visible_object_list` and `transform_int3_vecs_asr_by_1d744`
+are ported.
+- **Far list:** works like the near list (with no kind test for visibility), and also runs
+  the broad phase. Objects with +4 bits 0x2800 are "active": each is tested against the
+  earlier kept objects whose spans it overlaps, and every other object is tested against
+  the active ones. The scans stop at a stored running minimum (+0x28). Objects kept only
+  because they were seen recently skip the overlap list and the collision scans.
+- **Unported callees:** the four collision tests are reached through `_bsr_unported`. The
+  test logs them (19 calls in the mixed case, all four routines) and compares the pairs
+  and their order.
+- **Visible list:** turns the view points into camera space (the 0x1d744 matrix), then
+  keeps, in two passes (near, then far), the objects that have no view point, that the
+  camera is inside, or that lie in front within 1.5 x their screen extent.
+- `tools/strict_port/gen_visibility_cases.py` covers 6 cases.
+
+The broad-phase collision tests are ported: `test_proximity_collision`,
+`test_player_vs_type0e_proximity`, `create_shape_contact_record`, `handle_player_contact`,
+`point_in_face_by_axis` and `test_object_collision`.
+- **Proximity tests:** use 3/4 of the distance against the radii. The player variant
+  requires the player against a type 0xe object.
+- **Contact records:** select the faces whose extent reaches half the shape's metric. A
+  record goes into the 256-slot hash table and keeps face indices, side words and one
+  axis word per face (the dominant axis of the face normal).
+- **`test_object_collision`:** computes, for each recorded face, the side of the face plane
+  the moving object is on. On an existing record a side change asks
+  `point_in_face_by_axis` (projection on the plane named by the axis word). Inside means
+  `dispatch_collision`.
+- **Still unported:** `test_terrain_collision` and `handle_terrain_contact` (the terrain
+  paths). They go through `_bsr_unported` and are logged.
+- **Dispatch through `code_table`:** `collect_far_objects` now reaches the four tests
+  through `code_table` (their runtime addresses), so its own test still isolates them.
+- `tools/strict_port/gen_collision_cases.py` covers 21 cases. Records that must already
+  exist are made by the original creator during setup.
+
+The fractal terrain contact is ported: `create_fractal_contact_record`,
+`fractal_height_at` and `handle_terrain_contact`.
+- **Record:** the terrain record keeps the shifts, a cell rotation (from the summed part
+  angles of the terrain's parent chain), the cell size (0x19c80 scaled) and a cached cell.
+- **Height:** `fractal_height_at` turns the point into cell coordinates. Outside the cached
+  cell it floors to the new cell and finds its two faces from the face-centre template
+  vertices near the cell centre, then picks the triangle (flagging a change). The height
+  comes from that face's plane, never below 0.
+- **Player contact:** `handle_player_contact` now calls `handle_terrain_contact` directly,
+  which stores the height in the player's controller and releases its fractal reference.
+- **Terrain collision:** `lift_object_onto_terrain` and `test_terrain_collision` complete
+  the chain, so the far list's broad phase is now ported end to end.
+  - The lift raises an object that sank below the ground (its y, vertices, range and face
+    extents) and hangs it on a support point of the terrain's support list. The support
+    point is the face centre of the record's triangle, read from the terrain's live
+    vertices, not the template the C named. Without a usable plane it is a cell-corner mix.
+  - The terrain test adds a range check, lifts on a triangle change, and collides when the
+    object is below the ground.
+- `tools/strict_port/gen_terrain_cases.py` covers 22 cases on a small terrain it builds:
+  rotated and unrotated, other triangle, negative cell, cached cell, replay, early return,
+  no controller, successive height lookups on one record, terrain collisions (lifted, above,
+  frozen, out of range, rotated, a second call) and the cell-corner lift. Size class 5 of
+  the heap (the support list and points) gets a seeded free list. The collision fixture
+  drops its stubbed terrain cases (20 cases now).
+
+Five per-frame simulation steps are ported:
+- `clear_pending_entity_slots` cleans up the 7 scatter slots.
+- `apply_controller_velocities` keeps the old position and moves flagged objects by their
+  controller velocity.
+- `tick_flagged_object_controllers` compacts the controller list and runs the definition
+  tick of objects with +5 bit 2. When entries were dropped it moves down controllers
+  appended by the ticks.
+- `dispatch_entity_tick` applies the mission rates and shows or hides type 5 objects by
+  host word +0xb0.
+- `age_contact_records` frees untouched contact records (releasing a terrain reference)
+  and counts the others down.
+- `tools/strict_port/gen_sim_step_cases.py` covers 9 cases. The controller ticks log their
+  calls. A tick that really appends a controller during the loop is not exercised; the
+  long count above its loop word is.
+
+Three camera routines are ported:
+- `copy_player_pose_to_camera` puts the camera on the player with negated angles.
+- `place_camera_behind_object` puts it 1000 units behind an object, away from a point,
+  never lower than 0xfa.
+- `turn_camera_toward_point` eases the camera a quarter of the way toward a point, or snaps
+  when either angle is more than 0x1000 off.
+- `tools/strict_port/gen_camera_cases.py` covers 8 cases.
+
+The radar blip routines behind `update_radar_scope` (*0x1da90 erase / *0x1da94 draw) are
+ported:
+- **8-bit:** a 12-byte cross restored from the saved panel, or filled with the colour byte
+  host +0x1e7. The draw is a second entry (`0x17810`) inside `erase_radar_blip_depth8`, so
+  it has no mapping row of its own.
+- **4-bit:** two nibble patterns by pixel phase.
+- **1-bit:** both draw and erase are a host rectangle call (+0x276).
+- `tools/strict_port/gen_radar_blip_cases.py` covers 9 cases on a fake frame and panel.
+
+The bail-out and replay views are ported: `resolve_bailout_outcome`, `update_bailout_view`
+and `begin_replay_view`.
+- **Bail-out outcome:** it probes the nearest facility. A hard parachute landing ends badly;
+  otherwise random rolls (by place: enemy, friendly, open country) set the verdict in host
+  +0xd4, and an intact abandoned aircraft gives 4.
+- **Bail-out camera:** it follows the parachute, from behind it toward the aircraft or from
+  its pose ring.
+- **Replay start:** places the camera behind the player's current pose and sets a goal
+  beside the previous one, reached in 75 steps. It then resets the replay state and stops
+  all sound.
+- `tools/strict_port/gen_view_cases.py` covers 25 cases. Fifteen random seeds reach every
+  verdict for each kind of place.
+
+`update_tracking_camera`, the replay and end-sequence camera, is ported.
+- **What it looks at:** a live player shot, the midpoint with a designated aircraft (held
+  for 20 frames), or the player.
+- **Where it sits:** when tracking an aircraft it sits behind the player, or behind the
+  aircraft when the aircraft heads within 0x1000 of the player and its point 0x4000 ahead
+  is nearer. Otherwise it glides toward the replay goal, re-aimed when a follow ends.
+- **End of replay:** the frame counter drives replay state 3 and the final result: -1, 1,
+  or the bail-out outcome.
+- `tools/strict_port/gen_tracking_cases.py` covers 15 cases. The two forward-point cases
+  end behind different anchors.
+
+The frame loop is ported: `advance_frame_and_tick_controllers`, `run_simulation_tick` and
+`reset_distance_base_globals`.
+- **Frame advance:** each frame advances the counter (a replay start steps back 0x4a frames
+  and marks the effect log). In a replay it sets each shape's and pool object's visibility
+  by its birth and death frames and re-spawns the logged effects. It then runs every live
+  controller's tick, compacting the list, records the live count and applies the
+  velocities.
+- **Simulation tick:** cleans the pending slots, runs the mission-rate tick over the four
+  object arrays in mission phases 1..5, and resets the distance references.
+- `tools/strict_port/gen_frame_loop_cases.py` covers 8 cases.
+
+The cloud layer is ported: `spawn_cloud_layer` and `spawn_camera_relative_object`.
+- **Placement:** ten clouds of random class go on bearings at least 0x280 apart, around the
+  camera. High clouds (class 4) sit at 300000+ facing 0x4000; the others sit at about 52000
+  facing away from their bearing.
+- **No clouds:** without clouds, type 0x1d objects retire.
+- **Stub log:** the spawn stubs now append every call to a log (call count, then the
+  arguments) instead of keeping only the last one, so all ten placements are compared. The
+  four earlier fixtures that use the stubs were regenerated.
+- **Emulator:** its step limit now applies per call.
+- `tools/strict_port/gen_cloud_cases.py` covers 5 cases (three random seeds).
+
+`update_altitude_detail_bands` (`0x5a14`) is ported: the per-frame detail manager.
+- **Altitude band:** a power of two at or below the camera height (log in word `0x1d704`).
+  Its table value, interpolated by `(y - band) * v asr log`, becomes the y of the horizon
+  objects' vertices.
+- **Detail references:** the near reference moves to the camera beyond metric 0xce40, the far
+  one beyond 0x80e80 (`m + m asr 3`). A band change across 0xff or a move rebuilds every land
+  outline at the band's tolerance (halved under 0x8000, `* 0x16a1 / 4096`, limit 9/10).
+- **Far lists:** after a move, hidden unreferenced objects are freed with their controllers
+  (destroy hook first), very far ones go to `entity_array_4`, far ones stay in
+  `entity_array_3` and near ones are activated; freed controllers leave `controller_list`.
+- **Original quirk kept out of the cases:** a negative outline range sum never ends the
+  original's shift count, so the tolerance table entries stay small.
+- `tools/strict_port/gen_altitude_band_cases.py` covers 13 cases on real heaps (stack guard
+  widened to 0x2400 for the outline frame).
+
+`update_ground_scatter_objects` (`0x5e28`) is ported: 64 ground points around the camera feed
+7 scatter object slots.
+- **Off / high:** off without host word +0xac. Above height 0x26ac the slots are cleaned up
+  once (`clear_pending_entity_slots`).
+- **Re-placement:** a point beyond 0x4d58 on x or z is re-placed. In views <= 5 it goes on a
+  circle around the player heading; after a reset, or in other views, it goes anywhere in the
+  square. A slot it named loses +4 bit 2.
+- **Projection:** points go to view space in the frame (only the low words of the translated
+  longs reach the matrix). Those newly on screen get bit 7 and a visible-list entry.
+- **Slots:** each slot keeps its point, hides, or pops visible points until a surface has a
+  template. A same-class object with vertices is re-placed in place: scene record, position,
+  vertices, metric, band, shade. Others are cleaned up and a new object is spawned.
+- `tools/strict_port/gen_ground_scatter_cases.py` covers 9 cases. Its stack guard is widened
+  to 0x1000, because `surface_type_at_point`'s frame lies below the default guard.
+
+A batch of twelve small routines is ported, all checked by `test_small_math.gd`:
+- **Copy and checks:** `copy_block_return_dst` and `any_mission_kills_recorded` (the twelve
+  kill words at host +0xba..+0xd0).
+- **Attitude:** `build_attitude_matrix_from_dir_roll` (pitch and heading from a direction,
+  roll by angle; its square roots go through `isqrt_floor` and are taken as words) and
+  `rotate_int3_vecs_by_3ang`.
+- **Tagged invokers:** `invoke_tagged_attitude_compose_neg_sins4` / `_6` negate the sines and
+  run the composer named by `attitude_compose_tag`. That composer is the alt (transposed) one,
+  so the three alt composers are now in `code_table` under their runtime addresses
+  (0x2408 / 0x2468 / 0x26e0).
+- **Faces and colours:** `face_is_back_facing` (word products, summed as longs) and
+  `recolour_kind2_object`.
+- **Display state:** `reset_background_rows`, `reset_overlay_display_state`,
+  `clear_flag_00020ae4`.
+- **Angle:** `acos_scaled_dot3` (the dot product over `(|a| * |b|) asr 16`, then acos).
+- **Original crash kept out of the cases:** a direction whose x² + z² overflows a long makes
+  the original divide by zero.
+- `tools/strict_port/gen_small_math_cases.py` covers 46 cases. D0 is compared for the routines
+  that return a value.
+
+The cockpit instruments are ported: `draw_gauge_needle` and twelve updaters (altimeter,
+airspeed, direction, climb, tachometer, manifold, bomb lamp, throttle bar, flaps, gear, ammo,
+fuel).
+- **Needle:** a needle goes through the host line routine (host +0x272) when host word +0x9e
+  is set. Otherwise, once the readouts are drawn, an unchanged end returns 0, and a changed
+  one restores the old line (`depth_routine_da98`) before drawing the new one
+  (`depth_routine_da9c`). The end is cached per instrument type.
+- **Updaters:** each turns a player or camera value into a 14-bit angle and offsets the dial
+  centre by `(cos, sin) * length asr 12`. Most skip the redraw when the readouts are drawn and
+  the cached value is unchanged. The altimeter's short hand, the bomb lamp (host +0x29e) and
+  the throttle rectangles (host +0x28e) use their own host routines.
+- **Call logs:** the replay helper's logger now handles 7- and 8-argument code pointers.
+- `tools/strict_port/gen_gauge_cases.py` covers 128 cases (drawn / undrawn, value changed /
+  unchanged, host line routine, the airspeed piece boundaries).
+
+`update_view_readouts_and_overlays`, `mark_view_overlays_drawn` and `c_strlen` are ported.
+- **Readouts (panels not drawn):** each pass of the view_inset count prints one of the four
+  numeric readouts (altitude, speed, heading with a degree sign, climb) through the host text
+  routine (host +0x27a), when its value differs from the cached magnitude. Inset 4 first resets
+  the cache and the index; the reset leaves the loop counter at 4, so five passes run in all.
+  View 7 reads the designated aircraft and skips the climb readout.
+- **Panels drawn:** the panel copy offset is set, and the sky / ground, heading tape, panel
+  frame lines and instruments are redrawn, all as ported.
+- **Call logs:** the replay helper's logger now also handles 0-argument code pointers.
+- `tools/strict_port/gen_readout_cases.py` covers 18 cases. The text sent to the host is
+  compared through the call log, which records its first 12 bytes.
+
+`draw_panel_frame_lines` (`0xba2a`) is ported: the four panel frame lines.
+- **Host lines:** with the host line routine, two vertical and two horizontal lines go
+  through host +0x272 (nothing at depth 1).
+- **Direct drawing:** otherwise they are written into the screen. At depth 4 the colour is the
+  byte (c << 4) | c; at depth 8 it is the word (c << 8) | c, with the row bytes halved toward
+  zero. Columns step one row at a time; horizontal lines are two rows thick, (right - left) / 2
+  pixels long. Other depths draw nothing.
+- The readout routine now calls it directly, so its `blocked_by` names only the sky / ground
+  and heading tape routines.
+- `tools/strict_port/gen_panel_frame_cases.py` covers 11 cases (odd and negative row bytes,
+  odd widths, empty lines).
+
+The heading tape is ported: `update_heading_tape`, `begin_offscreen_drawing` and
+`end_offscreen_drawing`.
+- **Position:** (-heading * period) / 0x4000 toward zero, minus half the window, plus host
+  word +0x1a8. A negative position is raised by the period, but the original never reduces
+  one from above. An unchanged position (`heading_tape_pos`) skips the copy.
+- **Panels not drawn:** the window is first cleared in an offscreen port over the saved panel
+  copy (the port record and rects live in the frame).
+- **Below depth 8:** the strip window goes through the host copy routine (host +0x29a), split
+  in two when it runs past the period.
+- **Depth 8:** the window columns are walked against the marking bytes at the old and new
+  positions. Runs of marked columns go to `copy_rect_depth8` through its code address,
+  wrapping the strip at the period.
+- **Dead code kept out:** the depth-4 strip branch (0xc444, `copy_rect_depth4`) is unreachable,
+  because it is only entered at depth 8.
+- **Call logs:** the logger now reads through a second pointer argument, so copy bits logs
+  both its rectangles.
+- `tools/strict_port/gen_heading_tape_cases.py` covers 15 cases. The readout routine now
+  calls the tape directly, so its `blocked_by` names only the sky / ground routine.
+
+`draw_sky_and_ground` (`0xb4b6`) is ported, so the readout routine's whole drawn-panels path
+runs strict code (its `blocked_by` is now empty).
+- **Row buffers:** a changed view geometry (host +0x186..+0x199) frees both row buffers and,
+  below depth 1, reallocates them at rows * 20 bytes. The cases run this on a real heap.
+- **Horizon:** the edge is scaled from view rows to the cached rows. It gives the top and bottom
+  band rows, the x at the top (16.16) and the slope. Corner codes 0xf / 0 fill every row with
+  ground / sky.
+- **Depth 1:** on even frames with the panels drawn, it calls the host routine (+0x27e).
+- **Other depths:** each row gets a span record (sky / ground split at the horizon x), the
+  span filler blits them, and the buffers swap.
+- **Unset inputs kept out of the cases:** a flat horizon leaves the x, the slope and the side
+  flag unset, and corners 0xf / 0 leave the lower colour unset. The original hands these to
+  the depth-1 host call, so depth 1 is tested only with a sloped horizon and mixed corners.
+- `tools/strict_port/gen_sky_ground_cases.py` covers 11 cases. The readout fixture now runs the
+  real sky / ground too, with a cached geometry.
+
+The rectangle blitters are ported: `copy_rect_depth8` and `copy_rect_depth4`.
+- **Shape:** each copies a block of columns by rows. Leading columns go one at a time until the
+  destination is aligned; whole longs (depth 8) or 4-pixel words (depth 4) follow, with the
+  source misalignment merged from consecutive source units through a 4-way jump table; then
+  the leftover columns.
+- **Depth 4:** works on pixel (nibble) addresses with the row strides halved. Single pixels
+  are merged nibble by nibble (four parity cases).
+- **Quirk kept:** the height loops are dbra words, so a height of 0 would copy 0x10000 rows.
+- **Code table:** they are registered under their runtime addresses (0xbf90 / 0xbc88), which
+  the heading tape loads as code pointers. Its fixture keeps them as logging stubs, because
+  its frame addresses lie outside the test memory.
+- `tools/strict_port/gen_copy_rect_cases.py` covers 44 cases: every destination / source
+  alignment at both depths, counts ending in the leading part, zero and short counts,
+  negative strides, a single row.
+
+`draw_line_depth8` and `restore_line_depth8` are ported: the needle line draw and its undo.
+- **Algorithm:** both are a hand-written two-pixel-thick Bresenham with entry points in the
+  middle of the loop, ported as one label state machine that follows the original block by
+  block. X-major lines are two rows thick, y-major ones two columns wide. Words go on even
+  addresses; the odd pixel of a diagonal step is written by byte.
+- **Draw / restore:** draw writes the colour byte (doubled for words). Restore copies the same
+  bytes from a backup bitmap with its own row bytes, its pointers moving in step with the
+  screen ones.
+- **Branch flags:** a `bgt` reached by a jump uses the flags of the last add / test of the
+  error term, so it is ported as "error > 0".
+- `tools/strict_port/gen_line8_cases.py` covers 69 cases: lines in every octant, horizontal,
+  vertical, diagonal and single-point ones, odd and even start columns, even and odd row bytes.
+
+`draw_line_depth4` and `restore_line_depth4` are ported the same way, on 4-bit pixels.
+- **Nibbles:** a byte holding both pixels of a pair is written whole; a lone pixel merges its
+  nibble, low for odd pixels and high for even ones (eor / and / eor in the original).
+- **Draw / restore:** draw takes the colour byte, restore the backup byte at the matching
+  address.
+- **Quirk kept:** one x-major exit writes the high and then the low nibble of the same bytes.
+- `tools/strict_port/gen_line4_cases.py` covers 85 cases (the depth-8 lines plus four more with
+  odd pixel ends).
+
+The renderer's face emission is ported: `emit_face_chain`, `emit_faces_bsp`,
+`emit_faces_in_order` and `emit_faces_unnumbered`.
+- **What they build:** the draw-order queue of the prepared object's faces. Each emitted face
+  is numbered (face +2 = `draw_order_next`, which then increments) unless unnumbered, and
+  appended to the queue.
+- **Root walks:** follow each root face's +0x12 chain until a face is nearer than the object
+  distance or hidden (+0x13 bit 1).
+- **BSP walk:** recurses into the far side first (front subtree +0x10 when the face is
+  back-facing, else +0x11), renumbers the node, follows its chain when it was emitted, then the
+  near side.
+- **Near mode:** back-facing one-sided faces go to the back-face queue; two-sided ones get
+  +0x13 bit 4. Outside near mode, a back-facing one-sided face ends a chain.
+- `tools/strict_port/gen_face_emit_cases.py` covers 60 cases on seeded random face sets, with
+  `face_is_back_facing` run as ported.
+
+The face output stage is ported: `output_face_colour`, `output_face_bw`,
+`add_face_edges_to_rows` and `track_ground_plane_horizon`.
+- **Clipping:** both outputs clip the screen polygon through the four `clip_polygon_*` passes,
+  ping-ponging between the two point buffers. The ground face first goes through
+  `track_ground_plane_horizon`, which clips at the alternate bottom row, records the horizon
+  edge (the edge not lying along a screen border) and the screen corners it reaches.
+- **Colour faces:** the face's palette slot is marked (or assigned). Each non-horizontal edge
+  then takes an edge-pool record (16.16 x at the top row, slope) and is inserted into its top
+  row's bucket, sorted by x then slope. An equal edge with no second face takes this face
+  instead.
+- **1-bit faces:** these go to the host polygon routine.
+- **Quirk kept:** an edge on the centre column with no slope is dropped, but its pool record
+  stays counted.
+- **Emulator:** `m68k_emu` now implements the 64-bit-dividend `divs.l` (Dr:Dq) the clippers use,
+  so the `clip_polygon_*` passes are now also checked against the original bytes through these
+  cases.
+- `tools/strict_port/gen_face_output_cases.py` covers 15 cases. The `assign_face_colour` path
+  (a face that lost its palette slot) is not exercised.
+
+The object stage of the renderer is ported: `project_prepared_object`,
+`transform_face_vertices`, `clip_face_near_plane` and `submit_object_faces`.
+- **project_prepared_object:** sets the renderer globals from the prepared object, projects its
+  pre-transformed view vertices (behind the near plane = x 0x80000000) and marks every face for
+  transform (+0x13 |= 0x60).
+- **transform_face_vertices:** brings a face's vertices into camera space once per frame
+  (vertex_done), through the object matrix ((sum + 0x800) asr 12), then projects them.
+- **clip_face_near_plane:** rebuilds the polygon against z = 5. Crossings are interpolated in
+  camera space and projected at z = 5.
+- **submit_object_faces:** for each queued face it transforms when needed, copies or near-clips
+  its points, runs the near-mode penetration test (`point_in_polygon_xy` →
+  `dispatch_collision`) when the face's back / inside flags differ, and outputs it through
+  `depth_routine_ab4`. Then it tests the kept back faces and updates the object's drawn /
+  clipped flags. The two face outputs are now in `code_table` under 0xa14e / 0xa200.
+- `tools/strict_port/gen_object_pipeline_cases.py` covers 17 cases. The output pointer is a
+  logging stub, and the polygons stay off the view axis, so `dispatch_collision` is not reached.
+
+`transform_and_project_object` (`0xa75e`) is ported: it brings the prepared object into
+camera space.
+- **Eye:** the camera position shifted to the object's scale.
+- **Controller:** an unlinked one returns 4. The definition's pre-render hook may cancel
+  (bit 2), keep the attitude (bit 0) or ask to be called again (bit 1).
+- **Oriented objects:** the attitude is built from the controller angles and composed with the
+  camera matrix. The inverse goes through the tagged composer, and the eye (and, for lit
+  objects, the light vector, restored afterwards) is turned into the object.
+- **Band and shade:** the distance band and shading follow the host options.
+- **Vertices:** vertex_done is cleared, faces newly marked for transform mark their vertices,
+  and every marked vertex is transformed and projected. Unlike `project_prepared_object`, the
+  projected y uses a word `neg.w` / `muls.w`.
+- `tools/strict_port/gen_transform_object_cases.py` covers 10 cases. The hook is a logging stub
+  with a per-case return; the object's kind byte keeps shading a no-op.
+
+`render_visible_objects` (`0xac72`) is ported: the per-frame object draw driver.
+- **Pass 1:** pre-transformed objects are projected and their faces run (emit, submit).
+- **Pass 2:** the others are transformed. Near mode is decided while the remaining count is below
+  `visible_first_pass`; entering it clears the faces' inside bit once. Children with a parent are
+  deferred to a frame list. A part-sort request (byte +6 bit 1) runs
+  `sort_group_parts_by_distance` and unnumbered faces.
+- **Pass 3:** deferred children draw with their parent's draw order.
+- **View 1:** `mission_child4` is projected and drawn last.
+- **Quirk kept:** a part-sort request whose object is skipped (transform returns 4) carries over
+  to the next object.
+- `tools/strict_port/gen_render_objects_cases.py` covers 7 cases. Everything except the face
+  output runs as ported.
+
+`sort_group_parts_by_distance` (`0x1443a`) is ported, so the render driver is no longer
+blocked.
+- **Distances:** the camera is temporarily scaled to the object (y = 0). Each part centre (the
+  last model vertices) gets its horizontal distance in a frame array.
+- **Lit objects:** with host +0xaa, a part whose band changed has its face recoloured toward the
+  haze colour. Its palette slot is rewritten when still owned, else dropped.
+- **Sorting:** parts are insertion-sorted far to near. With a group list, entries are freed when
+  emptied (under `deferred_free_flag`) and sorted by their own distance.
+- **Merge:** each group is numbered before the first nearer part and reserves count << 7 draw
+  orders; parts take one each.
+- `tools/strict_port/gen_sort_parts_cases.py` covers 9 cases on seeded objects: unlit and lit,
+  owned and lost slots, groups in every merge position (including the early exit when the groups
+  run out), deferred frees on a real heap.
+
+The 8-bit span filler is ported: `init_code_pointer_tables` and `fill_span_rows_8bit`.
+- **What it does:** `fill_span_rows_8bit` is the span filler `draw_sky_and_ground` hands its row
+  buffers to. For each row it walks the new and previous row records together (a header long
+  with the span count, then (end x << 16 | colour) spans) and writes only the stretches whose
+  colour changed. The record words are read one long ahead, so both pointers are stored back one
+  long early.
+- **Run writers:** runs go through two 0x800-entry tables of code addresses inside the filler
+  (one per byte parity, swapped after an odd run). `init_code_pointer_tables` fills them with
+  the same runtime addresses, and the port dispatches on the address it reads, so a table
+  entry's meaning is kept exactly.
+- **GDScript pitfall:** lambdas capture variables by value, so a writer lambda that advanced the
+  screen cursor silently wrote every run at one address. The writer is now a plain function
+  returning its state. The other lambdas in the port only read what they capture.
+- **Hash extractor:** `check_sync.extract_function` now also finds definitions whose parameter
+  list starts on the line after the name (tried last; existing hashes unchanged).
+- `tools/strict_port/gen_span_fill_cases.py` covers 18 cases: the full tables, and seeded rows at
+  even, odd and +2 starts with a row skip.
+
+The 4-bit span fillers are ported: `fill_span_rows_4bit_a` / `_b` / `_c` and their table inits
+`init_span_table_32ba` / `_3466` / `_3608`.
+- **Algorithm:** the same span walk as the 8-bit filler, on 4-bit pixels. A changed stretch from
+  an odd pixel first merges the low nibble; whole bytes go through a 9-entry run-writer table
+  (runs over 8 pixels as longs of the replicated colour byte first); a trailing odd pixel merges
+  the high nibble. Each table is patched into the code segment by its init and dispatched by
+  label.
+- **Variants:** the three share one core. A takes record handles and, through the sign of d5
+  (negated between rows), takes the colour word's high byte on alternate rows. B and C take the
+  records directly but still store the end pointers through their first two arguments, as the
+  original does.
+- `tools/strict_port/gen_span4_cases.py` covers 18 cases (each table, and five seeded fills per
+  variant with distinct high and low colour bytes).
+
+`scan_convert_edge_rows` (`0x2e14`) is ported, so the colour renderer runs end to end on strict
+code: object pipeline, edges, scan conversion, span fill.
+- **Approach:** the routine is a hand-written active-edge scan converter. It is ported block for
+  block on the original registers (d0..d7, a0..a5) as a label machine, because its control flow
+  carries flags, half-registers and in-place list shifts between blocks.
+- **Slow path:** rows with bucket edges or a row flag merge the bucket into the active list
+  (dropping edges that end) and toggle each edge's faces. The front face is the inside face with
+  the highest draw order, and a change of its colour emits a span. Edges step by their slope
+  and are insertion-sorted when they cross.
+- **Fast path:** the rows up to the next event run without face tracking: one row at a time
+  under 4 rows, else column by column for as many rows as no two edges cross (`divu.l` of the
+  gap by the slope difference).
+- **Background:** the sentinel edge toggles the background face kept in the image (0x1b184,
+  order 0x7fff, colour 0x1b188).
+- **Emulator:** `m68k_emu` now implements `divu.l` (it only had the word form).
+- `tools/strict_port/gen_scan_convert_cases.py` covers 9 scenes built by the original
+  `add_face_edges_to_rows`: single and overlapping faces in both draw orders, crossing edges,
+  long coherent runs, half-rows mode, and an empty scene.
+
+**False-split entries (bookkeeping, not new ports).** Thirteen inventory entries are
+mid-function fragments recorded at runtime code-pointer addresses (see "False entries and
+runtime-address callees" in `DECOMPILATION_SYMBOLS.md`), for example `FUN_00001d56`, the tail
+of `matmul3x3_s16` at file 0x1d56 and runtime `sin_fixed14`. Their bytes only ever run inside
+their enclosing function. Each now has a mapping row whose target is that enclosing strict-port
+function and whose test is that function's test: the heap tails (`heap_add_large_block`,
+`heap_free_coalesce`, `heap_zero_payload`, `heap_realloc_grow_only`), `matmul3x3_s16`,
+`sin_fixed14`, `transform_listed_object_vecs12_by_1d744`,
+`apply_template_chain_xform_always`, `update_object_camera_metric`,
+`compute_camera_abs_metric`, `reset_object_to_template_pose`,
+`compute_template_force_from_626` and `overlay_rng_init`. `process_flight_input_tail` stays
+open until its enclosing key handler is ported.
+
+The colour set-ups are ported: `overlay_patch_template_u16_pair` (two template words in the code
+segment), `reset_palette_owner_tables` (free / reallocate the three owner tables),
+`init_depth8_colour_state` and `init_depth4_colour_state`.
+- **Depth 4:** builds, per screen, 125 colour entries from an 8-word source table indexed by
+  the 0 / 1 / 2 / 3 thresholds of r, g, b.
+- `tools/strict_port/gen_colour_setup_cases.py` covers 8 cases on a real heap.
+
+The handle and session-buffer routines are ported: `ensure_handle_allocated`,
+`lock_handle_nopurge`, `unlock_handle_purgeable`, `lock_overlay_buffers`,
+`allocate_session_buffers`, `lock_session_buffers` and `unlock_session_buffers`.
+- **What they do:** they drive the host Memory Manager hooks (new / reallocate / lock / unlock /
+  purgeable / no-purge / free memory at host +0x2c6..+0x2e2). Buffer sizes depend on free
+  memory (800 or 550 edge entries, 30 or 20 rows). The second and third screens only get
+  buffers with the multi-screen flag. Locked master pointers are masked to 24 bits under 24-bit
+  addressing. Locking ends with `update_view_clip_bounds`.
+- `tools/strict_port/gen_session_buffer_cases.py` covers 15 cases with every host hook logged.
+
+Five more routines are ported: `find_anchor_point` with its scene visitor `anchor_point_visitor`
+(registered at runtime 0xc2c), `present_spans_to_window`, `present_bw_frame` and
+`load_player_fuel_and_bombs`.
+- **Anchor search:** mode 1 picks the nearest runway face (type 0x70) that is not above ground
+  and anchors at its x / z at height 0x43. Mode 0 picks the shallowest kind-1 node, its position
+  and its parent record's attitude.
+- **Presenters:** they draw through a 0x2000-byte heap bounce buffer in chunks of whole rows
+  (kept even at depth 4). The span presenter hands the filler the addresses of its own
+  argument slots, which the filler advances, so the port writes its two record pointers into
+  the caller's argument slots.
+- **Fuel and bombs:** both tanks are filled to capacity * fuel percent / 200, at least 1 in the
+  first; the bomb load and ammunition are set too.
+- `tools/strict_port/gen_anchor_present_cases.py` covers 13 cases (a small mission scene, a real
+  heap for the presenters, four fuel set-ups).
+
+Three more routines are ported: `refresh_object_colours_for_depth`, `begin_flight_for_rank` and
+`apply_player_mouse_controls`.
+- **refresh_object_colours_for_depth:** clears the palette usage (and the owner table at depth
+  8), rebuilds the 4-bit state at depth 4, then recolours the mission children, entity_array_1
+  and the object pool. At depth 1 land objects and type-3 / 4 pool objects get face patterns
+  instead.
+- **begin_flight_for_rank:** sets the rank's AI aim lag and, unless the host overrides it, the
+  player handler; it refreshes the objects at depth 1 and clears the flight words.
+- **apply_player_mouse_controls:** steers the player from the mouse (3 / 2 of the x offset as
+  aileron, 3 times the y offset as elevator, plus the rudder key), or toward the designated
+  aircraft in auto mode.
+- **Fixture notes:** `recolour_kind2_object` always reshades, so the recoloured shapes have no
+  faces (shading has its own tests). The depth-1 pattern targets are non-shape objects with
+  faces.
+- `tools/strict_port/gen_flight_start_cases.py` covers 11 cases.
+
+`widen_printf_format`, `overlay_printf` and `start_mission_scene` are ported.
+- **printf:** the format is copied into the static buffer 0x20b4c with "%d" / "%x" widened to
+  "%ld" / "%lx", then handed with five arguments to the host printf (+0x262).
+- **start_mission_scene:** releases the previous scene object, takes the new one from the
+  scene-root record, puts the camera at the mode-0 anchor and resets the view and distance
+  state. It then activates the scene object, advances the frame counter by 0x4b, refills the
+  player's pose ring, copies the pose to the camera, lays the cloud layer and stops all sound
+  channels.
+- `tools/strict_port/gen_mission_start_cases.py` covers 6 cases; every mission-start callee runs
+  as ported.
+
+The overlay entry and respawn are ported: `overlay_main_entry`, `overlay_initialise`, the two rts
+stubs (`noop_stub_2e12`, `overlay_init_noop`) and `respawn_player_at_anchor`.
+- **Start-up:** `overlay_main_entry` stores the host globals pointer, runs `overlay_initialise`
+  (RNG seed, palette usage maps, all span-filler tables, light vector, frame counter, view
+  distance), sets host word +0x92 and installs the 22 overlay hooks (runtime addresses) in host
+  +0x2e6..+0x33a.
+- **Respawn:** `respawn_player_at_anchor` puts the player at the runway anchor (or the stored
+  one), refills its pose ring, resets the flight state and input words, cleans up a pending
+  replay object and drops its contact records.
+- `tools/strict_port/gen_overlay_entry_cases.py` covers 7 cases. The start-up cases begin from
+  the original initialisers' tables, so only the other start-up state shows as changes.
+
+`overlay_init_template_pointer_tables` and `init_mission_object_tables` are ported.
+- **Template tables:** heap copies of the built-in definition templates go into the template
+  pointer table: four 0x4a-byte and five 0x1c-byte records at the slot their first word names,
+  plus fixed 0x1a / 0x20-byte records. Their order and stack depths are kept as data
+  (`TEMPLATE_STEPS_A` / `_B`).
+- **Mission scene:** instantiates the scene root from the host descriptors, copies and relocates
+  its 24-byte child records, instantiates every child and publishes / activates the mission
+  children and the child window.
+- `tools/strict_port/gen_mission_tables_cases.py` covers 3 cases on a real heap whose small size
+  classes are pre-seeded (no host sbrk), with a group-only mission scene.
+
+`draw_distant_object_dots` (`0x162ba`) is ported: objects too far to render are plotted as dots.
+- **Colour:** each queued object's first face fixes the dot colour (palette tally or
+  `assign_face_colour`, whose failure ends the routine).
+- **Projection:** a single point (the object position) or, for trails, the first two of three
+  vertices are taken through the camera matrix and projected.
+- **Size:** each on-screen point gets a dot of size 4..1 by its depth against 5000 shifted to the
+  object's scale.
+- **Output:** dots are plotted through `depth_routine_da80` after `depth_routine_da84` erased the
+  previous ones; the dot count is stored and the queue emptied.
+- **Quirk kept:** a trail transforms three vertices but plots only the first two.
+- `tools/strict_port/gen_distant_dots_cases.py` covers 6 cases with the erase / plot routines
+  logged.
+
+`configure_renderer_for_display` (`0x6ff6`) is ported: the host's display hook.
+- **Geometry:** sets the view geometry (rows, width, origin, half sizes, the centre column and
+  the projection scales).
+- **Depth / screen change:** when the depth or the multi-screen flag changed, it rebuilds the
+  colour state and installs that depth's renderer hooks (span fillers, line draw / restore,
+  dot and blip routines, face output: the runtime addresses of the strict-port routines, kept
+  as data in `RENDERER_HOOKS_8` / `_4` / `_1`). It builds the mission if needed, and patches the
+  template words and mission_child4's faces for the 1-bit display.
+- **Clip bounds:** finally sets the clip bounds and refreshes the view.
+- `tools/strict_port/gen_renderer_config_cases.py` covers 7 cases (each depth switch, a
+  multi-screen change, an unchanged configuration, odd and negative sizes).
+
+`player_slew_mode` (FUN_0000f810) is the player controller's free-flight mode: yaw / pitch
+turn by half the input words, the slew keys steer a speed along one of three axes (a new axis
+starts at -/+1000, the same axis adds max(|speed| / 2, 1000), key 5 stops), the speed is rotated
+by the attitude matrix into the velocity (asr 6), the object is kept above ground, the gun fires a
+burst every third frame through `spawn_ordnance_oriented` and the gear steps down. The original
+quirk that sets a speed under 1000 in magnitude to 1000 with the opposite sign is kept.
+
+- `tools/strict_port/gen_slew_mode_cases.py` covers 41 cases (every key and axis transition,
+  key 5, the sign quirk, the ground clamp, the gun cycle and the gear limits) with
+  `spawn_ordnance_oriented` recording its arguments.
+
+`update_game_sounds` (FUN_000096f4) is the per-frame sound update: views 8 / 9 only play the
+pending explosions, other unsupported views stop every channel, and the views that follow an
+aircraft (the player, or designated_entity_2 in view 7) derive the gear / flaps moving flags,
+play or stop the gun, flaps / gear, ditch and grass loops, play the one-shot sounds by channel-1
+priority, and drive the engine on channel 0 (stalled record 0 at rpm + 0x10000, record 10 above
+10000 rpm at rpm * 4 / 3 + 0x4000, restarted only when the choice changes or the channel idles).
+The one-frame flags then clear and the explosion timers count down.
+
+- `tools/strict_port/gen_game_sound_cases.py` covers 30 cases (sound off, each view group,
+  gear / flaps limits, channel-1 priority, every engine branch including a missing record and an
+  rpm whose shift overflows) with the five host sound routines logged.
+
+`overlay_frame_step` (FUN_00006598) is one whole overlay frame: slot usage maps, distance
+reset, altitude bands, the inverse and forward camera matrices (six-angle in view mode 2), the
+mission children queued and transformed, camera metrics, the far-object insertion sort (biased by
+carried pairs for that sort only), object collection, overlaps, contacts, culling, rendering, scan
+conversion and presentation (span filler, `present_spans_to_window`, `present_bw_frame` or the
+depth-1 host routines), the view-mode-1 panel layout (with the session buffers re-created on step
+0) and the readouts / gauges. Index stores use scale 4 (decoded from the extension words). The
+emulator gained `roxl` / `roxr` for the altitude-band rebuild this frame reaches, and
+`clear_flag_00020ae4` is registered as a code address so a host routine can clear the panels.
+
+- `tools/strict_port/gen_frame_step_cases.py` covers 28 whole frames (each depth and presenter,
+  cursor hooks, view mode 2, haze, retirements, near / far objects with and without carried
+  pairs, readouts, drawn panels, and the panel layout with cached and re-laid geometry, session
+  buffers, a pending-panels host and 24-bit pointers), every host routine logged. The original
+  hands the depth-1 sky routine uninitialised frame words on a flat horizon and on the second pass
+  after a layout; those cases use a sloped horizon and an odd frame.
+
+`process_flight_input_and_outcome` (FUN_0000740a) is the player's per-frame input and
+outcome step: replay / crash-end / instant-replay control, the view exits, the key filter and
+the 0x76-entry key table at 0x7688 (decoded from the words), the throttle ramp, the
+keyboard-steered mouse point and gun trigger, the per-frame calls, the stopped-aircraft
+classifier (ditching, touchdown, runway, fuel recording, the random POW / MIA draws) and the
+camera for each view, then the pitch mirror and result tail. The bytes differ from Ghidra's C in
+two places the port follows: the view-6 shift loop tests only bit 15 of the low word, and view 5
+stores its negated angles directly. Ghidra's `process_flight_input_tail` (`0x823e`) is a false
+split inside the classifier and maps to the same target.
+
+- `tools/strict_port/gen_flight_input_cases.py` covers 142 frames (every key of the table in
+  the modes that change it, the throttle ramp, keyboard steering and its clamps, the gun, the
+  replay transitions, every classifier outcome including four RNG states, and the camera for
+  views 1, 2, 5, 6, 7 and 9), comparing memory, the host sound calls and the returned result.
+
 `animate_ground_fire` (`0x17150`) and `tick_ground_fire` (`0x17380`) are ported. The
 fire keeps four vertices beside its owner, across the owner's velocity: offsets
 (±v asl 5) divs.l (|vx| + |vz|), stored / 8 toward zero as drift words. While the
