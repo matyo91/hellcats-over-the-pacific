@@ -1,8 +1,7 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/missions/Mission01Training.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/game/Game.tscn" id="1"]
 
 [node name="Main" type="Node"]
 
-[node name="Mission01Training" parent="." instance=ExtResource("1")]
-
+[node name="Game" parent="." instance=ExtResource("1")]

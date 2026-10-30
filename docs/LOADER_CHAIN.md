@@ -141,20 +141,16 @@ Segment 7 has two ID00 entries: stored offset 0 targets the RTS at file 0x0004, 
 
 ## 8) Implementation handoff artifact
 
-- **[PROVEN]** A minimal machine-readable fixture for the proven loader targets exists at [`godot/tests/fixtures/proven_loader_targets.json`](../godot/tests/fixtures/proven_loader_targets.json).
-- **[INFERRED]** Godot can consume this artifact as loader-derived metadata without embedding any guessed segment-manager behavior.
-- **[UNKNOWN]** Additional targets (including the new ID06/ID07 proven targets below) may be added to that JSON only when the maintainer re-runs the proof and updates the artifact; this document does not edit `tools/`.
+- **[PROVEN]** The proven loader targets below are checked against the jump table the game runtime links ([`godot/hellcats/data/jump_table.json`](../godot/hellcats/data/jump_table.json), generated from `ID00.bin` by `tools/hellcats/build_runtime_data.py`) by `check_loader_targets` in [`tools/qa/test_regression.py`](../tools/qa/test_regression.py): each one's A5 offset is `jump_table_offset + id00_entry_offset - 16 + 2`, its segment and entry point as tabled here.
+- **[UNKNOWN]** Additional targets may be added to that check only when the maintainer re-runs the proof.
 
 ## 9) Godot integration boundary
 
-- **[INFERRED]** [`loader_metadata.gd`](../godot/hellcats/core/loader_metadata.gd) is the clean-room boundary for proven loader-target facts: parsed JSON only, no segment-manager emulation.
-- **[INFERRED]** [`sim_core.gd`](../godot/hellcats/core/sim_core.gd) now accepts that metadata through `load_loader_metadata_from_file` / `load_loader_metadata_from_json_text` and resolves targets through `resolve_loader_target`.
-- **[RECONSTRUCTED]** The canonical headless integration test [`test_sim_loader_bridge.gd`](../godot/tests/integration/test_sim_loader_bridge.gd) proves `SimCore` can ingest the proven ID02 and ID05 targets and still execute a deterministic tick.
-- **[UNKNOWN]** Runtime relocation, jump-table patching, and actual segment load execution are still out of scope for the Godot core until the address model is proven further.
+- **[RECONSTRUCTED]** The game runtime ([`docs/GAME_RUNTIME.md`](GAME_RUNTIME.md)) links every jump-table entry to its strict-port routine (`godot/hellcats/runtime/segment_loader.gd`) and loads the Pacific Conflict overlay with its relocations; the earlier clean-room loader metadata boundary of the MVP prototype is gone with it.
 
 ## 10) Safe targets for Godot consumption now
 
-The complete set of 175 loader targets is structurally decoded in `ID00.decomp.c`. The smaller fixture currently exposes these six byte-inspected examples to Godot:
+The complete set of 175 loader targets is structurally decoded in `ID00.decomp.c`. These six byte-inspected examples are the ones the QA check holds:
 
 | Segment | id00_entry_offset (dec) | stored_tail (hex) | entrypoint_offset (hex) | Delta | Correlated routine |
 |---------|-------------------------|--------------------|--------------------------|-------|---------------------|

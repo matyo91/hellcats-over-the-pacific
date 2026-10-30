@@ -1,0 +1,1408 @@
+{
+ "source": "sources/resedit-1-0-3/CODE/ID00.bin",
+ "above_a5": 1432,
+ "below_a5": 8798,
+ "jump_table_offset": 32,
+ "entries": [
+  {
+   "a5_offset": 34,
+   "segment": 1,
+   "target": 8,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 42,
+   "segment": 1,
+   "target": 150,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 50,
+   "segment": 1,
+   "target": 170,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 58,
+   "segment": 1,
+   "target": 190,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 66,
+   "segment": 1,
+   "target": 218,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 74,
+   "segment": 1,
+   "target": 272,
+   "port": "ID01.gd",
+   "method": "rt_udiv32",
+   "pascal": false
+  },
+  {
+   "a5_offset": 82,
+   "segment": 1,
+   "target": 304,
+   "port": "ID01.gd",
+   "method": "rt_umod32",
+   "pascal": false
+  },
+  {
+   "a5_offset": 90,
+   "segment": 1,
+   "target": 338,
+   "port": "ID01.gd",
+   "method": "rt_sdiv32",
+   "pascal": false
+  },
+  {
+   "a5_offset": 98,
+   "segment": 1,
+   "target": 370,
+   "port": "ID01.gd",
+   "method": "rt_smod32",
+   "pascal": false
+  },
+  {
+   "a5_offset": 106,
+   "segment": 1,
+   "target": 556,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 114,
+   "segment": 4,
+   "target": 13138,
+   "port": "ID04.gd",
+   "method": "plot_map_symbol_callback",
+   "pascal": false
+  },
+  {
+   "a5_offset": 122,
+   "segment": 4,
+   "target": 6670,
+   "port": "ID04.gd",
+   "method": "build_rank_and_name_string",
+   "pascal": false
+  },
+  {
+   "a5_offset": 130,
+   "segment": 4,
+   "target": 3074,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 138,
+   "segment": 4,
+   "target": 704,
+   "port": "ID04.gd",
+   "method": "percent_bar_user_item_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 146,
+   "segment": 4,
+   "target": 5362,
+   "port": "ID04.gd",
+   "method": "scrolling_text_user_item_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 154,
+   "segment": 4,
+   "target": 3696,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 162,
+   "segment": 4,
+   "target": 4,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 170,
+   "segment": 4,
+   "target": 7582,
+   "port": "ID04.gd",
+   "method": "draw_targets_destroyed_list",
+   "pascal": false
+  },
+  {
+   "a5_offset": 178,
+   "segment": 4,
+   "target": 13816,
+   "port": "ID04.gd",
+   "method": "map_view_user_item_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 186,
+   "segment": 4,
+   "target": 1264,
+   "port": "ID04.gd",
+   "method": "ask_save_changes",
+   "pascal": false
+  },
+  {
+   "a5_offset": 194,
+   "segment": 4,
+   "target": 1508,
+   "port": "ID04.gd",
+   "method": "duty_roster_filter_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 202,
+   "segment": 4,
+   "target": 8452,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 210,
+   "segment": 4,
+   "target": 14594,
+   "port": "ID04.gd",
+   "method": "map_dialog_filter_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 218,
+   "segment": 4,
+   "target": 12714,
+   "port": "ID04.gd",
+   "method": "conclude_mission",
+   "pascal": false
+  },
+  {
+   "a5_offset": 226,
+   "segment": 4,
+   "target": 4608,
+   "port": "ID04.gd",
+   "method": "draw_high_scores_table",
+   "pascal": false
+  },
+  {
+   "a5_offset": 234,
+   "segment": 4,
+   "target": 8424,
+   "port": "ID04.gd",
+   "method": "aircraft_kill_markers_user_item_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 242,
+   "segment": 4,
+   "target": 15682,
+   "port": "ID04.gd",
+   "method": "check_system_requirements",
+   "pascal": false
+  },
+  {
+   "a5_offset": 250,
+   "segment": 4,
+   "target": 1102,
+   "port": "ID04.gd",
+   "method": "show_scenery_open_error_alert",
+   "pascal": false
+  },
+  {
+   "a5_offset": 258,
+   "segment": 4,
+   "target": 4986,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 266,
+   "segment": 4,
+   "target": 14710,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 274,
+   "segment": 4,
+   "target": 3034,
+   "port": "ID04.gd",
+   "method": "scenario_selection_filter_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 282,
+   "segment": 4,
+   "target": 2542,
+   "port": "ID04.gd",
+   "method": "draw_select_mission_title",
+   "pascal": false
+  },
+  {
+   "a5_offset": 290,
+   "segment": 4,
+   "target": 1144,
+   "port": "ID04.gd",
+   "method": "show_paused_dialog",
+   "pascal": false
+  },
+  {
+   "a5_offset": 298,
+   "segment": 4,
+   "target": 366,
+   "port": "ID04.gd",
+   "method": "draw_default_button_outline",
+   "pascal": false
+  },
+  {
+   "a5_offset": 306,
+   "segment": 4,
+   "target": 1604,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 314,
+   "segment": 4,
+   "target": 1302,
+   "port": "ID04.gd",
+   "method": "confirm_end_mission",
+   "pascal": false
+  },
+  {
+   "a5_offset": 322,
+   "segment": 4,
+   "target": 498,
+   "port": "ID04.gd",
+   "method": "draw_grey_user_item",
+   "pascal": false
+  },
+  {
+   "a5_offset": 330,
+   "segment": 4,
+   "target": 3656,
+   "port": "ID04.gd",
+   "method": "refuel_dialog_filter_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 338,
+   "segment": 4,
+   "target": 7646,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 346,
+   "segment": 4,
+   "target": 6974,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 354,
+   "segment": 4,
+   "target": 14988,
+   "port": "ID04.gd",
+   "method": "show_about_dialog",
+   "pascal": false
+  },
+  {
+   "a5_offset": 362,
+   "segment": 4,
+   "target": 5828,
+   "port": "ID04.gd",
+   "method": "scroll_bar_action_proc",
+   "pascal": false
+  },
+  {
+   "a5_offset": 370,
+   "segment": 4,
+   "target": 1074,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 378,
+   "segment": 3,
+   "target": 23748,
+   "port": "ID03.gd",
+   "method": "prepare_instrument_panel",
+   "pascal": false
+  },
+  {
+   "a5_offset": 386,
+   "segment": 3,
+   "target": 27676,
+   "port": "ID03.gd",
+   "method": "remap_cached_panel_colours",
+   "pascal": false
+  },
+  {
+   "a5_offset": 394,
+   "segment": 3,
+   "target": 4,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 402,
+   "segment": 6,
+   "target": 792,
+   "port": "ID06.gd",
+   "method": "render_scanline_spans",
+   "pascal": false
+  },
+  {
+   "a5_offset": 410,
+   "segment": 6,
+   "target": 3600,
+   "port": "ID06.gd",
+   "method": "rasterize_and_present",
+   "pascal": false
+  },
+  {
+   "a5_offset": 418,
+   "segment": 6,
+   "target": 2210,
+   "port": "ID06.gd",
+   "method": "set_active_row_count",
+   "pascal": false
+  },
+  {
+   "a5_offset": 426,
+   "segment": 6,
+   "target": 1968,
+   "port": "ID06.gd",
+   "method": "init_raster_target",
+   "pascal": false
+  },
+  {
+   "a5_offset": 434,
+   "segment": 6,
+   "target": 2136,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 442,
+   "segment": 6,
+   "target": 2414,
+   "port": "ID06.gd",
+   "method": "reset_edge_table",
+   "pascal": false
+  },
+  {
+   "a5_offset": 450,
+   "segment": 6,
+   "target": 2520,
+   "port": "ID06.gd",
+   "method": "add_polygon_edges",
+   "pascal": false
+  },
+  {
+   "a5_offset": 458,
+   "segment": 6,
+   "target": 278,
+   "port": "ID06.gd",
+   "method": "rgb_to_bw_pattern",
+   "pascal": false
+  },
+  {
+   "a5_offset": 466,
+   "segment": 6,
+   "target": 238,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 474,
+   "segment": 8,
+   "target": 924,
+   "port": "ID08.gd",
+   "method": "bootstrap_window_and_load_overlay",
+   "pascal": false
+  },
+  {
+   "a5_offset": 482,
+   "segment": 8,
+   "target": 6,
+   "port": "ID08.gd",
+   "method": "load_overlay_from_resource",
+   "pascal": false
+  },
+  {
+   "a5_offset": 490,
+   "segment": 8,
+   "target": 4,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 498,
+   "segment": 9,
+   "target": 32,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 506,
+   "segment": 9,
+   "target": 394,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 514,
+   "segment": 9,
+   "target": 402,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 522,
+   "segment": 9,
+   "target": 412,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 530,
+   "segment": 9,
+   "target": 434,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 538,
+   "segment": 9,
+   "target": 444,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 546,
+   "segment": 9,
+   "target": 460,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 554,
+   "segment": 9,
+   "target": 512,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 562,
+   "segment": 9,
+   "target": 524,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 570,
+   "segment": 9,
+   "target": 536,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 578,
+   "segment": 9,
+   "target": 546,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 586,
+   "segment": 9,
+   "target": 566,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 594,
+   "segment": 9,
+   "target": 578,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 602,
+   "segment": 9,
+   "target": 590,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 610,
+   "segment": 9,
+   "target": 600,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 618,
+   "segment": 9,
+   "target": 612,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 626,
+   "segment": 9,
+   "target": 624,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 634,
+   "segment": 9,
+   "target": 634,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 642,
+   "segment": 9,
+   "target": 644,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 650,
+   "segment": 9,
+   "target": 654,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 658,
+   "segment": 9,
+   "target": 664,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 666,
+   "segment": 9,
+   "target": 670,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 674,
+   "segment": 9,
+   "target": 678,
+   "port": "ID09.gd",
+   "method": "fsopen_glue",
+   "pascal": true
+  },
+  {
+   "a5_offset": 682,
+   "segment": 9,
+   "target": 734,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 690,
+   "segment": 9,
+   "target": 762,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 698,
+   "segment": 9,
+   "target": 836,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 706,
+   "segment": 9,
+   "target": 872,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 714,
+   "segment": 9,
+   "target": 908,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 722,
+   "segment": 9,
+   "target": 944,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 730,
+   "segment": 9,
+   "target": 954,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 738,
+   "segment": 9,
+   "target": 962,
+   "port": "ID09.gd",
+   "method": "swapmmumode_glue",
+   "pascal": true
+  },
+  {
+   "a5_offset": 746,
+   "segment": 9,
+   "target": 982,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 754,
+   "segment": 9,
+   "target": 1028,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 762,
+   "segment": 9,
+   "target": 1074,
+   "port": "ID09.gd",
+   "method": "length_prefixed_bytes_to_c_string_in_place",
+   "pascal": true
+  },
+  {
+   "a5_offset": 770,
+   "segment": 9,
+   "target": 1046,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 778,
+   "segment": 9,
+   "target": 26,
+   "port": null,
+   "method": null,
+   "pascal": true
+  },
+  {
+   "a5_offset": 786,
+   "segment": 2,
+   "target": 3922,
+   "port": "ID02.gd",
+   "method": "close_port_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 794,
+   "segment": 2,
+   "target": 6562,
+   "port": "ID02.gd",
+   "method": "new_handle_clear_or_die_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 802,
+   "segment": 2,
+   "target": 3386,
+   "port": "ID02.gd",
+   "method": "blit_offscreen_frame_to_window",
+   "pascal": false
+  },
+  {
+   "a5_offset": 810,
+   "segment": 2,
+   "target": 2694,
+   "port": "ID02.gd",
+   "method": "draw_thick_xor_line_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 818,
+   "segment": 2,
+   "target": 6660,
+   "port": "ID02.gd",
+   "method": "dispose_handle_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 826,
+   "segment": 2,
+   "target": 3176,
+   "port": "ID02.gd",
+   "method": "apply_pending_color_entries_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 834,
+   "segment": 2,
+   "target": 6788,
+   "port": "ID02.gd",
+   "method": "hlock_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 842,
+   "segment": 2,
+   "target": 3646,
+   "port": "ID02.gd",
+   "method": "blit_pixels_via_port_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 850,
+   "segment": 2,
+   "target": 3956,
+   "port": "ID02.gd",
+   "method": "swap_port_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 858,
+   "segment": 2,
+   "target": 5350,
+   "port": "ID02.gd",
+   "method": "swap_mmu_mode_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 866,
+   "segment": 2,
+   "target": 4872,
+   "port": "ID02.gd",
+   "method": "draw_text_in_columns_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 874,
+   "segment": 2,
+   "target": 5580,
+   "port": "ID02.gd",
+   "method": "set_draw_color_index",
+   "pascal": false
+  },
+  {
+   "a5_offset": 882,
+   "segment": 2,
+   "target": 6524,
+   "port": "ID02.gd",
+   "method": "run_segment3_entry_and_unload_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 890,
+   "segment": 2,
+   "target": 6824,
+   "port": "ID02.gd",
+   "method": "hunlock_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 898,
+   "segment": 2,
+   "target": 5760,
+   "port": "ID02.gd",
+   "method": "design_y_to_screen",
+   "pascal": false
+  },
+  {
+   "a5_offset": 906,
+   "segment": 2,
+   "target": 6932,
+   "port": "ID02.gd",
+   "method": "freemem_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 914,
+   "segment": 2,
+   "target": 3364,
+   "port": "ID02.gd",
+   "method": "close_and_dispose_port",
+   "pascal": false
+  },
+  {
+   "a5_offset": 922,
+   "segment": 2,
+   "target": 4000,
+   "port": "ID02.gd",
+   "method": "paint_rect_color_index_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 930,
+   "segment": 2,
+   "target": 5682,
+   "port": "ID02.gd",
+   "method": "set_back_color_index",
+   "pascal": false
+  },
+  {
+   "a5_offset": 938,
+   "segment": 2,
+   "target": 6492,
+   "port": "ID02.gd",
+   "method": "blit_image_clipped_to_region_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 946,
+   "segment": 2,
+   "target": 6896,
+   "port": "ID02.gd",
+   "method": "hnopurge_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 954,
+   "segment": 2,
+   "target": 5802,
+   "port": "ID02.gd",
+   "method": "draw_view_frame_outline",
+   "pascal": false
+  },
+  {
+   "a5_offset": 962,
+   "segment": 2,
+   "target": 4588,
+   "port": "ID02.gd",
+   "method": "draw_notched_frame_pair_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 970,
+   "segment": 2,
+   "target": 5718,
+   "port": "ID02.gd",
+   "method": "design_x_to_screen",
+   "pascal": false
+  },
+  {
+   "a5_offset": 978,
+   "segment": 2,
+   "target": 3742,
+   "port": "ID02.gd",
+   "method": "open_offscreen_cport_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 986,
+   "segment": 2,
+   "target": 6860,
+   "port": "ID02.gd",
+   "method": "hpurge_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 994,
+   "segment": 2,
+   "target": 5386,
+   "port": "ID02.gd",
+   "method": "get_blended_fill_pattern",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1002,
+   "segment": 2,
+   "target": 2768,
+   "port": "ID02.gd",
+   "method": "paint_view_horizon_bands_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1010,
+   "segment": 2,
+   "target": 4050,
+   "port": "ID02.gd",
+   "method": "paint_polygon_rgb_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1018,
+   "segment": 2,
+   "target": 2626,
+   "port": "ID02.gd",
+   "method": "draw_thick_line_pixel_index_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1026,
+   "segment": 2,
+   "target": 3238,
+   "port": "ID02.gd",
+   "method": "new_offscreen_cport",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1034,
+   "segment": 2,
+   "target": 6696,
+   "port": "ID02.gd",
+   "method": "realloc_and_clear_handle_a5safe",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1042,
+   "segment": 2,
+   "target": 15022,
+   "port": "ID02.gd",
+   "method": "vbl_sound_handler_ch0_variant",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1050,
+   "segment": 2,
+   "target": 14760,
+   "port": "ID02.gd",
+   "method": "vbl_sound_handler_ch0_unrolled",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1058,
+   "segment": 2,
+   "target": 15300,
+   "port": "ID02.gd",
+   "method": "vbl_sound_handler_two_channel",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1066,
+   "segment": 2,
+   "target": 16464,
+   "port": "ID02.gd",
+   "method": "enqueue_sample_on_channel",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1074,
+   "segment": 2,
+   "target": 16962,
+   "port": "ID02.gd",
+   "method": "silence_sound_channel",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1082,
+   "segment": 2,
+   "target": 17072,
+   "port": "ID02.gd",
+   "method": "is_channel_playing",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1090,
+   "segment": 2,
+   "target": 16212,
+   "port": "ID02.gd",
+   "method": "play_sample_on_channel",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1098,
+   "segment": 2,
+   "target": 16806,
+   "port": "ID02.gd",
+   "method": "release_channel_loop",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1106,
+   "segment": 2,
+   "target": 16686,
+   "port": "ID02.gd",
+   "method": "set_sound_playback_rate",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1114,
+   "segment": 2,
+   "target": 18942,
+   "port": "ID02.gd",
+   "method": "lookup_palette_index_for_rgb_level",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1122,
+   "segment": 2,
+   "target": 19764,
+   "port": "ID02.gd",
+   "method": "process_pending_update_events",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1130,
+   "segment": 2,
+   "target": 18570,
+   "port": "ID02.gd",
+   "method": "clear_ctab_size_callback",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1138,
+   "segment": 2,
+   "target": 17794,
+   "port": "ID02.gd",
+   "method": "centre_window_on_screen",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1146,
+   "segment": 2,
+   "target": 17454,
+   "port": "ID02.gd",
+   "method": "position_alert_template",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1154,
+   "segment": 2,
+   "target": 19298,
+   "port": "ID02.gd",
+   "method": "init_standard_colour_indices",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1162,
+   "segment": 2,
+   "target": 17246,
+   "port": "ID02.gd",
+   "method": "position_window_on_screen",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1170,
+   "segment": 2,
+   "target": 19818,
+   "port": "ID02.gd",
+   "method": "handle_update_event",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1178,
+   "segment": 2,
+   "target": 7730,
+   "port": "ID02.gd",
+   "method": "show_creating_panel_dialog",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1186,
+   "segment": 2,
+   "target": 7306,
+   "port": "ID02.gd",
+   "method": "format_int_decimal_pstring",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1194,
+   "segment": 2,
+   "target": 11704,
+   "port": "ID02.gd",
+   "method": "wait_for_click_or_key",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1202,
+   "segment": 2,
+   "target": 12442,
+   "port": "ID02.gd",
+   "method": "main",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1210,
+   "segment": 2,
+   "target": 7496,
+   "port": "ID02.gd",
+   "method": "show_caution_alert_with_number",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1218,
+   "segment": 2,
+   "target": 8490,
+   "port": "ID02.gd",
+   "method": "reset_overlay_state",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1226,
+   "segment": 2,
+   "target": 10820,
+   "port": "ID02.gd",
+   "method": "apply_settings_to_live_options",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1234,
+   "segment": 2,
+   "target": 12004,
+   "port": "ID02.gd",
+   "method": "copy_pascal_string",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1242,
+   "segment": 2,
+   "target": 30,
+   "port": "ID02.gd",
+   "method": "abs_long",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1250,
+   "segment": 2,
+   "target": 462,
+   "port": "ID02.gd",
+   "method": "ansi_toupper",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1258,
+   "segment": 2,
+   "target": 562,
+   "port": "ID02.gd",
+   "method": "ansi_memcpy",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1266,
+   "segment": 2,
+   "target": 688,
+   "port": "ID02.gd",
+   "method": "ansi_memset",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1274,
+   "segment": 2,
+   "target": 586,
+   "port": "ID02.gd",
+   "method": "ansi_memmove",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1282,
+   "segment": 2,
+   "target": 1076,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 1290,
+   "segment": 2,
+   "target": 1014,
+   "port": "ID02.gd",
+   "method": "ansi_strncpy",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1298,
+   "segment": 2,
+   "target": 728,
+   "port": "ID02.gd",
+   "method": "ansi_strcat",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1306,
+   "segment": 2,
+   "target": 750,
+   "port": "ID02.gd",
+   "method": "ansi_strcmp",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1314,
+   "segment": 2,
+   "target": 1000,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 1322,
+   "segment": 2,
+   "target": 712,
+   "port": "ID02.gd",
+   "method": "ansi_strcpy",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1330,
+   "segment": 5,
+   "target": 2226,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 1338,
+   "segment": 5,
+   "target": 2038,
+   "port": "ID05.gd",
+   "method": "poison_overlay_bytes",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1346,
+   "segment": 5,
+   "target": 2232,
+   "port": "ID05.gd",
+   "method": "init_protection_table",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1354,
+   "segment": 5,
+   "target": 2356,
+   "port": "ID05.gd",
+   "method": "record_code_index_equals",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1362,
+   "segment": 5,
+   "target": 2948,
+   "port": "ID05.gd",
+   "method": "encode_code28_to_buf54",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1370,
+   "segment": 5,
+   "target": 2142,
+   "port": "ID05.gd",
+   "method": "restore_poisoned_overlay_bytes",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1378,
+   "segment": 5,
+   "target": 712,
+   "port": "ID05.gd",
+   "method": "code_dialog_filter",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1386,
+   "segment": 5,
+   "target": 4,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 1394,
+   "segment": 5,
+   "target": 1376,
+   "port": "ID05.gd",
+   "method": "run_protection_dialog",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1402,
+   "segment": 5,
+   "target": 444,
+   "port": "ID05.gd",
+   "method": "write_DATA128_pair",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1410,
+   "segment": 5,
+   "target": 352,
+   "port": "ID05.gd",
+   "method": "read_DATA128_pair",
+   "pascal": false
+  },
+  {
+   "a5_offset": 1418,
+   "segment": 7,
+   "target": 4,
+   "port": null,
+   "method": null,
+   "pascal": false
+  },
+  {
+   "a5_offset": 1426,
+   "segment": 7,
+   "target": 400,
+   "port": "ID07.gd",
+   "method": "init_string_pointer_groups",
+   "pascal": false
+  }
+ ]
+}

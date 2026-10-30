@@ -1,0 +1,224 @@
+[
+ {
+  "type": "ALRT",
+  "folder": "ALRT",
+  "id": 256,
+  "name": "Unable to Open Scenery"
+ },
+ {
+  "type": "ALRT",
+  "folder": "ALRT",
+  "id": 257,
+  "name": "Save Changes"
+ },
+ {
+  "type": "ALRT",
+  "folder": "ALRT",
+  "id": 258,
+  "name": "Error"
+ },
+ {
+  "type": "ALRT",
+  "folder": "ALRT",
+  "id": 259,
+  "name": "Really End Mission"
+ },
+ {
+  "type": "ALRT",
+  "folder": "ALRT",
+  "id": 260,
+  "name": "Erase Hi Score"
+ },
+ {
+  "type": "ALRT",
+  "folder": "ALRT",
+  "id": 261,
+  "name": "Not on floppy"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 1000,
+  "name": "Copy Protection"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 127,
+  "name": "About Hellcats"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 128,
+  "name": "Creating instrument Panel"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 129,
+  "name": "Scenario Selection"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 130,
+  "name": "Dusty Roster"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 131,
+  "name": "Paused Dialog"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 132,
+  "name": "Refuel"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 133,
+  "name": "Mission Summary"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 134,
+  "name": "High Scores"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 137,
+  "name": "Map"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 138,
+  "name": "About Hellcats 1-Bit"
+ },
+ {
+  "type": "DLOG",
+  "folder": "DLOG",
+  "id": 139,
+  "name": "Sound Error"
+ },
+ {
+  "type": "HEL1",
+  "folder": "HEL1",
+  "id": 127,
+  "name": "Hellcats Saved Settings"
+ },
+ {
+  "type": "HEL1",
+  "folder": "HEL1",
+  "id": 128,
+  "name": "Player and Score Data"
+ },
+ {
+  "type": "HELL",
+  "folder": "HELL",
+  "id": 0,
+  "name": "Finder Get Info"
+ },
+ {
+  "type": "STR#",
+  "folder": "STR#",
+  "id": 129,
+  "name": "English Strings"
+ },
+ {
+  "type": "cicn",
+  "folder": "cicn",
+  "id": 256,
+  "name": "Ensign"
+ },
+ {
+  "type": "cicn",
+  "folder": "cicn",
+  "id": 257,
+  "name": "Ensign"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 13493,
+  "name": "Hit"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 15396,
+  "name": "Ditch"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 15490,
+  "name": "Explosion"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 16059,
+  "name": "Gear"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 16737,
+  "name": "Short Engine"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 16815,
+  "name": "ugh"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 19330,
+  "name": "Engine"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 21266,
+  "name": "Distant Explosion"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 2186,
+  "name": "Grass"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 22599,
+  "name": "Wind"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 24100,
+  "name": "Wheel"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 25233,
+  "name": "Gun"
+ },
+ {
+  "type": "snd ",
+  "folder": "snds",
+  "id": 30683,
+  "name": "Taps"
+ }
+]

@@ -1,77 +1,39 @@
-# QA (Mission 1 MVP + determinism)
+# QA
 
 This folder contains Python-side deterministic guardrails that complement the
-Godot-native runtime tests in `godot/tests`. Mission 1 MVP validation is split:
-**automated** (math, fixtures, future mission-rule unit tests) vs **manual**
-(camera, world, HUD, feel); see `docs/MISSION_01_MVP.md` § QA.
+Godot-native runtime tests in `godot/tests`.
 
-## Mission 1 smoke (manual, ~10–15 min)
+## Game smoke (manual, ~10 min)
 
-Run after mission/gameplay changes. Assumes keyboard layout from the MVP doc.
-
-**Launch**
+Run after changes to the game runtime (`godot/hellcats/`, `godot/scenes/`).
 
 - Open the `godot/` project directory and run `res://scenes/main/Main.tscn`.
-- For fast iteration, run `res://scenes/missions/Mission01Training.tscn` directly.
-
-**Sanity (≤ 1 min)**
-
-- HUD shows speed, altitude, heading, throttle, objective text; values change while flying.
-- Aircraft responds to pitch/roll/yaw/throttle; no immediate uncontrolled spin at spawn.
-
-**Happy path**
-
-- Complete objectives **in order** (stabilize → left turn → right turn → climb → descend). The checkpoint is authored as optional bonus content.
-- Confirm **success banner** appears; controls freeze or mission state is clearly terminal; **R** restarts cleanly.
-
-**Failure spot-check (pick one)**
-
-- Provoke **hard stall** (throttle low until airspeed stays below the stall band in `aircraft_mvp.json`, **~55 m/s** at authoring, for **~4 s**) **or** fly **out of bounds** ~8 s **or** hit **sea/terrain** — expect **failure banner** + frozen/terminal state; **R** restarts.
-
-**Pass:** no crashes, objectives cannot be skipped, success and at least one failure path behave consistently.
+- The menu bar appears; Return passes the copy protection; the Active Duty Roster
+  and Select a Mission dialogs work with the mouse and keyboard.
+- A mission starts on the carrier: V gives the cockpit and its instruments, `=`
+  raises the throttle (the engine sounds), the mouse flies.
+- J ejects: the mission summary scrolls its text, shows the rank and medals, and
+  End Mission returns to the menus. Closing the window quits cleanly.
 
 ## Automated commands (CI / local)
 
 ```bash
-# Godot headless suite (RNG, flight math, loader, replay, mission objectives, mission + HUD scene structure)
+# Godot headless suite (the strict port's routines, the ResEdit mirror)
 HOME=/tmp/hellcats-godot-home /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/run_all.gd
 
-# Static fixture + runner layout checks (no engine)
+# Static checks (no engine)
 python3 tools/qa/test_regression.py
+python3 tools/hellcats/build_runtime_data.py --check
 ```
 
-Mission 1 rule tests are now registered in `godot/tests/run_all.gd`; keep `EXPECTED_RUNNER_PATHS` in `test_regression.py` aligned when adding more.
+Keep `EXPECTED_RUNNER_PATHS` in `test_regression.py` aligned with
+`godot/tests/run_all.gd` when adding tests.
 
 ## Scope split (no overlap)
 
-- `godot/tests/run_all.gd`:
-  - Executes runtime behavior checks (RNG parity, replay parity, loader metadata
-    lookup behavior, sim integration bridge).
+- `godot/tests/run_all.gd`: runtime behaviour checks of the strict port.
 - `tools/qa/test_regression.py`:
-  - Validates migrated test layout is stable (`run_all.gd` path list).
-  - Enforces fixture schema and deterministic fixture contents.
-  - Detects fixture drift between migrated fixtures and legacy duplicates.
-
-The Python QA checks avoid engine execution and avoid duplicating runtime logic.
-
-## Run
-
-From repo root:
-
-```bash
-python3 tools/qa/test_regression.py
-```
-
-## Deterministic expectations (enforced)
-
-- RNG parity is owned by `godot/tests/unit/test_rng.gd`.
-- Replay parity is owned by `godot/tests/integration/test_replay.gd`:
-  same seed + same replay fixture => byte-identical JSONL traces.
-- Loader metadata consistency is owned by:
-  - `godot/tests/unit/test_loader_metadata.gd`
-  - `godot/tests/integration/test_sim_loader_bridge.gd`
-- Fixture drift protection is owned by `tools/qa/test_regression.py`:
-  - exact loader target tuple set for proven entries
-  - `entrypoint_offset == stored_tail + delta` invariant (`delta == 4`)
-  - replay input packet shape and frame count
-  - byte-equality between legacy and migrated fixture copies (while both exist)
+  - the runner's test list;
+  - the proven loader targets against the game runtime's jump table;
+  - the main scene runs the game (and the removed prototype stays removed);
+  - byte checks, global alias docs, the ResEdit mirror.

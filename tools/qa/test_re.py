@@ -63,12 +63,10 @@ def main() -> int:
     assert "contact_pair_hash" in run("source-map", "FUN_0001358c")
     correspondence = run("correspondence", "--segment", "Pacific Conflict", "FUN_0001358c")
     assert '"original"' in correspondence and '"strict_port"' in correspondence
-    test_case = run("tests", "test_flight_math", "--case", "_test_fun_0000e42a")
-    assert "godot/tests/unit/test_flight_math.gd:59-76" in test_case
-    assert "module setup" in test_case and "res://hellcats/core/flight_math.gd" in test_case
-    assert "func _test_fun_0000e468" not in test_case and len(test_case.splitlines()) < 60
-    helper_case = run("tests", "test_replay", "--case", "run")
-    assert "direct helpers: 1" in helper_case and "func _run_once" in helper_case
+    test_case = run("tests", "test_effect_init", "--case", "run")
+    assert "godot/tests/strict_port/test_effect_init.gd:83-156 [selected test]" in test_case
+    assert "module setup" in test_case and "res://strict_port/code/pacific_conflict.gd" in test_case
+    assert "direct helpers: 7" in test_case and "func _plain" in test_case
     recovered_failures = {
         ("ID02", "FUN_000002b0"): "ansi_memset",
         ("ID02", "FUN_00004b62"): "init_standard_colour_indices",

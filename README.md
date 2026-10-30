@@ -64,16 +64,14 @@ Original function identities and source hashes live in
 `godot/strict_port/mappings/functions.json`. Source-local provenance comments
 remain valuable review evidence.
 
-## Playable prototype
+## Running the game
 
-Open `godot/project.godot` in Godot 4.7 and run
-`res://scenes/main/Main.tscn`. The prototype provides authored training
-objectives, keyboard flight controls, HUD feedback, restart, and success/failure
-flow. Its simplified flight model, world, and visuals are explicitly
-approximations.
-
-Controls: arrow keys or A/D for pitch/roll, Q/E for yaw, Page Up/Page Down or
-W/S for throttle, R to restart, and Esc to quit.
+Open `godot/project.godot` in Godot 4.7 and run `res://scenes/main/Main.tscn`:
+it runs the original program from the strict port on an emulated Macintosh
+(Toolbox, screen, sound, input), as [`docs/GAME_RUNTIME.md`](docs/GAME_RUNTIME.md)
+describes. The mouse is the joystick; the keys are the original's (V cockpit,
+C chase, T tower, F flaps, G gear, J eject, P pause, `=` / `-` throttle, ⌘Q quit).
+Pilots and settings the game saves go to Godot's `user://resources`.
 
 ## Validation
 

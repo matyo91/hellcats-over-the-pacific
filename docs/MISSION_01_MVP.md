@@ -1,5 +1,9 @@
 # Mission 01 MVP (Flight School vertical slice)
 
+> **Historical.** The MVP prototype this page describes (its scenes, `godot/hellcats/` scripts,
+> data and tests) has been removed: `res://scenes/main/Main.tscn` now runs the original game
+> ([GAME_RUNTIME.md](GAME_RUNTIME.md)). The [RECONSTRUCTED] notes below remain as analysis.
+
 Implementation-oriented notes for the first playable training mission. **[RECONSTRUCTED]** = from binary analysis; **[INFERRED]** = reasonable extrapolation; **[MVP AUTHORING DECISION]** = chosen for speed/scope; **[UNKNOWN]** = not blocking the slice.
 
 ## 1. Goal

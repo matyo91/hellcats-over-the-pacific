@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic QA checks for migrated Godot tests and fixtures.
+"""Deterministic QA checks for the Godot tests, the game runtime's data and the scenes.
 
 This script is intentionally static/data-oriented and complements (does not duplicate)
 runtime Godot tests in `godot/tests/run_all.gd`.
@@ -17,8 +17,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GODOT_ROOT = REPO_ROOT / "godot"
 GODOT_TESTS = GODOT_ROOT / "tests"
-GODOT_FIXTURES = GODOT_TESTS / "fixtures"
-LEGACY_FIXTURES = GODOT_ROOT / "hellcats" / "tests" / "fixtures"
+JUMP_TABLE = GODOT_ROOT / "hellcats" / "data" / "jump_table.json"
 RUNNER_PATH = GODOT_TESTS / "run_all.gd"
 
 EXPECTED_RUNNER_PATHS = [
@@ -187,21 +186,6 @@ EXPECTED_RUNNER_PATHS = [
     "res://tests/strict_port/test_resedit_interface.gd",
     "res://tests/strict_port/test_resedit_text.gd",
     "res://tests/strict_port/test_resedit_media.gd",
-    "res://tests/unit/test_rng.gd",
-    "res://tests/unit/test_rng_overlay_11564.gd",
-    "res://tests/unit/test_flight_math.gd",
-    "res://tests/unit/test_loader_metadata.gd",
-    "res://tests/unit/test_mission_objectives_m1.gd",
-    "res://tests/unit/test_player_input_frame.gd",
-    "res://tests/unit/test_flight_model_mvp.gd",
-    "res://tests/unit/test_world_collision_mvp.gd",
-    "res://tests/integration/test_sim_loader_bridge.gd",
-    "res://tests/integration/test_sim_tick_ordering.gd",
-    "res://tests/integration/test_sim_entity_controls.gd",
-    "res://tests/integration/test_movement_smoothing.gd",
-    "res://tests/integration/test_replay.gd",
-    "res://tests/integration/test_mission_scene_load.gd",
-    "res://tests/integration/test_hud_mvp_scene.gd",
 ]
 
 EXPECTED_LOADER_TARGETS = [
@@ -213,16 +197,6 @@ EXPECTED_LOADER_TARGETS = [
     {"segment_id": 7, "stored_tail": 0x018C, "entrypoint_offset": 0x0190, "id00_entry_offset": 1408},
 ]
 
-ALLOWED_REPLAY_KEYS = {"key_32", "key_61"}
-EXPECTED_REPLAY_FRAME_COUNT = 4
-EXPECTED_MISSION_OBJECTIVES = [
-    "stabilize_flight",
-    "turn_left",
-    "turn_right",
-    "climb",
-    "descend",
-    "checkpoint_pass",
-]
 
 
 def fail(msg: str) -> None:
@@ -276,120 +250,37 @@ def _load_json(path: Path) -> object:
         fail(f"Invalid JSON at {path}: {exc}")
 
 
-def check_loader_fixture() -> None:
-    fixture = GODOT_FIXTURES / "proven_loader_targets.json"
-    if not fixture.exists():
-        fail(f"Missing fixture: {fixture}")
-
-    data = _load_json(fixture)
-    if not isinstance(data, dict):
-        fail("proven_loader_targets.json root must be an object")
-    if "targets" not in data or not isinstance(data["targets"], list):
-        fail("proven_loader_targets.json must contain array key 'targets'")
-
-    targets = data["targets"]
-    if len(targets) != len(EXPECTED_LOADER_TARGETS):
-        fail(f"loader targets count drifted: got={len(targets)} want={len(EXPECTED_LOADER_TARGETS)}")
-
-    by_tuple = {}
-    id00_seen: set[int] = set()
-    for idx, entry in enumerate(targets):
-        if not isinstance(entry, dict):
-            fail(f"targets[{idx}] must be an object")
-        for key in ("segment_id", "stored_tail", "entrypoint_offset", "id00_entry_offset", "delta"):
-            if key not in entry:
-                fail(f"targets[{idx}] missing key {key}")
-            if not isinstance(entry[key], int):
-                fail(f"targets[{idx}].{key} must be int")
-
-        delta = entry["delta"]
-        if delta != 4:
-            fail(f"targets[{idx}].delta must be 4")
-        if entry["entrypoint_offset"] != entry["stored_tail"] + delta:
-            fail(
-                f"targets[{idx}] invariant failed: "
-                "entrypoint_offset must equal stored_tail + delta"
-            )
-
-        tup = (entry["segment_id"], entry["stored_tail"], entry["entrypoint_offset"], entry["id00_entry_offset"])
-        if tup in by_tuple:
-            fail(f"Duplicate loader target tuple at index {idx}")
-        by_tuple[tup] = idx
-
-        id00 = entry["id00_entry_offset"]
-        if id00 in id00_seen:
-            fail(f"Duplicate id00_entry_offset at index {idx}: {id00}")
-        id00_seen.add(id00)
-
-    want = {
-        (e["segment_id"], e["stored_tail"], e["entrypoint_offset"], e["id00_entry_offset"])
-        for e in EXPECTED_LOADER_TARGETS
-    }
-    got = set(by_tuple.keys())
-    if got != want:
-        fail(
-            "proven_loader_targets.json content drifted from deterministic expected set.\n"
-            f"only_in_got={sorted(got - want)}\n"
-            f"only_in_want={sorted(want - got)}"
-        )
-
-    # A legacy copy would reintroduce split-brain fixture updates.
-    legacy = LEGACY_FIXTURES / "proven_loader_targets.json"
-    if legacy.exists():
-        fail("Remove legacy proven_loader_targets.json; godot/tests/fixtures is canonical.")
+def check_loader_targets() -> None:
+    """The proven loader targets are jump-table entries of CODE 0 as the game runtime links them."""
+    table = _load_json(JUMP_TABLE)
+    if not isinstance(table, dict) or not isinstance(table.get("entries"), list):
+        fail(f"{JUMP_TABLE} must hold an object with array key 'entries'")
+    base = table["jump_table_offset"]
+    by_offset = {e["a5_offset"]: e for e in table["entries"]}
+    for target in EXPECTED_LOADER_TARGETS:
+        if target["entrypoint_offset"] != target["stored_tail"] + 4:
+            fail(f"loader target {target}: entrypoint_offset must equal stored_tail + 4")
+        # A CODE 0 entry is 8 bytes after its 16-byte header; the JMP's A5 offset is 2 bytes in.
+        a5_offset = base + target["id00_entry_offset"] - 16 + 2
+        entry = by_offset.get(a5_offset)
+        if entry is None:
+            fail(f"loader target {target}: no jump-table entry at A5+0x{a5_offset:x}")
+        if (entry["segment"], entry["target"]) != (target["segment_id"], target["entrypoint_offset"]):
+            fail(f"loader target {target}: jump table has segment {entry['segment']} +0x{entry['target']:x}")
 
 
-def check_replay_fixture() -> None:
-    fixture = GODOT_FIXTURES / "replay_inputs.json"
-    if not fixture.exists():
-        fail(f"Missing fixture: {fixture}")
-    data = _load_json(fixture)
-    if not isinstance(data, list):
-        fail("replay_inputs.json root must be an array")
-    if len(data) != EXPECTED_REPLAY_FRAME_COUNT:
-        fail(
-            f"replay_inputs.json frame count drifted: got={len(data)} "
-            f"want={EXPECTED_REPLAY_FRAME_COUNT}"
-        )
-
-    for i, packet in enumerate(data):
-        if not isinstance(packet, dict):
-            fail(f"replay_inputs[{i}] must be an object")
-        unknown_keys = set(packet) - ALLOWED_REPLAY_KEYS
-        if unknown_keys:
-            fail(f"replay_inputs[{i}] has unknown keys: {sorted(unknown_keys)}")
-        for k, v in packet.items():
-            if not isinstance(v, int):
-                fail(f"replay_inputs[{i}].{k} must be int")
-
-    legacy = LEGACY_FIXTURES / "replay_inputs.json"
-    if legacy.exists():
-        fail("Remove legacy replay_inputs.json; godot/tests/fixtures is canonical.")
-
-
-def check_mission_mvp_data() -> None:
-    mission_path = REPO_ROOT / "godot" / "data" / "mission_01" / "mission_01_training.json"
-    if not mission_path.exists():
-        fail(f"Missing mission data: {mission_path}")
-    mission = _load_json(mission_path)
-    if not isinstance(mission, dict):
-        fail("mission_01_training.json root must be an object")
-    if mission.get("start_mode") != "airborne":
-        fail("Mission 01 MVP must stay airborne-start for the current vertical slice")
-    sequence = mission.get("objective_sequence")
-    if not isinstance(sequence, list):
-        fail("mission_01_training.json objective_sequence must be a list")
-    ids = [entry.get("id") for entry in sequence if isinstance(entry, dict)]
-    if ids != EXPECTED_MISSION_OBJECTIVES:
-        fail(f"Mission objective order drifted: got={ids} want={EXPECTED_MISSION_OBJECTIVES}")
-    last_entry = sequence[-1]
-    if not isinstance(last_entry, dict) or not bool(last_entry.get("optional", False)):
-        fail("checkpoint_pass objective must remain optional in Mission 01 MVP data")
-    failure = mission.get("failure", {})
-    if float(failure.get("stall_seconds", -1.0)) != 4.0:
-        fail("Mission stall failure threshold drifted from 4.0s")
-    if float(failure.get("out_of_bounds_seconds", -1.0)) != 8.0:
-        fail("Mission out-of-bounds threshold drifted from 8.0s")
+def check_game_scenes() -> None:
+    """The main scene runs the original game (scenes/game/Game.tscn); the MVP prototype is gone."""
+    main = (GODOT_ROOT / "scenes" / "main" / "Main.tscn").read_text(encoding="utf-8")
+    if 'path="res://scenes/game/Game.tscn"' not in main:
+        fail("scenes/main/Main.tscn must instance res://scenes/game/Game.tscn")
+    project = (GODOT_ROOT / "project.godot").read_text(encoding="utf-8")
+    if 'run/main_scene="res://scenes/main/Main.tscn"' not in project:
+        fail("project.godot main scene must be res://scenes/main/Main.tscn")
+    for gone in ("hellcats/core", "hellcats/flight", "hellcats/mission", "hellcats/player", "hellcats/ui",
+                 "hellcats/world", "data/mission_01", "tests/unit", "tests/integration"):
+        if (GODOT_ROOT / gone).exists():
+            fail(f"godot/{gone} belongs to the removed MVP prototype")
 
 
 def check_01a48_kind2_jsr_bytes() -> None:
@@ -482,9 +373,8 @@ def check_resedit_mirror() -> None:
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
-        ("loader-fixture", check_loader_fixture),
-        ("replay-fixture", check_replay_fixture),
-        ("mission-mvp-data", check_mission_mvp_data),
+        ("loader-targets", check_loader_targets),
+        ("game-scenes", check_game_scenes),
         ("01a48-kind2-jsr-bytes", check_01a48_kind2_jsr_bytes),
         ("global-alias-docs", check_global_alias_docs),
         ("resedit-mirror", check_resedit_mirror),
