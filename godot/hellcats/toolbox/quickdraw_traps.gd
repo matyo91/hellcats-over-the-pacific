@@ -420,14 +420,10 @@ func _classic(background: bool, constant: int) -> int:
 	return 0
 
 ## A port's colour (RGB, 16 bits each) set from the RGBColor at `rgb` (field offset in the port).
-## An RGBColor by address, or by value as the ports pass it in two longs ([red << 16 | green,
-## blue << 16 | the word after]).
-func _rgb(field: int, rgb) -> int:
-	var c: Array
-	if rgb is Array:
-		c = [(int(rgb[0]) >> 16) & 0xffff, int(rgb[0]) & 0xffff, (int(rgb[1]) >> 16) & 0xffff]
-	else:
-		c = [memory.read_u16(rgb), memory.read_u16(rgb + 2), memory.read_u16(rgb + 4)]
+## RGBForeColor / RGBBackColor: the RGBColor at its address (the strict port passes the caller's
+## frame record, as the original pushes it).
+func _rgb(field: int, rgb: int) -> int:
+	var c: Array = [memory.read_u16(rgb), memory.read_u16(rgb + 2), memory.read_u16(rgb + 4)]
 	var port: int = _port()
 	if qd.is_color(memory, port):
 		qd.set_rgb(port, field == 0x2a, c[0], c[1], c[2])

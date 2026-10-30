@@ -72,7 +72,7 @@ static func replay(fixture_path: String, port_script: GDScript) -> bool:
 	return ok
 
 ## The port side of tools/strict_port/segment_stubs.py: log the arguments (an Array argument is a
-## dereferenced buffer, logged long by long; an "out" argument is a pointer the stand-in writes its
+## dereferenced buffer, logged long by long, and so is a pointer whose derefs entry is a long count; an "out" argument is a pointer the stand-in writes its
 ## long through, unlogged; "outseq" writes the value for the call's number) at base (count, then
 ## the longs of each call, or under the key "-1" = "digest" a running hash h * 31 + value) and return the long at base - 4 (or the entry's next scripted result),
 ## masked to the Pascal result size (0: the whole long, D0).
@@ -89,6 +89,9 @@ static func _stub(mem, base: int, sizes: Array, result_size: int, results: Array
 				_write_out(mem, int(args[i]), spec)
 			elif args[i] is Array:
 				values.append_array(args[i])
+			elif spec is int or spec is float:
+				for k in int(spec):           # a pointer to a buffer: its longs, as the emulator side logs them
+					values.append(mem.read_u32((int(args[i]) + 4 * k) & 0xffffffff))
 			else:
 				values.append(int(args[i]) & ((1 << (8 * int(sizes[i]))) - 1))
 		if derefs.get("-1") == "digest":

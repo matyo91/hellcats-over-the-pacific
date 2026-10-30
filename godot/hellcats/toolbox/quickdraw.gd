@@ -67,52 +67,21 @@ static func s16(v: int) -> int:
 	return v - 0x10000 if v >= 0x8000 else v
 
 ## A rect argument: its address, or two longs (top << 16 | left, bottom << 16 | right) when the
-## port passes it by value (as its test stubs logged it). A routine that changes a rect in place
-## (InsetRect, OffsetRect) cannot reach a rect passed by value, so its result is kept and applied to
-## the next use of the same value, as the in-place change would have been.
-var _rect_edits: Dictionary = {}
-
+## port passes it by value (the strict port logs read-only rects so, as its test stubs do).
 func rect_arg(arg) -> Rect2i:
 	if arg is Array:
-		var key := "%d:%d" % [int(arg[0]), int(arg[1])]
-		if _rect_edits.has(key):
-			return _rect_edits[key]
 		var a: int = int(arg[0])
 		var b: int = int(arg[1])
 		return Rect2i(s16(a), s16(a >> 16), s16(b) - s16(a), s16(b >> 16) - s16(a >> 16))
 	return read_rect(int(arg))
 
-## A rect changed in place: written back to its address. A rect the port passed by value is looked
-## for in the frames below the ports' stack pointers (where the caller keeps its locals: the first
-## match going down from each) and written back there; only when it is nowhere is the change kept
-## for its by-value key.
+## A rect changed in place (InsetRect, OffsetRect...): written back to its address. The strict
+## port passes such rects by address, as the original pushes them; one by value has nowhere to go.
 func update_rect(arg, r: Rect2i) -> void:
-	if not arg is Array:
-		write_rect(int(arg), r)
+	if arg is Array:
+		machine.note_missing("rect-by-value", "an in-place rect change on a rect passed by value")
 		return
-	var key := "%d:%d" % [int(arg[0]), int(arg[1])]
-	var at: int = _frame_rect(int(arg[0]) & 0xffffffff, int(arg[1]) & 0xffffffff)
-	if at != 0:
-		write_rect(at, r)
-		_rect_edits.erase(key)
-	else:
-		_rect_edits[key] = r
-
-const FRAME_SEARCH := 0x400
-
-func _frame_rect(a: int, b: int) -> int:
-	for port in machine.segments.all_ports():
-		if not machine.segments.has_stack_pointer(port):
-			continue
-		var top: int = int(port.a7)
-		if top <= machine.STACK_LIMIT or top > machine.STACK_TOP:
-			continue
-		var p: int = top - 2
-		while p >= top - FRAME_SEARCH:
-			if memory.read_u32(p) == a and memory.read_u32(p + 4) == b:
-				return p
-			p -= 2
-	return 0
+	write_rect(int(arg), r)
 
 func read_rect(at: int) -> Rect2i:
 	var top: int = memory.read_s16(at)

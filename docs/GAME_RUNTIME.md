@@ -91,9 +91,9 @@ keys are read, so the menus are reached by their ⌘ keys (the menu bar does not
 other events are drained); HideCursor / ShowCursor / InitCursor keep the Mac cursor's level, which
 hides Godot's pointer during the flight.
 
-Rects the ports pass by value (two longs) to the traps that change them in place (InsetRect,
-OffsetRect) are found in the frames below the ports' stack pointers and written back there, as
-the VAR parameter would have been; pictures (DrawPicture, dialog picture items) are decoded from
+The strict port passes the rects that traps change in place (InsetRect, OffsetRect) by their
+frame address, as the original pushes them, so the change lands where the program reads it back;
+read-only rects may still come by value (two longs). Pictures (DrawPicture, dialog picture items) are decoded from
 the mirror's PNG on the game's thread without making textures.
 
 Routines outside the 740 (Ghidra never defined them) are written from their disassembly in

@@ -102,7 +102,7 @@ func frame_dialog_item_box(dialog: int, item: int) -> void:
 	_trap(TRAP_SET_PORT, [C68kScript.u32(dialog)])
 	_item_handle(dialog, item)
 	var a6: int = a7 - 4
-	_trap(TRAP_INSET_RECT, [0xfffe, 0xfffe, _box(a6 - 0xe)])
+	_trap(TRAP_INSET_RECT, [0xfffe, 0xfffe, C68kScript.u32(a6 - 0xe)])
 	_trap(TRAP_PEN_SIZE, [1, 1])
 	_trap(TRAP_FRAME_RECT, [_box(a6 - 0xe)])
 	_trap(TRAP_SET_PORT, [saved])
@@ -113,7 +113,7 @@ func draw_default_button_outline(dialog: int, _item: int) -> void:
 	_item_handle(dialog, memory.read_u16(C68kScript.u32(a5 - 0x225e)))
 	var a6: int = a7 - 4
 	_trap(TRAP_PEN_SIZE, [3, 3])
-	_trap(TRAP_INSET_RECT, [0xfffc, 0xfffc, _box(a6 - 0xe)])
+	_trap(TRAP_INSET_RECT, [0xfffc, 0xfffc, C68kScript.u32(a6 - 0xe)])
 	_trap(TRAP_FRAME_ROUND_RECT, [0x10, 0x10, _box(a6 - 0xe)])
 
 ## 0x1f2 (a user item procedure, Pascal): the item's box filled with the grey pattern A5 - 0x1624.
@@ -141,7 +141,7 @@ func draw_percent_bar_item(dialog: int, item: int) -> void:
 	memory.write_u16(box + 2, C68kScript.u16(cut + 1))
 	memory.write_u16(box + 6, right)
 	_trap(TRAP_FILL_RECT, [C68kScript.u32(a5 - 0x1614), _box(box)])
-	_trap(TRAP_INSET_RECT, [0xffff, 0xffff, _box(a6 - 0x1a)])
+	_trap(TRAP_INSET_RECT, [0xffff, 0xffff, C68kScript.u32(a6 - 0x1a)])
 	_trap(TRAP_PEN_SIZE, [1, 1])
 	_trap(TRAP_FRAME_RECT, [_box(a6 - 0x1a)])
 
@@ -177,7 +177,7 @@ func run_with_temporary_window() -> void:
 		memory.write_u32(C68kScript.u32(a5 - 0x14ba), memory.read_u32(C68kScript.u32(a5 - 0x167c)))
 		memory.write_u32(a6 - 8, memory.read_u32(C68kScript.u32(a5 - 0x14be)))
 		memory.write_u32(a6 - 4, memory.read_u32(C68kScript.u32(a5 - 0x14ba)))
-		_trap(TRAP_INSET_RECT, [0x64, 0x64, _box(a6 - 8)])
+		_trap(TRAP_INSET_RECT, [0x64, 0x64, C68kScript.u32(a6 - 8)])
 		var window: int = C68kScript.u32(_trap(TRAP_NEW_WINDOW, [0, 1, 0xffffffff, 3, 1, memory.read_u32(C68kScript.u32(a5 - 0xe4e)),
 				_box(a6 - 8), 0]))
 		memory.write_u32(C68kScript.u32(a5 - 0x225a), window)
@@ -341,7 +341,7 @@ func draw_scrolling_text_item(dialog: int, item: int) -> void:
 	var te: int = memory.read_u32(C68kScript.u32(a5 + A5_TE))
 	_trap(TRAP_ERASE_RECT, [C68kScript.u32(memory.read_u32(te) + 8)])
 	_trap(TRAP_TE_UPDATE, [te, _box(a6 - 0x12)])
-	_trap(TRAP_INSET_RECT, [0xfffe, 0xfffe, _box(a6 - 0x12)])
+	_trap(TRAP_INSET_RECT, [0xfffe, 0xfffe, C68kScript.u32(a6 - 0x12)])
 	_trap(TRAP_PEN_SIZE, [1, 1])
 	_trap(TRAP_FRAME_RECT, [_box(a6 - 0x12)])
 
@@ -431,8 +431,8 @@ func create_scrolling_text_item(dialog: int, item: int) -> void:
 	memory.write_u32(a6 - 0x1a, memory.read_u32(a6 - 0x12))
 	memory.write_u32(a6 - 0x16, memory.read_u32(a6 - 0xe))
 	memory.write_u16(a6 - 0x18, C68kScript.u16(memory.read_u16(a6 - 0xc) - 0x10))
-	_trap(TRAP_INSET_RECT, [0xfffe, 0, _box(a6 - 0x1a)])
-	_trap(TRAP_OFFSET_RECT, [0, 2, _box(a6 - 0x1a)])
+	_trap(TRAP_INSET_RECT, [0xfffe, 0, C68kScript.u32(a6 - 0x1a)])
+	_trap(TRAP_OFFSET_RECT, [0, 2, C68kScript.u32(a6 - 0x1a)])
 	_trap(TRAP_GET_PORT, [a6 - 0x1e])
 	_trap(TRAP_SET_PORT, [C68kScript.u32(dialog)])
 	memory.write_u32(C68kScript.u32(a5 + A5_TE), C68kScript.u32(_trap(TRAP_TE_NEW, [_box(a6 - 0x12), _box(a6 - 0x12)])))
@@ -685,7 +685,7 @@ func update_summary_dialog_buttons(dialog: int, which: int) -> void:
 	_trap(TRAP_SET_PORT, [C68kScript.u32(dialog)])
 	for item in [memory.read_u16(C68kScript.u32(a5 - 0x225e)), 1]:
 		_get_ditem(dialog, item, a6 - 2, a6 - 6, a6 - 0xe)
-		_trap(TRAP_INSET_RECT, [0xfffc, 0xfffc, _box(a6 - 0xe)])
+		_trap(TRAP_INSET_RECT, [0xfffc, 0xfffc, C68kScript.u32(a6 - 0xe)])
 		_trap(TRAP_ERASE_RECT, [_box(a6 - 0xe)])
 		_trap(TRAP_INVAL_RECT, [_box(a6 - 0xe)])
 	memory.write_u16(C68kScript.u32(a5 - 0x225e), 1)
@@ -856,7 +856,7 @@ func draw_targets_destroyed_row(dialog: int, item: int, index: int) -> void:
 	_trap(TRAP_SET_PORT, [C68kScript.u32(dialog)])
 	_trap(TRAP_CLIP_RECT, [C68kScript.u32(memory.read_u32(C68kScript.u32(a5 - 0x160c)) + 0x10)])
 	_get_ditem(dialog, item, a6 - 8, a6 - 0xc, a6 - 0x14)
-	_trap(TRAP_INSET_RECT, [0, 4, _box(a6 - 0x14)])
+	_trap(TRAP_INSET_RECT, [0, 4, C68kScript.u32(a6 - 0x14)])
 	_trap(TRAP_GET_FONT_INFO, [a6 - 0x92])
 	var top: int = memory.read_u16(a6 - 0x14)
 	var y: int = C68kScript.u16(row * 0x17 + memory.read_u16(a6 - 0x92) + top + 3)
@@ -930,8 +930,8 @@ func draw_aircraft_kill_markers(dialog: int, item: int) -> void:
 		_trap(TRAP_FRAME_RECT, [_box(a6 - 0x2c)])
 		memory.write_u16(a6 - 0x2a, C68kScript.u16(x + memory.read_u16(a6 - 0x22) + 7))
 		memory.write_u16(a6 - 0x26, C68kScript.u16(memory.read_u16(a6 - 0x2a) + 0x10))
-		_trap(TRAP_INSET_RECT, [3, 3, _box(a6 - 0x2c)])
-		_trap(TRAP_RGB_FORE_COLOR, [_box(a6 - 0x36)])
+		_trap(TRAP_INSET_RECT, [3, 3, C68kScript.u32(a6 - 0x2c)])
+		_trap(TRAP_RGB_FORE_COLOR, [C68kScript.u32(a6 - 0x36)])
 		_trap(TRAP_PAINT_OVAL, [_box(a6 - 0x2c)])
 		_trap(TRAP_FORE_COLOR, [0x21])
 		col += 1
@@ -1115,11 +1115,11 @@ func _about_picture(entry: int, a6: int, dialog: int, picture: int) -> void:
 	var frame: int = a6 - 0x28
 	memory.write_u32(frame, memory.read_u32(memory.read_u32(picture) + 2))
 	memory.write_u32(frame + 4, memory.read_u32(memory.read_u32(picture) + 6))
-	_trap(TRAP_OFFSET_RECT, [C68kScript.u16(-memory.read_u16(frame)), C68kScript.u16(-memory.read_u16(a6 - 0x26)), _box(frame)])
+	_trap(TRAP_OFFSET_RECT, [C68kScript.u16(-memory.read_u16(frame)), C68kScript.u16(-memory.read_u16(a6 - 0x26)), C68kScript.u32(frame)])
 	var centre: int = C68kScript.u16(C68kScript.divs_trunc(C68kScript.s16(memory.read_u16(a6 - 0x1a) - memory.read_u16(a6 - 0x1e)
 			- memory.read_u16(a6 - 0x22) - memory.read_u16(a6 - 0x26)), 2))
 	memory.write_u16(a6 - 0xc, centre)
-	_trap(TRAP_OFFSET_RECT, [memory.read_u16(a6 - 0x20), C68kScript.u16(memory.read_u16(a6 - 0x1e) + centre), _box(frame)])
+	_trap(TRAP_OFFSET_RECT, [memory.read_u16(a6 - 0x20), C68kScript.u16(memory.read_u16(a6 - 0x1e) + centre), C68kScript.u32(frame)])
 	_trap(TRAP_CLIP_RECT, [_box(a6 - 0x20)])
 	_trap(TRAP_DRAW_PICTURE, [_box(frame), picture])
 	var p: int = memory.read_u32(picture)

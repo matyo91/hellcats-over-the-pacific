@@ -278,7 +278,7 @@ func make_inset_face_oval_region(rect: int, size: int, h: int, v: int) -> int:
 	memory.write_u16(r + 4, C68kScript.u16(scale_design_4800(size) + memory.read_u16(r) - 2))
 	var dh: int = scale_design_4800(0x32) & 0xffff
 	var dv: int = scale_design_4800(0x32) & 0xffff
-	_trap(TRAP_INSET_RECT, [dv, dh, _box(r)])
+	_trap(TRAP_INSET_RECT, [dv, dh, C68kScript.u32(r)])
 	var rgn: int = C68kScript.u32(_trap(TRAP_NEW_RGN, []))
 	_trap(TRAP_OPEN_RGN, [])
 	_trap(TRAP_FRAME_OVAL, [_box(r)])
@@ -301,7 +301,7 @@ func composite_instrument_bitmap(port: int, size: int, _unused: int, a: int, b: 
 	if memory.read_u16(_g(A5_COLOUR_MODE)) == 1:
 		memory.write_u32(a6 - 0x10, memory.read_u32(p + 0x10))
 		memory.write_u32(a6 - 0xc, memory.read_u32(p + 0x14))
-		_trap(TRAP_OFFSET_RECT, [dv, dh, _box(a6 - 0x10)])
+		_trap(TRAP_OFFSET_RECT, [dv, dh, C68kScript.u32(a6 - 0x10)])
 		_trap(TRAP_COPY_BITS, [0, 3, _box(a6 - 0x10), _box(p + 0x10), C68kScript.u32(memory.read_u32(_g(A5_PANEL_PORT)) + 2),
 				C68kScript.u32(p + 2)])
 	else:
@@ -437,7 +437,7 @@ func draw_split_display_box(width: int, height: int, _unused: int, a: int, b: in
 	_trap(TRAP_PAINT_RECT, [_box(rect)])
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(2)])
 	_trap(TRAP_FRAME_RECT, [_box(rect)])
-	_trap(TRAP_INSET_RECT, [3, 3, _box(rect)])
+	_trap(TRAP_INSET_RECT, [3, 3, C68kScript.u32(rect)])
 	var span: int = C68kScript.u16(memory.read_u16(a6 - 4) - memory.read_u16(a6 - 8))
 	memory.write_u16(a6 - 0x20, span)
 	memory.write_u16(a6 - 4, C68kScript.u16(C68kScript.divs_trunc(C68kScript.s16(span), 2) + memory.read_u16(a6 - 8) - 1))
@@ -655,7 +655,7 @@ func _face_rect(a6: int, size: int, k: int) -> void:
 	memory.write_u16(a6 - 2, C68kScript.u16(scale_design_4800(memory.read_u16(C68kScript.u32(size))) * k))
 	var dh: int = C68kScript.u16(scale_design_4800(0x14) * k + k)
 	var dv: int = C68kScript.u16(scale_design_4800(0x14) * k + k)
-	_trap(TRAP_INSET_RECT, [dv, dh, _box(a6 - 8)])
+	_trap(TRAP_INSET_RECT, [dv, dh, C68kScript.u32(a6 - 8)])
 
 const TRAP_GET_CLIP: int = 0xa87a
 const TRAP_PAINT_OVAL: int = 0xa8b8
@@ -1192,7 +1192,7 @@ func draw_percent_scale_gauge(w: int, h: int, digits: int, pen: int, v: int, h0:
 	antialias_downsample_bw_3x(port, left, top, C68kScript.u16(bottom - top), C68kScript.u16(right - left), 0)
 	a7 = entry
 	dispose_offscreen_bw_port(port)
-	_trap(TRAP_INSET_RECT, [1, 1, _box(a6 - 0x12)])
+	_trap(TRAP_INSET_RECT, [1, 1, C68kScript.u32(a6 - 0x12)])
 	memory.write_u32(_g(-0x1186), memory.read_u32(a6 - 0x12))
 	memory.write_u32(_g(-0x1182), memory.read_u32(a6 - 0xe))
 
@@ -1226,7 +1226,7 @@ func draw_panel_section_with_numbered_boxes() -> void:
 		_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(0)])
 	else:
 		_jt(JT_FORE_PANEL_COLOUR, [_jt(JT_PANEL_COLOUR, [0, 1, 0]) & 0xffff])
-	_trap(TRAP_INSET_RECT, [2, 2, _box(rect)])
+	_trap(TRAP_INSET_RECT, [2, 2, C68kScript.u32(rect)])
 	_trap(TRAP_PAINT_RECT, [_box(rect)])
 	memory.write_u32(_g(-0x11aa), memory.read_u32(rect))
 	memory.write_u32(_g(-0x11a6), memory.read_u32(rect + 4))
@@ -1421,7 +1421,7 @@ func draw_gyro_instrument(size: int, tick: int, pen: int, v: int, h: int, card: 
 	memory.write_u16(a6 - 0x22, C68kScript.u16(scale_design_4800(size) + memory.read_u16(rect)))
 	var dh: int = scale_design_4800(0x46) & 0xffff
 	var dv: int = scale_design_4800(0xb4) & 0xffff
-	_trap(TRAP_INSET_RECT, [dv, dh, _box(rect)])
+	_trap(TRAP_INSET_RECT, [dv, dh, C68kScript.u32(rect)])
 	_trap(TRAP_MOVE_TO, [memory.read_u16(rect), _h(h)])
 	var x: int = _h(h)
 	_trap(TRAP_LINE_TO, [C68kScript.u16(scale_design_4800(0x28) + memory.read_u16(rect)), x])

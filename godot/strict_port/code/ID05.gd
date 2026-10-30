@@ -326,7 +326,7 @@ func code_dialog_filter(dialog: int, event: int, item_hit: int) -> int:
 		_trap(TRAP_GET_ITEXT, [a6 - 0x10e, memory.read_u32(a6 - 6)])
 		_trap(TRAP_GET_DITEM, [a6 - 0xe, a6 - 6, a6 - 2, 1, C68kScript.u32(dialog)])
 		_trap(TRAP_PEN_SIZE, [3, 3])
-		_trap(TRAP_INSET_RECT, [0xfffc, 0xfffc, _box(a6 - 0xe)])
+		_trap(TRAP_INSET_RECT, [0xfffc, 0xfffc, C68kScript.u32(a6 - 0xe)])
 		_trap(TRAP_FRAME_ROUND_RECT, [0x10, 0x10, _box(a6 - 0xe)])
 		_trap(TRAP_HILITE_CONTROL, [0xff if memory.read_u8(a6 - 0x10e) == 0 else 0, memory.read_u32(a6 - 6)])
 	var what: int = memory.read_u16(C68kScript.u32(event))

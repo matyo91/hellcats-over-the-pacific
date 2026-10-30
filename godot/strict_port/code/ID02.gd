@@ -1292,12 +1292,18 @@ const TRAP_GET_CLIP: int = 0xa87a
 ## word and -y) starting at the last, filled with the colour in `rgb` (bytes 3 / 2 / 1 = red /
 ## green / blue, each << 8):
 ## at depth 1 with the RGB-to-pattern pattern (FillPoly), otherwise RGBForeColor + PaintPoly; then
-## KillPoly. RGBForeColor gets the frame colour record, logged with the loop counter word after it.
+## KillPoly. RGBForeColor gets the frame colour record (red / green / blue words at A6 - 8 .. - 4),
+## logged with the loop counter word (A6 - 2) after it.
 func paint_polygon_rgb_a5safe(points: int, count: int, rgb: int) -> void:
+	assert(a7 != 0, "paint_polygon_rgb_a5safe needs a7 (its frame holds the colour record)")
+	var a6: int = a7 - 4
 	var world: int = _current_a5()
 	var r: int = ((C68kScript.asr32(rgb, 24) & 0xff) << 8) & 0xffff
 	var g: int = ((C68kScript.asr32(rgb, 16) & 0xff) << 8) & 0xffff
 	var b: int = ((C68kScript.asr32(rgb, 8) & 0xff) << 8) & 0xffff
+	memory.write_u16(a6 - 8, r)
+	memory.write_u16(a6 - 6, g)
+	memory.write_u16(a6 - 4, b)
 	var poly: int = C68kScript.u32(_trap(TRAP_OPEN_POLY, []))
 	var n: int = C68kScript.s32(count)
 	var last: int = C68kScript.u32(points + C68kScript.s32(C68kScript.lsl32(n - 1, 3)))
@@ -1307,12 +1313,13 @@ func paint_polygon_rgb_a5safe(points: int, count: int, rgb: int) -> void:
 		var p: int = C68kScript.u32(points + 8 * i)
 		_trap(TRAP_LINE_TO, [C68kScript.u16(-memory.read_u32(p + 4)), memory.read_u16(p + 2)])
 		i = C68kScript.s16(i + 1)
+	memory.write_u16(a6 - 2, i & 0xffff)
 	_trap(TRAP_CLOSE_POLY, [])
 	if memory.read_s16(C68kScript.u32(world - 0x137a)) == 1:
 		var pattern: int = _jt(JT_RGB_TO_PATTERN, [r, g, b])
 		_trap(TRAP_FILL_POLY, [C68kScript.u32(pattern), poly])
 	else:
-		_trap(TRAP_RGB_FORE_COLOR, [[(r << 16) | g, (b << 16) | (i & 0xffff)]])
+		_trap(TRAP_RGB_FORE_COLOR, [C68kScript.u32(a6 - 8)])
 		_trap(TRAP_PAINT_POLY, [poly])
 	_trap(TRAP_KILL_POLY, [poly])
 
