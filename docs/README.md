@@ -6,12 +6,13 @@ by `python3 tools/progress_stats.py`; they are not copied into prose.
 | Need | Authority |
 |---|---|
 | Current architecture and integration boundary | [`PROJECT_STATUS.md`](PROJECT_STATUS.md) |
+| The game runtime around the strict port | [`GAME_RUNTIME.md`](GAME_RUNTIME.md) |
 | Semantic reconstruction target and rules | [`DECOMPILATION_PROGRESS.md`](DECOMPILATION_PROGRESS.md) |
 | Segment-qualified function registry | [`DECOMPILATION_INVENTORY.json`](DECOMPILATION_INVENTORY.json) through `tools/re_query.py` |
 | Symbols, globals, layouts, and call corrections | [`DECOMPILATION_SYMBOLS.md`](DECOMPILATION_SYMBOLS.md) |
 | Strict C-to-GDScript contract | [`STRICT_PORT_FOUNDATION.md`](STRICT_PORT_FOUNDATION.md) |
 | Original subsystem navigation | [`SUBSYSTEM_MAP.md`](SUBSYSTEM_MAP.md) |
-| Prototype/import correspondence | [`IMPORT_STATUS.md`](IMPORT_STATUS.md) |
+| Prototype/import correspondence (historical) | [`IMPORT_STATUS.md`](IMPORT_STATUS.md) |
 | Resource formats and retrieval | [`RESOURCE_ANALYSIS.md`](RESOURCE_ANALYSIS.md) through `tools/resedit.py` |
 | Structures and loader mechanics | [`STRUCTS.md`](STRUCTS.md), [`LOADER_CHAIN.md`](LOADER_CHAIN.md) |
 | Rendering, sound, HUD, mission, and controller findings | Topic-specific documents in this directory |

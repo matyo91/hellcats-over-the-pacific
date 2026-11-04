@@ -1822,6 +1822,21 @@ void tally_destroyed_entity /* Original: FUN_00000488 */ (int entity /* param_1:
 
 
 
+/* Unexported function at overlay offset 0x4d0 (runtime 0x4b0; not in Ghidra's export; no
+ * LINK, C convention). Recovered name (comment only): player_left_ground_zone [STRONG
+ * INFERENCE]. Host service hook at +0x302 (A5-0x1086), installed by overlay_main_entry.
+ * Bytes 0x4d0..0x4f6 [PROVEN]: no player (DAT_0001b738 == 0) gives 1; otherwise the player
+ * object's y (+0x1c) less its controller's ground height (+0x2e, the deck under it when
+ * carrier_deck_contact set it) compared with 0x1387 (CMPI.L / BGT, signed): above 4999 gives 1,
+ * else 0; RTS:
+ *
+ *   int player_left_ground_zone(void)
+ *   { if (DAT_0001b738 == 0) return 1;
+ *     return (DAT_0001b738->object->y - DAT_0001b738->ground_2e > 4999) ? 1 : 0; }
+ *
+ * The game runtime runs it as godot/hellcats/runtime/overlay_loader.gd _04b0.
+ */
+
 /* Original: FUN_000004f8; source: Pacific Conflict.c. Recovered name: transform_through_node_chain [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x4f8).
  * Args: node-pointer stack top, count, object, out x / y / z, optional vertex output. Starts from the object position (+2 / +6 / +0xa); for each node popped from the stack: build_attitude_matrix_3ang from the node angles (+2, +4, +6), FUN_00002aba, then the vector transform at LAB_00001c3a_2 of the position with the node offset (+8, +0xc, +0x10); with a vertex buffer it also transforms the object vertex list (count +0x1a, scale shift +0x18, data at +0x22). Returns the world-space origin through the three out pointers [STRONG INFERENCE: hierarchical object placement]. Callers: FUN_000006ec (three calls) and FUN_00000aba. FUN_00000954 calls for_each_mission_scene_object(FUN_000006ec,...), so FUN_000006ec is the per-object visitor.
@@ -16583,6 +16598,23 @@ LAB_0000d11c:
 }
 
 
+
+/* Unexported function at overlay offset 0xd25a (runtime 0xd23a; not in Ghidra's export; no
+ * LINK, C convention). Recovered name (comment only): redraw_view_readouts [STRONG INFERENCE].
+ * Host service hook at +0x316 (A5-0x1072), installed by overlay_main_entry; the host runs it
+ * through redraw_panel_readouts_locked (ID02 0xa26). It starts right after an RTS.
+ * Bytes 0xd25a..0xd27a [PROVEN]: update_view_readouts_and_overlays(0) (BSR 0xd00c, the long
+ * argument popped); when panels_drawn (word DAT_00020ae4) is set: update_throttle_gauge
+ * (0xcb62), update_radar_range_buttons (BSR.L 0x17a8c), update_bomb_indicator (0xcac6) and
+ * mark_view_overlays_drawn (0xd27c); RTS:
+ *
+ *   void redraw_view_readouts(void)
+ *   { update_view_readouts_and_overlays(0);
+ *     if (panels_drawn) { update_throttle_gauge(); update_radar_range_buttons();
+ *                         update_bomb_indicator(); mark_view_overlays_drawn(); } }
+ *
+ * The game runtime runs it as godot/hellcats/runtime/overlay_loader.gd _d23a.
+ */
 
 // WARNING: Globals starting with '_' overlap smaller symbols at the same address
 

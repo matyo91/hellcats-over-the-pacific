@@ -38,6 +38,10 @@ func install(toolbox) -> void:
 		menus.erase(h)
 		return 0)
 	t.install(0xa94d, func(_a: Array) -> int: return 0)                            ## AddResMenu: no desk accessories
+	# With no desk accessories in the Apple menu, the Desk Manager has nothing to do.
+	t.install(0xa9b6, func(_a: Array) -> int: return 0)                            ## OpenDeskAcc(name): no driver opened
+	t.install(0xa9b3, func(_a: Array) -> int: return 0)                            ## SystemClick(event, window)
+	t.install(0xa9c2, func(_a: Array) -> int: return 0)                            ## SystemEdit(cmd): false, the program edits
 	t.install(0xa937, func(_a: Array) -> int:                                       ## DrawMenuBar
 		draw_menu_bar()
 		return 0)

@@ -52,7 +52,7 @@ func alloc_and_read_resource_payload(ref_num: int) -> int:
 	memory.write_u32(a6 - 4, C68kScript.u32(memory.read_u32(a6 - 4) - memory.read_u32(a6 - 8)))
 	var block: int = C68kScript.u32(_jt(JT_NEW_PTR, [memory.read_u32(a6 - 4)]))
 	memory.write_u32(C68kScript.u32(a5 + A5_PAYLOAD), block)
-	return _jt(JT_FS_READ, [memory.read_u32(C68kScript.u32(a5 + A5_PAYLOAD)), [memory.read_u32(a6 - 4)], ref_num & 0xffff]) & 0xffff
+	return _jt(JT_FS_READ, [memory.read_u32(C68kScript.u32(a5 + A5_PAYLOAD)), C68kScript.u32(a6 - 4), ref_num & 0xffff]) & 0xffff
 
 const JT_POSITION_WINDOW: int = 0x48a   ## ID02 position_window_on_screen (C, window)
 const JT_SF_GET_FILE: int = 0x30a       ## SFGetFile(where, prompt, filter, count, types, hook, VAR reply) (Pascal)
@@ -171,7 +171,7 @@ func _load_image(entry: int, a6: int, ref_num: int) -> bool:
 	if memory.read_u32(_g(A5_IMAGE)) != 0:
 		_jt(JT_DISPOSE_PTR, [memory.read_u32(_g(A5_IMAGE))])
 	memory.write_u32(a6 - 0x10, 0x20)
-	var err: int = _jt(JT_FS_READ, [_g(A5_HEADER), [memory.read_u32(a6 - 0x10)], ref_num]) & 0xffff
+	var err: int = _jt(JT_FS_READ, [_g(A5_HEADER), C68kScript.u32(a6 - 0x10), ref_num]) & 0xffff
 	memory.write_u16(a6 - 0xc, err)
 	if err != 0:
 		return _fail(-0xdf6, err)
@@ -184,10 +184,10 @@ func _load_image(entry: int, a6: int, ref_num: int) -> bool:
 		return _fail(-0xdf2, 0)
 	memory.write_u32(_g(A5_IMAGE), C68kScript.u32(image + ((4 - (image & 3)) & 3)))
 	memory.write_u32(a6 - 0x10, memory.read_u32(_g(-0x1022)))
-	_jt(JT_FS_READ, [memory.read_u32(_g(A5_IMAGE)), [memory.read_u32(a6 - 0x10)], ref_num])
+	_jt(JT_FS_READ, [memory.read_u32(_g(A5_IMAGE)), C68kScript.u32(a6 - 0x10), ref_num])
 	if memory.read_u32(_g(-0x101e)) != 0:
 		memory.write_u32(a6 - 0x10, memory.read_u32(_g(-0x101e)))
-		_jt(JT_FS_READ, [C68kScript.u32(memory.read_u32(_g(A5_IMAGE)) + memory.read_u32(_g(-0x1022))), [memory.read_u32(a6 - 0x10)], ref_num])
+		_jt(JT_FS_READ, [C68kScript.u32(memory.read_u32(_g(A5_IMAGE)) + memory.read_u32(_g(-0x1022))), C68kScript.u32(a6 - 0x10), ref_num])
 	var first: int = C68kScript.divs_trunc(memory.read_s32(_g(-0x100e)), 8)
 	var second: int = C68kScript.divs_trunc(memory.read_s32(_g(-0x100a)), 8)
 	memory.write_u32(a6 - 0x18, C68kScript.u32(first))
@@ -195,7 +195,7 @@ func _load_image(entry: int, a6: int, ref_num: int) -> bool:
 	var i: int = 0
 	while C68kScript.s32(first + second) > i:
 		memory.write_u32(a6 - 0x10, 8)
-		_jt(JT_FS_READ, [a6 - 0x128, [memory.read_u32(a6 - 0x10)], ref_num])
+		_jt(JT_FS_READ, [a6 - 0x128, C68kScript.u32(a6 - 0x10), ref_num])
 		var flags: int = memory.read_s32(a6 - 0x124)
 		if (flags >> 7) & 1 == 0:
 			if (flags >> 4) & 1 != 0:

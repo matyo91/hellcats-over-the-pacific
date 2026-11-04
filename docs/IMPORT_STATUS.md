@@ -1,5 +1,9 @@
 # Import status (decompiled C ↔ Godot)
 
+> **Historical.** This page maps symbols to the removed MVP prototype. Every function is now
+> strict-ported (`godot/strict_port/mappings/functions.json`, `tools/progress_stats.py`) and runs
+> as the original game ([GAME_RUNTIME.md](GAME_RUNTIME.md)); the analysis notes below remain.
+
 Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]** / **[DEFERRED]**.
 
 **Purpose:** Technical cross-reference showing which **Pacific Conflict.c** (and segment) symbols are reflected in the prototype. Current strict-port status comes only from `godot/strict_port/mappings/functions.json` and `tools/progress_stats.py`.

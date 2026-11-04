@@ -93,11 +93,70 @@ hides Godot's pointer during the flight.
 
 The strict port passes the rects that traps change in place (InsetRect, OffsetRect) by their
 frame address, as the original pushes them, so the change lands where the program reads it back;
-read-only rects may still come by value (two longs). Pictures (DrawPicture, dialog picture items) are decoded from
+read-only rects may still come by value (two longs). FSRead's count is the caller's long too: the
+bytes read are written back into it. Pictures (DrawPicture, dialog picture items) are decoded from
 the mirror's PNG on the game's thread without making textures.
 
 Routines outside the 740 (Ghidra never defined them) are written from their disassembly in
 `hellcats/runtime/unexported.gd` and registered where the port calls them.
+
+`tools/qa/test_regression.py` (`check_runtime_coverage`) keeps the runtime complete: every
+jump-table slot and segment-local offset the strict port calls, every slot the CODE segments hand
+out as a procedure, every code pointer in the overlay's relocation table and every trap word the
+ports use must have a routine behind it, so a gap fails the check before anyone plays into it.
+
+Those written routines are also checked against their original bytes where they stand alone:
+`tools/hellcats/gen_runtime_cases.py` runs them on the 68000 interpreter (`tools/strict_port/
+m68k_emu.py`) and `godot/tests/runtime/test_unexported_routines.gd` replays the cases on the
+runtime (ansi_strlen, ansi_strncmp and player_left_ground_zone so far).
+
+## Routines outside the 740
+
+Ghidra never defined these 35 routines, so they have no `.c` export and stay outside the registry;
+the ones marked *decomp* are described in their segment's `.decomp.c` (an "Unexported function"
+block, or the comment of the routine around them), with the semantic name used here. Each is written from the disassembly of its bytes; its start was checked to be a
+routine boundary (a `LINK`, or the instruction after an `RTS` / `JMP (A0)`). Segment offsets are in
+the CODE resource (`sources/resedit-1-0-3/CODE/<ID>.bin`); overlay addresses are runtime
+addresses, the scenery file's offset less `0x20`. "Reached by" is how the port calls it: a
+jump-table slot (`$offset`), its segment offset (local), or a code address.
+
+| Segment | Offset | Reached by | Runtime | What it does |
+|---|---|---|---|---|
+| ID02 | 0x1b42 | local | `unexported.gd` `id02_1b42` | `install_overlay_service_table`: main's set-up (*decomp*) |
+| ID02 | 0x4d24 | local | `id02_4d24` | `apply_display_palettes`: palette for the depth, index maps, the renderer (*decomp*) |
+| ID02 | 0x4d96 | local | `id02_4d96` | `restore_screen_globals`: the screen device and globals (*decomp*) |
+| ID02 | 0x04a4 | local | `id02_04a4` | `end_overlay_session`: end of an overlay session (sound shut down) (*decomp*) |
+| ID02 | 0x095a | local | `id02_095a` | `lock_session_handles`: the first of nested calls (*decomp*) |
+| ID02 | 0x09fa | local | `id02_09fa` | `unlock_session_handles`: the last of nested calls (*decomp*) |
+| ID02 | 0x0a26 | local | `id02_0a26` | `redraw_panel_readouts_locked`: the overlay's readouts hook (*decomp*) |
+| ID02 | 0x2da0 | local | `id02_2da0` | `save_changed_settings`: changed settings written (*decomp*) |
+| ID02 | 0x2eaa | local | `id02_2eaa` | `quit_application`: asking to save changed settings (*decomp*) |
+| ID02 | 0x0434 | `$502` | `id02_0434` | `ansi_strncmp` (*decomp*) |
+| ID02 | 0x03e8 | `$522` | `id02_03e8` | `ansi_strlen` (*decomp*) |
+| ID03 | 0x59f4 | local | `id03_59f4` | `release_panel_bitmaps`: the panel session handles (*decomp*) |
+| ID04 | 0x0432 | `$172` | `id04_0432` | `report_panel_store_failure`: the event loop's pending message (*decomp*) |
+| ID04 | 0x01b8 | local | `id04_01b8` | `install_default_ring_item`: the default button's ring user item (*decomp*) |
+| ID04 | 0x02dc | local | `id04_02dc` | `set_radio_group_selection`: a radio group's selection (*decomp*) |
+| ID04 | 0x0644 | `$132` | `id04_0644` | `run_duty_roster_dialog`: the Active Duty Roster dialog (*decomp*) |
+| ID04 | 0x0c02 | `$82` | `id04_0c02` | `run_scenario_selection_dialog`: the Select a Mission dialog (*decomp*) |
+| ID04 | 0x0e70 | `$9a` | `id04_0e70` | `run_refuel_dialog`: Refuel and Reload after a landing (*decomp*) |
+| ID04 | 0x137a | `$102` | `id04_137a` | `run_high_scores_dialog`: the High Scores dialog (*decomp*) |
+| ID04 | 0x1752 | local | `id04_1752` | `track_summary_text_click`: a click on the summary's scroll bar (*decomp*) |
+| ID04 | 0x1b3e | `$15a` | `id04_1b3e` | `draw_rank_insignia`: the rank insignia user item (*decomp*) |
+| ID04 | 0x1dde | `$152` | `id04_1dde` | `draw_mission_awards`: the medals user item (*decomp*) |
+| ID04 | 0x2104 | `$ca` | `id04_2104` | `mission_summary_filter_proc`: the mission summary's dialog filter (*decomp*) |
+| ID04 | 0x21d6 | local | `id04_21d6` | `advance_mission_summary_text`: the mission summary's text, one step a call (*decomp*) |
+| ID04 | 0x3614 | local | `id04_3614` | `track_map_bearing_and_distance`: a click on the map, its heading and range (*decomp*) |
+| ID04 | 0x3976 | `$10a` | `id04_3976` | `run_map_dialog`: the Mission Map dialog (*decomp*) |
+| ID05 | 0x03ba | local | `id05_03ba` | `build_protection_code_strings`: the copy protection dialog's strings (*decomp*) |
+| ID05 | 0x08b2 | `$532` | `id05_08b2` | `arm_restore_gate`: the protection counter (*decomp*) |
+| ID06 | 0x00ee | `$1d2` | `id06_00ee` | the grey map pointer, the 1-bit view buffer base |
+| ID06 | 0x0858 | `$1b2` | `id06_0858` | `release_render_buffers`, with `free_pattern_tables` (0x15a) and `free_edge_pool` (0x582) inlined (*decomp*) |
+| ID09 | 0x03d6 | `$2ea` | `toolbox.gd` `iu_comp_string` | `iucompstring_glue`, IUCompString through `_Pack6` (*decomp*) |
+| Pacific Conflict | 0x04b0 | hook | `overlay_loader.gd` `_04b0` | `player_left_ground_zone`: more than 4999 above its ground (*decomp*) |
+| Pacific Conflict | 0xd23a | hook | `_d23a` | `redraw_view_readouts`: the readouts, gauges and overlays (*decomp*) |
+| Pacific Conflict | 0x16208 | code address | `_16208` | the 1-bit renderer's erase hook: `clr.w $1da8c` |
+| Pacific Conflict | 0x15134 | code address | `_15134` | `carrier_deck_contact`: the deck as ground (*decomp*) |
 
 ## Progress
 
@@ -107,7 +166,7 @@ Routines outside the 740 (Ghidra never defined them) are written from their disa
 | 2. Memory Manager, Resource Manager (from the strict resource mirror), Color QuickDraw device, SysEnvirons | done |
 | 3. `initialize_application` runs to its end; InitWindows draws the desktop and menu bar | done |
 | 4. Overlay load: File Manager, the A5 world from DATA / ZERO / DREL, the image at runtime base 0, overlay entry, hooks and host services | done |
-| 5. Unexported routines: ID02 0x1b42, 0x4d24, 0x4d96, 0x4a4, 0x95a, 0x9fa, 0xa26, 0xd24, 0x2da0, 0x2eaa, 0x434 ($502 strncmp), 0x3e8 ($522 strlen); ID03 0x59f4; ID04 0x432 ($172), 0x644 ($132, the Active Duty Roster), 0xc02 ($82, Select a Mission), 0x1b8, 0x2dc, the mission summary's 0x21d6 (its text), 0x1752 (its scroll bar), 0x2104 ($ca, its filter), 0x1dde ($152, medals) and 0x1b3e ($15a, rank insignia), 0x3976 ($10a, the Mission Map), 0x137a ($102, High Scores); ID05 0x3ba, 0x8b2 ($532); ID06 0x858 ($1b2). Overlay routines 0x4b0, 0xd23a and the carrier's collision hook 0x15134 (the deck as the ground) | done |
+| 5. Unexported routines: ID02 0x1b42, 0x4d24, 0x4d96, 0x4a4, 0x95a, 0x9fa, 0xa26, 0x2da0, 0x2eaa, 0x434 ($502 strncmp), 0x3e8 ($522 strlen); ID03 0x59f4; ID04 0x432 ($172), 0x644 ($132, the Active Duty Roster), 0xc02 ($82, Select a Mission), 0x1b8, 0x2dc, the mission summary's 0x21d6 (its text), 0x1752 (its scroll bar), 0x2104 ($ca, its filter), 0x1dde ($152, medals) and 0x1b3e ($15a, rank insignia), 0x3976 ($10a, the Mission Map) and 0x3614 (its click tracker), 0x137a ($102, High Scores), 0xe70 ($9a, Refuel and Reload); ID05 0x3ba, 0x8b2 ($532); ID06 0x858 ($1b2), 0xee ($1d2). Overlay routines 0x4b0, 0xd23a and the carrier's collision hook 0x15134 (the deck as the ground) | done |
 | 6. QuickDraw (ports, patterns and modes, lines, rects, round rects, ovals, regions as rects plus single-oval regions for clipping and PtInRgn, text from a glyph cache, CopyBits, pictures, colour icons), Window / Dialog / Control (scroll bars: NewControl, FindControl, TrackControl) / Menu managers, TextEdit, Standard File's Get File (File > Open…, over the scenery volume; the overlay reloads), palettes | done |
 | 7. Event Manager from Godot input (mouse, Mac key codes and GetKeys, ticks), update and activate events | done |
 | 8. Pilot roster, mission selection, the 3D flight view from the carrier's deck, the cockpit view (V) with its instrument panel, keyboard and mouse input, ejecting, and the mission summary (its text, scroll bar, medals and rank); sound (the VBL sound hook run every tick into SoundBase and played through `scenes/game/Game.tscn`'s Speaker; SndPlay of 'snd ' resources); saving (WriteResource / UpdateResFile kept under `user://resources`) | done |

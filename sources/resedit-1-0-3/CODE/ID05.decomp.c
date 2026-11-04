@@ -297,7 +297,7 @@ void write_TEXT128_pair /* Original: FUN_00000270 */ (undefined4 first /* param_
  *   return false;
  * Trap names / event layout: Inside Macintosh [STRONG INFERENCE].
  *
- * Routine B, file 0x3ba..0x4e2, NOT exported by Ghidra (no separate entry;
+ * Routine B (recovered name, comment only: build_protection_code_strings [HYPOTHESIS]), file 0x3ba..0x4e2, NOT exported by Ghidra (no separate entry;
  * caller UNKNOWN) [PROVEN bytes; roles HYPOTHESIS]:
  *   args: long *a [8(A6)], char *outA [$c], long *b [$10], char *outB [$14]
  *   copy 0x102 bytes A5-0x2c8 -> local buf; get_machine_screen_fingerprint(&w1..&w5) fills 5 words;
@@ -685,7 +685,8 @@ void poison_overlay_bytes /* Original: FUN_000007f6 */ (int base /* param_1: ove
  * of table A5-0xb4 in reverse order (11..0). Otherwise does nothing.
  * Caller [PROVEN, bytes]: ID08 file 0x29e JSR $55a(A5) (JT seg5 -> file 0x85e),
  * after the seg5 calls $542, $582, $552, $54a, $532 (conditional) and $572.
- * Gate writers: A5-0xbc via JT $532 stub file 0x8b2 after
+ * Gate writers: A5-0xbc via JT $532 stub file 0x8b2 (unexported, bytes 0x8b2..0x8b6
+ * [PROVEN]: ADDQ.W #1,A5-0xbc; RTS; recovered name, comment only: arm_restore_gate) after
  * record_code_index_equals; A5-0xc0 by unexported routine at file 0x964. Note: if neither gate is set, 12 overlay bytes remain 0xFF.
  */
 void restore_poisoned_overlay_bytes /* Original: FUN_0000085e */ (void)

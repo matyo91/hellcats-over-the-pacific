@@ -69,6 +69,10 @@ func _init(owner) -> void:
 		machine.park()
 		return 0)
 	install(0xa9c8, func(_a: Array) -> int: return 0)    ## SysBeep
+	install(0xa05d, func(a: Array) -> int:              ## SwapMMUMode: D0's mode byte in, the old one out
+		var old: int = machine.mmu_mode
+		machine.mmu_mode = a[0] & 0xff
+		return old)
 	install(0xa86a, func(a: Array) -> int: return (a[0] >> 16) & 0xffff)   ## HiWord(long)
 	install(0xa86b, func(a: Array) -> int: return a[0] & 0xffff)           ## LoWord(long)
 
@@ -84,6 +88,32 @@ func install_glue(stand_ins: Dictionary) -> void:
 	stand_ins[0x1f2] = func(a: Array) -> int: return sys_environs(a[0])            ## SysEnvirons(version, VAR rec)
 	stand_ins[0x302] = func(a: Array) -> int: return c_to_pascal(a[0])             ## c2pstr in place
 	stand_ins[0x2f2] = func(a: Array) -> int: return num_to_string(a[1], a[0])     ## NumToString(n, VAR s)
+	stand_ins[0x2ea] = func(a: Array) -> int: return iu_comp_string(a[1], a[0])     ## IUCompString(a, b)
+
+## IUCompString (iucompstring_glue, ID09 0x3d6, in ID09.decomp.c's unexported block: the strings'
+## lengths and bodies to _Pack6 selector 10, IUMagString): -1, 0 or 1 as a word, by the US System's order: letters without regard to case
+## first, then (for strings equal so) capitals before small letters, then length.
+func iu_comp_string(a: int, b: int) -> int:
+	var sa: PackedByteArray = _pbytes(a)
+	var sb: PackedByteArray = _pbytes(b)
+	for exact in [false, true]:
+		for k in mini(sa.size(), sb.size()):
+			var x: int = sa[k] if exact else _fold(sa[k])
+			var y: int = sb[k] if exact else _fold(sb[k])
+			if x != y:
+				return 0xffff if x < y else 1
+	if sa.size() != sb.size():
+		return 0xffff if sa.size() < sb.size() else 1
+	return 0
+
+func _pbytes(p: int) -> PackedByteArray:
+	var out := PackedByteArray()
+	for k in machine.memory.read_u8(p):
+		out.append(machine.memory.read_u8(p + 1 + k))
+	return out
+
+static func _fold(c: int) -> int:
+	return c - 0x20 if c >= 0x61 and c <= 0x7a else c
 
 func _missing(word: int) -> Callable:
 	return func(args: Array) -> int:

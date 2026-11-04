@@ -186,6 +186,7 @@ EXPECTED_RUNNER_PATHS = [
     "res://tests/strict_port/test_resedit_interface.gd",
     "res://tests/strict_port/test_resedit_text.gd",
     "res://tests/strict_port/test_resedit_media.gd",
+    "res://tests/runtime/test_unexported_routines.gd",
 ]
 
 EXPECTED_LOADER_TARGETS = [
@@ -362,6 +363,90 @@ def check_optional_ghidra() -> str:
     return f"available ({root})"
 
 
+def check_runtime_coverage() -> None:
+    """Everything the strict port can call has a routine behind it in the game runtime: the
+    jump-table slots and segment-local offsets the ports call, the slots the CODE segments hand out
+    as procedure pointers (PEA / LEA d16(A5), UnloadSeg's segment names aside), the code pointers in
+    the overlay's relocation table, and the trap words the ports use."""
+    hellcats = GODOT_ROOT / "hellcats"
+    runtime_src = "\n".join(p.read_text(encoding="utf-8") for p in sorted(hellcats.glob("**/*.gd")))
+    entries = {e["a5_offset"]: e for e in _load_json(JUMP_TABLE)["entries"]}
+    segment_methods = _load_json(hellcats / "data" / "segment_methods.json")
+    overlay_methods = {int(k, 16) for k in _load_json(hellcats / "data" / "overlay_methods.json")}
+    stand_ins = {int(m, 16) for m in re.findall(r"stand_ins\[(0x[0-9a-f]+)\] =", runtime_src)}
+    provided = {off for off, e in entries.items() if e["method"]} | stand_ins
+    locals_ = {}
+    for seg, off in re.findall(r"register_local\((\d+), (0x[0-9a-f]+)", runtime_src):
+        locals_.setdefault(seg, set()).add(int(off, 16))
+    installed = {int(w, 16) for w in re.findall(r"install\((0xa[0-9a-f]{3})", runtime_src)}
+    for group in re.findall(r"for word in \[([^\]]*)\]", runtime_src):
+        installed |= {int(w, 16) for w in re.findall(r"0xa[0-9a-f]{3}", group)}
+    # Only on sysenvirons_glue_fallback's path, which needs SysEnvirons missing (the runtime has it).
+    unreachable_traps = {0xA260, 0xA207}
+    problems = []
+    for path in sorted((GODOT_ROOT / "strict_port" / "code").glob("*.gd")):
+        src = path.read_text(encoding="utf-8")
+        consts = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^const (\w+): int = (0x[0-9a-f]+)", src, re.M)}
+        value = lambda tok: int(tok, 16) if tok.startswith("0x") else consts.get(tok)
+        for tok in re.findall(r"_jt\((\w+)", src):
+            off = value(tok)
+            if off in entries and off not in provided:
+                problems.append(f"{path.name}: jump-table slot ${off:x} has no routine")
+        if path.name.startswith("ID"):
+            seg = str(int(path.name[2:4]))
+            for tok in re.findall(r"_local\((\w+)", src):
+                off = value(tok)
+                ported = f"0x{off:x}" in segment_methods.get(seg, {}) if off is not None else True
+                if off is not None and not ported and off not in locals_.get(seg, set()):
+                    problems.append(f"{path.name}: segment {seg} offset 0x{off:x} has no routine")
+        for tok in re.findall(r"_trap\((\w+)", src):
+            word = value(tok)
+            if word is not None and 0xA000 <= word <= 0xAFFF and word not in installed | unreachable_traps:
+                problems.append(f"{path.name}: trap {word:04x} ({tok}) is not installed")
+    code_dir = REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE"
+    for n in range(1, 10):
+        b = (code_dir / f"ID0{n}.bin").read_bytes()
+        for o in range(0, len(b) - 6, 2):
+            if int.from_bytes(b[o:o + 2], "big") in (0x486D, 0x41ED, 0x43ED, 0x45ED, 0x47ED, 0x49ED):
+                disp = int.from_bytes(b[o + 2:o + 4], "big", signed=True)
+                unload = int.from_bytes(b[o + 4:o + 6], "big") == 0xA9F1
+                if disp > 0 and disp in entries and disp not in provided and not unload:
+                    problems.append(f"ID0{n} 0x{o:x}: slot ${disp:x} passed as a procedure has no routine")
+    scenery = (hellcats / "data" / "scenery" / "Pacific Conflict").read_bytes()
+    u32 = lambda o: int.from_bytes(scenery[o:o + 4], "big")
+    port_src = (GODOT_ROOT / "strict_port" / "code" / "pacific_conflict.gd").read_text(encoding="utf-8")
+    rts_only = re.search(r"^const RTS_ONLY := \[([^\]]*)\]", port_src, re.M).group(1)
+    covered = overlay_methods | {int(a, 16) for a in re.findall(r"0x[0-9a-f]+", rts_only)}
+    covered |= {int(a, 16) for a in re.findall(r"code_table\[(0x[0-9a-f]+)\] =", port_src + runtime_src)}
+    covered |= {int(a, 16) for a in re.findall(r"(0x[0-9a-f]+): \"_", runtime_src)}
+    code, data = u32(4), u32(8)
+    first, second = u32(24) // 8, u32(28) // 8
+    at = 0x20 + code + data
+    for i in range(first + second):
+        offset, flags = u32(at), u32(at + 4)
+        at += 8
+        if (flags >> 7) & 1:
+            continue
+        cell = offset + (code if i >= first else 0)
+        target = u32(0x20 + cell)
+        if target < code and target not in covered:
+            problems.append(f"overlay cell 0x{cell:x}: code pointer 0x{target:x} has no routine")
+    # An "Unexported function" block in a semantic decompilation must not name a ported function.
+    seg_of = {f"ID0{n}": str(n) for n in range(10)}
+    for path in sorted(code_dir.glob("*.decomp.c")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for m in re.finditer(r"Unexported functions? at (ID0\d|overlay) offsets? (0x[0-9a-f]+)", text):
+            seg, off = m.group(1), int(m.group(2), 16)
+            if seg == "overlay":
+                ported = (off - 0x20) in overlay_methods
+            else:
+                ported = f"0x{off:x}" in segment_methods.get(seg_of[seg], {})
+            if ported:
+                problems.append(f"{path.name}: the unexported block at {seg} 0x{off:x} names a ported function")
+    if problems:
+        fail("runtime coverage:\n  " + "\n  ".join(problems))
+
+
 def check_resedit_mirror() -> None:
     import subprocess
     result = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "strict_port" / "import_resedit.py"), "--check"],
@@ -378,6 +463,7 @@ def main() -> int:
         ("01a48-kind2-jsr-bytes", check_01a48_kind2_jsr_bytes),
         ("global-alias-docs", check_global_alias_docs),
         ("resedit-mirror", check_resedit_mirror),
+        ("runtime-coverage", check_runtime_coverage),
     ]
     optional = [
         ("optional-capstone", check_optional_capstone),

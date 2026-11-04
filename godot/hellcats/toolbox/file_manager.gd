@@ -3,8 +3,8 @@ extends RefCounted
 ## The File Manager calls the game makes through the ID09 glue: FSOpen, FSRead, FSClose, GetEOF,
 ## GetFPos, SetFPos and GetVol, over the files of one volume (hellcats/data/scenery/: the scenery
 ## files the game opens by name, read-only). Arguments come as the ports pass them, last-pushed
-## first; FSRead's count arrives as the value (the port passes VAR count by value) and the bytes go
-## to the buffer.
+## first; FSRead's VAR count is the caller's long: the bytes requested, then the bytes read (written
+## back, as the File Manager does), and the bytes go to the buffer.
 
 const VOLUME := "res://hellcats/data/scenery"
 const VOLUME_NAME := "Macintosh HD"   ## not the original floppy's name (ID08 refuses to run from it)
@@ -52,13 +52,11 @@ func _done(block: int, err: int) -> int:
 func install(stand_ins: Dictionary) -> void:
 	stand_ins[0x2a2] = func(a: Array) -> int: return fs_open(a[2], a[0])            ## FSOpen(name, vRefNum, VAR refNum)
 	stand_ins[0x2aa] = func(a: Array) -> int: return fs_close(a[0])                 ## FSClose(refNum)
-	stand_ins[0x2b2] = func(a: Array) -> int: return fs_read(a[2], _value(a[1]), a[0])  ## FSRead(refNum, VAR count, buffer)
+	stand_ins[0x2b2] = func(a: Array) -> int: return fs_read_var(a[2], a[1], a[0])      ## FSRead(refNum, VAR count, buffer)
 	stand_ins[0x2c2] = func(a: Array) -> int: return get_eof(a[1], a[0])            ## GetEOF(refNum, VAR eof)
 	stand_ins[0x2ca] = func(a: Array) -> int: return get_fpos(a[1], a[0])           ## GetFPos(refNum, VAR pos)
 	stand_ins[0x2ba] = func(a: Array) -> int: return get_vol(a[1], a[0])            ## GetVol(VAR name, VAR vRefNum)
 
-static func _value(v) -> int:
-	return int(v[0]) if v is Array else int(v)
 
 func _pstring(at: int) -> String:
 	var n: int = memory.read_u8(at)
@@ -81,6 +79,15 @@ func fs_open(name_ptr: int, ref_ptr: int) -> int:
 		on_open.call(name, _files[ref]["bytes"])
 	machine.log_line("FSOpen: %s (%d bytes) as %d" % [name, _files[ref]["bytes"].size(), ref])
 	return NO_ERR
+
+## FSRead with its VAR count: the long at count_ptr in, the bytes actually read back out.
+func fs_read_var(ref: int, count_ptr: int, buffer: int) -> int:
+	var wanted: int = memory.read_u32(count_ptr)
+	var before: int = _files[ref & 0xffff]["mark"] if _files.has(ref & 0xffff) else 0
+	var err: int = fs_read(ref, wanted, buffer)
+	if _files.has(ref & 0xffff):
+		memory.write_u32(count_ptr, (_files[ref & 0xffff]["mark"] - before) & 0xffffffff)
+	return err
 
 func fs_read(ref: int, count: int, buffer: int) -> int:
 	ref &= 0xffff

@@ -24,6 +24,7 @@ HOME=/tmp/hellcats-godot-home /Applications/Godot.app/Contents/MacOS/Godot --hea
 # Static checks (no engine)
 python3 tools/qa/test_regression.py
 python3 tools/hellcats/build_runtime_data.py --check
+python3 tools/hellcats/gen_runtime_cases.py --check
 ```
 
 Keep `EXPECTED_RUNNER_PATHS` in `test_regression.py` aligned with
@@ -36,4 +37,7 @@ Keep `EXPECTED_RUNNER_PATHS` in `test_regression.py` aligned with
   - the runner's test list;
   - the proven loader targets against the game runtime's jump table;
   - the main scene runs the game (and the removed prototype stays removed);
+  - runtime coverage: every jump-table slot, segment-local offset, procedure pointer (PEA / LEA
+    d16(A5) in the CODE bytes), overlay code pointer (its relocation table) and trap word the
+    strict port can reach has a routine in the game runtime;
   - byte checks, global alias docs, the ResEdit mirror.

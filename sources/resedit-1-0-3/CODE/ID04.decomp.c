@@ -208,7 +208,7 @@ void frame_dialog_item_box /* Original: FUN_00000120 */ (int dlg /* param_1: Dia
 /* Original: FUN_0000016e; source: ID04.c. Recovered name: draw_default_button_outline [PROVEN].
  * Ghidra could not decode this body (rebuilt as C below); decoded from ID04.bin
  * bytes at file 0x16e.
- * Pascal user-item procedure (DialogPtr at +0xa, item at +8; pops 6 bytes). Ignores its item argument and uses the word at A5-0x225e: GetDItem, PenSize(3, 3), InsetRect(&box, -4, -4), FrameRoundRect(&box, 16, 16) ($A8B0) - the standard bold default-button ring. Reached through JT $12a (ID00 entry -> ID04 0x16e). The unexported routine at ID04 0x1b8 installs JT $12a as a user item with SetDItem and stores the default-button item number in A5-0x225e [PROVEN, bytes 0x1de/0x1e8].
+ * Pascal user-item procedure (DialogPtr at +0xa, item at +8; pops 6 bytes). Ignores its item argument and uses the word at A5-0x225e: GetDItem, PenSize(3, 3), InsetRect(&box, -4, -4), FrameRoundRect(&box, 16, 16) ($A8B0) - the standard bold default-button ring. Reached through JT $12a (ID00 entry -> ID04 0x16e). The unexported routine at ID04 0x1b8 (C: dialog, item, default; recovered name, comment only: install_default_ring_item [STRONG INFERENCE]) installs JT $12a as a user item with SetDItem, keeping the item's type and box from GetDItem, and stores the default-button item number in A5-0x225e [PROVEN, bytes 0x1b8..0x1f0].
  */
 // WARNING: Control flow encountered bad instruction data
 
@@ -360,7 +360,9 @@ short get_radio_group_selection /* Original: FUN_00000362 */ (int dlg /* param_1
  * Note: the following unexported routine at file 0x432..0x44c (no Ghidra
  * entry) is the user of STR# 129 slot 1: if word A5-0x14a0 { JT $462 (ID02
  * 0x4d34); show_caution_alert_with_number(slot 1 "Unable to store instrument
- * panel to disk", 0); A5-0x14a0 = 0 } [PROVEN, bytes].
+ * panel to disk", 0); A5-0x14a0 = 0 } [PROVEN, bytes]. Jump-table slot $172, run every
+ * pass of the event loop. Recovered name (comment only): report_panel_store_failure
+ * [STRONG INFERENCE]; the game runtime runs it as unexported.gd id04_0432.
  */
 void run_with_temporary_window /* Original: FUN_000003c2 */ (void)
 
@@ -1134,7 +1136,7 @@ void fit_text_view_to_box /* Original: FUN_00001638 */ (undefined4 *box /* param
 /* Original: FUN_000016c4; source: ID04.c. Recovered name: scroll_bar_action_proc [PROVEN].
  * Decoded from ID04.bin bytes at file 0x16c4.
  * Pascal control action procedure (ControlHandle at +0xa, part code at +8; pops 6 bytes). Reached through JT $16a (CODE 0 entry -> ID04 0x16c4), passed to TrackControl by the click handler at 0x1752. If part != 0: page = visible lines - 1, then a switch through the ID01 helper (JSR $3a(A5)); its inline table at file 0x16fe is lo 20, hi 23, default +0x2c, cases 20 inUpButton -> -1, 21 inDownButton -> +1, 22 inPageUp -> -page, 23 inPageDown -> +page. Ghidra had decoded that table as stores through unaff_A4 (artifacts, not real stores); body rebuilt as C below. Then SetCtlValue(ctl, GetCtlValue(ctl) + delta) and sync_text_scroll_to_control. The default path (part outside 20..23) adds the uninitialised local delta (original behaviour, bytes 0x1702/0x172e).
- * The code that follows in this Ghidra range (file 0x1752..0x17e4, not exported as a function) is the click handler: C args +8 DialogPtr, +0xc EventRecord *; GetPort/SetPort, GlobalToLocal(where) ($A871), FindControl ($A96C); returns 0 when no control or another control is hit; on the scroll bar A5-0x2236: inThumb (129) -> TrackControl(ctl, where, NULL) ($A968) then sync, else TrackControl(ctl, where, JT $16a); returns 1 when handled; restores the port [PROVEN, bytes].
+ * The code that follows in this Ghidra range (file 0x1752..0x17e4, not exported as a function) is the click handler (recovered name, comment only: track_summary_text_click [STRONG INFERENCE]): C args +8 DialogPtr, +0xc EventRecord *; GetPort/SetPort, GlobalToLocal(where) ($A871), FindControl ($A96C); returns 0 when no control or another control is hit; on the scroll bar A5-0x2236: inThumb (129) -> TrackControl(ctl, where, NULL) ($A968) then sync, else TrackControl(ctl, where, JT $16a); returns 1 when handled; restores the port [PROVEN, bytes].
  */
 // WARNING: Control flow encountered bad instruction data
 

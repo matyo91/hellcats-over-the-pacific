@@ -242,10 +242,28 @@ short fsopen_glue /* Original: FUN_000002a6 */ (Str255 *fileName,short vRefNum,s
  * [STRONG INFERENCE, Inside Macintosh OS Utilities]: $A05D = _SwapMMUMode;
  * matches PROCEDURE SwapMMUMode(VAR mode: SignedByte) (24/32-bit addressing).
  *
- * Following unexported glue (HYPOTHESIS): 0x3d6/0x3dc push selectors 10/12
- * and call $ADED (Pack6 auto-pop: IUMagString / IUMagIDString);
+ * Following unexported glue: 0x3d6/0x3dc push selectors 10/12 and call $ADED
+ * (Pack6 auto-pop: IUMagString / IUMagIDString) [PROVEN, bytes; block below];
  * 0x404 NumToString via $A9EE (Pack7, selector 0); 0x416 in-place C->Pascal
- * string conversion (c2pstr-like). Callers: none in the exports.
+ * string conversion (c2pstr-like) (HYPOTHESIS). Callers: none in the exports.
+ */
+/* Unexported functions at ID09 offsets 0x3d6 and 0x3dc (not in Ghidra's export; Pascal glue).
+ * Recovered names (comment only): iucompstring_glue (0x3d6, jump-table slot $2ea) and
+ * iuequalstring_glue (0x3dc, no slot) [STRONG INFERENCE: Inside Macintosh, International
+ * Utilities]. Bytes 0x3d6..0x403 [PROVEN]: MOVE.W #10,D2 (0x3d6; BRA to the shared tail) or
+ * MOVE.W #12,D2 (0x3dc); A1 = 4(A7) (the second string), A0 = 8(A7) (the first); D0 / D1 =
+ * their length bytes (MOVE.B (A0)+ / (A1)+, zero-extended), the advanced pointers stored back
+ * into the two argument slots; the return address popped, then aLen, bLen and the selector
+ * pushed and the return address again; $ADED (_Pack6 with auto-pop) returns straight to the
+ * caller, its INTEGER result in the slot the caller reserved:
+ *
+ *   FUNCTION IUCompString(aStr, bStr: Str255): INTEGER;
+ *     = IUMagString(@aStr[1], @bStr[1], Length(aStr), Length(bStr))    (selector 10)
+ *   FUNCTION IUEqualString(aStr, bStr: Str255): INTEGER;
+ *     = IUMagIDString(@aStr[1], @bStr[1], Length(aStr), Length(bStr))  (selector 12)
+ *
+ * Callers: ID04 rank_pilots_by_score (JT $2ea: pilots of equal score ordered by name). The game
+ * runtime answers IUCompString in godot/hellcats/toolbox/toolbox.gd iu_comp_string.
  */
 /* VERIFIED (ID09::FUN_000003c2): ID09.bin 0x3c2..0x3d4 checked against an independent capstone disassembly:
  * Pascal glue SwapMMUMode(VAR mode: SignedByte) - D0.B = *mode, _SwapMMUMode ($A05D), *mode = D0.B,

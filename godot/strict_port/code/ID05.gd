@@ -219,7 +219,7 @@ const TRAP_DISPOSE_DIALOG: int = 0xa983
 const A5_FILTER_ARMED: int = -0x2ca     ## word: code_dialog_filter's first-call counter
 const A5_ITEM_TEXT: int = -0x1c9        ## get_dialog_item_text_upper's buffer
 const A5_CTYPE: int = -0x1608           ## the C library's character class table (bit 7: lower case)
-const LOCAL_BUILD_CODE_STRINGS: int = 0x3ba  ## routine B, the code-string builder (C: 4 pointers; not exported)
+const LOCAL_BUILD_CODE_STRINGS: int = 0x3ba  ## build_protection_code_strings, routine B (C: 4 pointers; not exported)
 
 func _trap(word: int, args: Array) -> int:
 	assert(traps.has(word), "A-line trap %04x has no routine" % word)

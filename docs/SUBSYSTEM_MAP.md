@@ -2,7 +2,7 @@
 
 Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]** / **[DEFERRED]**.
 
-**Purpose:** One-page mental model of how the **original sim** hangs together and where **Godot** work lands. For symbol-level detail see `docs/IMPORT_STATUS.md` and the per-topic contracts linked below.
+**Purpose:** One-page mental model of how the **original sim** hangs together and where it runs in **Godot**: every function below is strict-ported under `godot/strict_port/code/` and runs as the original game through the runtime ([`GAME_RUNTIME.md`](GAME_RUNTIME.md)). For symbol-level detail use `tools/re_query.py` and the per-topic contracts linked below.
 
 **Primary source file:** `Pacific Conflict.c` (Ghidra export). **Segment/runtime:** `ID01.c`–`ID09.c` (see `docs/LOADER_CHAIN.md`).
 
@@ -32,7 +32,7 @@ flowchart TD
 
 **[RECONSTRUCTED]** Per-entity simulation includes **FUN_0000e792** (large; `docs/contracts/flight_FUN_0000e792_contract.md`).
 
-**Godot:** **`godot/hellcats/core/sim_core.gd`** mirrors pass order and **`param_2`**; **Mission-1** gameplay loop is **`PlayerAircraft` + `FlightModelMvp`** **[INFERRED]** unless you explicitly drive SimCore.
+**Godot:** `pacific_conflict.gd` **`run_simulation_tick`** (FUN_000044e8) and **`dispatch_entity_tick`** (FUN_000044a4), run every frame by the original flight loop (ID02 `run_flight_session`).
 
 ## 2) Per-entity update (conceptual)
 
@@ -57,7 +57,7 @@ flowchart LR
 
 **[INFERRED]** **FUN_00011564** is used in many places (entity, AI, effects); full consumption graph is **[UNKNOWN]** without a dedicated pass.
 
-**Godot:** **`flight_model_mvp.gd`**, **`flight_math.gd`**, **`sim_core.gd`** (partial).
+**Godot:** `pacific_conflict.gd` **`update_aircraft_entity`** (FUN_0000e792) and its helpers; **`overlay_rng_next`** (FUN_00011564).
 
 ## 3) Input path (conceptual)
 
@@ -75,22 +75,22 @@ flowchart TD
   H740 --> ENT["Entity / throttle / UI effects"]
 ```
 
-**Godot:** **`player_input_map.gd`** — **`docs/contracts/input_godot_contract.md`**, **`docs/briefs/input_FUN_0000740a_brief.md`**.
+**Godot:** `pacific_conflict.gd` **`process_flight_input_and_outcome`** (FUN_0000740a), fed Mac key and mouse events by `godot/hellcats/toolbox/event_manager.gd` from Godot input — **`docs/briefs/input_FUN_0000740a_brief.md`**.
 
-## 4) Mission state bridge (MVP)
+## 4) Mission state
 
 **[RECONSTRUCTED]** Mission block **`DAT_0001b5a0`** fields **`+0xa8`** (phase) and **`+0xac`** (flag) gate **FUN_000044e8**’s middle section.
 
-**Godot:** **`MissionController`** exposes **`mission_phase_a8`** / **`mission_flag_ac`** and **`get_mission_sim_bridge_state`** — **`docs/contracts/mission_state_DAT_contract.md`**.
+**Godot:** the mission block lives in the emulated memory at its original address and is read and written by the strict port itself — **`docs/contracts/mission_state_DAT_contract.md`**.
 
 ## 5) RNG (two layers)
 
 | Layer | **[RECONSTRUCTED]** location | Notes |
 |-------|------------------------------|--------|
-| Segment LCG | **ID05.c** `FUN_00000728` style (`* 0x41c64e6d + 0x3039`) | Matches **`Rng68k`** / docs. |
+| Segment LCG | **ID05.c** `FUN_00000728` style (`* 0x41c64e6d + 0x3039`) | `ID05.gd` **`ansi_rand`**. |
 | In-overlay RNG | **FUN_00011564** (`Pacific Conflict.c`) | Many callers; order-sensitive for replay. |
 
-See **`IMPORT_STATUS.md`** §F and **`STRICT_PORT_FOUNDATION.md`**.
+See **`STRICT_PORT_FOUNDATION.md`**.
 
 ## 6) Camera
 
@@ -113,11 +113,10 @@ flowchart LR
 
 | Document | Role |
 |----------|------|
-| `docs/IMPORT_STATUS.md` | Row-level import status |
 | `docs/contracts/tick_FUN_000044e8_contract.md` | Tick order |
 | `docs/contracts/FUN_0000435a_contract.md` | **param_2** / **0x02** branch |
 | `docs/contracts/flight_FUN_0000e792_contract.md` | Entity update slice |
-| `docs/contracts/input_godot_contract.md` | Godot input mapping |
+| `docs/contracts/input_godot_contract.md` | Godot input mapping of the removed prototype (historical) |
 | `docs/contracts/mission_state_DAT_contract.md` | Mission bridge |
 | `docs/STRUCTS.md` | DAT_* / offset tables |
 | `docs/LOADER_CHAIN.md` | ID00–ID09 and loading |

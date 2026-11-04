@@ -749,6 +749,17 @@ LAB_000003b6:
 
 
 
+/* Unexported function at ID02 offset 0x3e8 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): ansi_strlen [PROVEN]. Jump-table slot $522.
+ * Bytes 0x3e8..0x3f4 [PROVEN]: MOVEQ #-1,D0; MOVEA.L 4(A7),A0; loop ADDQ.L #1,D0 /
+ * TST.B (A0)+ / BNE; RTS:
+ *
+ *   size_t ansi_strlen(const char *s) { long n = -1; do n++; while (*s++); return n; }
+ *
+ * Callers: ID04 append_line_to_scrolling_text (JT $522, the summary's lines). The game
+ * runtime runs it as godot/hellcats/runtime/unexported.gd id02_03e8.
+ */
+
 /* VERIFIED (ID02::FUN_000003f6): ID02.bin 0x3f6..0x410 checked against an independent capstone disassembly.
  * D0 = A0 = dst, A1 = src, D1 = n, BEQ on 0; MOVE.B (A1),(A0)+ / BEQ skips ADDQ.L #1,A1 (pads with NUL);
  * SUBQ.L / BNE. D0 = dst on exit (Ghidra's void return corrected) - identical to the C. */
@@ -814,6 +825,21 @@ char * ansi_strncat /* Original: FUN_00000412 */ (char *dst /* param_1 */,char *
 }
 
 
+
+/* Unexported function at ID02 offset 0x434 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): ansi_strncmp [PROVEN]. Jump-table slot $502.
+ * Bytes 0x434..0x458 [PROVEN]: MOVEQ #0,D0; A0 = a, A1 = b, D1 = n; BRA into the count
+ * test; loop MOVE.B (A0)+,D2 / CMP.B (A1)+,D2 / BEQ (equal: TST.B D2 ends at the NUL with
+ * 0, else SUBQ.L #1,D1 and again while non-zero); on a difference BHI gives +1 (unsigned
+ * compare), otherwise SUBQ.L #2 / ADDQ.L #1 gives -1. D2 is not saved (as the bytes do):
+ *
+ *   int ansi_strncmp(const char *a, const char *b, long n)
+ *   { while (n) { char c = *a++; if (c != *b++) return (uchar)c > (uchar)b[-1] ? 1 : -1;
+ *                 if (!c) break; n--; } return 0; }
+ *
+ * Callers: ID04's Active Duty Roster (0x644, JT $502: a name edited in a field). The game
+ * runtime runs it as godot/hellcats/runtime/unexported.gd id02_0434.
+ */
 
 /* VERIFIED (ID02::FUN_0000045a): ID02.bin 0x45a..0x4a2 checked against an independent capstone disassembly.
  * LINK -4, CLR.L -4; PEA $a2(A5) / UnloadSeg $A9F1; BSR 0x4c6; JSR (A5-0x1082); BSR 0x1f8e load_game_sounds;
@@ -1122,6 +1148,41 @@ void call_overlay_session_hooks /* Original: FUN_00000930 */ (undefined4 step_ar
 
 
 // WARNING: Control flow encountered bad instruction data
+
+/* Unexported functions at ID02 offsets 0x95a and 0x9fa (not in Ghidra's export; no LINK, C).
+ * Recovered names (comment only): lock_session_handles (0x95a) and unlock_session_handles
+ * (0x9fa) [STRONG INFERENCE]. A nesting counter (word A5-0x14f4) brackets the four session
+ * handles: the gyro spans A5-0x11f6, the gyro card A5-0x11dc and its column marks A5-0x11d4,
+ * and the panel bitmap A5-0x12b0.
+ * Bytes 0x95a..0x9f8 [PROVEN]: the counter read and incremented (MOVE.W / ADDQ.W #1); only
+ * when it was 0: HLock (JT $272) of the four handles in the order -0x11f6, -0x11dc, -0x11d4,
+ * -0x12b0, then each master pointer kept (-0x11f2, -0x11d8, -0x11d0, -0x12ac), ANDed with
+ * 0xffffff when word A5-0x1348 is set (24-bit addresses); RTS.
+ * Bytes 0x9fa..0xa24 [PROVEN]: the counter decremented (SUBQ.W #1); when it reaches 0, HUnlock
+ * (JT $27a) of -0x12b0, -0x11f6, -0x11dc, -0x11d4; RTS:
+ *
+ *   void lock_session_handles(void)
+ *   { if (A5w[-0x14f4]++ == 0) { HLock x 4; p[-0x11f2] = *h[-0x11f6] (& 0xffffff if A5w[-0x1348]); ... } }
+ *   void unlock_session_handles(void) { if (--A5w[-0x14f4] == 0) HUnlock x 4; }
+ *
+ * Callers: begin_overlay_session (JSR 0x95a) and end_overlay_session (0x4a4, JSR 0x9fa). The
+ * game runtime runs them as godot/hellcats/runtime/unexported.gd id02_095a / id02_09fa.
+ */
+
+/* Unexported function at ID02 offset 0xa26 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): redraw_panel_readouts_locked [STRONG INFERENCE]. Bytes
+ * 0xa26..0xa40 [PROVEN]: only when the gyro spans A5-0x11f6 and the gyro card A5-0x11dc are
+ * both allocated: BSR lock_session_handles (0x95a); JSR (A5-0x1072), the overlay hook at
+ * service-table +0x316 (overlay 0xd23a, file 0xd25a: the view readouts, gauges and overlays
+ * redrawn; docs/OVERLAY_SERVICE_TABLE.md); BSR unlock_session_handles (0x9fa); RTS:
+ *
+ *   void redraw_panel_readouts_locked(void)
+ *   { if (A5[-0x11f6] && A5[-0x11dc]) { lock_session_handles(); (*A5[-0x1072])();
+ *                                       unlock_session_handles(); } }
+ *
+ * Callers: redraw_main_window (0x4db0, after call_overlay_session_hooks). The game runtime
+ * runs it as godot/hellcats/runtime/unexported.gd id02_0a26.
+ */
 
 /* VERIFIED (ID02::FUN_00000a42): ID02.bin 0xa42..0xa84 checked against an independent capstone disassembly.
  * LINK -8, A5 / D2 saved at -4 / -8, MOVEA.L $904.w,A5; MOVE.L 8(A6) to (A5-0x160c)+$50; PenSize(2, 2);
@@ -3366,6 +3427,19 @@ void initialize_application /* Original: FUN_00002bbc */ (void)
 
 
 // WARNING: Control flow encountered bad instruction data
+
+/* Unexported function at ID02 offset 0x2da0 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): save_changed_settings [STRONG INFERENCE]. Bytes 0x2da0..0x2db6
+ * [PROVEN]: when the settings-changed word A5-0x138a is set, ChangedResource ($A9AA) and
+ * WriteResource ($A9B0) of the settings handle A5-0x13ac (HEL1 127), then the flag cleared; RTS:
+ *
+ *   void save_changed_settings(void)
+ *   { if (A5w[-0x138a]) { ChangedResource(A5[-0x13ac]); WriteResource(A5[-0x13ac]);
+ *                        A5w[-0x138a] = 0; } }
+ *
+ * Callers: the File menu's Save Settings (menu 2 item 2) and quit_application (0x2eaa). The
+ * game runtime runs it as godot/hellcats/runtime/unexported.gd id02_2da0.
+ */
 
 /* VERIFIED (ID02::FUN_00002db8): ID02.bin 0x2db8..0x2e34 checked against an independent capstone disassembly.
  * SystemTask $A9B4; GetNextEvent(-1, -$12) EXTB.L to -2; BSR 0x29f2; TST.W -2 / BEQ loop; JSR $3a(A5) on what:
@@ -5640,6 +5714,20 @@ void check_device_color_state_changed /* Original: FUN_00004c18 */ (void)
 
 // WARNING: Control flow encountered bad instruction data
 
+/* Unexported function at ID02 offset 0x4d24 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): apply_display_palettes [STRONG INFERENCE]. Bytes
+ * 0x4d24..0x4d32 [PROVEN]: BSR select_palette_for_depth (0x462c); BSR
+ * rebuild_all_palette_index_maps (0x46b4); JSR (A5-0x10a2), the overlay hook at service-table
+ * +0x2e6 (configure_renderer_for_display, overlay 0x6ff6); RTS:
+ *
+ *   void apply_display_palettes(void)
+ *   { select_palette_for_depth(); rebuild_all_palette_index_maps(); (*A5[-0x10a2])(); }
+ *
+ * Callers: reset_overlay_state (0x212a), configure_display_from_main_device (0x27e4) and
+ * refresh_display_if_changed (0x29f2), each after apply_settings_to_live_options. The game
+ * runtime runs it as godot/hellcats/runtime/unexported.gd id02_4d24.
+ */
+
 /* VERIFIED (ID02::FUN_00004d34): ID02.bin 0x4d34..0x4d68 checked against an independent capstone disassembly.
  * BRA to GetNextEvent($40, -$10) $A970 TST.B / BNE; CMP.L -$e with A5-0x14ca / BNE exit; BeginUpdate, BSR 0x4db0,
  * EndUpdate, loop - identical to the C. */
@@ -5696,6 +5784,20 @@ void handle_update_event /* Original: FUN_00004d6a */ (int evt /* param_1: Event
 
 
 // WARNING: Control flow encountered bad instruction data
+
+/* Unexported function at ID02 offset 0x4d96 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): restore_screen_globals [STRONG INFERENCE]. Bytes
+ * 0x4d96..0x4dae [PROVEN]: SetGDevice ($AA31) of the main device A5-0x1036; the screen base
+ * A5-0x1346 (long), row bytes A5-0x134a and 24-bit flag A5-0x1348 (words) copied back into the
+ * live A5-0x1382, A5-0x1378 and A5-0x1312; RTS:
+ *
+ *   void restore_screen_globals(void)
+ *   { SetGDevice(A5[-0x1036]); A5[-0x1382] = A5[-0x1346]; A5w[-0x1378] = A5w[-0x134a];
+ *     A5w[-0x1312] = A5w[-0x1348]; }
+ *
+ * Callers: run_flight_session's exit (0x84c, after end_overlay_session) and redraw_main_window
+ * (0x4db0). The game runtime runs it as godot/hellcats/runtime/unexported.gd id02_4d96.
+ */
 
 /* VERIFIED (ID02::FUN_00004db0): ID02.bin 0x4db0..0x4e18 checked against an independent capstone disassembly.
  * -4 = A5-0x12d4 && A5-0x1032 (dead); TST A5-0x14c6, A5-0x1006, A5-0x12f8; A5-0x12ea == 0 -> A5-0x103c = it,

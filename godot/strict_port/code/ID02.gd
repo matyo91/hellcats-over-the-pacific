@@ -1676,9 +1676,9 @@ const A5_HOOK_START: int = -0x107e
 const A5_HOOK_RUN: int = -0x107a       ## (C: two longs)
 const A5_HOOK_FINISH: int = -0x1076
 const A5_GAME_WINDOW: int = -0x14ca
-const LOCAL_SESSION_SETUP: int = 0x95a       ## not exported
-const LOCAL_SYNC_SCREEN_GLOBALS: int = 0x4d96 ## not exported: DisposCTable-like refresh of the screen globals
-const LOCAL_AFTER_REDRAW: int = 0xa26        ## not exported
+const LOCAL_SESSION_SETUP: int = 0x95a       ## lock_session_handles (not exported; ID02.decomp.c block)
+const LOCAL_SYNC_SCREEN_GLOBALS: int = 0x4d96 ## restore_screen_globals (not exported): SetGDevice, the screen globals copied back
+const LOCAL_AFTER_REDRAW: int = 0xa26        ## redraw_panel_readouts_locked (not exported)
 
 ## A call to a routine of this segment not ported yet (or not exported), by its segment offset.
 func _local(offset: int, args: Array) -> int:
@@ -1785,8 +1785,8 @@ const TRAP_NEW_PALETTE: int = 0xaa91
 const TRAP_SET_ORIGIN: int = 0xa878
 const JT_VIEW_BUFFER_1BIT: int = 0x1aa  ## C routine (buffer, count word, 0x7f, width, height): word result, 0 when it failed
 const JT_VIEW_BUFFER_COLOUR: int = 0x1b2 ## C routine, no arguments
-const JT_VIEW_BUFFER_BASE: int = 0x1d2  ## C routine, no arguments: long result
-const LOCAL_CLOSE_OFFSCREEN_PORT: int = 0xd24  ## not exported (C, the port at A5 - 0x103a)
+const JT_VIEW_BUFFER_BASE: int = 0x1d2  ## ID06 0xee, the grey map pointer (C routine, no arguments: long result)
+const LOCAL_CLOSE_OFFSCREEN_PORT: int = 0xd24  ## close_and_dispose_port (C, the port at A5 - 0x103a)
 const MBAR_HEIGHT: int = 0xbaa
 
 ## The menu-bar shift of the device records (A5 - 0x136e + 0x16 * 1..3, those with a device): their
@@ -2047,7 +2047,7 @@ const TRAP_TEXT_FONT: int = 0xa887
 const TRAP_TICK_COUNT: int = 0xa975
 const JT_GET_PTR_SIZE: int = 0x242    ## GetPtrSize: Pascal, function result long
 const JT_IDLE_HOOK: int = 0x172       ## C routine, no arguments
-const LOCAL_SYNC_OVERLAY_GLOBALS: int = 0x4d24  ## not exported
+const LOCAL_SYNC_OVERLAY_GLOBALS: int = 0x4d24  ## apply_display_palettes (not exported)
 
 ## The EventRecord in a frame at `at` as handle_activate_event's arguments (what, message, when,
 ## where, modifiers).
@@ -2227,7 +2227,7 @@ const JT_CONCLUDE_MISSION: int = 0xda   ## C routine (message long, mode word): 
 const JT_FILE_ITEM_6: int = 0x10a       ## C routine, no arguments
 const JT_SAVE_CHANGES: int = 0x13a      ## C routine, no arguments: word result, 2 to close
 const JT_FILE_ITEM_11: int = 0x102      ## C routine, no arguments
-const LOCAL_SAVE_SETTINGS: int = 0x2da0         ## not exported: the settings resource written when changed
+const LOCAL_SAVE_SETTINGS: int = 0x2da0         ## save_changed_settings (not exported): the settings resource written when changed
 const LOCAL_QUIT_APPLICATION: int = 0x2eaa      ## not exported: quit_application
 
 ## 0x35e4: a new mission when the JT $132 and JT $82 checks allow it: the overlay's mission hook
@@ -2562,7 +2562,7 @@ const TRAP_WRITE_RESOURCE: int = 0xa9b0
 const TRAP_LOAD_RESOURCE: int = 0xa9a2
 const RES_MENU: int = 0x4d454e55       ## 'MENU'
 const RES_HEL1: int = 0x48454c31       ## 'HEL1'
-const LOCAL_MAIN_SETUP: int = 0x1b42   ## not exported
+const LOCAL_MAIN_SETUP: int = 0x1b42   ## install_overlay_service_table (not exported)
 
 ## A settings resource ('HEL1' `id`) into A5 + `slot`: loaded when present, else a new handle of
 ## `size` added (named by the Pascal string at A5 + `name`), passed to `fill`, marked changed and
@@ -2682,7 +2682,7 @@ func main() -> void:
 const TRAP_SELECT_WINDOW: int = 0xa91f
 const TRAP_GET_MOUSE: int = 0xa972
 const TRAP_UPDATE_RES_FILE: int = 0xa999
-const JT_SESSION_CLEANUP: int = 0x9a    ## C routine, no arguments
+const JT_RUN_REFUEL_DIALOG: int = 0x9a  ## ID04 run_refuel_dialog (C routine, no arguments)
 const JT_SHOW_PAUSED_DIALOG: int = 0x122 ## C routine, no arguments
 const LOCAL_END_OVERLAY_SESSION: int = 0x4a4  ## not exported: end_overlay_session
 const FLIGHT_KEYS_MASK: int = 0x18      ## keyDown | keyUp
@@ -2829,7 +2829,7 @@ func run_flight_session() -> void:
 					return
 				if low == 9:
 					continue
-				_jt(JT_SESSION_CLEANUP, [])
+				_jt(JT_RUN_REFUEL_DIALOG, [])
 				_hook(-0x108e)
 				if low == 1:
 					continue
@@ -2838,7 +2838,7 @@ func run_flight_session() -> void:
 				redraw_main_window()
 				a7 = entry
 			2:
-				_jt(JT_SESSION_CLEANUP, [])
+				_jt(JT_RUN_REFUEL_DIALOG, [])
 				_hook(-0x108e)
 			4:
 				_jt(JT_SHOW_PAUSED_DIALOG, [])

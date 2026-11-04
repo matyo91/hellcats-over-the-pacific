@@ -1665,8 +1665,8 @@ A-line trap words (the trap is consumed and A7 points at its arguments), and
 argument sizes in stack order, Pascal (callee pops, result written in the caller's slot) or C (D0),
 the result size, and the arguments whose buffers are logged by value. A port passes a read-only
 buffer either by value (an Array of its longs) or by address; a rect a trap changes in place
-(InsetRect, OffsetRect, SetRect, UnionRect, SectRect) always by its frame address, as the original
-pushes it, and the port-side stub (`helpers/segment_cases.gd`) dereferences such a pointer by the
+(InsetRect, OffsetRect, SetRect, UnionRect, SectRect), an RGBColor and FSRead's VAR count always by
+its frame address, as the original pushes it, and the port-side stub (`helpers/segment_cases.gd`) dereferences such a pointer by the
 fixture's long count, as `segment_stubs.py` does. The segment ports call
 `_jt(offset, args)` / `_trap(word, args)`, and `helpers/segment_cases.gd` installs the same loggers
 from the fixture. The first 12 such ID02 routines are ported this way:

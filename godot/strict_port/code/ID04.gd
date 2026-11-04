@@ -1157,7 +1157,7 @@ func _poll_at(entry: int, locals: int) -> int:
 
 const JT_BLOCK_MOVE: int = 0x4ea              ## (C: dest, src, count)
 const TRAP_MODAL_DIALOG: int = 0xa991
-const LOCAL_DEFAULT_RING: int = 0x1b8         ## the default-button ring installer (C: dialog, user item, default item; not exported)
+const LOCAL_DEFAULT_RING: int = 0x1b8         ## install_default_ring_item (C: dialog, user item, default item; not exported)
 const LOCAL_ADVANCE_SUMMARY: int = 0x21d6     ## advance_mission_summary_text (C: dialog, item, phase): word (not exported)
 
 ## 0x2de6: the mission summary (dialog 0x85, placed by JT $472) for `pilot` (-1: the mission's own,

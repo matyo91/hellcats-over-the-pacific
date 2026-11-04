@@ -1728,7 +1728,7 @@ const JT_NEW_HANDLE: int = 0x24a          ## NewHandle(size) (Pascal)
 const JT_NEW_HANDLE_CLEAR: int = 0x252    ## NewHandleClear(size) (Pascal)
 const JT_CREATING_PANEL_DIALOG: int = 0x49a  ## show_creating_panel_dialog (C): the dialog
 const JT_VIEW_FRAME_OUTLINE: int = 0x3ba  ## draw_view_frame_outline (C)
-const LOCAL_RELEASE_BITMAPS: int = 0x59f4 ## releases the current panel bitmaps (C; not exported)
+const LOCAL_RELEASE_BITMAPS: int = 0x59f4 ## release_panel_bitmaps: the current panel bitmaps (C; not exported)
 const PANEL_ENTRY_SIZE: int = 0x160
 
 func _entry(n: int) -> int:

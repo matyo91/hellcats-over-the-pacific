@@ -1267,7 +1267,7 @@ func transform_through_node_chain(path_top: int, node_count: int, object: int, o
 	return
 
 ## Runtime addresses of a lone rts: a jsr there returns with D0 unchanged.
-const RTS_ONLY := [0x14326] ## file 0x14346, just before dispatch_collision
+const RTS_ONLY := [0x14326, 0x12f70] ## files 0x14346 (just before dispatch_collision) and 0x12f90 (stored at 0x1a9aa)
 
 ## Direct bsr / jsr to a function that is not ported yet: looked up in code_table under its
 ## runtime address (file - 0x20), so a test or adapter must supply it explicitly; the

@@ -186,6 +186,19 @@ int rgb_to_bw_pattern /* Original: FUN_00000116 */ (undefined4 red_green /* para
 
 
 
+/* Unexported function at ID06 offset 0x15a (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): free_pattern_tables [STRONG INFERENCE: the inverse of
+ * alloc_pattern_tables]. Bytes 0x15a..0x17a [PROVEN]: free_aligned (0x24c) of the mask and
+ * pattern table A5-0x1eda, which is cleared; MOVEQ #0,D0; the same for the grey map A5-0x1ede;
+ * MOVEQ #0,D0; RTS:
+ *
+ *   int free_pattern_tables(void)
+ *   { free_aligned(A5[-0x1eda]); A5[-0x1eda] = 0; free_aligned(A5[-0x1ede]); A5[-0x1ede] = 0;
+ *     return 0; }
+ *
+ * Callers: release_render_buffers (0x858).
+ */
+
 /* VERIFIED (ID06::FUN_0000017c): ID06.bin 0x17c..0x1a0 checked against an independent capstone disassembly:
  * CMPI.W #$100 / BLT (signed) clamps to 0xff, EXT.L index * 2 into the word table *(A5-0x1ede), MOVE.W
  * (A0),D0 leaves the address's high word in D0 (Ghidra's CONCAT22). The C compared and indexed the
@@ -566,6 +579,16 @@ void free_row_table /* Original: FUN_00000512 */ (void)
 
 
 
+/* Unexported function at ID06 offset 0x582 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): free_edge_pool [STRONG INFERENCE: the inverse of
+ * init_edge_pool]. Bytes 0x582..0x596 [PROVEN]: when the edge pool A5-0x1cd6 is set,
+ * free_aligned (0x24c) of it; A5-0x1cd6 cleared either way; RTS:
+ *
+ *   void free_edge_pool(void) { if (A5[-0x1cd6]) free_aligned(A5[-0x1cd6]); A5[-0x1cd6] = 0; }
+ *
+ * Callers: release_render_buffers (0x858).
+ */
+
 /* VERIFIED (ID06::FUN_00000598): ID06.bin 0x598..0x664 checked against an independent capstone disassembly:
  * 0 without a target; free_row_table (JSR 0x512) when the table holds fewer rows than $a(A6); if none,
  * alloc_aligned_clear(0x24) -> A5-0x1cd2 and (rows * 12, MULU.L #$c of the sign-extended word) -> +4, 0 on
@@ -749,6 +772,21 @@ undefined4 init_raster_target /* Original: FUN_000007b0 */ (undefined4 pixel_bas
 }
 
 
+
+/* Unexported function at ID06 offset 0x858 (not in Ghidra's export; no LINK, C convention).
+ * Recovered name (comment only): release_render_buffers [STRONG INFERENCE]. Jump-table slot
+ * $1b2. Bytes 0x858..0x878 [PROVEN]: BSR free_pattern_tables (0x15a); BSR free_edge_pool
+ * (0x582); BSR free_row_table (0x512); when the raster target record A5-0x1cce is set,
+ * free_aligned (0x24c) of it; A5-0x1cce cleared either way; RTS:
+ *
+ *   void release_render_buffers(void)
+ *   { free_pattern_tables(); free_edge_pool(); free_row_table();
+ *     if (A5[-0x1cce]) free_aligned(A5[-0x1cce]); A5[-0x1cce] = 0; }
+ *
+ * The inverse of the renderer's set-up (alloc_pattern_tables, init_edge_pool, alloc_row_table,
+ * init_raster_target). Callers: ID02, through JT $1b2, when the display depth is not 1. The game
+ * runtime runs it as godot/hellcats/runtime/unexported.gd id06_0858.
+ */
 
 /* VERIFIED (ID06::FUN_0000087a): ID06.bin 0x87a..0x88e checked against an independent capstone disassembly:
  * if the target A5-0x1cce is set, its +0 = 8(A6) - identical to the C. */

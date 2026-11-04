@@ -23,7 +23,6 @@ func _init(owner) -> void:
 	segments.register_local(2, 0x95a, func(_a: Array) -> int: return id02_095a())
 	segments.register_local(2, 0x9fa, func(_a: Array) -> int: return id02_09fa())
 	segments.register_local(2, 0xa26, func(_a: Array) -> int: return id02_0a26())
-	segments.register_local(2, 0xd24, func(a: Array) -> int: return id02_0d24(a[0]))
 	segments.register_local(2, 0x2da0, func(_a: Array) -> int: return id02_2da0())
 	segments.register_local(2, 0x2eaa, func(_a: Array) -> int: return id02_2eaa())
 	id05 = segments.instances[5]
@@ -46,6 +45,9 @@ func _init(owner) -> void:
 	segments.stand_ins[0x15a] = func(a: Array) -> int: return id04_1b3e(a[0], a[1])
 	segments.stand_ins[0x152] = func(a: Array) -> int: return id04_1dde(a[0], a[1])
 	segments.stand_ins[0x10a] = func(_a: Array) -> int: return id04_3976()
+	segments.stand_ins[0x9a] = func(_a: Array) -> int: return id04_0e70()
+	segments.stand_ins[0x1d2] = func(_a: Array) -> int: return id06_00ee()
+	segments.register_local(4, 0x3614, func(a: Array) -> int: return id04_3614(a[0], a[1]))
 	segments.stand_ins[0x102] = func(_a: Array) -> int: return id04_137a()
 
 var id02
@@ -78,16 +80,18 @@ func _jt(offset: int, args: Array = []) -> int:
 func _trap(word: int, args: Array = []) -> int:
 	return id02.traps[word].call(args)
 
-## ID02 0x4d24: select_palette_for_depth (0x462c), rebuild_all_palette_index_maps (0x46b4), then
-## the overlay's hook A5 - 0x10a2.
+## ID02 0x4d24 (apply_display_palettes in ID02.decomp.c's unexported block):
+## select_palette_for_depth (0x462c), rebuild_all_palette_index_maps (0x46b4), then the overlay's
+## hook A5 - 0x10a2 (configure_renderer_for_display).
 func id02_4d24() -> int:
 	_id02("select_palette_for_depth")
 	_id02("rebuild_all_palette_index_maps")
 	id02._call_address(memory.read_u32(_g(-0x10a2)), [])
 	return 0
 
-## ID02 0x4d96: SetGDevice(A5 - 0x1036), then the screen base / row bytes / flag back from A5 -
-## 0x1346 / - 0x134a / - 0x1348 into A5 - 0x1382 / - 0x1378 / - 0x1312.
+## ID02 0x4d96 (restore_screen_globals, the same file's block): SetGDevice(A5 - 0x1036), then the
+## screen base / row bytes / flag back from A5 - 0x1346 / - 0x134a / - 0x1348 into A5 - 0x1382 / -
+## 0x1378 / - 0x1312.
 func id02_4d96() -> int:
 	_trap(0xaa31, [memory.read_u32(_g(-0x1036))])
 	memory.write_u32(_g(-0x1382), memory.read_u32(_g(-0x1346)))
@@ -108,9 +112,10 @@ func id02_04a4() -> int:
 		_trap(0xa937)
 	return 0
 
-## ID02 0x95a: the first of nested calls (counter A5 - 0x14f4) locks the four session handles
-## (A5 - 0x11f6, - 0x11dc, - 0x11d4, - 0x12b0: JT $272 HLock) and keeps their master pointers in
-## A5 - 0x11f2, - 0x11d8, - 0x11d0, - 0x12ac (24-bit cleaned when A5 - 0x1348 is set).
+## ID02 0x95a (lock_session_handles in ID02.decomp.c's unexported block): the first of nested calls
+## (counter A5 - 0x14f4) locks the four session handles (A5 - 0x11f6, - 0x11dc, - 0x11d4, - 0x12b0:
+## JT $272 HLock) and keeps their master pointers in A5 - 0x11f2, - 0x11d8, - 0x11d0, - 0x12ac
+## (24-bit cleaned when A5 - 0x1348 is set).
 func id02_095a() -> int:
 	var depth: int = memory.read_u16(_g(-0x14f4))
 	memory.write_u16(_g(-0x14f4), (depth + 1) & 0xffff)
@@ -125,7 +130,8 @@ func id02_095a() -> int:
 		memory.write_u32(_g(pair[1]), p)
 	return 0
 
-## ID02 0x9fa: the last of the nested calls unlocks them (JT $27a HUnlock).
+## ID02 0x9fa (unlock_session_handles, the same block): the last of the nested calls unlocks them
+## (JT $27a HUnlock).
 func id02_09fa() -> int:
 	var depth: int = (memory.read_u16(_g(-0x14f4)) - 1) & 0xffff
 	memory.write_u16(_g(-0x14f4), depth)
@@ -134,8 +140,9 @@ func id02_09fa() -> int:
 			_jt(0x27a, [memory.read_u32(_g(h))])
 	return 0
 
-## ID02 0xa26: with the first two session handles allocated, the overlay's hook A5 - 0x1072 between
-## 0x95a and 0x9fa.
+## ID02 0xa26 (redraw_panel_readouts_locked, the same file's block): with the first two session
+## handles allocated, the overlay's hook A5 - 0x1072 (its readouts and gauges, overlay 0xd23a)
+## between lock_session_handles (0x95a) and unlock_session_handles (0x9fa).
 func id02_0a26() -> int:
 	if memory.read_u32(_g(-0x11f6)) != 0 and memory.read_u32(_g(-0x11dc)) != 0:
 		id02_095a()
@@ -143,14 +150,8 @@ func id02_0a26() -> int:
 		id02_09fa()
 	return 0
 
-## ID02 0xd24 (C, the port): ClosePort, then DisposePtr (JT $23a).
-func id02_0d24(port: int) -> int:
-	_trap(0xa87d, [port])
-	_jt(0x23a, [port])
-	return 0
-
-## ID02 0x2da0: changed settings (A5 - 0x138a) written: ChangedResource and WriteResource of the
-## handle A5 - 0x13ac, the flag cleared.
+## ID02 0x2da0 (save_changed_settings in ID02.decomp.c): changed settings (A5 - 0x138a) written:
+## ChangedResource and WriteResource of the handle A5 - 0x13ac, the flag cleared.
 func id02_2da0() -> int:
 	if memory.read_u16(_g(-0x138a)) != 0:
 		_trap(0xa9aa, [memory.read_u32(_g(-0x13ac))])
@@ -158,9 +159,9 @@ func id02_2da0() -> int:
 		memory.write_u16(_g(-0x138a), 0)
 	return 0
 
-## ID02 0x2eaa (quit): JT $13a must answer 2; with changed settings JT $ba asks (ID01's dense switch
-## on 1..2: 1 saves them (0x2da0), 2 cancels the quit, others quit without saving); the game window
-## hidden while it is up; ExitToShell.
+## ID02 0x2eaa (quit_application in ID02.decomp.c; quit): JT $13a must answer 2; with changed
+## settings JT $ba asks (ID01's dense switch on 1..2: 1 saves them (0x2da0), 2 cancels the quit,
+## others quit without saving); the game window hidden while it is up; ExitToShell.
 func id02_2eaa() -> int:
 	if _jt(0x13a) & 0xffff != 2:
 		return 0
@@ -175,9 +176,9 @@ func id02_2eaa() -> int:
 	_trap(0xa9f4)
 	return 0
 
-## ID02 0x1b42 (main's set-up): the host service table the overlay calls through, each entry a
-## jump-table slot address (A5 + offset), then A5 - 0x1040 = NewPtrClear(0x4e390), or 0x35cf0 when
-## FreeMem is not above 1 MB.
+## ID02 0x1b42 (install_overlay_service_table in ID02.decomp.c; main's set-up): the host service
+## table the overlay calls through, each entry a jump-table slot address (A5 + offset), then A5 -
+## 0x1040 = NewPtrClear(0x4e390), or 0x35cf0 when FreeMem is not above 1 MB.
 func id02_1b42() -> int:
 	var table: Array = [[-0x1122, 0x33a], [-0x111a, 0x3aa], [-0x111e, 0x372], [-0x1116, 0x3fa], [-0x1112, 0x32a],
 			[-0x10f2, 0x322], [-0x10ee, 0x34a], [-0x10ea, 0x3c2], [-0x1106, 0x3d2], [-0x10fe, 0x312], [-0x1102, 0x352],
@@ -192,14 +193,14 @@ func id02_1b42() -> int:
 	memory.write_u32(a5 - 0x1040, heap.new_ptr(size, true))
 	return 0
 
-## ID05 0x3ba (C: code, code text, other, other text): builds the protection dialog's strings. The
-## volume name buffer (A5 - 0x2c8, 0x102 bytes) copied into the frame; the machine's fingerprint
-## (get_machine_screen_fingerprint, five words in the frame); the TEXT 128 pair read into *code /
-## *other. When they are equal and the current volume is the original floppy (GetVol, its name
-## made C and compared with A5 - 0xca) the pair is written again as (0, random_28bit_value) and
-## read back. Equal: the other text is the string at A5 - 0xd66; otherwise the fields packed
-## (pack_fields_to_code_buf68) followed, 6 bytes on, by encode_code28_to_buf54(*other). The code
-## text is encode_long_to_buf40(*code).
+## ID05 0x3ba (build_protection_code_strings in ID05.decomp.c; C: code, code text, other, other
+## text): builds the protection dialog's strings. The volume name buffer (A5 - 0x2c8, 0x102 bytes)
+## copied into the frame; the machine's fingerprint (get_machine_screen_fingerprint, five words in
+## the frame); the TEXT 128 pair read into *code / *other. When they are equal and the current
+## volume is the original floppy (GetVol, its name made C and compared with A5 - 0xca) the pair is
+## written again as (0, random_28bit_value) and read back. Equal: the other text is the string at
+## A5 - 0xd66; otherwise the fields packed (pack_fields_to_code_buf68) followed, 6 bytes on, by
+## encode_code28_to_buf54(*other). The code text is encode_long_to_buf40(*code).
 func id05_03ba(code: int, code_text: int, other: int, other_text: int) -> int:
 	var frame: int = machine.free_stack()
 	var a6: int = frame - 4
@@ -224,13 +225,15 @@ func id05_03ba(code: int, code_text: int, other: int, other_text: int) -> int:
 	_jt(0x52a, [code_text, _run(id05, "encode_long_to_buf40", [memory.read_u32(code)])])
 	return 0
 
-## ID05 0x8b2 (jump-table slot $532): A5 - 0xbc counts up.
+## ID05 0x8b2 (arm_restore_gate in ID05.decomp.c; jump-table slot $532): A5 - 0xbc counts up.
 func id05_08b2() -> int:
 	memory.write_u16(_g(-0xbc), (memory.read_u16(_g(-0xbc)) + 1) & 0xffff)
 	return 0
 
-## ID06 0x858 (slot $1b2): the renderer's buffers released: 0x15a (the tables at A5 - 0x1eda and
-## - 0x1ede), 0x582 (A5 - 0x1cd6), free_row_table (0x512), then A5 - 0x1cce, each pointer cleared.
+## ID06 0x858 (slot $1b2, release_render_buffers in ID06.decomp.c's unexported block): the
+## renderer's buffers released: free_pattern_tables (0x15a: the tables at A5 - 0x1eda and - 0x1ede),
+## free_edge_pool (0x582: A5 - 0x1cd6), free_row_table (0x512), then the raster target A5 - 0x1cce,
+## each pointer cleared. The two unexported helpers are inlined here as their bytes read.
 func id06_0858() -> int:
 	for slot in [-0x1eda, -0x1ede, -0x1cd6]:
 		if slot == -0x1cd6 and memory.read_u32(_g(slot)) == 0:
@@ -243,9 +246,9 @@ func id06_0858() -> int:
 	memory.write_u32(_g(-0x1cce), 0)
 	return 0
 
-## ID04 0x432 (slot $172, run every pass of the event loop): a pending message (A5 - 0x14a0) is shown:
-## JT $462, then show_caution_alert_with_number (JT $4ba) with the C string at A5 - 0xf42 and 0;
-## the flag cleared.
+## ID04 0x432 (report_panel_store_failure in ID04.decomp.c; slot $172, run every pass of the event
+## loop): a pending message (A5 - 0x14a0) is shown: JT $462, then show_caution_alert_with_number
+## (JT $4ba) with the C string at A5 - 0xf42 and 0; the flag cleared.
 func id04_0432() -> int:
 	if memory.read_u16(_g(-0x14a0)) != 0:
 		_jt(0x462)
@@ -253,8 +256,9 @@ func id04_0432() -> int:
 		memory.write_u16(_g(-0x14a0), 0)
 	return 0
 
-## ID02 0x434 (slot $502, C strncmp(a, b, n)): 0 when the first n bytes (up to a terminator) are
-## equal, else -1 / 1 as the first difference is below / above (unsigned).
+## ID02 0x434 (slot $502, C strncmp(a, b, n); ansi_strncmp in ID02.decomp.c's unexported block): 0
+## when the first n bytes (up to a terminator) are equal, else -1 / 1 as the first difference is
+## below / above (unsigned).
 func id02_0434(a: int, b: int, n: int) -> int:
 	n &= 0xffffffff
 	var k: int = 0
@@ -269,15 +273,17 @@ func id02_0434(a: int, b: int, n: int) -> int:
 		n -= 1
 	return 0
 
-## ID02 0x3e8 (slot $522, C strlen): the bytes before the first zero.
+## ID02 0x3e8 (slot $522, C strlen; ansi_strlen in ID02.decomp.c's unexported block): the bytes
+## before the first zero.
 func id02_03e8(s: int) -> int:
 	var n: int = 0
 	while memory.read_u8(s + n) != 0:
 		n += 1
 	return n
 
-## ID04 0x1b8 (C: dialog, item, value): the item becomes a user item drawn by the procedure at slot
-## $12a (GetDItem, SetDItem with its type and box), and A5 - 0x225e = value.
+## ID04 0x1b8 (install_default_ring_item in ID04.decomp.c; C: dialog, item, value): the item
+## becomes a user item drawn by the procedure at slot $12a (GetDItem, SetDItem with its type and
+## box), and A5 - 0x225e = value.
 func id04_01b8(dialog: int, item: int, value: int) -> int:
 	var f: int = machine.free_stack() - 0x10
 	_trap(0xa98d, [f, f + 8, f + 0xc, item, dialog])
@@ -285,16 +291,17 @@ func id04_01b8(dialog: int, item: int, value: int) -> int:
 	memory.write_u16(_g(-0x225e), value & 0xffff)
 	return 0
 
-## ID04 0x644 (slot $132, the Active Duty Roster): DLOG 130 centred (JT $472); the pilots ranked
-## (rank_pilots_by_score into the frame, prune_inactive_pilots_beyond_ten); up to ten active ones
-## (record +0x20 clear) listed: item n+5 their rank's name (the string table at A5 - 0xffe by record
-## +0x22), item n+15 their name, item n+25 their score (compute_pilot_score through JT $4a2). The
-## settings' pilot (+0x20) is the current one (A5 - 0x13a4); the field selected is its row when it
-## is listed with a name or a score. Item 2 drawn by slot $12a (0x1b8), item 39 by slot $142
-## (set_dialog_user_item_proc). ModalDialog with the filter at slot $c2: Cancel (3) returns 0, item
-## 4 shows the selected pilot's record (show_mission_summary_dialog with the message at A5 - 0xe4a),
-## OK (1) writes back the edited names (30 bytes, strncmp / strncpy; the roster resource changed and
-## written when one differs), makes the selected row's pilot current and returns 1.
+## ID04 0x644 (run_duty_roster_dialog in ID04.decomp.c; slot $132, the Active Duty Roster): DLOG
+## 130 centred (JT $472); the pilots ranked (rank_pilots_by_score into the frame,
+## prune_inactive_pilots_beyond_ten); up to ten active ones (record +0x20 clear) listed: item n+5
+## their rank's name (the string table at A5 - 0xffe by record +0x22), item n+15 their name, item
+## n+25 their score (compute_pilot_score through JT $4a2). The settings' pilot (+0x20) is the
+## current one (A5 - 0x13a4); the field selected is its row when it is listed with a name or a
+## score. Item 2 drawn by slot $12a (0x1b8), item 39 by slot $142 (set_dialog_user_item_proc).
+## ModalDialog with the filter at slot $c2: Cancel (3) returns 0, item 4 shows the selected pilot's
+## record (show_mission_summary_dialog with the message at A5 - 0xe4a), OK (1) writes back the
+## edited names (30 bytes, strncmp / strncpy; the roster resource changed and written when one
+## differs), makes the selected row's pilot current and returns 1.
 func id04_0644() -> int:
 	var frame: int = machine.free_stack()
 	var a6: int = frame - 4
@@ -366,9 +373,9 @@ func id04_0644() -> int:
 	_trap(0xa983, [dlg])
 	return 1
 
-## ID04 0x2dc (C: dialog, item numbers, count, selected): when `selected` is within the group (from
-## its first to its last item) every radio button of the group gets value 1 if it is the selected
-## one, else 0.
+## ID04 0x2dc (set_radio_group_selection in ID04.decomp.c; C: dialog, item numbers, count,
+## selected): when `selected` is within the group (from its first to its last item) every radio
+## button of the group gets value 1 if it is the selected one, else 0.
 func id04_02dc(dialog: int, items: int, count: int, selected: int) -> int:
 	selected = qd_s16(selected)
 	count = qd_s16(count)
@@ -385,17 +392,17 @@ static func qd_s16(v: int) -> int:
 	v &= 0xffff
 	return v - 0x10000 if v >= 0x8000 else v
 
-## ID04 0xc02 (slot $82, Select a Mission): the settings' scenario (+0x1e, 1 when unset) and the fuel
-## percent (A5 - 0x12d2, 100 when unset, into A5 - 0x225c); DLOG 129 centred; item 2 by slot $12a
-## (0x1b8), item 4 by slot $11a (the title), item 19 by slot $142, item 5 by slot $8a (the fuel
-## bar); the scenario's radio button (scenario + 7, scenario 1 shown as 2) among the 8 at A5 -
-## 0x2256 and bombs item 8 among the 3 at A5 - 0x2246 selected. ModalDialog with the filter at slot
-## $112: Cancel (3) returns 0; OK (1) goes on when confirm_end_mission answers 2; any other item
-## selects within both groups. Then the bombs (selection - 6, settings +0x24), the scenario
-## (selection - 7, +0x1e), the fuel (+0x22) and the pilot (+0x20, A5 - 0x13a4) are stored when they
-## changed (A5 - 0x138a set); the dialog disposed, the settings applied (JT $4ca), A5 - 0x14c4
-## cleared, the game state A5 - 0x12f8 = the scenario, the overlay reset (JT $4c2); the scenario is
-## returned.
+## ID04 0xc02 (run_scenario_selection_dialog in ID04.decomp.c; slot $82, Select a Mission): the
+## settings' scenario (+0x1e, 1 when unset) and the fuel percent (A5 - 0x12d2, 100 when unset, into
+## A5 - 0x225c); DLOG 129 centred; item 2 by slot $12a (0x1b8), item 4 by slot $11a (the title),
+## item 19 by slot $142, item 5 by slot $8a (the fuel bar); the scenario's radio button (scenario +
+## 7, scenario 1 shown as 2) among the 8 at A5 - 0x2256 and bombs item 8 among the 3 at A5 - 0x2246
+## selected. ModalDialog with the filter at slot $112: Cancel (3) returns 0; OK (1) goes on when
+## confirm_end_mission answers 2; any other item selects within both groups. Then the bombs
+## (selection - 6, settings +0x24), the scenario (selection - 7, +0x1e), the fuel (+0x22) and the
+## pilot (+0x20, A5 - 0x13a4) are stored when they changed (A5 - 0x138a set); the dialog disposed,
+## the settings applied (JT $4ca), A5 - 0x14c4 cleared, the game state A5 - 0x12f8 = the scenario,
+## the overlay reset (JT $4c2); the scenario is returned.
 func id04_0c02() -> int:
 	var frame: int = machine.free_stack()
 	var a6: int = frame - 4
@@ -451,9 +458,10 @@ func id04_0c02() -> int:
 	_jt(0x4c2)
 	return memory.read_u16(_g(-0x12f8))
 
-## ID03 0x59f4: the four session handles (A5 - 0x11f6, - 0x11dc, - 0x11d4, - 0x12b0) released: a
-## resource (the current scenery record's word +0xc set: *(A5 - 0x13b2) + 0x160 * A5 - 0x211e) by
-## ReleaseResource, otherwise by DisposeHandle (JT $25a); each cleared.
+## ID03 0x59f4 (release_panel_bitmaps in ID03.decomp.c): the four session handles (A5 - 0x11f6, -
+## 0x11dc, - 0x11d4, - 0x12b0) released: a resource (the current scenery record's word +0xc set:
+## *(A5 - 0x13b2) + 0x160 * A5 - 0x211e) by ReleaseResource, otherwise by DisposeHandle (JT $25a);
+## each cleared.
 func id03_59f4() -> int:
 	for slot in [-0x11f6, -0x11dc, -0x11d4, -0x12b0]:
 		var h: int = memory.read_u32(_g(slot))
@@ -786,11 +794,12 @@ func _id04_21d6_rank(_dialog: int) -> int:
 	_set_w(-0x2222, 5)
 	return 0
 
-## ID04 0x2104 (slot $ca, the summary's ModalDialog filter, Pascal (dialog, event, VAR item)):
-## Return or Enter give the default item (A5 - 0x225e) once the text is done (A5 - 0x2230 clear); a
-## click on the text's scroll bar (0x1752) gives item 8; an update goes to JT $492. Otherwise, once
-## |TickCount - A5 - 0x222c| (as a word) reaches A5 - 0x2230, the text advances a step (0x21d6 with
-## the phase A5 - 0x2220), the buttons are updated when it ends, and the time is taken again.
+## ID04 0x2104 (mission_summary_filter_proc in ID04.decomp.c; slot $ca, the summary's ModalDialog
+## filter, Pascal (dialog, event, VAR item)): Return or Enter give the default item (A5 - 0x225e)
+## once the text is done (A5 - 0x2230 clear); a click on the text's scroll bar (0x1752) gives item
+## 8; an update goes to JT $492. Otherwise, once |TickCount - A5 - 0x222c| (as a word) reaches A5 -
+## 0x2230, the text advances a step (0x21d6 with the phase A5 - 0x2220), the buttons are updated
+## when it ends, and the time is taken again.
 func id04_2104(dialog: int, event: int, item_hit: int) -> int:
 	match memory.read_u16(event):
 		3:
@@ -812,9 +821,10 @@ func id04_2104(dialog: int, event: int, item_hit: int) -> int:
 	memory.write_u32(_g(-0x222c), _trap(0xa975) & 0xffffffff)
 	return 0
 
-## ID04 0x1752 (C: dialog, event): a click in the dialog (its where, local) on the scrolling text's
-## bar (A5 - 0x2236) is tracked: the thumb (part 129) without an action and the text synced, other
-## parts with the action procedure at slot $16a; 1 then, 0 for anything else. The port is restored.
+## ID04 0x1752 (track_summary_text_click in ID04.decomp.c; C: dialog, event): a click in the dialog
+## (its where, local) on the scrolling text's bar (A5 - 0x2236) is tracked: the thumb (part 129)
+## without an action and the text synced, other parts with the action procedure at slot $16a; 1
+## then, 0 for anything else. The port is restored.
 func id04_1752(dialog: int, event: int) -> int:
 	var f: Array = _enter(0x12)
 	var a6: int = f[0]
@@ -839,8 +849,9 @@ func id04_1752(dialog: int, event: int) -> int:
 	id04.a7 = f[1]
 	return result
 
-## ID04 0x1b3e (slot $15a, a user item procedure, Pascal (dialog, item)): the pilot's rank insignia
-## (cicn 256 + record +0x22) at the item box's top right, at the icon's own size.
+## ID04 0x1b3e (draw_rank_insignia in ID04.decomp.c; slot $15a, a user item procedure, Pascal
+## (dialog, item)): the pilot's rank insignia (cicn 256 + record +0x22) at the item box's top
+## right, at the icon's own size.
 func id04_1b3e(dialog: int, item: int) -> int:
 	var f: Array = _enter(0x1a)
 	var a6: int = f[0]
@@ -861,11 +872,11 @@ func _place_icon(icon: int, r: int) -> void:
 	memory.write_u16(r + 2, (memory.read_u16(r + 6) - w) & 0xffff)
 	memory.write_u16(r + 4, (h + memory.read_u16(r)) & 0xffff)
 
-## ID04 0x1dde (slot $152, a user item procedure, Pascal (dialog, item)): the item's box framed
-## (frame_dialog_item_box); in the dialog (clipped to the port at A5 - 0x160c's rect, the port left
-## set) the pilot's medals (record +0x26, bit k for medal k of 8) in three columns: each a 60 x 18
-## frame centred at (w * column / 3, h * row / 3) + the box's top left + (32, 11), its cicn (512 + k)
-## at the frame's top right.
+## ID04 0x1dde (draw_mission_awards in ID04.decomp.c; slot $152, a user item procedure, Pascal
+## (dialog, item)): the item's box framed (frame_dialog_item_box); in the dialog (clipped to the
+## port at A5 - 0x160c's rect, the port left set) the pilot's medals (record +0x26, bit k for medal
+## k of 8) in three columns: each a 60 x 18 frame centred at (w * column / 3, h * row / 3) + the
+## box's top left + (32, 11), its cicn (512 + k) at the frame's top right.
 func id04_1dde(dialog: int, item: int) -> int:
 	var f: Array = _enter(0x36)
 	var a6: int = f[0]
@@ -907,11 +918,11 @@ func qd_rect(at: int) -> Rect2i:
 	var left: int = qd_s16(memory.read_u16(at + 2))
 	return Rect2i(left, top, qd_s16(memory.read_u16(at + 6)) - left, qd_s16(memory.read_u16(at + 4)) - top)
 
-## ID04 0x3976 (slot $10a, Mission Map): not in scenario 2 (A5 - 0x12f8); DLOG 0x89 centred (JT
-## $472), item 8 drawn by the map procedure at slot $b2, the default ring on item 1 (0x1b8 with 2,
-## 1), shown; ModalDialog with the filter at slot $d2 until OK (1): item 3 halves the settings' map
-## scale (+0x26, while above 1), item 4 doubles it (asl.w, while below 0x100), each redrawing the
-## map (draw_map_view_item, item 8). The dialog disposed.
+## ID04 0x3976 (run_map_dialog in ID04.decomp.c; slot $10a, Mission Map): not in scenario 2 (A5 -
+## 0x12f8); DLOG 0x89 centred (JT $472), item 8 drawn by the map procedure at slot $b2, the default
+## ring on item 1 (0x1b8 with 2, 1), shown; ModalDialog with the filter at slot $d2 until OK (1):
+## item 3 halves the settings' map scale (+0x26, while above 1), item 4 doubles it (asl.w, while
+## below 0x100), each redrawing the map (draw_map_view_item, item 8). The dialog disposed.
 func id04_3976() -> int:
 	if _sw(-0x12f8) == 2:
 		return 0
@@ -940,12 +951,13 @@ func id04_3976() -> int:
 	id04.a7 = f[1]
 	return 0
 
-## ID04 0x137a (slot $102, High Scores): DLOG 0x86 centred (JT $472), the default ring on item 1
-## (0x1b8 with 2, 1), item 8 drawn by slot $142 and item 10 (the table) by slot $e2, shown;
-## ModalDialog (no filter) until OK (1). Item 3 (erase) asks confirm_erase_high_scores: on 2 every
-## retired pilot (record +0x20 set) of the twenty is reset (reset_pilot_record) with the roster
-## locked (JT $272 / $27a); when any was, the roster is marked changed and written and item 10's box
-## invalidated (in the dialog's port, the port at A5 - 0x160c restored). The dialog disposed.
+## ID04 0x137a (run_high_scores_dialog in ID04.decomp.c; slot $102, High Scores): DLOG 0x86 centred
+## (JT $472), the default ring on item 1 (0x1b8 with 2, 1), item 8 drawn by slot $142 and item 10
+## (the table) by slot $e2, shown; ModalDialog (no filter) until OK (1). Item 3 (erase) asks
+## confirm_erase_high_scores: on 2 every retired pilot (record +0x20 set) of the twenty is reset
+## (reset_pilot_record) with the roster locked (JT $272 / $27a); when any was, the roster is marked
+## changed and written and item 10's box invalidated (in the dialog's port, the port at A5 - 0x160c
+## restored). The dialog disposed.
 func id04_137a() -> int:
 	var f: Array = _enter(0x22)
 	var a6: int = f[0]
@@ -980,3 +992,129 @@ func id04_137a() -> int:
 	_trap(0xa983, [dlg])
 	id04.a7 = f[1]
 	return 0
+
+## ID04 0x3614 (track_map_bearing_and_distance in ID04.decomp.c; C: dialog, event): a click inside
+## the Mission Map's item 8 (the event's where, local) is tracked while the button is down: a
+## 2 x 2 XOR line (PenMode 2) from the map's centre to the mouse, the previous one erased, clipped
+## to the map; for each new point item 5 shows the bearing, 360 - angle * 360 / 0x4000 with the
+## angle the heading attitude_from_velocity (the service at A5 - 0x1056) gives for (dx, 0, -dy,
+## 0, dx * dx + dy * dy), and A5 - 0x2122 after it; item 6 the distance, the square root (the
+## service at A5 - 0x105a) of dx * dx + dy * dy times the map scale (settings +0x26) over the
+## map's width / 40, as "<d / 10>" A5 - 0x2120 "<d % 10>" and STR# 129's " mi." (*(A5 - 0xe56)).
+## The last line is erased on release; pen size 1 and the port at A5 - 0x160c are restored.
+func id04_3614(dialog: int, event: int) -> int:
+	var f: Array = _enter(0x82)
+	var a6: int = f[0]
+	memory.write_u16(a6 - 0x12, 0)
+	memory.write_u32(a6 - 0x2c, memory.read_u32(_g(-0x160c)))
+	_trap(0xa873, [dialog])
+	_trap(0xa98d, [a6 - 0x20, a6 - 0x18, a6 - 0x14, 8, dialog])
+	memory.write_u32(a6 - 0x24, memory.read_u32(event + 0xa))
+	_trap(0xa871, [a6 - 0x24])
+	if (_trap(0xa8ad, [a6 - 0x20, memory.read_u32(a6 - 0x24)]) >> 8) & 0xff != 0:
+		var top: int = _sw16(a6 - 0x20)
+		var left: int = _sw16(a6 - 0x1e)
+		var w: int = qd_s16(_sw16(a6 - 0x1a) - left)
+		var h: int = qd_s16(_sw16(a6 - 0x1c) - top)
+		memory.write_u16(a6 - 6, w & 0xffff)
+		memory.write_u16(a6 - 8, h & 0xffff)
+		var cx: int = qd_s16(C68kScript.divs_trunc(w, 2) + left)
+		var cy: int = qd_s16(C68kScript.divs_trunc(h, 2) + top)
+		_trap(0xa89b, [2, 2])
+		memory.write_u16(a6 - 0x26, cx & 0xffff)
+		memory.write_u16(a6 - 0x28, cy & 0xffff)
+		while true:
+			var inside: bool = (_trap(0xa8ad, [a6 - 0x20, memory.read_u32(a6 - 0x24)]) >> 8) & 0xff != 0
+			var moved: bool = memory.read_u32(a6 - 0x24) != memory.read_u32(a6 - 0x28)
+			if inside and moved:
+				_track_map_point(dialog, a6, cx, cy, w)
+			_trap(0xa972, [a6 - 0x24])
+			if (_trap(0xa974) >> 8) & 0xff == 0:
+				break
+		if memory.read_u16(a6 - 0x12) != 0:
+			_trap(0xa89c, [2])
+			_trap(0xa893, [cy & 0xffff, cx & 0xffff])
+			_trap(0xa891, [memory.read_u16(a6 - 0x28), memory.read_u16(a6 - 0x26)])
+			_trap(0xa89c, [0])
+	_trap(0xa89b, [1, 1])
+	_trap(0xa873, [memory.read_u32(a6 - 0x2c)])
+	id04.a7 = f[1]
+	return 0
+
+func _sw16(at: int) -> int:
+	return qd_s16(memory.read_u16(at))
+
+## One point of track_map_bearing_and_distance: the old line erased and the new drawn, the
+## bearing into item 5 and the distance into item 6.
+func _track_map_point(dialog: int, a6: int, cx: int, cy: int, w: int) -> void:
+	_trap(0xa87b, [a6 - 0x20])
+	_trap(0xa89c, [2])
+	if memory.read_u16(a6 - 0x12) != 0:
+		_trap(0xa893, [cy & 0xffff, cx & 0xffff])
+		_trap(0xa891, [memory.read_u16(a6 - 0x28), memory.read_u16(a6 - 0x26)])
+	_trap(0xa893, [cy & 0xffff, cx & 0xffff])
+	_trap(0xa891, [memory.read_u16(a6 - 0x24), memory.read_u16(a6 - 0x22)])
+	memory.write_u32(a6 - 0x28, memory.read_u32(a6 - 0x24))
+	memory.write_u16(a6 - 0x12, 1)
+	_trap(0xa89c, [0])
+	_trap(0xa87b, [memory.read_u32(_g(-0x160c)) + 0x10])
+	var dx: int = qd_s16(_sw16(a6 - 0x22) - cx)
+	var dy: int = qd_s16(_sw16(a6 - 0x24) - cy)
+	var r2: int = (dx * dx + dy * dy) & 0xffffffff
+	machine.segments.call_procedure(memory.read_u32(_g(-0x1056)),
+			[dx & 0xffffffff, 0, (-dy) & 0xffffffff, 0, r2, a6 - 0x80, a6 - 0x82])
+	var deg: int = C68kScript.divs_trunc(C68kScript.s32(_sw16(a6 - 0x82) * 0x168), 0x4000)
+	var line: int = a6 - 0x64
+	_jt(0x2fa, [_jt(0x4a2, [(0x168 - deg) & 0xffffffff, line])])
+	_jt(0x512, [line, _g(-0x2122)])
+	_jt(0x302, [line])
+	_run(id04, "set_dialog_item_text", [dialog, 5, line])
+	var root: int = qd_s16(machine.segments.call_procedure(memory.read_u32(_g(-0x105a)), [r2]))
+	var scale: int = _sw16(memory.read_u32(memory.read_u32(_g(-0x13ac))) + 0x26)
+	var per: int = qd_s16(C68kScript.divs_trunc(w, 0x28))
+	var dist: int = C68kScript.divs_trunc(C68kScript.s32(scale * root), per)
+	var tenths: int = dist - C68kScript.divs_trunc(dist, 10) * 10
+	_jt(0x2fa, [_jt(0x4a2, [C68kScript.divs_trunc(dist, 10) & 0xffffffff, line])])
+	_jt(0x512, [line, _g(-0x2120)])
+	_jt(0x512, [line, _jt(0x2fa, [_jt(0x4a2, [tenths & 0xffffffff, a6 - 0x6e])])])
+	_jt(0x512, [line, memory.read_u32(_g(-0xe56))])
+	_jt(0x302, [line])
+	_run(id04, "set_dialog_item_text", [dialog, 6, line])
+
+## ID04 0xe70 (slot $9a, run_refuel_dialog in ID04.decomp.c): the fuel slider starts at the
+## current load (A5 - 0x225c = A5 - 0x12d2); DLOG 0x84 centred (JT $472), the default ring on item
+## 1 (install_default_ring_item with 2, 1), item 3 the percent bar (slot $8a), the bomb radios
+## (the item list A5 - 0x2240, three of them) set to item 6, shown; ModalDialog with the filter at
+## slot $14a until OK (1), each other hit given to set_radio_group_selection (the slider's item
+## 3 falls outside the group). Then the bombs (A5 - 0x12d0) = the selected radio - 4 when one is,
+## the fuel (A5 - 0x12d2) = the slider's A5 - 0x225c, and the dialog disposed.
+func id04_0e70() -> int:
+	var f: Array = _enter(0x18)
+	var a6: int = f[0]
+	memory.write_u16(a6 - 0x16, _w(-0x12f8))
+	memory.write_u16(a6 - 0x18, _w(-0x12d0))
+	_set_w(-0x225c, _w(-0x12d2))
+	var dlg: int = _trap(0xa97c, [0xffffffff, 0, 0x84]) & 0xffffffff
+	_jt(0x472, [dlg])
+	id04_01b8(dlg, 2, 1)
+	_run(id04, "set_dialog_user_item_proc", [dlg, 3, _g(0x8a)])
+	id04_02dc(dlg, _g(-0x2240), 3, 6)
+	_trap(0xa915, [dlg])
+	while true:
+		_trap(0xa991, [a6 - 6, _g(0x14a)])
+		var item: int = _sw16(a6 - 6)
+		if item == 1:
+			break
+		id04_02dc(dlg, _g(-0x2240), 3, item)
+	var sel: int = qd_s16(_run(id04, "get_radio_group_selection", [dlg, _g(-0x2240), 3]))
+	if sel != -1:
+		_set_w(-0x12d0, sel - 4)
+	_set_w(-0x12d2, _w(-0x225c))
+	_trap(0xa983, [dlg])
+	id04.a7 = f[1]
+	return 0
+
+## ID06 0xee (slot $1d2, the entry without a LINK frame before 0xf4): the grey map's pointer
+## (A5 - 0x1ede), the 1-bit view buffer's base for ID02.
+func id06_00ee() -> int:
+	return memory.read_u32(_g(-0x1ede))

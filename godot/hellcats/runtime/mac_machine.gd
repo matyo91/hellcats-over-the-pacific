@@ -61,6 +61,8 @@ var exited := false
 ## Set by the scene when Godot quits: the program's thread stops at its next trap and stays parked
 ## (`parked`), so no script runs on it while the engine shuts down.
 var halting := false
+## The addressing mode SwapMMUMode keeps (0: 24-bit, the only one this machine has).
+var mmu_mode: int = 0
 ## The Mac cursor's level (HideCursor / ShowCursor / InitCursor): shown at 0, hidden below.
 var cursor_level: int = 0
 var parked := false
