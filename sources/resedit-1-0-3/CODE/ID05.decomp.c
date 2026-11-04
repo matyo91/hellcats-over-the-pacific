@@ -298,9 +298,12 @@ void write_TEXT128_pair /* Original: FUN_00000270 */ (undefined4 first /* param_
  * Trap names / event layout: Inside Macintosh [STRONG INFERENCE].
  *
  * Routine B (recovered name, comment only: build_protection_code_strings [HYPOTHESIS]), file 0x3ba..0x4e2, NOT exported by Ghidra (no separate entry;
- * caller UNKNOWN) [PROVEN bytes; roles HYPOTHESIS]:
+ * its only caller run_protection_dialog, JSR d16(PC) at 0x57c [PROVEN, tools/decomp/xrefs.py]) [PROVEN bytes;
+ * roles HYPOTHESIS]:
  *   args: long *a [8(A6)], char *outA [$c], long *b [$10], char *outB [$14]
- *   copy 0x102 bytes A5-0x2c8 -> local buf; get_machine_screen_fingerprint(&w1..&w5) fills 5 words;
+ *   copy 0xfe bytes A5-0x2c8 -> local buf -0x10c(A6) (MOVEQ #$3e + DBF over MOVE.L, then one MOVE.W)
+ *   [PROVEN bytes]; get_machine_screen_fingerprint(&w1..&w5) fills 5 words (PEA -$a .. -2: w1 = -2(A6),
+ *   pushed last, is the first C argument, the machine type; w5 = -0xa(A6) the cleared last) [PROVEN];
  *   read_TEXT128_pair(a, b);  (FUN_00000214)
  *   if (*a == *b) {
  *     GetVol(buf, &vref) (JT $2ba = ID09 file 0x344, $A014);
@@ -550,7 +553,8 @@ uint ansi_rand /* Original: FUN_00000728 */ (void)
 /*
  * Original: FUN_00000746; source: ID05.c:141-148.
  * Recovered name: ansi_srand [STRONG INFERENCE].
- * Stores param_1 into the ansi_rand seed (long A5-0x6c). No callers found yet.
+ * Stores param_1 into the ansi_rand seed (long A5-0x6c). Caller: init_protection_table (0x8b8),
+ * JSR $746(PC) at 0x8c0 [PROVEN, tools/decomp/xrefs.py].
  */
 void ansi_srand /* Original: FUN_00000746 */ (undefined4 seed /* param_1 */)
 
@@ -889,7 +893,13 @@ uint random_28bit_value /* Original: FUN_00000a62 */ (void)
  * letters into A5-0x68 (returned): bits 16..27 = param_1 high word; 12..15 =
  * param_1 low / 0x80; 8..11 = param_2 high / 0x80; 5..7 = param_2 low / 4;
  * 0..4 = min(param_3 high / 0x200, 0x20). Ghidra _0_2_/_2_2_ split each 4-byte
- * argument slot into words; actual prototype [UNKNOWN]. Masking/overlap of the
+ * argument slot into words. The prototype is five words [PROVEN]: its only caller
+ * (build_protection_code_strings, ID05 0x3ba; bytes 0x484..0x4a0, the JSR at 0x498) pushes the words at
+ * -0xa, -8, -6, -4, -2(A6) with MOVE.W and pops 10 bytes (LEA $a(A7)), so the first
+ * argument (slot1's high word) is -2(A6). Those are get_machine_screen_fingerprint's
+ * outputs, so the fields are, in order, the machine type, the screen width, height and
+ * pixel depth, and the cleared last word [STRONG INFERENCE, the fingerprint's names];
+ * slot3's low word is past the pushed words. Masking/overlap of the
  * OR (e.g. 0x20 sets bit 5) preserved as exported.
  * Inverse (with rescaling): unpack_fields_from_code. Caller: ID05 file 0x498.
  */
@@ -921,7 +931,8 @@ int pack_fields_to_code_buf68 /* Original: FUN_00000a90 */ (undefined4 slot1 /* 
  * Recovered name: unpack_fields_from_code [STRONG INFERENCE].
  * Decodes a 6-letter code and splits it: *p2 = bits 16..31, *p3 = bits 12..15 << 7,
  * *p4 = bits 8..11 << 7, *p5 = bits 5..7 << 2, *p6 = bits 0..4. Mirrors
- * pack_fields_to_code_buf68 (last field not rescaled by 0x200). No caller found yet.
+ * pack_fields_to_code_buf68 (last field not rescaled by 0x200). Unreferenced: no branch to it in
+ * ID05, no jump-table slot, no slot use in any segment [PROVEN, tools/decomp/xrefs.py].
  */
 void unpack_fields_from_code /* Original: FUN_00000b10 */ (int code /* param_1: 6-letter code */,undefined2 *bits16_31 /* param_2: out, bits 16..31 */,undefined2 *bits12_15 /* param_3: out, bits 12..15 << 7 */,undefined2 *bits8_11 /* param_4: out, bits 8..11 << 7 */,
                  undefined2 *bits5_7 /* param_5: out, bits 5..7 << 2 */,ushort *bits0_4 /* param_6: out, bits 0..4 */)
@@ -967,7 +978,8 @@ int encode_code28_to_buf54 /* Original: FUN_00000b84 */ (uint value /* param_1: 
 /*
  * Original: FUN_00000ba8; source: ID05.c:338-345.
  * Recovered name: decode_code_to_long_a [STRONG INFERENCE].
- * Returns decode_base26_6chars(param_1). No caller found yet.
+ * Returns decode_base26_6chars(param_1). Unreferenced: no branch to it in ID05, no jump-table
+ * slot, no slot use in any segment [PROVEN, tools/decomp/xrefs.py].
  */
 int decode_code_to_long_a /* Original: FUN_00000ba8 */ (int code /* param_1: 6-letter code */)
 

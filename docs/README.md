@@ -12,6 +12,7 @@ by `python3 tools/progress_stats.py`; they are not copied into prose.
 | Symbols, globals, layouts, and call corrections | [`DECOMPILATION_SYMBOLS.md`](DECOMPILATION_SYMBOLS.md) |
 | Strict C-to-GDScript contract | [`STRICT_PORT_FOUNDATION.md`](STRICT_PORT_FOUNDATION.md) |
 | Original subsystem navigation | [`SUBSYSTEM_MAP.md`](SUBSYSTEM_MAP.md) |
+| Overlay object definitions (key -> handlers, from the bytes) | [`OVERLAY_DEFINITION_TABLE.md`](OVERLAY_DEFINITION_TABLE.md) |
 | Prototype/import correspondence (historical) | [`IMPORT_STATUS.md`](IMPORT_STATUS.md) |
 | Resource formats and retrieval | [`RESOURCE_ANALYSIS.md`](RESOURCE_ANALYSIS.md) through `tools/resedit.py` |
 | Structures and loader mechanics | [`STRUCTS.md`](STRUCTS.md), [`LOADER_CHAIN.md`](LOADER_CHAIN.md) |

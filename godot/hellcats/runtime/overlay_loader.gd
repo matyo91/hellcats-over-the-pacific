@@ -132,6 +132,14 @@ func _unported(address: int) -> Callable:
 		machine.note_missing("overlay:0x%x" % address, "%s, %d args" % [UNPORTED[address], args.size()])
 		return 0
 
+## For tests: the image (code and data) at base 0 as the loader leaves it once linked (its
+## relocated longs hold runtime addresses, which the file's already are), and its port attached.
+func attach_image(bytes: PackedByteArray) -> void:
+	var size: int = _u32(bytes, 4) + _u32(bytes, 8)
+	for k in size:
+		machine.memory.write_u8(k, bytes[HEADER + k])
+	_attach(_u32(bytes, 20))
+
 func _hook(address: int) -> Callable:
 	if WRITTEN.has(address):
 		return func(args: Array) -> int:
@@ -161,7 +169,12 @@ func _hook(address: int) -> Callable:
 		port.a7 = saved
 		return 0 if result == null else int(result)
 
+## For tests: ported overlay methods the written routines' calls go to a stand-in for (by name).
+var test_stubs: Dictionary = {}
+
 func _run(method: String, args: Array = []) -> int:
+	if test_stubs.has(method):
+		return int(test_stubs[method].call(args))
 	var r = port.callv(method, args)
 	return 0 if r == null else int(r)
 
@@ -206,7 +219,8 @@ func _15134(carrier: int, player: int, contact_record: int) -> int:
 			_run("overlay_printf", [0x15114, 0, 0, 0, 0, 0])
 		var deck_face: int = (faces + (m.read_s16(ctrl + 0x50) << 5)) & 0xffffffff
 		var w: int = m.read_s16(m.read_u32(deck_face + 0x18))
-		var y: int = m.read_s32(m.read_u32(carrier + 0x44) + 3 * w + 4)
+		# LEA (A0,A0.L*2) then MOVE.L 4(A1,A0.L*4): vertex w's y in the 12-byte vertex table.
+		var y: int = m.read_s32(m.read_u32(carrier + 0x44) + 12 * w + 4)
 		m.write_u16(ctrl + 0x54, (y >> (m.read_u16(carrier + 0x34) & 63)) & 0xffff)
 	var deck: int = (faces + (m.read_s16(ctrl + 0x50) << 5)) & 0xffffffff
 	var folded: int = qd_s16(_run("fold_angle_pm_0x2000", [m.read_s16(ctrl + 0x20)]))

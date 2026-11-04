@@ -22,19 +22,19 @@
         "source_path": "sources/resedit-1-0-3/CODE/ID09.decomp.c"
       },
       {
-        "annotation_line": 176,
+        "annotation_line": 178,
         "kind": "known_function",
         "original_symbol": "FUN_000002a6",
         "source_path": "sources/resedit-1-0-3/CODE/ID09.decomp.c"
       },
       {
-        "annotation_line": 232,
+        "annotation_line": 235,
         "kind": "known_function",
         "original_symbol": "FUN_000003c2",
         "source_path": "sources/resedit-1-0-3/CODE/ID09.decomp.c"
       },
       {
-        "annotation_line": 273,
+        "annotation_line": 296,
         "kind": "known_function",
         "original_symbol": "FUN_00000432",
         "source_path": "sources/resedit-1-0-3/CODE/ID09.decomp.c"
@@ -85,8 +85,8 @@
       {
         "kind": "C/decompilation export",
         "path": "sources/resedit-1-0-3/CODE/ID09.decomp.c",
-        "sha256": "50da9744c96bab8cf2d417a18fa85fe6255ca6e9f6aa7be3c9f401d7ef17040b",
-        "size": 16029
+        "sha256": "e24c1787b2e744ff30f234d001aed0aa92fe1d59a15e5ec8b27f6a25cf44ac7d",
+        "size": 18009
       }
     ],
     "resource_attributes": "0x38",

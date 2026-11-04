@@ -45,6 +45,10 @@ def extract_function(source: str, name: str) -> str:
 
 def _extract_with(source: str, signature: re.Pattern) -> str | None:
     for match in signature.finditer(source):
+        # A definition never starts inside a comment: a line of a block comment (" * ...", "/* ...")
+        # or a line comment that names the function is not its signature.
+        if source[match.start():match.end()].lstrip().startswith(("*", "/*", "//")):
+            continue
         brace = source.find("{", match.end())
         if brace < 0:
             continue

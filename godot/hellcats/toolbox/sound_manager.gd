@@ -6,8 +6,9 @@ extends RefCounted
 ##   word); `service()` runs the hook for the ticks gone by, on the program's thread at its traps,
 ##   and queues the buffer's samples for Godot (`take()`, 22254.5 Hz, unsigned 8-bit);
 ## - the Sound Manager: SndNewChannel gives a channel record, SndPlay plays a 'snd ' handle (decoded
-##   by strict_port/ui/resource_sound.gd) as a Godot stream (`take_played()`), SndDisposeChannel
-##   and the others answer noErr.
+##   by strict_port/ui/resource_sound.gd) as a Godot stream on that channel (`take_played()`), and
+##   SndDisposeChannel with quietNow set cuts the channel's sounds short (`take_stopped()`), as the
+##   summary's named sound is when the summary closes (ID04 0x3178); the others answer noErr.
 
 const Sounds := preload("res://strict_port/ui/resource_sound.gd")
 
@@ -23,7 +24,8 @@ var _hook: int = 0
 var _in_vbl := false
 var _lock := Mutex.new()
 var _queue := PackedFloat32Array()
-var _played: Array = []                    ## AudioStreamWAV the Sound Manager started
+var _played: Array = []                    ## [AudioStreamWAV, channel] the Sound Manager started
+var _stopped: Array = []                   ## channels disposed with quietNow set
 
 func _init(owner, toolbox) -> void:
 	machine = owner
@@ -36,8 +38,8 @@ func install(toolbox) -> void:
 		if memory.read_u32(a[3]) == 0:
 			memory.write_u32(a[3], heap.new_ptr(0x400, true))
 		return 0)
-	t.install(0xa801, func(_a: Array) -> int: return 0)                                       ## SndDisposeChannel(chan, quietNow)
-	t.install(0xa805, func(a: Array) -> int: return play(a[1]))                               ## SndPlay(chan, snd, async)
+	t.install(0xa801, func(a: Array) -> int: return dispose(a[1], a[0]))                      ## SndDisposeChannel(chan, quietNow)
+	t.install(0xa805, func(a: Array) -> int: return play(a[1], a[2]))                         ## SndPlay(chan, snd, async)
 	for word in [0xa802, 0xa803, 0xa804, 0xa806]:                                              ## SndAddModifier, SndDoCommand, SndDoImmediate, SndControl
 		t.install(word, func(_a: Array) -> int: return 0)
 
@@ -85,7 +87,7 @@ func take() -> PackedFloat32Array:
 	_lock.unlock()
 	return out
 
-func play(snd: int) -> int:
+func play(snd: int, channel: int = 0) -> int:
 	var p: int = memory.read_u32(snd)
 	var bytes := PackedByteArray()
 	bytes.resize(heap.handle_size(snd))
@@ -93,10 +95,28 @@ func play(snd: int) -> int:
 		bytes[k] = memory.read_u8(p + k)
 	var decoded: Dictionary = Sounds.decode_snd(bytes)
 	_lock.lock()
-	_played.append(Sounds.stream(decoded))
+	_played.append([Sounds.stream(decoded), channel & 0xffffffff])
 	_lock.unlock()
 	return 0
 
+## SndDisposeChannel: with quietNow set (the ports pass the Boolean as 1), the sounds playing on
+## the channel stop now, and any not yet started are dropped; otherwise they play out.
+func dispose(channel: int, quiet_now: int) -> int:
+	if quiet_now & 0xffff != 0:
+		_lock.lock()
+		_played = _played.filter(func(p: Array) -> bool: return p[1] != (channel & 0xffffffff))
+		_stopped.append(channel & 0xffffffff)
+		_lock.unlock()
+	return 0
+
+func take_stopped() -> Array:
+	_lock.lock()
+	var out: Array = _stopped
+	_stopped = []
+	_lock.unlock()
+	return out
+
+## [stream, channel] for each sound started since the last call.
 func take_played() -> Array:
 	_lock.lock()
 	var out: Array = _played

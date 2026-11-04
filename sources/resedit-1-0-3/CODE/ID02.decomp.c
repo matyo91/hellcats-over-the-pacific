@@ -1747,7 +1747,8 @@ void paint_polygon_rgb_a5safe /* Original: FUN_00000fd2 */ (int *points /* param
  *   LineTo(left, bottom - c); LineTo(left, top + d + 2c); Line(c, -c); Line(-c, -c);
  *   Line(c, -c); Line(-c, -c); Line(0, -d); ClosePoly; return poly.
  * Shape: frame with V-notches on both sides and chamfered bottom corners.
- * Purpose UNKNOWN (UI decoration). Caller: draw_notched_frame_pair_a5safe.
+ * Purpose: a bomb lamp's outline for the panel's bomb indicator [PROVEN by its caller,
+ * draw_notched_frame_pair_a5safe]. Caller: draw_notched_frame_pair_a5safe.
  */
 int build_notched_frame_poly /* Original: FUN_000010ce */ (short top,short left,short bottom,short right)
 
@@ -1792,8 +1793,8 @@ int build_notched_frame_poly /* Original: FUN_000010ce */ (short top,short left,
  * identical to the C. */
 /*
  * Original: FUN_000011ec; source: ID02.c:830.
- * Recovered name: draw_notched_frame_pair_a5safe [STRONG INFERENCE mechanics /
- * UNKNOWN purpose] (; INVESTIGATING).
+ * Recovered name: draw_notched_frame_pair_a5safe [STRONG INFERENCE mechanics; purpose PROVEN
+ * below: the bomb indicator's two lamps].
  *: both polygons come from the same Rect at A5-0x119c (8 bytes
  * ending at A5-0x1194), built by build_notched_frame_poly with PenSize 2 and
  * then PenSize 1 (outer and inner outline); the shift A5-0x1192 - A5-0x119a
@@ -1806,7 +1807,12 @@ int build_notched_frame_poly /* Original: FUN_000010ce */ (short top,short left,
  * FillPoly(pattern A5-0x14e2), FramePoly in standard grey indices A5-0x118c /
  * A5-0x118a (init_standard_colour_indices), then OffsetPoly both by
  * (A5-0x1192 - A5-0x119a); KillPoly both; PenPat(A5-0x161c).
- * [UNKNOWN] What the shapes are (possibly a bevelled UI frame drawn twice).
+ * The shapes are the bomb indicator's two lamps [PROVEN chain]: the only caller is the overlay's
+ * update_bomb_indicator (Pacific Conflict 0xcac6) through its host globals pointer (A5-0x1388)
+ * + 0x29e = this service slot A5-0x10ea, passing (aircraft high above the ground, lamp 1 colour,
+ * lamp 2 colour), lamp n lit (host word +0x200, else +0x1fc) when at least n bombs remain; the
+ * rect is draw_split_display_box's left half (ID03 0x4b32), the second lamp shifted into its
+ * right half (A5-0x1192 - A5-0x119a).
  */
 void draw_notched_frame_pair_a5safe /* Original: FUN_000011ec */ (int solid /* param_1: 0 = fill the inner frame with the A5-0x14e2 pattern, else paint it */,int colour_index /* param_2: inner frame colour, first pass */,int colour_index2 /* param_3: inner frame colour, second pass */)
 
@@ -3329,7 +3335,9 @@ void apply_settings_to_live_options /* Original: FUN_00002a44 */ (void)
  *   $A850 InitCursor; JSR $1fa(A5)(-1) seg9 0x18a: SetEventMask (word -> $144)
  *   JSR $592(A5)      ID07 init_string_pointer_groups; PEA $58a(A5); $A9F1
  *                     UnloadSeg -> segment 7 is init-only
- *   JSR $f2(A5)       seg4 file 0x3d42, D0.W == 0 -> $A9F4 ExitToShell [UNKNOWN check]
+ *   JSR $f2(A5)       seg4 file 0x3d42 check_system_requirements (Color QuickDraw and a 68020
+ *                     or better, SysEnvirons +9 / +6 >= 3; else its caution alert), D0.W == 0
+ *                     -> $A9F4 ExitToShell [PROVEN, ID04 0x3d42's bytes]
  *   JSR $1f2(A5)(1, &env) seg9 file 0x20 = SysEnvirons dispatcher (ID09
  *                     sysenvirons_glue_fallback); env at -$1e(A6)
  *   A5-0x1388 byte <- env.hasColorQD (-$15(A6) = env+9)
@@ -3350,8 +3358,13 @@ void apply_settings_to_live_options /* Original: FUN_00002a44 */ (void)
  *   BSR file 0x27e4; SetPort ($A873) (port A5-0x14ca); UNLK; RTS
  *
  * Callers: main (FUN_0000309a, ID02.c:1658), which first sets word A5-0x13ae = -1.
- * [UNKNOWN] Semantics of seg4 check, HEL1 record fields, local helpers
- * 0x2192 / 0x27e4 / 0x2e36 / 0x2eaa.
+ * The local helpers are, by their targets: 0x2192 scan_display_devices, 0x27e4
+ * configure_display_from_main_device, 0x2e36 show_resource_file_error_box and 0x2eaa
+ * quit_application (ID02.decomp.c's unexported block) [PROVEN, BSR targets]. The HEL1 127
+ * fields written here are the defaults of the settings record whose fields
+ * docs/DECOMPILATION_SYMBOLS.md lists (+0xe view size, +0x1e mission, +0x20 pilot, +0x22 fuel,
+ * +0x24 bombs, +0x26 map scale) [STRONG INFERENCE there]; HEL1 128 is twenty 64-byte pilot
+ * records. The seg4 check is check_system_requirements (above).
  */
 void initialize_application /* Original: FUN_00002bbc */ (void)
 
@@ -3674,7 +3687,8 @@ void handle_activate_event /* Original: FUN_00002fa0 */ (undefined8 evt_what_mes
  * where -$8, modifiers -$4); word got_event at -$2(A6).
  *
  *   HiliteMenu(0) ($A938); SystemTask ($A9B4)
- *   BSR 0x3174 (FUN_00003174); JSR $172(A5) -> seg4 file 0x432 [UNKNOWN]
+ *   BSR 0x3174 (FUN_00003174); JSR $172(A5) -> seg4 file 0x432 = report_panel_store_failure
+ *        (ID04.decomp.c's unexported block; checked against its bytes by the runtime cases) [PROVEN]
  *   got_event = GetNextEvent(-1 /everyEvent/, &evt) ($A970), then
  *       word 0x49C0 = EXTB.L D0 (68020+ only; Capstone 68000 mode rejects it)
  *   BSR 0x29f2 (FUN_000029f2); if (!got_event) return
@@ -3764,8 +3778,8 @@ void poll_and_dispatch_event /* Original: FUN_00002fd4 */ (void)
  *   word A5-0x14c4 = 1
  *   ok = JSR $1e2(A5) -> seg 8 file 0x6 = ID08 load_overlay_from_resource
  *   UnloadSeg(JT $1ea = seg 8 entry); UnloadSeg(JT $56a = seg 5 entry)
- *   BSR file 0x30fa (FUN_000030fa)                   [UNKNOWN]
- *   if (ok && word A5-0x102e != 0) BSR file 0x35e4   [UNKNOWN]
+ *   BSR file 0x30fa (FUN_000030fa) = install_menus   [PROVEN, target of the BSR]
+ *   if (ok && word A5-0x102e != 0) BSR file 0x35e4 = start_new_mission [PROVEN, target of the BSR]
  *   for (;) BSR file 0x2fd4 (poll_and_dispatch_event, FUN_00002fd4) [never returns]
  *   (UNLK/RTS at 0x30f6 unreachable)
  * Name chosen for the role (C runtime entry -> main); original symbol unknown.

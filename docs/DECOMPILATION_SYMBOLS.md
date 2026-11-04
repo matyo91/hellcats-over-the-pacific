@@ -358,10 +358,10 @@ revalidated here.
 | `FUN_00012528` (Pacific Conflict) | `animate_effect_kind3_debris` | STRONG INFERENCE | gravity, ground clamp; FUN_000175de / FUN_000115fc at the end. |
 | `FUN_00012738` (Pacific Conflict) | `face_object_to_camera` | VERIFIED | attitude = −camera angles. |
 | `FUN_000127aa` (Pacific Conflict) | `effect_pre_render_hook` | STRONG INFERENCE | definition +0xe of effects; DAT_0001b42c[kind]. |
-| `FUN_000115fc` (Pacific Conflict) | `spawn_smoke_plume` | HYPOTHESIS | template DAT_000260e8; sizes +0x36 / +0x34; end frame +0x38. |
+| `FUN_000115fc` (Pacific Conflict) | `spawn_smoke_plume` | STRONG INFERENCE (definition key 0x7's template; OVERLAY_DEFINITION_TABLE.md) | template DAT_000260e8; sizes +0x36 / +0x34; end frame +0x38. |
 | `FUN_000115da` (Pacific Conflict) | `register_smoke_template` | VERIFIED | DAT_000260e8 = template; create handler → 0x115b0. |
 | `FUN_00011670` (Pacific Conflict) | `attach_trailing_plume` | STRONG INFERENCE | plume linked to an aircraft (+0x3c), 8 trail points. |
-| `FUN_000175de` (Pacific Conflict) | `spawn_ground_mark` | HYPOTHESIS | template DAT_00026660 scaled, expiry +2700 frames. |
+| `FUN_000175de` (Pacific Conflict) | `spawn_ground_mark` | STRONG INFERENCE (definition key 0x11's template; OVERLAY_DEFINITION_TABLE.md) | template DAT_00026660 scaled, expiry +2700 frames. |
 | `FUN_0000a75e` (Pacific Conflict) | `transform_and_project_object` | STRONG INFERENCE | +0xe hook phases 1 / 2; vertices of faces with bit 0x20 → camera space → DAT_000256b2. |
 | `FUN_0000a676` (Pacific Conflict) | `project_prepared_object` | STRONG INFERENCE | projects +0x4c camera-space vertices; face bits 0x60. |
 | `FUN_0000ac72` (Pacific Conflict) | `render_visible_objects` | STRONG INFERENCE | per-frame draw of the visible list in three passes. |
@@ -425,8 +425,8 @@ revalidated here.
 | `FUN_00018b52` (Pacific Conflict) | `create_flak_controller` | STRONG INFERENCE | type 0x1a +6; range 0x26ac0. |
 | `FUN_00018b98` (Pacific Conflict) | `destroy_flak_controller` | VERIFIED | type 0x1a +0xa; drops +0x36 / +0x32 refs. |
 | `FUN_00016b4c` (Pacific Conflict) | `attach_smoke_trail` | STRONG INFERENCE | kind-0 trail; aircraft +0x68c count. |
-| `FUN_00016b9e` (Pacific Conflict) | `attach_burning_trail` | HYPOTHESIS | kind-1 trail; explosion sound countdowns. |
-| `FUN_00017102` (Pacific Conflict) | `attach_ground_fire` | HYPOTHESIS | FUN_000170ba object linked to owner. |
+| `FUN_00016b9e` (Pacific Conflict) | `attach_burning_trail` | STRONG INFERENCE (definition key 0xa's template; OVERLAY_DEFINITION_TABLE.md) | kind-1 trail; explosion sound countdowns. |
+| `FUN_00017102` (Pacific Conflict) | `attach_ground_fire` | STRONG INFERENCE (definition key 0xb's template; OVERLAY_DEFINITION_TABLE.md) | FUN_000170ba object linked to owner. |
 | `FUN_000173fe` (Pacific Conflict) | `spawn_debris_fragment` | STRONG INFERENCE | template DAT_0002665c, random velocity, 45 frames. |
 | `FUN_00016ae8` (Pacific Conflict) | `spawn_trail` | STRONG INFERENCE | DAT_00026650[kind] + init DAT_0001b50c[kind]. |
 | `FUN_0001702a` (Pacific Conflict) | `tick_trail` | VERIFIED | animate DAT_0001b514[kind]; lifetime +0x34. |
@@ -441,7 +441,7 @@ revalidated here.
 | `FUN_00017098` (Pacific Conflict) | `register_ground_fire_template` | VERIFIED | effect-family handler (template / create / destroy / tick). |
 | `FUN_0001706a` (Pacific Conflict) | `create_ground_fire_controller` | STRONG INFERENCE | effect-family handler (template / create / destroy / tick). |
 | `FUN_0001713c` (Pacific Conflict) | `destroy_ground_fire_controller` | VERIFIED | effect-family handler (template / create / destroy / tick). |
-| `FUN_00017150` (Pacific Conflict) | `animate_ground_fire` | HYPOTHESIS | effect-family handler (template / create / destroy / tick). |
+| `FUN_00017150` (Pacific Conflict) | `animate_ground_fire` | STRONG INFERENCE (key 0xb's tick body; OVERLAY_DEFINITION_TABLE.md) | called only by tick_ground_fire (0x17388); fire vertices beside a moving owner, detaching. |
 | `FUN_00017380` (Pacific Conflict) | `tick_ground_fire` | VERIFIED | effect-family handler (template / create / destroy / tick). |
 | `FUN_000173dc` (Pacific Conflict) | `register_debris_template` | VERIFIED | effect-family handler (template / create / destroy / tick). |
 | `FUN_000173a2` (Pacific Conflict) | `create_debris_controller` | STRONG INFERENCE | effect-family handler (template / create / destroy / tick). |
@@ -522,8 +522,8 @@ revalidated here.
 | `FUN_00015d78` (Pacific Conflict) | `spawn_ordnance_oriented_3ang` | STRONG INFERENCE | bullet family / contact records. |
 | `FUN_0001377a` (Pacific Conflict) | `age_contact_records` | VERIFIED | bullet family / contact records. |
 | `FUN_000137da` (Pacific Conflict) | `drop_contact_records_for_object` | VERIFIED | bullet family / contact records. |
-| `FUN_0000c11e` (Pacific Conflict) | `begin_offscreen_drawing` | HYPOTHESIS | panel helper. |
-| `FUN_0000c17e` (Pacific Conflict) | `end_offscreen_drawing` | HYPOTHESIS | panel helper. |
+| `FUN_0000c11e` (Pacific Conflict) | `begin_offscreen_drawing` | STRONG INFERENCE (host services open_offscreen_cport / swap_port) | opens a colour port over a buffer and switches to it; returns the previous port. |
+| `FUN_0000c17e` (Pacific Conflict) | `end_offscreen_drawing` | STRONG INFERENCE (host services close_port / swap_port) | closes that port and switches back. |
 | `FUN_0000cac6` (Pacific Conflict) | `update_bomb_indicator` | STRONG INFERENCE | panel helper. |
 | `FUN_0000cb62` (Pacific Conflict) | `update_throttle_gauge` | STRONG INFERENCE | panel helper. |
 | `FUN_0001a75e` (Pacific Conflict) | `c_strlen` | VERIFIED |  (renamed from bounded_strlen in 315): panel helper. |
@@ -543,7 +543,7 @@ revalidated here.
 | `FUN_000114b4` (Pacific Conflict) | `spin_object_heading` | VERIFIED | definition handler / radar buttons. |
 | `FUN_00018a34` (Pacific Conflict) | `shadow_pre_render` | STRONG INFERENCE | definition handler / radar buttons. |
 | `FUN_00017a8c` (Pacific Conflict) | `update_radar_range_buttons` | STRONG INFERENCE | definition handler / radar buttons. |
-| `FUN_00012f92` (Pacific Conflict) | `create_singleton_type10_controller` | HYPOTHESIS | definition handler / radar buttons. |
+| `FUN_00012f92` (Pacific Conflict) | `create_singleton_type10_controller` | PROVEN mechanics (key 0x10's create; role: landing aim-point marker, STRONG INFERENCE) | 0x32-byte controller published at 0x20b40; tick_landing_approach_glide moves its object to the glide aim point. |
 | `FUN_00003cca` (Pacific Conflict) | `segment_point_min_distance` | PROVEN | from bytes; bisection of segment (start + word deltas) against a point. |
 | `FUN_0000e512` (Pacific Conflict) | `compute_template_force_from_626_tail` | PROVEN | false split inside FUN_0000e4a4. |
 | `DAT_0001b870` (Pacific Conflict) | instant-replay state (kept as original identifier) | STRONG INFERENCE | 0 live, 1 rewind 0x4a frames, other non-zero replaying, 3 = controller tick restricted, -1 inside replay_logged_effects. |
@@ -853,7 +853,7 @@ test `btst #n,$684` means word bit n + 8. Word +0x686 is last frame's copy
 | create_*_controller (16 functions, see DECOMPILATION_PROGRESS ) | `void f(...)` | returns the new controller (`uint *`) in D0 (applied in the semantic C for spinner / plume / camera_facing / basic_ship / firing_ship / sinking / bullet / trail / ground_fire / debris / ground_mark / shadow / flak / cloud / view_attached / singleton_type10: all void ones done) | PROVEN | D0 = heap_alloc_cleared result untouched to RTS; instantiate_object_from_desc stores it at object +8 | Godot `sim_core.gd` `_call_fun_00004690` / create handlers: review |
 | point_over_face_xz (FUN_000132c8) | `void` | returns int (point_in_polygon_xz result; applied in the semantic C) | PROVEN | D0 untouched after the last bsr; call sites 0x15236 / 0x1527a test D0 | none found in godot/ |
 | surface_type_under_object (FUN_00013452) | `void` | returns the surface code (applied in the semantic C: `int`, returns the call) | PROVEN | bsr surface_type_at_point then RTS; callers use D0 at 0xf148 / 0xf1d0 / 0x11e04 | godot sim_core.gd / flight_math.gd reference FUN_00013452: review |
-| begin_offscreen_drawing (FUN_0000c11e) | `void` | returns the host +0x286 result (previous port?; applied in the semantic C as `undefined4`) | PROVEN (return) / STRONG_INFERENCE (meaning) | caller keeps D0 in a3 at 0xc242 | none found in godot/ |
+| begin_offscreen_drawing (FUN_0000c11e) | `void` | returns the host +0x286 result, swap_port_a5safe's previous port (applied in the semantic C as `undefined4`) | PROVEN (return; +0x286 = A5-0x1102 swap_port_a5safe) | caller keeps D0 in a3 at 0xc242 | none found in godot/ |
 
 ## Object flag long (+4)
 
@@ -1652,7 +1652,7 @@ inventory yet.
 | Pacific Conflict | `effect_anim_table` | `DAT_0001b41c` | per-kind effect animator called by tick_effect (returns 1 when finished) |
 | Pacific Conflict | `effect_pre_render_table` | `DAT_0001b42c` | per-kind effect pre-render hook called by effect_pre_render_hook |
 | Pacific Conflict | `ordnance_template` | `DAT_00026280` | ordnance template object stored by register_ordnance_template, spawned by spawn_weapon_entity |
-| Pacific Conflict | `type10_controller` | `DAT_00020b40` | the single type-10 controller published by create_singleton_type10_controller [HYPOTHESIS per that function's name] |
+| Pacific Conflict | `type10_controller` | `DAT_00020b40` | the single type-10 controller published by create_singleton_type10_controller [PROVEN]; its object marks the landing glide's aim point (STRONG INFERENCE) |
 | Pacific Conflict | `contact_table` | `DAT_0001bdbc` | 256-slot open-addressing table of contact records keyed by contact_pair_hash(a, b), linear probing |
 | Pacific Conflict | `cell_face_a` | `DAT_00020b44` | fractal_height_at: face of the current cell whose centre z is at or below the cell centre (-1 = none) [INFERENCE] |
 | Pacific Conflict | `cell_face_b` | `DAT_00020b46` | fractal_height_at: face of the current cell whose centre z is above the cell centre (-1 = none) [INFERENCE] |

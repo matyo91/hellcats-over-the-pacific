@@ -14,20 +14,265 @@
   "code_references": [],
   "decoded": {
     "consumed_bytes": 594,
-    "elements": [],
-    "format": "Undecoded MDPL Binary Structure",
+    "elements": [
+      {
+        "directory_offset": 92,
+        "flag": 1,
+        "index": 1,
+        "length": 12,
+        "offset": 310
+      },
+      {
+        "directory_offset": 128,
+        "flag": 1,
+        "index": 2,
+        "length": 8,
+        "offset": 322
+      },
+      {
+        "directory_offset": 140,
+        "flag": 1,
+        "index": 3,
+        "length": 8,
+        "offset": 330
+      },
+      {
+        "directory_offset": 188,
+        "flag": 1,
+        "index": 4,
+        "length": 32,
+        "offset": 338
+      },
+      {
+        "directory_offset": 200,
+        "flag": 1,
+        "index": 5,
+        "length": 224,
+        "offset": 370
+      },
+      {
+        "directory_offset": 212,
+        "flag": 1,
+        "index": 6,
+        "length": 311,
+        "offset": 594
+      }
+    ],
+    "format": "Drawing-Program Text Object Layout (PICT 131's first text block)",
     "properties": {
-      "printable_ascii_runs": [
+      "game_code_references": 0,
+      "line_count": 30,
+      "line_metrics": [
         {
-          "offset": 331,
-          "text": "Geneva"
+          "ascent": 10,
+          "line_height": 13
+        },
+        {
+          "ascent": 10,
+          "line_height": 13
+        },
+        {
+          "ascent": 10,
+          "line_height": 13
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
+        },
+        {
+          "ascent": 10,
+          "line_height": 12
         }
       ],
-      "structure_status": "unresolved",
-      "u16_word_count": 297,
-      "word_aligned": true,
-      "zero_byte_count": 389,
-      "zero_byte_fraction": 0.654882
+      "line_starts": [
+        0,
+        9,
+        26,
+        38,
+        39,
+        60,
+        82,
+        103,
+        104,
+        130,
+        153,
+        166,
+        187,
+        188,
+        212,
+        230,
+        253,
+        254,
+        279,
+        292,
+        293,
+        294,
+        295,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311
+      ],
+      "matching_picture": "PICT 131 (application comments 'MDPL' objects 7 and 8)",
+      "size": 594,
+      "structure_status": "partially_resolved",
+      "style_runs": [
+        {
+          "start": 0,
+          "style": 0
+        },
+        {
+          "start": 26,
+          "style": 1
+        },
+        {
+          "start": 38,
+          "style": 2
+        }
+      ],
+      "style_runs_end": 312,
+      "styles": [
+        {
+          "ascent": 10,
+          "face": 1,
+          "font_id": 3,
+          "index": 1,
+          "line_height": 13,
+          "offset": 256,
+          "size": 10
+        },
+        {
+          "ascent": 10,
+          "face": 0,
+          "font_id": 3,
+          "index": 2,
+          "line_height": 13,
+          "offset": 274,
+          "size": 10
+        },
+        {
+          "ascent": 10,
+          "face": 0,
+          "font_id": 3,
+          "index": 3,
+          "line_height": 12,
+          "offset": 292,
+          "size": 9
+        }
+      ],
+      "text_length": 311,
+      "uninterpreted_ranges": [
+        "0x0000-0x005b",
+        "0x0136-0x0181"
+      ]
     },
     "trailing_bytes": 0
   },
@@ -70,7 +315,7 @@
     "outgoing": []
   },
   "resource": {
-    "description": "Undecoded MDPL Binary Structure; 594 curated payload bytes.",
+    "description": "Drawing-Program Text Object Layout (PICT 131's first text block); 594 curated payload bytes.",
     "descriptive_name": "594-Byte MDPL Mixed-Field Structure",
     "id": 128,
     "key": "MDPL:128",
@@ -88,7 +333,7 @@
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
   "unresolved": [
-    "Binary layout and field semantics remain unidentified.",
-    "The MDPL type name and internal fields have not been tied to a documented Apple structure."
+    "Partly decoded; the uninterpreted ranges are listed.",
+    "The MDPL layout's header (before 0x5c) and its block at 0x136..0x182 are not interpreted; the type is the drawing program's, not a documented Apple structure."
   ]
 }

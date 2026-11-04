@@ -15,14 +15,14 @@
     {
       "evidence": "* GetNewDialog(0x83 = DLOG 131 \"Paused Dialog\", NULL, (WindowPtr)-1) ($A97C); JT $48a (ID02 0x435e); ShowWindow; DrawDialog ($A981); then polls GetNextEvent(0x18 = keyDown | keyUp mask) ($A970) until it has seen a keyDown (what 3) followed by a keyUp (what 4); DisposDialog. DITL 131 text: \"Paused... Press any key to continue.\" Reached through JT $122 (-> ID04 0x478). Body rebuilt as C below.",
       "function_or_context": "show_paused_dialog",
-      "line": 411,
+      "line": 413,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "dlg = GetNewDialog(0x83,0,-1);                /* $A97C: DLOG 131 */",
       "function_or_context": "show_paused_dialog",
-      "line": 422,
+      "line": 424,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

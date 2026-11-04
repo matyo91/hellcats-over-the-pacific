@@ -29,6 +29,7 @@ Use deterministic narrow retrieval:
 python3 tools/re_query.py function --segment "Pacific Conflict" FUN_0000e792
 python3 tools/re_query.py excerpt --segment "Pacific Conflict" FUN_0000e792 --address 0xf47c
 python3 tools/re_query.py callers --segment "Pacific Conflict" FUN_0000e792
+python3 tools/decomp/xrefs.py "Pacific Conflict" 0x155d8   # callers in the bytes
 python3 tools/re_query.py callees --segment "Pacific Conflict" FUN_0000e792
 python3 tools/re_query.py globals --segment "Pacific Conflict" FUN_0000e792 --access reads
 python3 tools/re_query.py tests test_effect_init --case run
@@ -195,9 +196,18 @@ python3 tools/resedit.py verify
 python3 tools/strict_port/check_sync.py --json
 python3 tools/qa/test_regression.py
 python3 tools/hellcats/gen_runtime_cases.py --check
+python3 tools/decomp/definition_table.py --check
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot \
   --log-file /tmp/hellcats-godot.log --script res://tests/run_all.gd
 git diff --check
+```
+
+An end-to-end headless session of the game (about 90 seconds; it never touches the
+player's saved pilots) is run separately:
+
+```sh
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot \
+  --script res://tests/runtime/smoke_session.gd
 ```
 
 Verify protected Ghidra exports from their directory because the checksum

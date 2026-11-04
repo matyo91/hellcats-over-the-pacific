@@ -187,6 +187,7 @@ EXPECTED_RUNNER_PATHS = [
     "res://tests/strict_port/test_resedit_text.gd",
     "res://tests/strict_port/test_resedit_media.gd",
     "res://tests/runtime/test_unexported_routines.gd",
+    "res://tests/runtime/test_sound_channels.gd",
 ]
 
 EXPECTED_LOADER_TARGETS = [
@@ -455,6 +456,49 @@ def check_resedit_mirror() -> None:
         fail("the resource folders in godot/strict_port drifted from sources/resedit-1-0-3:\n" + result.stdout)
 
 
+def check_source_extraction() -> None:
+    """check_sync's function extractor finds the definition, not a comment that names the function
+    with parentheses after it (twelve mappings had been hashed over such a comment and the function
+    after it, the wrapped-signature pattern spanning lines from the comment)."""
+    sys.path.insert(0, str(REPO_ROOT / "tools" / "strict_port"))
+    import check_sync
+    source = (
+        "/* see also\n"
+        " * the gauge (target_routine flags 0x0f), drawn after (other_helper, x)\n"
+        " */\n"
+        "void decoy /* Original: FUN_1 */\n"
+        "   (short a)\n"
+        "{\n  return;\n}\n"
+        "void target_routine /* Original: FUN_2 */\n"
+        "   (short b)\n"
+        "{\n  b = 1;\n}\n"
+    )
+    found = check_sync.extract_function(source, "target_routine")
+    if not found.startswith("void target_routine"):
+        fail("check_sync.extract_function matched a comment instead of the definition:\n" + found[:120])
+
+
+def check_xrefs() -> None:
+    """tools/decomp/xrefs.py finds the cross-references already established in the bytes: a jump-table
+    call across segments, an overlay definition record, an intra-segment JSR d16(PC), and none for an
+    unreferenced routine."""
+    sys.path.insert(0, str(REPO_ROOT / "tools" / "decomp"))
+    import xrefs
+    cases = [
+        (("ID04", 0x432), ["jump-table slot $172", "ID02: JSR $172(A5) at 0x2fe2"]),
+        (("Pacific Conflict", 0x155D8), ["overlay: long 0x155b8 at file 0x1aaf0 (after 0016)"]),
+        (("ID05", 0x3BA), ["ID05: JSR d16(PC) at 0x57c"]),
+        (("Pacific Conflict", 0x54), ["overlay: BSR.L at 0x16e6"]),
+        (("ID05", 0xBA8), []),
+    ]
+    for (segment, target), expected in cases:
+        got = xrefs.overlay_xrefs(target) if segment == "Pacific Conflict" else xrefs.segment_xrefs(segment, target)
+        if segment == "Pacific Conflict" and target == 0x54:
+            got = [r for r in got if "BSR" in r]        # its runtime value 0x34 also occurs as plain data
+        if got != expected:
+            fail(f"xrefs {segment} 0x{target:x}: {got}, expected {expected}")
+
+
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
@@ -464,6 +508,8 @@ def main() -> int:
         ("global-alias-docs", check_global_alias_docs),
         ("resedit-mirror", check_resedit_mirror),
         ("runtime-coverage", check_runtime_coverage),
+        ("source-extraction", check_source_extraction),
+        ("xrefs", check_xrefs),
     ]
     optional = [
         ("optional-capstone", check_optional_capstone),

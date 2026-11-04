@@ -58,6 +58,28 @@ def matching_brace(masked: str, opening: int) -> int:
     raise ValueError(f"unclosed function body at byte offset {opening}")
 
 
+RECOVERED_NAME_RE = re.compile(r"Recovered name(?: \(comment only\))?: ([A-Za-z_][A-Za-z0-9_]*) \[([^\]]+)\]")
+## The overlay's, ID08's and ID09's header style: "Proposed name: <name>" (or "Recovered name:", a
+## note after it allowed), then the next line "Confidence: [LEVEL] ...".
+PROPOSED_NAME_RE = re.compile(r"(?:Proposed|Recovered) name: ([A-Za-z_][A-Za-z0-9_]*)[^\n]*\n[ \t]*\*[ \t]*Confidence:[ \t]*([^\n]+)")
+## A false entry: a label inside another function that Ghidra split off, kept under its original
+## identifier ("Proposed name: *(false mid-label of ...)*" or "Status: false entry").
+FALSE_ENTRY_RE = re.compile(r"false (?:entry|mid-label)|not a callable (?:entry|function)", re.IGNORECASE)
+
+
+def header_confidence(comment: str, name: str) -> str | None:
+    """The name's confidence as the decomp's header before the function states it, brackets dropped."""
+    for m in RECOVERED_NAME_RE.finditer(comment):
+        if m.group(1) == name:
+            return m.group(2).strip()
+    for m in PROPOSED_NAME_RE.finditer(comment):
+        if m.group(1) == name:
+            return " ".join(m.group(2).replace("[", "").replace("]", "").split())
+    if FALSE_ENTRY_RE.search(comment):
+        return "FALSE ENTRY: a fragment of another function, its original identifier kept"
+    return None
+
+
 def definitions(path: Path) -> list[dict[str, Any]]:
     text = path.read_text(encoding="utf-8", errors="replace")
     masked = mask_comments(text)
@@ -83,6 +105,8 @@ def definitions(path: Path) -> list[dict[str, Any]]:
                 "end": closing + 1,
                 "original_ids": list(dict.fromkeys(ids[-2:])),
                 "body_sha256": sha256_text(text[match.start():closing + 1]),
+                # The decomp's own header, "Recovered name: <name> [<LEVEL>]", the evidence for the name.
+                "name_confidence": header_confidence(text[previous_end:match.start()], match.group("name")),
                 "whole_function_verified": bool(
                     re.search(
                         r"\bVERIFIED\b.*?independent.*?disassembly.*?identical",
@@ -202,6 +226,8 @@ def build_registry(code_dir: Path, previous: dict[str, Any]) -> dict[str, Any]:
                 status = "ANNOTATED"
             if semantic and semantic["whole_function_verified"]:
                 status = "VERIFIED"
+            if semantic and semantic.get("name_confidence"):
+                confidence = stable_technical_text(semantic["name_confidence"])
             strict_row = strict.get(key)
             evidence = [f"{rel(original_path)}:{original['original_line']}"]
             if semantic:
@@ -243,7 +269,10 @@ def build_registry(code_dir: Path, previous: dict[str, Any]) -> dict[str, Any]:
                 },
                 "renaming_confidence": confidence,
                 "reconstruction_status": status,
-                "name_verified": old.get("name_verified", "PROVEN" in confidence_upper or status == "VERIFIED"),
+                # Sticky once set; a name the decomp's header now marks PROVEN is verified too.
+                "name_verified": bool(old.get("name_verified", "PROVEN" in confidence_upper or status == "VERIFIED"))
+                or (confidence_upper.startswith("PROVEN") and "INFERENCE" not in confidence_upper
+                    and "HYPOTHESIS" not in confidence_upper),
                 "semantically_verified": status == "VERIFIED",
                 "behavioral_verification_status": (
                     "VERIFIED" if strict_row and strict_row.get("behaviorally_verified")

@@ -51,8 +51,9 @@ typedef unsigned char    byte;
  * [STRONG INFERENCE] $A9A0 = _GetResource (Inside Macintosh Resource Manager).
  * Side effects: resource stays loaded and locked; strings are rewritten in
  * place inside the resource handle; A5-0xf46 table gets 120 pointers.
- * [UNKNOWN] Whether the resource always holds >= 120 strings (no bounds check),
- * NULL-handle behaviour (no test before HLock / dereference).
+ * The game's STR# 129 holds exactly 120 strings, so the unchecked loop stays inside it
+ * [PROVEN, resource count]; any other resource is not bounds-checked. [UNKNOWN] NULL-handle
+ * behaviour (no test before HLock / dereference).
  * Caller: FUN_00000190 (ID07.c:26), sole call site in the exports.
  */
 void load_str129_string_table /* Original: FUN_00000006 */ (void)
@@ -147,7 +148,14 @@ void load_str129_string_table /* Original: FUN_00000006 */ (void)
  * ID04.c:711 indexes A5-0x0ffe by a record word at +0x22 and passes the
  * string to JT routines $2fa/$52a/$512; ID04 LEAs of -0xfae and -0xf86 at
  * file 0x131a, 0x1cba, 0x1d14, 0x2aac.
- * [UNKNOWN] Semantic category of each group (names, messages, menus...).
+ * The groups' categories [PROVEN by STR# 129's strings, slot k = string k, and their readers]:
+ * A5-0x221e = the mission outcome lines (slots 2..22, "Congratulations on successfully
+ * ditching..." to "However, you bailed out...", pushed by advance_mission_summary_text);
+ * A5-0x0ffe = the six rank names (94..99, Ensign .. Captain; indexed by the roster record's
+ * +0x22); A5-0x0fae = the six pilot statuses (100..105: Active, Dead, Retired, POW, Discharged,
+ * MIA; the record's +0x20 status); A5-0x0f86 = the ten target kinds (106..115: Fighter, Bomber,
+ * Tank, AAA Battery, Vehicle, Carrier, Battleship, Cruiser, PT Boat, Runway; the kill tallies'
+ * order, draw_targets_destroyed_row).
  * Note: loop 1 tests local_6 < 0x15; the binary uses CMPI.W #$14 / BLE,
  * which is equivalent for the signed word counter.
  */

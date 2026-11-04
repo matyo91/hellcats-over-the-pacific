@@ -108,7 +108,31 @@ ports use must have a routine behind it, so a gap fails the check before anyone 
 Those written routines are also checked against their original bytes where they stand alone:
 `tools/hellcats/gen_runtime_cases.py` runs them on the 68000 interpreter (`tools/strict_port/
 m68k_emu.py`) and `godot/tests/runtime/test_unexported_routines.gd` replays the cases on the
-runtime (ansi_strlen, ansi_strncmp and player_left_ground_zone so far).
+runtime, comparing the D0 and the memory each leaves (ansi_strlen, ansi_strncmp, lock / unlock_
+session_handles, save_changed_settings, restore_screen_globals, apply_display_palettes,
+install_overlay_service_table, release_panel_bitmaps, report_panel_store_failure,
+redraw_panel_readouts_locked, end_overlay_session, install_default_ring_item,
+set_radio_group_selection, track_summary_text_click, quit_application, draw_rank_insignia,
+draw_mission_awards, run_map_dialog, track_map_bearing_and_distance, run_refuel_dialog,
+run_scenario_selection_dialog, run_duty_roster_dialog, run_high_scores_dialog,
+mission_summary_filter_proc, advance_mission_summary_text (every stage) and release_render_buffers
+(with the calls they make, overlay hooks and Dialog, Control Manager and TextEdit traps, DisposPtr
+and the overlay's heading and square-root services included), arm_restore_gate,
+build_protection_code_strings, the grey-map accessor, carrier_deck_contact on its own image,
+player_left_ground_zone, the 1-bit erase hook and redraw_view_readouts (its four drawing callees
+stubbed): every written routine but the IUCompString glue, whose comparison is the System's _Pack6
+and not in the game's bytes; Toolbox traps and Pascal glue stubbed on the emulator side).
+
+An end-to-end session is `tests/runtime/smoke_session.gd`, kept out of `run_all.gd` because it runs
+for about a minute and a half:
+`Godot --headless --path godot --script res://tests/runtime/smoke_session.gd [-- --shots <dir>]`.
+Driven as a player would, the program goes through the start-up dialogs and Select a Mission into the
+cockpit. The session then throttles up, flies the chase, tower and cockpit views, works the gear,
+flaps and stick, and uses the menus' command keys (triple time, detail, sound, map, status, resume).
+It pauses and resumes, ejects, returns to the desktop through the mission summary, and tries Instant
+Replay.
+It fails when the program's thread dies or the runtime notes anything missing. It saves into
+`user://smoke_session_resources` (emptied first), never the player's `user://resources`.
 
 ## Routines outside the 740
 

@@ -13,6 +13,9 @@ const NAMES := "res://hellcats/data/resource_names.json"
 const FOLDERS := {"snd ": "snds", "icl4": "icI4", "icl8": "icI8"}
 const APPLICATION_FILE := 1
 const SAVED := "user://resources"
+## Where changed resources (pilots, settings) are saved and read back: SAVED, except for a session
+## that must leave the player's own data alone (tests/runtime/smoke_session.gd).
+static var saved_root: String = SAVED
 
 var machine
 var memory
@@ -106,7 +109,7 @@ func get_named(type_code: String, name: int) -> int:
 	return get_resource(type_code, _names[key])
 
 static func _saved_path(type_code: String, id: int) -> String:
-	return "%s/%s/%d.bin" % [SAVED, type_code.strip_edges().to_lower().uri_encode(), id]
+	return "%s/%s/%d.bin" % [saved_root, type_code.strip_edges().to_lower().uri_encode(), id]
 
 ## A changed resource's bytes written to its saved copy (nothing for a handle that is not one).
 func write(h: int) -> int:

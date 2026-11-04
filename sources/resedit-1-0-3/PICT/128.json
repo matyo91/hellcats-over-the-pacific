@@ -13,8 +13,76 @@
   },
   "code_references": [],
   "decoded": {
-    "consumed_bytes": 10,
-    "elements": [],
+    "consumed_bytes": 43710,
+    "elements": [
+      {
+        "index": 1,
+        "length": 2,
+        "name": "Version",
+        "offset": 10,
+        "opcode": "0x0011"
+      },
+      {
+        "index": 2,
+        "length": 24,
+        "name": "HeaderOp",
+        "offset": 14,
+        "opcode": "0x0C00"
+      },
+      {
+        "index": 3,
+        "length": 10,
+        "name": "Clip",
+        "offset": 40,
+        "opcode": "0x0001"
+      },
+      {
+        "bounds": {
+          "bottom": 302,
+          "height": 302,
+          "left": 0,
+          "right": 480,
+          "top": 0,
+          "width": 480
+        },
+        "colour_table_entries": 16,
+        "colour_table_offset": 100,
+        "destination": {
+          "bottom": 302,
+          "height": 302,
+          "left": 0,
+          "right": 480,
+          "top": 0,
+          "width": 480
+        },
+        "index": 4,
+        "length": 43654,
+        "name": "PackBitsRect",
+        "offset": 52,
+        "opcode": "0x0098",
+        "pixel_size": 4,
+        "pixmap": true,
+        "row_bytes": 240,
+        "row_data_offset": 254,
+        "rows": 302,
+        "source": {
+          "bottom": 302,
+          "height": 302,
+          "left": 0,
+          "right": 480,
+          "top": 0,
+          "width": 480
+        },
+        "transfer_mode": 0
+      },
+      {
+        "index": 5,
+        "length": 0,
+        "name": "OpEndPic",
+        "offset": 43708,
+        "opcode": "0x00FF"
+      }
+    ],
     "format": "QuickDraw Picture",
     "properties": {
       "actual_size_bytes": 43710,
@@ -26,17 +94,31 @@
         "top": 0,
         "width": 480
       },
+      "comment_kinds": [],
       "declared_size_word": 43710,
-      "opcode_decode_status": "not_implemented",
+      "opcode_count": 5,
+      "opcode_decode_status": "verified",
       "opcode_stream_offset": 10,
+      "png_pixel_comparison": {
+        "compared_pixels": 144960,
+        "comparison": "independently rendered bitmap opcodes versus PNG pixels",
+        "differing_pixels": 0,
+        "png_dimensions": [
+          480,
+          302
+        ],
+        "png_path": "sources/resedit-1-0-3/PICT/128.png",
+        "status": "pixel_exact"
+      },
       "quickdraw_version": "version_2",
       "render_exports": [
         "sources/resedit-1-0-3/PICT/128.png",
         "sources/resedit-1-0-3/PICT/128.bmp"
       ],
-      "rendering_fidelity_status": "not_pixel_verified"
+      "rendering_fidelity_status": "not_pixel_verified",
+      "text": []
     },
-    "trailing_bytes": 43700
+    "trailing_bytes": 0
   },
   "evidence": {
     "appledouble_resource_fork_offset": 82,
@@ -119,7 +201,5 @@
   },
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
-  "unresolved": [
-    "43700 trailing bytes are not decoded."
-  ]
+  "unresolved": []
 }

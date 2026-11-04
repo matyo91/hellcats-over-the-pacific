@@ -194,18 +194,20 @@ func id02_1b42() -> int:
 	return 0
 
 ## ID05 0x3ba (build_protection_code_strings in ID05.decomp.c; C: code, code text, other, other
-## text): builds the protection dialog's strings. The volume name buffer (A5 - 0x2c8, 0x102 bytes)
+## text): builds the protection dialog's strings. The volume name buffer (A5 - 0x2c8, 0xfe bytes)
 ## copied into the frame; the machine's fingerprint (get_machine_screen_fingerprint, five words in
-## the frame); the TEXT 128 pair read into *code / *other. When they are equal and the current
-## volume is the original floppy (GetVol, its name made C and compared with A5 - 0xca) the pair is
-## written again as (0, random_28bit_value) and read back. Equal: the other text is the string at
-## A5 - 0xd66; otherwise the fields packed (pack_fields_to_code_buf68) followed, 6 bytes on, by
-## encode_code28_to_buf54(*other). The code text is encode_long_to_buf40(*code).
+## the frame, the machine type at A6 - 2 down to the last at A6 - 0xa); the TEXT 128 pair read into
+## *code / *other. When they are equal and the current volume is the original floppy (GetVol, its
+## name made C and compared with A5 - 0xca) the pair is written again as (0, random_28bit_value) and
+## read back. Equal: the other text is the string at A5 - 0xd66; otherwise the fields packed
+## (pack_fields_to_code_buf68) followed, 6 bytes on, by encode_code28_to_buf54(*other). The code
+## text is encode_long_to_buf40(*code).
 func id05_03ba(code: int, code_text: int, other: int, other_text: int) -> int:
 	var frame: int = machine.free_stack()
 	var a6: int = frame - 4
-	for k in 0x102:
+	for k in 0xfe:                  # MOVEQ #$3e, DBF over MOVE.L (a1)+,(a0)+, then one MOVE.W
 		memory.write_u8(a6 - 0x10c + k, memory.read_u8(_g(-0x2c8) + k))
+	# PEA -$a .. -2 (A6): -2, pushed last, is the first argument (the machine type).
 	_run(id05, "get_machine_screen_fingerprint", [a6 - 2, a6 - 4, a6 - 6, a6 - 8, a6 - 0xa])
 	_run(id05, "read_TEXT128_pair", [code, other])
 	if memory.read_u32(code) == memory.read_u32(other):
@@ -361,7 +363,7 @@ func id04_0644() -> int:
 		_trap(0xa990, [a6 - 0x214, memory.read_u32(a6 - 0x12)])
 		_jt(0x2fa, [a6 - 0x214])
 		_jt(0x2fa, [rec])
-		if id02_0434(rec, a6 - 0x214, 0x1e) & 0xffff != 0:
+		if _jt(0x502, [rec, a6 - 0x214, 0x1e]) & 0xffff != 0:          # strncmp (JT $502, 0x976)
 			changed = true
 			_jt(0x50a, [rec, a6 - 0x214, 0x1e])
 		_jt(0x302, [rec])
@@ -711,9 +713,9 @@ func _id04_21d6(a6: int, dialog: int, item: int, phase: int) -> int:
 			_jt(0x512, [line, _g(-0x212a)])
 			_jt(0x302, [name])
 			_append_line(dialog, item, line)
-			_trap(0xa873, [dialog])
-			_redraw_item(dialog, 0xf, a6, -0x24, -4)
-			_redraw_item(dialog, 9, a6, -4, -4)
+			_trap(0xa873, [dialog])     # once: the two redraws below set no port of their own
+			_redraw_item(dialog, 0xf, a6, -0x24, -4, false)
+			_redraw_item(dialog, 9, a6, -4, -4, false)
 			_trap(0xa873, [saved])
 			_set_w(-0x2222, 100)
 			return 1
@@ -724,10 +726,11 @@ func _pop_message() -> int:
 	memory.write_u32(_g(-0x21ca), (at + 4) & 0xffffffff)
 	return memory.read_u32(at)
 
-## SetPort(dialog); the item's box (GetDItem into the frame at a6 - 0x56) inset by (dh, dv), erased
-## and invalidated.
-func _redraw_item(dialog: int, item: int, a6: int, dh: int, dv: int) -> void:
-	_trap(0xa873, [dialog])
+## SetPort(dialog) (unless set_port is false: stage 5 sets it once for two items); the item's box
+## (GetDItem into the frame at a6 - 0x56) inset by (dh, dv), erased and invalidated.
+func _redraw_item(dialog: int, item: int, a6: int, dh: int, dv: int, set_port: bool = true) -> void:
+	if set_port:
+		_trap(0xa873, [dialog])
 	var box: int = a6 - 0x56
 	_trap(0xa98d, [box, a6 - 0x4e, a6 - 0x4a, item, dialog])
 	_trap(0xa8a9, [dv & 0xffff, dh & 0xffff, box])

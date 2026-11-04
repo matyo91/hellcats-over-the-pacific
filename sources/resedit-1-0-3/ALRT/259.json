@@ -15,14 +15,14 @@
     {
       "evidence": "*   JT $47a(0x103); return CautionAlert(259, nil).",
       "function_or_context": "confirm_end_mission",
-      "line": 472,
+      "line": 474,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "return CautionAlert(0x103,0);                 /* $A988 */",
       "function_or_context": "confirm_end_mission",
-      "line": 490,
+      "line": 492,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

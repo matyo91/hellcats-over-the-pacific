@@ -15,14 +15,14 @@
     {
       "evidence": "* centring as in show_caution_alert_with_number); return CautionAlert(257, nil)",
       "function_or_context": "ask_save_changes",
-      "line": 447,
+      "line": 449,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "return CautionAlert(0x101,0);                 /* $A988 (result via a local word) */",
       "function_or_context": "ask_save_changes",
-      "line": 456,
+      "line": 458,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

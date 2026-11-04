@@ -549,7 +549,8 @@ typedef unsigned short    ushort;
 #define effect_anim_table DAT_0001b41c /* per-kind effect animator called by tick_effect (returns 1 when finished) */
 #define effect_pre_render_table DAT_0001b42c /* per-kind effect pre-render hook called by effect_pre_render_hook */
 #define ordnance_template DAT_00026280 /* ordnance template object stored by register_ordnance_template, spawned by spawn_weapon_entity */
-#define type10_controller DAT_00020b40 /* the single type-10 controller published by create_singleton_type10_controller [HYPOTHESIS per that function's name] */
+#define type10_controller DAT_00020b40 /* the single type-10 controller published by create_singleton_type10_controller [PROVEN]; its object is
+   moved to the landing glide's aim point by tick_landing_approach_glide (an aim-point marker, STRONG INFERENCE) */
 #define contact_table DAT_0001bdbc /* 256-slot open-addressing table of contact records keyed by contact_pair_hash(a, b), linear probing */
 #define cell_face_a DAT_00020b44 /* fractal_height_at: face of the current cell whose centre z is at or below the cell centre (-1 = none) [INFERENCE] */
 #define cell_face_b DAT_00020b46 /* fractal_height_at: face of the current cell whose centre z is above the cell centre (-1 = none) [INFERENCE] */
@@ -1417,7 +1418,9 @@ undefined4 * copy_block_return_dst(undefined4 *dst, undefined4 *src, undefined4 
  *   Many writes to DAT_0001b524-relative pointer slots; depends on FUN_00001a48
  *   (D0 destination) and copy_block_return_dst / FUN_00000032.
  *
- * Known callers: [UNKNOWN] — first code after FUN_00000032; likely overlay init path.
+ * Known callers: init_mission_object_tables (FUN_000016e2), its BSR.L at file 0x16e6, the only
+ *   reference in the overlay's bytes (no other BSR to file 0x54 and no relocated long 0x34 in its code)
+ *   [PROVEN, byte scan].
  * Callees: FUN_00001a48, copy_block_return_dst (FUN_00000032).
  *
  * Reconstruction status:
@@ -3756,7 +3759,8 @@ void translate_int3_vecs(uint count /* param_1: vector count; low word is the db
 /*
  * Original: FUN_00001cac
  * Proposed name: scale_int3_vecs
- * Confidence: [PROVEN] body; [UNKNOWN] callers
+ * Confidence: [PROVEN] body; no caller in the bytes (no BSR to file 0x1cac, no long 0x1c8c)
+ * [PROVEN, tools/decomp/xrefs.py]; a computed call remains possible
  *
  * Sibling of translate_int3_vecs: same DBRA count / int[3] stride, but
  * dst = (x*sx, y*sy, z*sz) via MULS.L (param_4/5/6). Capstone @0x1CAC–0x1D00.
@@ -7891,7 +7895,9 @@ void dispatch_entity_tick(char *entity, int path) /* Original: FUN_000044a4 */
  * Inputs: none (reads DAT_0001b5a0 mission block + four entity-pointer arrays).
  * Side effects: optional clear_pending_entity_slots; per-entity FUN_000044a4; reset_distance_base_globals.
  *
- * Known callers: none in this overlay C export [UNKNOWN external/JSR site].
+ * Known callers: none in this overlay C export; overlay_main_entry (0x1112) stores its runtime
+ * address 0x44c8 into a host hook (MOVE.L #$44c8 at file 0x1152), the only reference in the
+ * bytes [PROVEN, tools/decomp/xrefs.py].
  *
  * Gate [PROVEN]:
  *   1) If *(short*)(DAT_0001b5a0+0xac)==0 → clear_pending_entity_slots
@@ -10652,7 +10658,11 @@ void reset_span_row_lists /* Original: FUN_00006e74 */ (int slot /* param_1: dev
 
 /* Original: FUN_00006ece; source: Pacific Conflict.c. Recovered name: clear_flag_00020ae4 [PROVEN].
  * Ghidra C reviewed (function at overlay offset 0x6ece).
- * _DAT_00020ae4 = 0 (the same word update_view_clip_bounds clears; meaning [UNKNOWN]). Complete Ghidra C.
+ * _DAT_00020ae4 = 0 (the same word update_view_clip_bounds clears). Its meaning: the cockpit panel is up
+ * (panels_drawn, above) [STRONG INFERENCE]: redraw_view_readouts (file 0xd25a = runtime 0xd23a, checked against its bytes by the
+ * runtime cases) redraws the throttle gauge, radar range buttons and bomb indicator only while it is set
+ * [PROVEN], and the panel-less full-screen view runs with it 0 (the notes of update_heading_tape 0xc1aa and
+ * update_view_readouts_and_overlays 0xd00c, file offsets). Complete Ghidra C.
  */
 /* VERIFIED (FUN_00006ece clear_flag_00020ae4): clr.w $20ae4.l / rts, checked against an
  * independent capstone disassembly and found identical to the C (a word store). */
@@ -15628,7 +15638,11 @@ uint copy_rect_depth8 /* Original: FUN_0000bfb0 */ (uint *dst /* param_1: destin
 
 
 
-/* Original: FUN_0000c11e; source: Pacific Conflict.c. Recovered name: begin_offscreen_drawing [HYPOTHESIS].
+/* Original: FUN_0000c11e; source: Pacific Conflict.c. Recovered name: begin_offscreen_drawing [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): the host services it calls through the globals pointer (A5-0x1388) are +0x282 = A5-0x1106
+ * open_offscreen_cport_a5safe, +0x286 = A5-0x1102 swap_port_a5safe and +0x28a = A5-0x10fe close_port_a5safe
+ * (docs/OVERLAY_SERVICE_TABLE.md) [PROVEN chain]: it opens a colour port over the
+ * caller's buffer and switches to it, returning the previous port (swap_port_a5safe's result).
  * SIGNATURE CORRECTION [PROVEN, bytes; meaning STRONG_INFERENCE]: returns the D0 result of the last host call (+0x286) unchanged (move.l / unlk / RTS); update_heading_tape keeps it (movea.l d0,a3 at 0xc242). +0x286 is also called by end_offscreen_drawing with its second argument, so the value is most likely the previous port, restored there [STRONG_INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc11e).
  * Clears a 0x6c-byte port / pixmap record, sets it up through the host service +0x282 (with base address, row bytes and the host depth word +0x16) and makes it current with +0x286. Used by update_heading_tape at depth 8 (paired with end_offscreen_drawing). Complete Ghidra C.
@@ -15657,7 +15671,10 @@ undefined4 begin_offscreen_drawing /* Original: FUN_0000c11e */ (undefined4 *por
 
 
 
-/* Original: FUN_0000c17e; source: Pacific Conflict.c. Recovered name: end_offscreen_drawing [HYPOTHESIS].
+/* Original: FUN_0000c17e; source: Pacific Conflict.c. Recovered name: end_offscreen_drawing [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): the host services it calls through the globals pointer (A5-0x1388) are +0x282 = A5-0x1106
+ * open_offscreen_cport_a5safe, +0x286 = A5-0x1102 swap_port_a5safe and +0x28a = A5-0x10fe close_port_a5safe
+ * (docs/OVERLAY_SERVICE_TABLE.md) [PROVEN chain]: it closes that port and switches back.
  * Ghidra C reviewed (function at overlay offset 0xc17e).
  * Releases the record with the host service +0x28a and restores the previous port with +0x286. Complete Ghidra C.
  */
@@ -22460,7 +22477,8 @@ undefined4 register_smoke_template /* Original: FUN_000115da */ (undefined4 temp
 
 
 
-/* Original: FUN_000115fc; source: Pacific Conflict.c. Recovered name: spawn_smoke_plume [HYPOTHESIS].
+/* Original: FUN_000115fc; source: Pacific Conflict.c. Recovered name: spawn_smoke_plume [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): it instantiates DAT_000260e8, the template register_smoke_template stores for definition key 0x7 (tick_smoke_plume, create_plume_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x115fc).
  * Args: size a, size b, duration, word, unused, x, y, z. Spawns the template DAT_000260e8 (registered by register_smoke_template) at (x, y, z) and sets controller +0x36 = a and +0x34 = b (both << object shift), +0x32 = word, +0x38 = end frame DAT_0001b838 + duration. Used by the kind-2 / kind-3 effect animators after explosions (duration 0x2a3) and by attach_trailing_plume (a = 0x48) on damaged aircraft - a long-lived plume [HYPOTHESIS: smoke]. Returns the controller. Complete Ghidra C.
  *
@@ -24241,7 +24259,11 @@ void ordnance_collision /* Original: FUN_00012f52 */ (int self_obj /* param_1: o
 
 
 
-/* Original: FUN_00012f92; source: Pacific Conflict.c. Recovered name: create_singleton_type10_controller [HYPOTHESIS].
+/* Original: FUN_00012f92; source: Pacific Conflict.c. Recovered name: create_singleton_type10_controller [PROVEN mechanics].
+ * Name evidence (was HYPOTHESIS): a mechanical name the bytes prove: it is definition key 0x10's +6 create
+ * handler (docs/OVERLAY_DEFINITION_TABLE.md) and stores its controller in the one global 0x20b40.
+ * Role [STRONG INFERENCE]: the landing approach's aim-point marker; tick_landing_approach_glide moves
+ * that controller's object to the smoothed glide aim point (x, y, z) every tick.
  * SIGNATURE CORRECTION [PROVEN, bytes]: the Ghidra C declares this function void, but the 68000 code leaves the heap_alloc_cleared result (the new controller) in D0 up to RTS without overwriting it, and the caller instantiate_object_from_desc (definition +6 call) stores that D0 value at object +8. The real signature is uint *create_singleton_type10_controller(object, definition key,...). The C body is kept as exported (no token change); a port must return the controller.
  * Ghidra C reviewed (function at overlay offset 0x12f92).
  * Definition +6 of key 0x10 (file 0x1aa16; no tick, no other handler) [PROVEN bytes]: cleared 0x32-byte controller kept in the single global DAT_00020b40, object flags | 0x112100 [UNKNOWN which object type 0x10 is]. Complete Ghidra C.
@@ -24497,7 +24519,8 @@ void project_face_vertices_yz /* Original: FUN_00013268 */ (int model /* param_1
  * SIGNATURE CORRECTION [PROVEN, bytes]: returns the point_in_polygon_xz result (0 / 1) - the last call (bsr $13070) is followed only by MOVEM / UNLK / RTS, and both call sites (0x15236, 0x1527a) test D0 (tst.l d0). Real signature: int point_over_face_xz(record, face). C body kept as exported.
  * Not VERIFIED: the bytes confirm the shift / projection / point_in_polygon_xz sequence and that the result of point_in_polygon_xz is left in D0 as the return value, which the void Ghidra C drops.
  * Ghidra C reviewed (function at overlay offset 0x132c8).
- * Args: record (+0 entity, +4 shape object, word +0xc signed shift, word +0xe vertex shift), face. Takes the entity x / z (+0x18 / +0x20) shifted right (negative word +0xc) or left by word +0xc as the origin, projects the face vertices relative to it with project_face_vertices_xz and runs point_in_polygon_xz(0, 0,...). Ghidra types the function void and drops the test result (in D0 on return) [STRONG INFERENCE: it returns whether the entity is above the face]. Same pattern as the inner loop of surface_type_at_point. No caller in the exported C (reached through a pointer or unexported code) [UNKNOWN]. Ghidra C.
+ * Args: record (+0 entity, +4 shape object, word +0xc signed shift, word +0xe vertex shift), face. Takes the entity x / z (+0x18 / +0x20) shifted right (negative word +0xc) or left by word +0xc as the origin, projects the face vertices relative to it with project_face_vertices_xz and runs point_in_polygon_xz(0, 0,...). Ghidra types the function void and drops the test result (in D0 on return) [STRONG INFERENCE: it returns whether the entity is above the face]. Same pattern as the inner loop of surface_type_at_point. No caller in the exported C; in the bytes, two BSR.L from carrier_deck_contact (file 0x15154, the
+ * unexported deck routine) at 0x15236 and 0x1527a, the deck and wire-zone tests [PROVEN, tools/decomp/xrefs.py]. Ghidra C.
   * VERIFIED: 0x132c8..0x13344 checked against an independent capstone disassembly and found
  * identical to the C with the int return applied: shift = sext word +0xc (asr.l by -shift
  * when negative, else asl.l) applied to the object x / z (+0x18 / +0x20); bsr.w 0x1320a
@@ -26434,7 +26457,9 @@ uint * create_carrier_controller /* Original: FUN_000150c8 */ (uint obj /* param
 /* Original: FUN_0001530e; source: Pacific Conflict.c. Recovered name: create_firing_ship_controller [STRONG INFERENCE].
  * SIGNATURE CORRECTION [PROVEN, bytes]: the Ghidra C declares this function void, but the 68000 code leaves the heap_alloc_cleared result (the new controller) in D0 up to RTS without overwriting it, and the caller instantiate_object_from_desc (definition +6 call) stores that D0 value at object +8. The real signature is uint *create_firing_ship_controller(object, definition key,...). The C body is kept as exported (no token change); a port must return the controller.
  * Ghidra C reviewed (function at overlay offset 0x1530e).
- * Allocates a cleared 300-byte controller: +0 object, +4 definition DAT_0001b524[key], word +0x50 = 0x14 (shots), +0x48 = 1000000000, word +0x44 = 7, word +0x32 = definition +0x1a (hits). Room for the 12-byte gun positions at +0x54 and 6-byte aim angles at +0xe4 used by tick_firing_ship_controller. No caller in the exported C [UNKNOWN]. Complete Ghidra C.
+ * Allocates a cleared 300-byte controller: +0 object, +4 definition DAT_0001b524[key], word +0x50 = 0x14 (shots), +0x48 = 1000000000, word +0x44 = 7, word +0x32 = definition +0x1a (hits). Room for the 12-byte gun positions at +0x54 and 6-byte aim angles at +0xe4 used by tick_firing_ship_controller. No caller in the exported C: it is the +6 (create) handler of definition key 0x19, the record at file
+ * 0x1aa9a (key word 0x19, +2 = runtime 0x15336, +6 = runtime 0x152ee = this function), the only
+ * reference in the bytes [PROVEN, tools/decomp/xrefs.py]. Complete Ghidra C.
  * VERIFIED: 0x1530e..0x15354 checked against an independent capstone disassembly and found
  * identical to the C with the uint * return applied: bsr.l 0x1b6c heap_alloc_cleared, D0
  * copied to a0 and never written again before rts; alloc 300; +0 = object, +4 = DAT_0001b524[class], word +0x50 = 0x14,
@@ -26587,7 +26612,8 @@ void tick_firing_ship_controller /* Original: FUN_00015356 */ (int *ctl /* param
 /* Original: FUN_00015580; source: Pacific Conflict.c. Recovered name: create_sinking_controller [STRONG INFERENCE].
  * SIGNATURE CORRECTION [PROVEN, bytes]: the Ghidra C declares this function void, but the 68000 code leaves the heap_alloc_cleared result (the new controller) in D0 up to RTS without overwriting it, and the caller instantiate_object_from_desc (definition +6 call) stores that D0 value at object +8. The real signature is uint *create_sinking_controller(object, definition key,...). The C body is kept as exported (no token change); a port must return the controller.
  * Ghidra C reviewed (function at overlay offset 0x15580).
- * Args: object, definition key, word. Allocates a cleared 0x56-byte controller (heap_alloc_cleared): +0 object, +4 definition DAT_0001b524[key] (ID-keyed record table), +0x54 the word argument, +0x48 next step frame = 1000000000 (not scheduled), word +0x44 = 3 (step interval), word +0x32 = definition +0x1a; sets object flags 0x102000 (+4). The fields match those read by step_sinking_object [STRONG INFERENCE]. The new controller is not returned in the Ghidra C (void) [UNKNOWN how it is linked]. No caller in the exported C (reached through a handler table) [UNKNOWN]. Complete Ghidra C.
+ * Args: object, definition key, word. Allocates a cleared 0x56-byte controller (heap_alloc_cleared): +0 object, +4 definition DAT_0001b524[key] (ID-keyed record table), +0x54 the word argument, +0x48 next step frame = 1000000000 (not scheduled), word +0x44 = 3 (step interval), word +0x32 = definition +0x1a; sets object flags 0x102000 (+4). The fields match those read by step_sinking_object [STRONG INFERENCE]. The new controller is not returned in the Ghidra C (void) [UNKNOWN how it is linked]. No caller in the exported C: it is the +6 (create) handler of definition key 0x16, the record at file
+ * 0x1aaee (+2 = tick_sinking_controller), the only reference in the bytes [PROVEN, tools/decomp/xrefs.py]. Complete Ghidra C.
  * VERIFIED: 0x15580..0x155d6 checked against an independent capstone disassembly and found
  * identical to the C with the uint * return applied: bsr.l 0x1b6c heap_alloc_cleared, D0
  * copied to a0 and never written again before rts; alloc 0x56; +0 = object, word +0x54 = param_3 (low word $12(a6)), +4 =
@@ -26616,7 +26642,7 @@ uint * create_sinking_controller /* Original: FUN_00015580 */ (uint obj /* param
 
 /* Original: FUN_000155d8; source: Pacific Conflict.c. Recovered name: tick_sinking_controller [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x155d8).
- * Runs step_sinking_object on the controller when its word +0x4c is non-zero [STRONG INFERENCE: sinking started]. No caller in the exported C (handler table) [UNKNOWN]. Complete Ghidra C.
+ * Runs step_sinking_object on the controller when its word +0x4c is non-zero [STRONG INFERENCE: sinking started]. No caller in the exported C: it is reached as the +2 (tick) handler of definition key 0x16, the record at file 0x1aaee (key word 0x16, +2 = runtime 0x155b8 = this function, +6 = runtime 0x15560 = create_sinking_controller), the only reference in the overlay's bytes [PROVEN, byte scan]. Complete Ghidra C.
  */
 /* VERIFIED (FUN_000155d8): 0x155d8..0x155ea checked against an independent capstone disassembly and
  * found identical to the C: bsr.w 0x14d86 step_sinking_object(ctl) when word +0x4c != 0. */
@@ -28084,7 +28110,8 @@ int * attach_smoke_trail /* Original: FUN_00016b4c */ (uint x,uint y,uint z,int 
 
 
 
-/* Original: FUN_00016b9e; source: Pacific Conflict.c. Recovered name: attach_burning_trail [HYPOTHESIS].
+/* Original: FUN_00016b9e; source: Pacific Conflict.c. Recovered name: attach_burning_trail [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): it spawns trail kind 1 through spawn_trail, whose templates DAT_00026650 register_trail_templates stores for definition key 0xa (tick_trail, create_trail_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x16b9e).
  * Trail of kind 1 linked to an object (ordnance_detonation when bit 0x40 changes); also starts the explosion sound countdowns by camera distance (< 5000: DAT_0001b84a = 0x1e Explosion, < 20000: DAT_0001b848 = 0xf Distant Explosion). Both trail spawners use FUN_00016ae8(kind, x, y, z) and FUN_0001702a, link the trail to the owner object (+0x52, owner reference count +3) and mark it active (+0x56 = 1). [HYPOTHESIS: fire / burning debris trail] Complete Ghidra C.
  */
@@ -28524,7 +28551,8 @@ undefined4 register_ground_fire_template /* Original: FUN_00017098 */ (undefined
 
 
 
-/* Original: FUN_000170ba; source: Pacific Conflict.c. Recovered name: spawn_ground_fire_object [HYPOTHESIS].
+/* Original: FUN_000170ba; source: Pacific Conflict.c. Recovered name: spawn_ground_fire_object [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): it instantiates DAT_00026658, the template register_ground_fire_template stores for definition key 0xb (tick_ground_fire, create_ground_fire_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * VERIFIED: checked against an independent capstone disassembly of the overlay bytes at 0x170ba: spawn_mission_pool_object(DAT_00026658, x, y, z, 0, 0, 0, 0); 0 on failure, else controller +0x34 = 1, +0x32 = 0x2d, returned - identical.
  * Ghidra C reviewed (function at overlay offset 0x170ba).
  * Spawns the template DAT_00026658 at (x, y, z) with controller words +0x34 = 1 and +0x32 = 0x2d (45); used by attach_ground_fire. Complete Ghidra C.
@@ -28548,7 +28576,8 @@ int spawn_ground_fire_object /* Original: FUN_000170ba */ (uint x,uint y,uint z)
 
 
 
-/* Original: FUN_00017102; source: Pacific Conflict.c. Recovered name: attach_ground_fire [HYPOTHESIS].
+/* Original: FUN_00017102; source: Pacific Conflict.c. Recovered name: attach_ground_fire [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): it calls spawn_ground_fire_object, definition key 0xb's spawner (docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x17102).
  * Called by update_aircraft_damage_state when damage bit 4 appears, at the ground height under the aircraft: spawns an object with FUN_000170ba and links it to the owner (+0x50, owner count +3). [HYPOTHESIS: a fire on the ground below] Complete Ghidra C.
  */
@@ -28601,7 +28630,10 @@ void destroy_ground_fire_controller /* Original: FUN_0001713c */ (int ctl /* gro
  * their drift, writes the centroid to vertex 4, and releases vertices (all at once when ctl +0x684 &
  * 0x1800 is 0, else bit 1 or 8 at random until both) moving to state 3 when all four are free; state 3
  * counts +0x32 down and finishes (returns 1) at 0 or in replay mode 1 - identical to the C. */
-/* Original: FUN_00017150; source: Pacific Conflict.c. Recovered name: animate_ground_fire [HYPOTHESIS].
+/* Original: FUN_00017150; source: Pacific Conflict.c. Recovered name: animate_ground_fire [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): its only caller, the BSR.W at 0x17388, is tick_ground_fire (file 0x17380),
+ * definition key 0xb's tick, whose template register_ground_fire_template stores
+ * (docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, tools/decomp/xrefs.py].
  * Ghidra C reviewed (function at overlay offset 0x17150).
  * State machine in +0x34 (1 start, 2 burning, 3 dying with countdown +0x32) following the owner (+0x50); goes to state 3 when the owner is gone or on replay rewind; returns 1 when finished. [HYPOTHESIS: the ground fire under a damaged aircraft] Ghidra C (read in full).
  * VERIFIED: checked against an independent capstone disassembly of 0x17150..0x1737e:
@@ -28936,7 +28968,8 @@ void tick_ground_mark /* Original: FUN_000175c0 */ (int *ctl /* ground mark cont
 
 
 
-/* Original: FUN_000175de; source: Pacific Conflict.c. Recovered name: spawn_ground_mark [HYPOTHESIS].
+/* Original: FUN_000175de; source: Pacific Conflict.c. Recovered name: spawn_ground_mark [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): it instantiates DAT_00026660, the template register_ground_mark_template stores for definition key 0x11 (tick_ground_mark, create_ground_mark_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x175de).
  * Args: size percent, x, y, z. Spawns the template DAT_00026660 at (x, y, z), scales its six vertices about that point by size * 256 / 100, scales the range, and sets the expiry frame +0x3c = DAT_0001b838 + 0xa8c (2700 frames; advance_frame_and_tick_controllers then retires it). Called by animate_effect_kind3_debris when debris lands with the object at ground level [HYPOTHESIS: crater / scorch mark]. Returns the controller. Complete Ghidra C.
  */

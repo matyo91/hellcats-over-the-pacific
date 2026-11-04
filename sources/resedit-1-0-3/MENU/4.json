@@ -15,7 +15,7 @@
     {
       "evidence": "*(int *)(unaff_A5 + -0xc42) = GetMenu(4);        /* $A9BF */",
       "function_or_context": "install_menus",
-      "line": 3748,
+      "line": 3836,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     }

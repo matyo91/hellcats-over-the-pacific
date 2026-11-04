@@ -24,9 +24,24 @@
       "palette_reference": null,
       "pixel_data_bytes": 256,
       "png_pixel_comparison": {
+        "compared_pixels": 208,
+        "comparison": "indices through the default colour table versus PNG pixels",
+        "differing_indices": [
+          216,
+          246,
+          248,
+          249,
+          250
+        ],
+        "differing_pixels": 120,
+        "palette": "System default clut 8",
+        "png_dimensions": [
+          16,
+          16
+        ],
         "png_path": "sources/resedit-1-0-3/ics8/128.png",
-        "reason": "No palette association is asserted for this raw indexed icon payload.",
-        "status": "not_run"
+        "status": "mismatch",
+        "transparent_pixels_not_compared": 48
       },
       "width": 16
     },
@@ -96,6 +111,6 @@
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
   "unresolved": [
-    "No palette association is asserted; indexed pixels require external Finder palette rules."
+    "The PNG export differs from the default colour table on 120 pixels (indices 216, 246, 248, 249, 250); the icl8 exports, using the same indices, match the table exactly, so the export is the suspect."
   ]
 }

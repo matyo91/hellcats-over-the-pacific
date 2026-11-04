@@ -15,7 +15,7 @@
     {
       "evidence": "*   h = GetResource('HEL1', 0x80) -> A5-0x13a8; if nil: NewHandleClear(0x500),",
       "function_or_context": "initialize_application",
-      "line": 3286,
+      "line": 3355,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     }

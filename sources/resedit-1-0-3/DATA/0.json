@@ -7,7 +7,7 @@
   },
   "claims": {
     "binary_integrity": "VERIFIED",
-    "decoded_structure": "UNKNOWN",
+    "decoded_structure": "VERIFIED",
     "gameplay_role": "VERIFIED",
     "identity": "VERIFIED"
   },
@@ -22,96 +22,1278 @@
   ],
   "decoded": {
     "consumed_bytes": 2918,
-    "elements": [],
+    "elements": [
+      {
+        "a5_offset": -8798,
+        "byte_count": 2,
+        "data_offset": 0,
+        "index": 1,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8796,
+        "byte_count": 6,
+        "index": 2,
+        "kind": "zero_run",
+        "zero_entry": 1
+      },
+      {
+        "a5_offset": -8790,
+        "byte_count": 30,
+        "data_offset": 2,
+        "index": 3,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8760,
+        "byte_count": 254,
+        "index": 4,
+        "kind": "zero_run",
+        "zero_entry": 2
+      },
+      {
+        "a5_offset": -8506,
+        "byte_count": 8,
+        "data_offset": 32,
+        "index": 5,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8498,
+        "byte_count": 4,
+        "index": 6,
+        "kind": "zero_run",
+        "zero_entry": 3
+      },
+      {
+        "a5_offset": -8494,
+        "byte_count": 18,
+        "data_offset": 40,
+        "index": 7,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8476,
+        "byte_count": 10,
+        "index": 8,
+        "kind": "zero_run",
+        "zero_entry": 4
+      },
+      {
+        "a5_offset": -8466,
+        "byte_count": 208,
+        "data_offset": 58,
+        "index": 9,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8258,
+        "byte_count": 0,
+        "index": 10,
+        "kind": "zero_run",
+        "zero_entry": 5
+      },
+      {
+        "a5_offset": -8258,
+        "byte_count": 158,
+        "data_offset": 266,
+        "index": 11,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8100,
+        "byte_count": 4,
+        "index": 12,
+        "kind": "zero_run",
+        "zero_entry": 6
+      },
+      {
+        "a5_offset": -8096,
+        "byte_count": 20,
+        "data_offset": 424,
+        "index": 13,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8076,
+        "byte_count": 0,
+        "index": 14,
+        "kind": "zero_run",
+        "zero_entry": 7
+      },
+      {
+        "a5_offset": -8076,
+        "byte_count": 4,
+        "data_offset": 444,
+        "index": 15,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8072,
+        "byte_count": 0,
+        "index": 16,
+        "kind": "zero_run",
+        "zero_entry": 8
+      },
+      {
+        "a5_offset": -8072,
+        "byte_count": 4,
+        "data_offset": 448,
+        "index": 17,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -8068,
+        "byte_count": 4,
+        "index": 18,
+        "kind": "zero_run",
+        "zero_entry": 9
+      },
+      {
+        "a5_offset": -8064,
+        "byte_count": 74,
+        "data_offset": 452,
+        "index": 19,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7990,
+        "byte_count": 0,
+        "index": 20,
+        "kind": "zero_run",
+        "zero_entry": 10
+      },
+      {
+        "a5_offset": -7990,
+        "byte_count": 6,
+        "data_offset": 526,
+        "index": 21,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7984,
+        "byte_count": 0,
+        "index": 22,
+        "kind": "zero_run",
+        "zero_entry": 11
+      },
+      {
+        "a5_offset": -7984,
+        "byte_count": 4,
+        "data_offset": 532,
+        "index": 23,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7980,
+        "byte_count": 0,
+        "index": 24,
+        "kind": "zero_run",
+        "zero_entry": 12
+      },
+      {
+        "a5_offset": -7980,
+        "byte_count": 20,
+        "data_offset": 536,
+        "index": 25,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7960,
+        "byte_count": 0,
+        "index": 26,
+        "kind": "zero_run",
+        "zero_entry": 13
+      },
+      {
+        "a5_offset": -7960,
+        "byte_count": 36,
+        "data_offset": 556,
+        "index": 27,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7924,
+        "byte_count": 0,
+        "index": 28,
+        "kind": "zero_run",
+        "zero_entry": 14
+      },
+      {
+        "a5_offset": -7924,
+        "byte_count": 24,
+        "data_offset": 592,
+        "index": 29,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7900,
+        "byte_count": 14,
+        "index": 30,
+        "kind": "zero_run",
+        "zero_entry": 15
+      },
+      {
+        "a5_offset": -7886,
+        "byte_count": 4,
+        "data_offset": 616,
+        "index": 31,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7882,
+        "byte_count": 4,
+        "index": 32,
+        "kind": "zero_run",
+        "zero_entry": 16
+      },
+      {
+        "a5_offset": -7878,
+        "byte_count": 4,
+        "data_offset": 620,
+        "index": 33,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7874,
+        "byte_count": 0,
+        "index": 34,
+        "kind": "zero_run",
+        "zero_entry": 17
+      },
+      {
+        "a5_offset": -7874,
+        "byte_count": 4,
+        "data_offset": 624,
+        "index": 35,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7870,
+        "byte_count": 0,
+        "index": 36,
+        "kind": "zero_run",
+        "zero_entry": 18
+      },
+      {
+        "a5_offset": -7870,
+        "byte_count": 4,
+        "data_offset": 628,
+        "index": 37,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7866,
+        "byte_count": 0,
+        "index": 38,
+        "kind": "zero_run",
+        "zero_entry": 19
+      },
+      {
+        "a5_offset": -7866,
+        "byte_count": 4,
+        "data_offset": 632,
+        "index": 39,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7862,
+        "byte_count": 0,
+        "index": 40,
+        "kind": "zero_run",
+        "zero_entry": 20
+      },
+      {
+        "a5_offset": -7862,
+        "byte_count": 4,
+        "data_offset": 636,
+        "index": 41,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7858,
+        "byte_count": 0,
+        "index": 42,
+        "kind": "zero_run",
+        "zero_entry": 21
+      },
+      {
+        "a5_offset": -7858,
+        "byte_count": 4,
+        "data_offset": 640,
+        "index": 43,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7854,
+        "byte_count": 0,
+        "index": 44,
+        "kind": "zero_run",
+        "zero_entry": 22
+      },
+      {
+        "a5_offset": -7854,
+        "byte_count": 8,
+        "data_offset": 644,
+        "index": 45,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7846,
+        "byte_count": 0,
+        "index": 46,
+        "kind": "zero_run",
+        "zero_entry": 23
+      },
+      {
+        "a5_offset": -7846,
+        "byte_count": 466,
+        "data_offset": 652,
+        "index": 47,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -7380,
+        "byte_count": 16,
+        "index": 48,
+        "kind": "zero_run",
+        "zero_entry": 24
+      },
+      {
+        "a5_offset": -7364,
+        "byte_count": 674,
+        "data_offset": 1118,
+        "index": 49,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6690,
+        "byte_count": 254,
+        "index": 50,
+        "kind": "zero_run",
+        "zero_entry": 25
+      },
+      {
+        "a5_offset": -6436,
+        "byte_count": 8,
+        "data_offset": 1792,
+        "index": 51,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6428,
+        "byte_count": 0,
+        "index": 52,
+        "kind": "zero_run",
+        "zero_entry": 26
+      },
+      {
+        "a5_offset": -6428,
+        "byte_count": 10,
+        "data_offset": 1800,
+        "index": 53,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6418,
+        "byte_count": 0,
+        "index": 54,
+        "kind": "zero_run",
+        "zero_entry": 27
+      },
+      {
+        "a5_offset": -6418,
+        "byte_count": 10,
+        "data_offset": 1810,
+        "index": 55,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6408,
+        "byte_count": 0,
+        "index": 56,
+        "kind": "zero_run",
+        "zero_entry": 28
+      },
+      {
+        "a5_offset": -6408,
+        "byte_count": 10,
+        "data_offset": 1820,
+        "index": 57,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6398,
+        "byte_count": 0,
+        "index": 58,
+        "kind": "zero_run",
+        "zero_entry": 29
+      },
+      {
+        "a5_offset": -6398,
+        "byte_count": 12,
+        "data_offset": 1830,
+        "index": 59,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6386,
+        "byte_count": 0,
+        "index": 60,
+        "kind": "zero_run",
+        "zero_entry": 30
+      },
+      {
+        "a5_offset": -6386,
+        "byte_count": 10,
+        "data_offset": 1842,
+        "index": 61,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6376,
+        "byte_count": 0,
+        "index": 62,
+        "kind": "zero_run",
+        "zero_entry": 31
+      },
+      {
+        "a5_offset": -6376,
+        "byte_count": 16,
+        "data_offset": 1852,
+        "index": 63,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6360,
+        "byte_count": 0,
+        "index": 64,
+        "kind": "zero_run",
+        "zero_entry": 32
+      },
+      {
+        "a5_offset": -6360,
+        "byte_count": 10,
+        "data_offset": 1868,
+        "index": 65,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6350,
+        "byte_count": 0,
+        "index": 66,
+        "kind": "zero_run",
+        "zero_entry": 33
+      },
+      {
+        "a5_offset": -6350,
+        "byte_count": 20,
+        "data_offset": 1878,
+        "index": 67,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6330,
+        "byte_count": 0,
+        "index": 68,
+        "kind": "zero_run",
+        "zero_entry": 34
+      },
+      {
+        "a5_offset": -6330,
+        "byte_count": 10,
+        "data_offset": 1898,
+        "index": 69,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6320,
+        "byte_count": 0,
+        "index": 70,
+        "kind": "zero_run",
+        "zero_entry": 35
+      },
+      {
+        "a5_offset": -6320,
+        "byte_count": 10,
+        "data_offset": 1908,
+        "index": 71,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6310,
+        "byte_count": 0,
+        "index": 72,
+        "kind": "zero_run",
+        "zero_entry": 36
+      },
+      {
+        "a5_offset": -6310,
+        "byte_count": 6,
+        "data_offset": 1918,
+        "index": 73,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6304,
+        "byte_count": 0,
+        "index": 74,
+        "kind": "zero_run",
+        "zero_entry": 37
+      },
+      {
+        "a5_offset": -6304,
+        "byte_count": 32,
+        "data_offset": 1924,
+        "index": 75,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6272,
+        "byte_count": 0,
+        "index": 76,
+        "kind": "zero_run",
+        "zero_entry": 38
+      },
+      {
+        "a5_offset": -6272,
+        "byte_count": 20,
+        "data_offset": 1956,
+        "index": 77,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6252,
+        "byte_count": 0,
+        "index": 78,
+        "kind": "zero_run",
+        "zero_entry": 39
+      },
+      {
+        "a5_offset": -6252,
+        "byte_count": 18,
+        "data_offset": 1976,
+        "index": 79,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6234,
+        "byte_count": 0,
+        "index": 80,
+        "kind": "zero_run",
+        "zero_entry": 40
+      },
+      {
+        "a5_offset": -6234,
+        "byte_count": 10,
+        "data_offset": 1994,
+        "index": 81,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6224,
+        "byte_count": 0,
+        "index": 82,
+        "kind": "zero_run",
+        "zero_entry": 41
+      },
+      {
+        "a5_offset": -6224,
+        "byte_count": 22,
+        "data_offset": 2004,
+        "index": 83,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6202,
+        "byte_count": 0,
+        "index": 84,
+        "kind": "zero_run",
+        "zero_entry": 42
+      },
+      {
+        "a5_offset": -6202,
+        "byte_count": 20,
+        "data_offset": 2026,
+        "index": 85,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6182,
+        "byte_count": 0,
+        "index": 86,
+        "kind": "zero_run",
+        "zero_entry": 43
+      },
+      {
+        "a5_offset": -6182,
+        "byte_count": 12,
+        "data_offset": 2046,
+        "index": 87,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6170,
+        "byte_count": 0,
+        "index": 88,
+        "kind": "zero_run",
+        "zero_entry": 44
+      },
+      {
+        "a5_offset": -6170,
+        "byte_count": 8,
+        "data_offset": 2058,
+        "index": 89,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6162,
+        "byte_count": 0,
+        "index": 90,
+        "kind": "zero_run",
+        "zero_entry": 45
+      },
+      {
+        "a5_offset": -6162,
+        "byte_count": 28,
+        "data_offset": 2066,
+        "index": 91,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6134,
+        "byte_count": 0,
+        "index": 92,
+        "kind": "zero_run",
+        "zero_entry": 46
+      },
+      {
+        "a5_offset": -6134,
+        "byte_count": 10,
+        "data_offset": 2094,
+        "index": 93,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6124,
+        "byte_count": 0,
+        "index": 94,
+        "kind": "zero_run",
+        "zero_entry": 47
+      },
+      {
+        "a5_offset": -6124,
+        "byte_count": 10,
+        "data_offset": 2104,
+        "index": 95,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6114,
+        "byte_count": 0,
+        "index": 96,
+        "kind": "zero_run",
+        "zero_entry": 48
+      },
+      {
+        "a5_offset": -6114,
+        "byte_count": 8,
+        "data_offset": 2114,
+        "index": 97,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6106,
+        "byte_count": 0,
+        "index": 98,
+        "kind": "zero_run",
+        "zero_entry": 49
+      },
+      {
+        "a5_offset": -6106,
+        "byte_count": 14,
+        "data_offset": 2122,
+        "index": 99,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6092,
+        "byte_count": 0,
+        "index": 100,
+        "kind": "zero_run",
+        "zero_entry": 50
+      },
+      {
+        "a5_offset": -6092,
+        "byte_count": 12,
+        "data_offset": 2136,
+        "index": 101,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6080,
+        "byte_count": 0,
+        "index": 102,
+        "kind": "zero_run",
+        "zero_entry": 51
+      },
+      {
+        "a5_offset": -6080,
+        "byte_count": 20,
+        "data_offset": 2148,
+        "index": 103,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6060,
+        "byte_count": 0,
+        "index": 104,
+        "kind": "zero_run",
+        "zero_entry": 52
+      },
+      {
+        "a5_offset": -6060,
+        "byte_count": 12,
+        "data_offset": 2168,
+        "index": 105,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6048,
+        "byte_count": 0,
+        "index": 106,
+        "kind": "zero_run",
+        "zero_entry": 53
+      },
+      {
+        "a5_offset": -6048,
+        "byte_count": 12,
+        "data_offset": 2180,
+        "index": 107,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -6036,
+        "byte_count": 0,
+        "index": 108,
+        "kind": "zero_run",
+        "zero_entry": 54
+      },
+      {
+        "a5_offset": -6036,
+        "byte_count": 50,
+        "data_offset": 2192,
+        "index": 109,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5986,
+        "byte_count": 0,
+        "index": 110,
+        "kind": "zero_run",
+        "zero_entry": 55
+      },
+      {
+        "a5_offset": -5986,
+        "byte_count": 10,
+        "data_offset": 2242,
+        "index": 111,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5976,
+        "byte_count": 0,
+        "index": 112,
+        "kind": "zero_run",
+        "zero_entry": 56
+      },
+      {
+        "a5_offset": -5976,
+        "byte_count": 12,
+        "data_offset": 2252,
+        "index": 113,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5964,
+        "byte_count": 0,
+        "index": 114,
+        "kind": "zero_run",
+        "zero_entry": 57
+      },
+      {
+        "a5_offset": -5964,
+        "byte_count": 10,
+        "data_offset": 2264,
+        "index": 115,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5954,
+        "byte_count": 0,
+        "index": 116,
+        "kind": "zero_run",
+        "zero_entry": 58
+      },
+      {
+        "a5_offset": -5954,
+        "byte_count": 8,
+        "data_offset": 2274,
+        "index": 117,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5946,
+        "byte_count": 0,
+        "index": 118,
+        "kind": "zero_run",
+        "zero_entry": 59
+      },
+      {
+        "a5_offset": -5946,
+        "byte_count": 20,
+        "data_offset": 2282,
+        "index": 119,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5926,
+        "byte_count": 0,
+        "index": 120,
+        "kind": "zero_run",
+        "zero_entry": 60
+      },
+      {
+        "a5_offset": -5926,
+        "byte_count": 20,
+        "data_offset": 2302,
+        "index": 121,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5906,
+        "byte_count": 0,
+        "index": 122,
+        "kind": "zero_run",
+        "zero_entry": 61
+      },
+      {
+        "a5_offset": -5906,
+        "byte_count": 10,
+        "data_offset": 2322,
+        "index": 123,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5896,
+        "byte_count": 0,
+        "index": 124,
+        "kind": "zero_run",
+        "zero_entry": 62
+      },
+      {
+        "a5_offset": -5896,
+        "byte_count": 14,
+        "data_offset": 2332,
+        "index": 125,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5882,
+        "byte_count": 0,
+        "index": 126,
+        "kind": "zero_run",
+        "zero_entry": 63
+      },
+      {
+        "a5_offset": -5882,
+        "byte_count": 12,
+        "data_offset": 2346,
+        "index": 127,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5870,
+        "byte_count": 0,
+        "index": 128,
+        "kind": "zero_run",
+        "zero_entry": 64
+      },
+      {
+        "a5_offset": -5870,
+        "byte_count": 22,
+        "data_offset": 2358,
+        "index": 129,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5848,
+        "byte_count": 208,
+        "index": 130,
+        "kind": "zero_run",
+        "zero_entry": 65
+      },
+      {
+        "a5_offset": -5640,
+        "byte_count": 130,
+        "data_offset": 2380,
+        "index": 131,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5510,
+        "byte_count": 164,
+        "index": 132,
+        "kind": "zero_run",
+        "zero_entry": 66
+      },
+      {
+        "a5_offset": -5346,
+        "byte_count": 10,
+        "data_offset": 2510,
+        "index": 133,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -5336,
+        "byte_count": 1288,
+        "index": 134,
+        "kind": "zero_run",
+        "zero_entry": 67
+      },
+      {
+        "a5_offset": -4048,
+        "byte_count": 4,
+        "data_offset": 2520,
+        "index": 135,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -4044,
+        "byte_count": 0,
+        "index": 136,
+        "kind": "zero_run",
+        "zero_entry": 68
+      },
+      {
+        "a5_offset": -4044,
+        "byte_count": 4,
+        "data_offset": 2524,
+        "index": 137,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -4040,
+        "byte_count": 0,
+        "index": 138,
+        "kind": "zero_run",
+        "zero_entry": 69
+      },
+      {
+        "a5_offset": -4040,
+        "byte_count": 4,
+        "data_offset": 2528,
+        "index": 139,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -4036,
+        "byte_count": 0,
+        "index": 140,
+        "kind": "zero_run",
+        "zero_entry": 70
+      },
+      {
+        "a5_offset": -4036,
+        "byte_count": 4,
+        "data_offset": 2532,
+        "index": 141,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -4032,
+        "byte_count": 0,
+        "index": 142,
+        "kind": "zero_run",
+        "zero_entry": 71
+      },
+      {
+        "a5_offset": -4032,
+        "byte_count": 8,
+        "data_offset": 2536,
+        "index": 143,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -4024,
+        "byte_count": 90,
+        "index": 144,
+        "kind": "zero_run",
+        "zero_entry": 72
+      },
+      {
+        "a5_offset": -3934,
+        "byte_count": 22,
+        "data_offset": 2544,
+        "index": 145,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -3912,
+        "byte_count": 584,
+        "index": 146,
+        "kind": "zero_run",
+        "zero_entry": 73
+      },
+      {
+        "a5_offset": -3328,
+        "byte_count": 112,
+        "data_offset": 2566,
+        "index": 147,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -3216,
+        "byte_count": 0,
+        "index": 148,
+        "kind": "zero_run",
+        "zero_entry": 74
+      },
+      {
+        "a5_offset": -3216,
+        "byte_count": 66,
+        "data_offset": 2678,
+        "index": 149,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -3150,
+        "byte_count": 2312,
+        "index": 150,
+        "kind": "zero_run",
+        "zero_entry": 75
+      },
+      {
+        "a5_offset": -838,
+        "byte_count": 4,
+        "data_offset": 2744,
+        "index": 151,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -834,
+        "byte_count": 0,
+        "index": 152,
+        "kind": "zero_run",
+        "zero_entry": 76
+      },
+      {
+        "a5_offset": -834,
+        "byte_count": 4,
+        "data_offset": 2748,
+        "index": 153,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -830,
+        "byte_count": 2,
+        "index": 154,
+        "kind": "zero_run",
+        "zero_entry": 77
+      },
+      {
+        "a5_offset": -828,
+        "byte_count": 8,
+        "data_offset": 2752,
+        "index": 155,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -820,
+        "byte_count": 2,
+        "index": 156,
+        "kind": "zero_run",
+        "zero_entry": 78
+      },
+      {
+        "a5_offset": -818,
+        "byte_count": 4,
+        "data_offset": 2760,
+        "index": 157,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -814,
+        "byte_count": 0,
+        "index": 158,
+        "kind": "zero_run",
+        "zero_entry": 79
+      },
+      {
+        "a5_offset": -814,
+        "byte_count": 8,
+        "data_offset": 2764,
+        "index": 159,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -806,
+        "byte_count": 0,
+        "index": 160,
+        "kind": "zero_run",
+        "zero_entry": 80
+      },
+      {
+        "a5_offset": -806,
+        "byte_count": 8,
+        "data_offset": 2772,
+        "index": 161,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -798,
+        "byte_count": 0,
+        "index": 162,
+        "kind": "zero_run",
+        "zero_entry": 81
+      },
+      {
+        "a5_offset": -798,
+        "byte_count": 4,
+        "data_offset": 2780,
+        "index": 163,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -794,
+        "byte_count": 2,
+        "index": 164,
+        "kind": "zero_run",
+        "zero_entry": 82
+      },
+      {
+        "a5_offset": -792,
+        "byte_count": 4,
+        "data_offset": 2784,
+        "index": 165,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -788,
+        "byte_count": 0,
+        "index": 166,
+        "kind": "zero_run",
+        "zero_entry": 83
+      },
+      {
+        "a5_offset": -788,
+        "byte_count": 20,
+        "data_offset": 2788,
+        "index": 167,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -768,
+        "byte_count": 0,
+        "index": 168,
+        "kind": "zero_run",
+        "zero_entry": 84
+      },
+      {
+        "a5_offset": -768,
+        "byte_count": 4,
+        "data_offset": 2808,
+        "index": 169,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -764,
+        "byte_count": 2,
+        "index": 170,
+        "kind": "zero_run",
+        "zero_entry": 85
+      },
+      {
+        "a5_offset": -762,
+        "byte_count": 4,
+        "data_offset": 2812,
+        "index": 171,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -758,
+        "byte_count": 0,
+        "index": 172,
+        "kind": "zero_run",
+        "zero_entry": 86
+      },
+      {
+        "a5_offset": -758,
+        "byte_count": 44,
+        "data_offset": 2816,
+        "index": 173,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -714,
+        "byte_count": 512,
+        "index": 174,
+        "kind": "zero_run",
+        "zero_entry": 87
+      },
+      {
+        "a5_offset": -202,
+        "byte_count": 10,
+        "data_offset": 2860,
+        "index": 175,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -192,
+        "byte_count": 86,
+        "index": 176,
+        "kind": "zero_run",
+        "zero_entry": 88
+      },
+      {
+        "a5_offset": -106,
+        "byte_count": 4,
+        "data_offset": 2870,
+        "index": 177,
+        "kind": "words"
+      },
+      {
+        "a5_offset": -102,
+        "byte_count": 58,
+        "index": 178,
+        "kind": "zero_run",
+        "zero_entry": 89
+      },
+      {
+        "a5_offset": -44,
+        "byte_count": 44,
+        "data_offset": 2874,
+        "index": 179,
+        "kind": "words"
+      },
+      {
+        "a5_offset": 0,
+        "byte_count": 0,
+        "index": 180,
+        "kind": "zero_run",
+        "zero_entry": 90
+      }
+    ],
     "format": "Hellcats A5 World Compressed Initializer Data",
     "properties": {
-      "printable_ascii_runs": [
-        {
-          "offset": 47,
-          "text": "Taps"
-        },
-        {
-          "offset": 2370,
-          "text": "Hellcats"
-        },
-        {
-          "offset": 2445,
-          "text": "``````@@@@@@@@@@@@@@@@@@@@"
-        },
-        {
-          "offset": 2567,
-          "text": "Engine"
-        },
-        {
-          "offset": 2575,
-          "text": "Short Engine"
-        },
-        {
-          "offset": 2597,
-          "text": "Distant Explosion"
-        },
-        {
-          "offset": 2615,
-          "text": "Wheel"
-        },
-        {
-          "offset": 2621,
-          "text": "Gear"
-        },
-        {
-          "offset": 2631,
-          "text": "Grass"
-        },
-        {
-          "offset": 2637,
-          "text": "Ditch"
-        },
-        {
-          "offset": 2643,
-          "text": "Wind"
-        },
-        {
-          "offset": 2649,
-          "text": "Explosion"
-        },
-        {
-          "offset": 2659,
-          "text": "Distant Explosion"
-        },
-        {
-          "offset": 2679,
-          "text": "Hellcats Saved Settings"
-        },
-        {
-          "offset": 2703,
-          "text": "Pacific Conflict"
-        },
-        {
-          "offset": 2721,
-          "text": "Player and Score Data"
-        },
-        {
-          "offset": 2860,
-          "text": "Hellcats"
-        },
-        {
-          "offset": 2874,
-          "text": "BKj "
-        },
-        {
-          "offset": 2888,
-          "text": "BKj "
-        },
-        {
-          "offset": 2902,
-          "text": "BKj "
-        }
-      ],
-      "structure_status": "unresolved",
-      "u16_word_count": 1459,
-      "word_aligned": true,
-      "zero_byte_count": 684,
-      "zero_byte_fraction": 0.234407
+      "byte_order": "big_endian",
+      "consumer": "CODE 1 0x34 (C runtime start-up)",
+      "expanded_bytes": 8798,
+      "expands_from_a5_offset": -8798,
+      "structure_status": "verified",
+      "word_count": 1459,
+      "zero_runs_from": "ZERO 0",
+      "zero_word_count": 90
     },
     "trailing_bytes": 0
   },
@@ -175,7 +1357,5 @@
   },
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
-  "unresolved": [
-    "Binary layout and field semantics remain unidentified."
-  ]
+  "unresolved": []
 }

@@ -36,7 +36,9 @@ undefined DAT_00000059;
  * Output: void; clears eight words, sets word 0 to 1, and classifies word 1.
  * Block dependencies: DAT_216e0017, DAT_216e0016, DAT_0000028e,
  * (short)_DAT_00000b22. No direct callee in this block; no direct caller found
- * in the ten original C exports. Runtime/indirect callers remain unknown.
+ * in the ten original C exports, and none in the bytes: no branch to 0x48 in ID09, no jump-table
+ * slot naming it [PROVEN, tools/decomp/xrefs.py]; an indirect call through a computed address
+ * remains possible.
  * Field-population block also reads DAT_0000021e, DAT_00000059,
  * DAT_00000291, DAT_000001fb, DAT_000002dc and DAT_00000210.
  * Later code reads _DAT_000003f6 and _DAT_00000a58; it writes additional
@@ -199,7 +201,8 @@ short sysenvirons_glue_fallback /* Original: FUN_00000048 */ (short versionReque
  * Neighbouring unexported glue in ID09.bin (HYPOTHESIS, same IOParam pattern):
  * 0x2de FSClose ($A001), 0x2fa/0x2fe FSRead/FSWrite ($A002/$A003, D1 selects),
  * 0x344 GetVol ($A014), 0x368 GetEOF ($A011), 0x38c GetFPos ($A018).
- * Callers: none in the exports (inter-segment calls go via the jump table).
+ * Callers: none in the exports (inter-segment calls go via the jump table): slot $2a2, used by
+ * ID08 load_overlay_from_resource, JSR $2a2(A5) at 0x28 and 0x44 [PROVEN, tools/decomp/xrefs.py].
  */
 /* VERIFIED (ID09::FUN_000002a6): ID09.bin 0x2a6..0x2dc checked against an independent capstone disassembly
  * (ID09 maps Ghidra address = file offset): Pascal glue FSOpen(fileName, vRefNum, VAR refNum): OSErr -
@@ -245,7 +248,9 @@ short fsopen_glue /* Original: FUN_000002a6 */ (Str255 *fileName,short vRefNum,s
  * Following unexported glue: 0x3d6/0x3dc push selectors 10/12 and call $ADED
  * (Pack6 auto-pop: IUMagString / IUMagIDString) [PROVEN, bytes; block below];
  * 0x404 NumToString via $A9EE (Pack7, selector 0); 0x416 in-place C->Pascal
- * string conversion (c2pstr-like) (HYPOTHESIS). Callers: none in the exports.
+ * string conversion (c2pstr-like) (HYPOTHESIS). Callers: none in the exports, but in the bytes
+ * 0x404 is slot $2f2 (3 JSRs, ID05 from 0x5b8), 0x416 slot $302 (13 JSRs, ID02 and ID04),
+ * 0x3d6 slot $2ea (ID04 0x1054, rank_pilots_by_score) and 0x3dc has no slot and no reference [PROVEN, tools/decomp/xrefs.py].
  */
 /* Unexported functions at ID09 offsets 0x3d6 and 0x3dc (not in Ghidra's export; Pascal glue).
  * Recovered names (comment only): iucompstring_glue (0x3d6, jump-table slot $2ea) and
@@ -295,7 +300,9 @@ void swapmmumode_glue /* Original: FUN_000003c2 */ (char *mode)
  * Output: original buffer pointer; count payload bytes shifted left one byte,
  * followed by a zero byte. Embedded zero bytes are copied, not skipped.
  * Side effects: writes only buffer[0..initial_count]; no global accesses.
- * Known callers: none found in the ten original C exports.
+ * Known callers: none found in the ten original C exports; in the bytes it is jump-table slot $2fa,
+ * with 17 JSR $2fa(A5) uses in ID02 and ID04 (e.g. ID02 0x1dca, run_duty_roster_dialog 0x95a /
+ * 0x964) [PROVEN, tools/decomp/xrefs.py].
  * Known callees: none.
  * Evidence: ID09.c:132-141 zero-extends the byte count, copies forward from
  * cursor[1], then writes zero:142 returns the original pointer.

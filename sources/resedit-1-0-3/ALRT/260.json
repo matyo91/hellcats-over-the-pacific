@@ -15,14 +15,14 @@
     {
       "evidence": "* Bytes 0x560..0x584 [PROVEN]: JT $47a(0x104); return CautionAlert(260, nil).",
       "function_or_context": "confirm_erase_high_scores",
-      "line": 502,
+      "line": 504,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "return CautionAlert(0x104,0);                 /* $A988 (result via a local word) */",
       "function_or_context": "confirm_erase_high_scores",
-      "line": 511,
+      "line": 513,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

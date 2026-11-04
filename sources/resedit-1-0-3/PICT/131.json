@@ -15,14 +15,697 @@
     {
       "evidence": "* GetNewDialog(0x8a = DLOG 138 \"About Hellcats 1-Bit\") when A5-0x137a == 1, else GetNewDialog(0x7f = DLOG 127 \"About Hellcats\"); returns at once when it fails. JT $472; ShowWindow; DrawDialog; SetPort; GetDItem(item 3), MoveTo its box, TextFont(1), TextSize(8); GetResource(vers, 1) ($A9A0) and draws a 5-character version \"M.m.r\" from its first word: M = (word >> 8) + '0', m = ((word & 0xf0) >> 8) + '0' - always '0', an original bug (>> 4 was surely meant) [PROVEN, bytes] - r = (word & 0xf) + '0'",
       "function_or_context": "show_about_dialog",
-      "line": 2277,
+      "line": 2279,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }
   ],
   "decoded": {
-    "consumed_bytes": 10,
-    "elements": [],
+    "consumed_bytes": 1302,
+    "elements": [
+      {
+        "index": 1,
+        "length": 1,
+        "name": "Version",
+        "offset": 10,
+        "opcode": "0x11"
+      },
+      {
+        "index": 2,
+        "kind": 130,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 12,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 3,
+        "kind": 100,
+        "length": 12,
+        "name": "LongComment",
+        "offset": 15,
+        "opcode": "0xA1"
+      },
+      {
+        "index": 4,
+        "length": 10,
+        "name": "Clip",
+        "offset": 28,
+        "opcode": "0x01"
+      },
+      {
+        "index": 5,
+        "length": 8,
+        "name": "PnPat",
+        "offset": 39,
+        "opcode": "0x09"
+      },
+      {
+        "index": 6,
+        "length": 8,
+        "name": "paintRect",
+        "offset": 48,
+        "opcode": "0x31"
+      },
+      {
+        "index": 7,
+        "kind": 150,
+        "length": 16,
+        "name": "LongComment",
+        "offset": 57,
+        "opcode": "0xA1"
+      },
+      {
+        "index": 8,
+        "kind": 154,
+        "length": 12,
+        "name": "LongComment",
+        "offset": 74,
+        "opcode": "0xA1"
+      },
+      {
+        "index": 9,
+        "length": 10,
+        "name": "Clip",
+        "offset": 87,
+        "opcode": "0x01"
+      },
+      {
+        "font_id": 3,
+        "font_name": "Geneva",
+        "index": 10,
+        "length": 11,
+        "name": "FontName",
+        "offset": 98,
+        "opcode": "0x2C"
+      },
+      {
+        "index": 11,
+        "length": 2,
+        "name": "TxFont",
+        "offset": 110,
+        "opcode": "0x03"
+      },
+      {
+        "index": 12,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 113,
+        "opcode": "0x04"
+      },
+      {
+        "index": 13,
+        "length": 2,
+        "name": "TxSize",
+        "offset": 115,
+        "opcode": "0x0D"
+      },
+      {
+        "index": 14,
+        "length": 12,
+        "name": "DHDVText",
+        "offset": 118,
+        "opcode": "0x2B",
+        "text": "Hellcats\r"
+      },
+      {
+        "index": 15,
+        "length": 22,
+        "name": "LongText",
+        "offset": 131,
+        "opcode": "0x28",
+        "text": "Over the Pacific\r"
+      },
+      {
+        "index": 16,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 154,
+        "opcode": "0x04"
+      },
+      {
+        "index": 17,
+        "length": 15,
+        "name": "DHDVText",
+        "offset": 156,
+        "opcode": "0x2B",
+        "text": "Version 1.0\r"
+      },
+      {
+        "index": 18,
+        "length": 2,
+        "name": "TxSize",
+        "offset": 172,
+        "opcode": "0x0D"
+      },
+      {
+        "index": 19,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 175,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 20,
+        "length": 31,
+        "name": "LongText",
+        "offset": 180,
+        "opcode": "0x28",
+        "text": "Software © Copyright 1991 "
+      },
+      {
+        "index": 21,
+        "length": 20,
+        "name": "DHDVText",
+        "offset": 212,
+        "opcode": "0x2B",
+        "text": "by Parsoft, Inc.\r"
+      },
+      {
+        "index": 22,
+        "length": 26,
+        "name": "LongText",
+        "offset": 233,
+        "opcode": "0x28",
+        "text": "All Rights Reserved.\r"
+      },
+      {
+        "index": 23,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 260,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 24,
+        "length": 31,
+        "name": "LongText",
+        "offset": 265,
+        "opcode": "0x28",
+        "text": "Portions © Copyright 1991 "
+      },
+      {
+        "index": 25,
+        "length": 26,
+        "name": "DHDVText",
+        "offset": 297,
+        "opcode": "0x2B",
+        "text": "by Graphic Simulations "
+      },
+      {
+        "index": 26,
+        "length": 16,
+        "name": "DHDVText",
+        "offset": 324,
+        "opcode": "0x2B",
+        "text": "Corporation.\r"
+      },
+      {
+        "index": 27,
+        "length": 26,
+        "name": "LongText",
+        "offset": 341,
+        "opcode": "0x28",
+        "text": "All Rights Reserved.\r"
+      },
+      {
+        "index": 28,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 368,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 29,
+        "length": 34,
+        "name": "LongText",
+        "offset": 373,
+        "opcode": "0x28",
+        "text": "Database Models created with "
+      },
+      {
+        "index": 30,
+        "length": 25,
+        "name": "DHDVText",
+        "offset": 408,
+        "opcode": "0x2B",
+        "text": "MultiGen™ by Software "
+      },
+      {
+        "index": 31,
+        "length": 17,
+        "name": "DHDVText",
+        "offset": 434,
+        "opcode": "0x2B",
+        "text": "Systems, Inc.\r"
+      },
+      {
+        "index": 32,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 452,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 33,
+        "length": 30,
+        "name": "LongText",
+        "offset": 457,
+        "opcode": "0x28",
+        "text": "Unauthorized duplication "
+      },
+      {
+        "index": 34,
+        "length": 15,
+        "name": "DHDVText",
+        "offset": 488,
+        "opcode": "0x2B",
+        "text": "prohibited.\r"
+      },
+      {
+        "index": 35,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 504,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 36,
+        "length": 3,
+        "name": "DVText",
+        "offset": 509,
+        "opcode": "0x2A",
+        "text": "\r"
+      },
+      {
+        "index": 37,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 513,
+        "opcode": "0x04"
+      },
+      {
+        "index": 38,
+        "length": 13,
+        "name": "LongText",
+        "offset": 515,
+        "opcode": "0x28",
+        "text": "Credits:"
+      },
+      {
+        "index": 39,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 529,
+        "opcode": "0x04"
+      },
+      {
+        "index": 40,
+        "length": 3,
+        "name": "DHText",
+        "offset": 531,
+        "opcode": "0x29",
+        "text": "\r"
+      },
+      {
+        "index": 41,
+        "length": 6,
+        "name": "LongText",
+        "offset": 535,
+        "opcode": "0x28",
+        "text": "\r"
+      },
+      {
+        "index": 42,
+        "length": 2,
+        "name": "TxSize",
+        "offset": 542,
+        "opcode": "0x0D"
+      },
+      {
+        "index": 43,
+        "length": 28,
+        "name": "LongText",
+        "offset": 545,
+        "opcode": "0x28",
+        "text": "Written by Eric Parker\r"
+      },
+      {
+        "index": 44,
+        "length": 16,
+        "name": "DHDVText",
+        "offset": 574,
+        "opcode": "0x2B",
+        "text": "Parsoft, Inc."
+      },
+      {
+        "index": 45,
+        "length": 2,
+        "name": "TxSize",
+        "offset": 591,
+        "opcode": "0x0D"
+      },
+      {
+        "index": 46,
+        "length": 3,
+        "name": "DHText",
+        "offset": 594,
+        "opcode": "0x29",
+        "text": "\r"
+      },
+      {
+        "index": 47,
+        "length": 6,
+        "name": "LongText",
+        "offset": 598,
+        "opcode": "0x28",
+        "text": "\r"
+      },
+      {
+        "index": 48,
+        "length": 3,
+        "name": "DVText",
+        "offset": 605,
+        "opcode": "0x2A",
+        "text": "\r"
+      },
+      {
+        "index": 49,
+        "length": 30,
+        "name": "LongText",
+        "offset": 609,
+        "opcode": "0x28",
+        "text": "Sound and B/W Rendering:\r"
+      },
+      {
+        "index": 50,
+        "length": 14,
+        "name": "DHDVText",
+        "offset": 640,
+        "opcode": "0x2B",
+        "text": "Trey Smith\r"
+      },
+      {
+        "index": 51,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 655,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 52,
+        "length": 31,
+        "name": "LongText",
+        "offset": 660,
+        "opcode": "0x28",
+        "text": "Manual and Documentation:\r"
+      },
+      {
+        "index": 53,
+        "length": 15,
+        "name": "DHDVText",
+        "offset": 692,
+        "opcode": "0x2B",
+        "text": "Jeff Morgan\r"
+      },
+      {
+        "index": 54,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 708,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 55,
+        "length": 3,
+        "name": "DVText",
+        "offset": 713,
+        "opcode": "0x2A",
+        "text": "\r"
+      },
+      {
+        "index": 56,
+        "length": 22,
+        "name": "LongText",
+        "offset": 717,
+        "opcode": "0x28",
+        "text": "Database Design:\r"
+      },
+      {
+        "index": 57,
+        "length": 15,
+        "name": "DHDVText",
+        "offset": 740,
+        "opcode": "0x2B",
+        "text": "Jeff Morgan\r"
+      },
+      {
+        "index": 58,
+        "length": 15,
+        "name": "DHDVText",
+        "offset": 756,
+        "opcode": "0x2B",
+        "text": "Eric Parker\r"
+      },
+      {
+        "index": 59,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 772,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 60,
+        "length": 3,
+        "name": "DVText",
+        "offset": 777,
+        "opcode": "0x2A",
+        "text": "\r"
+      },
+      {
+        "index": 61,
+        "length": 29,
+        "name": "LongText",
+        "offset": 781,
+        "opcode": "0x28",
+        "text": "Additional Programming:\r"
+      },
+      {
+        "index": 62,
+        "length": 14,
+        "name": "DHDVText",
+        "offset": 811,
+        "opcode": "0x2B",
+        "text": "Trey Smith\r"
+      },
+      {
+        "index": 63,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 826,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 64,
+        "length": 3,
+        "name": "DVText",
+        "offset": 831,
+        "opcode": "0x2A",
+        "text": "\r"
+      },
+      {
+        "index": 65,
+        "length": 24,
+        "name": "LongText",
+        "offset": 835,
+        "opcode": "0x28",
+        "text": "Special Thanks to:\r"
+      },
+      {
+        "index": 66,
+        "length": 15,
+        "name": "DHDVText",
+        "offset": 860,
+        "opcode": "0x2B",
+        "text": "Craig Fryar\r"
+      },
+      {
+        "index": 67,
+        "length": 20,
+        "name": "LongText",
+        "offset": 876,
+        "opcode": "0x28",
+        "text": "Apple Computer\r"
+      },
+      {
+        "index": 68,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 897,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 69,
+        "length": 3,
+        "name": "DVText",
+        "offset": 902,
+        "opcode": "0x2A",
+        "text": "\r"
+      },
+      {
+        "index": 70,
+        "length": 31,
+        "name": "LongText",
+        "offset": 906,
+        "opcode": "0x28",
+        "text": "3D models and scenes were "
+      },
+      {
+        "index": 71,
+        "length": 29,
+        "name": "DHDVText",
+        "offset": 938,
+        "opcode": "0x2B",
+        "text": "generated using MultiGen® "
+      },
+      {
+        "index": 72,
+        "length": 27,
+        "name": "DVText",
+        "offset": 968,
+        "opcode": "0x2A",
+        "text": "from Software Systems of "
+      },
+      {
+        "index": 73,
+        "length": 17,
+        "name": "DHDVText",
+        "offset": 996,
+        "opcode": "0x2B",
+        "text": "San Jose, CA.\r"
+      },
+      {
+        "index": 74,
+        "length": 4,
+        "name": "DHDVText",
+        "offset": 1014,
+        "opcode": "0x2B",
+        "text": "\r"
+      },
+      {
+        "index": 75,
+        "length": 26,
+        "name": "LongText",
+        "offset": 1019,
+        "opcode": "0x28",
+        "text": "MultiGen is a unique "
+      },
+      {
+        "index": 76,
+        "length": 35,
+        "name": "LongText",
+        "offset": 1046,
+        "opcode": "0x28",
+        "text": "interactive graphics modeling "
+      },
+      {
+        "index": 77,
+        "length": 32,
+        "name": "DVText",
+        "offset": 1082,
+        "opcode": "0x2A",
+        "text": "system designed for the rapid "
+      },
+      {
+        "index": 78,
+        "length": 31,
+        "name": "DVText",
+        "offset": 1115,
+        "opcode": "0x2A",
+        "text": "generation of out-the-window "
+      },
+      {
+        "index": 79,
+        "length": 27,
+        "name": "DHDVText",
+        "offset": 1147,
+        "opcode": "0x2B",
+        "text": "visual scenes and is in "
+      },
+      {
+        "index": 80,
+        "length": 29,
+        "name": "LongText",
+        "offset": 1175,
+        "opcode": "0x28",
+        "text": "widespread use at major "
+      },
+      {
+        "index": 81,
+        "length": 27,
+        "name": "DHDVText",
+        "offset": 1205,
+        "opcode": "0x2B",
+        "text": "military and commercial "
+      },
+      {
+        "index": 82,
+        "length": 34,
+        "name": "LongText",
+        "offset": 1233,
+        "opcode": "0x28",
+        "text": "simulation facilities around "
+      },
+      {
+        "index": 83,
+        "length": 13,
+        "name": "DHDVText",
+        "offset": 1268,
+        "opcode": "0x2B",
+        "text": "the world."
+      },
+      {
+        "index": 84,
+        "kind": 151,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 1282,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 85,
+        "kind": 100,
+        "length": 12,
+        "name": "LongComment",
+        "offset": 1285,
+        "opcode": "0xA1"
+      },
+      {
+        "index": 86,
+        "kind": 131,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 1298,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 87,
+        "length": 0,
+        "name": "OpEndPic",
+        "offset": 1301,
+        "opcode": "0xFF"
+      }
+    ],
     "format": "QuickDraw Picture",
     "properties": {
       "actual_size_bytes": 1302,
@@ -34,17 +717,98 @@
         "top": -1,
         "width": 137
       },
+      "comment_kinds": [
+        130,
+        100,
+        150,
+        154,
+        151,
+        100,
+        131
+      ],
       "declared_size_word": 1302,
-      "opcode_decode_status": "not_implemented",
+      "opcode_count": 87,
+      "opcode_decode_status": "verified",
       "opcode_stream_offset": 10,
+      "png_pixel_comparison": {
+        "png_path": "sources/resedit-1-0-3/PICT/131.png",
+        "reason": "The picture draws text, which needs the System's fonts to render.",
+        "status": "not_run"
+      },
       "quickdraw_version": "version_1",
       "render_exports": [
         "sources/resedit-1-0-3/PICT/131.png",
         "sources/resedit-1-0-3/PICT/131.bmp"
       ],
-      "rendering_fidelity_status": "not_pixel_verified"
+      "rendering_fidelity_status": "not_pixel_verified",
+      "text": [
+        "Hellcats\r",
+        "Over the Pacific\r",
+        "Version 1.0\r",
+        "\r",
+        "Software © Copyright 1991 ",
+        "by Parsoft, Inc.\r",
+        "All Rights Reserved.\r",
+        "\r",
+        "Portions © Copyright 1991 ",
+        "by Graphic Simulations ",
+        "Corporation.\r",
+        "All Rights Reserved.\r",
+        "\r",
+        "Database Models created with ",
+        "MultiGen™ by Software ",
+        "Systems, Inc.\r",
+        "\r",
+        "Unauthorized duplication ",
+        "prohibited.\r",
+        "\r",
+        "\r",
+        "Credits:",
+        "\r",
+        "\r",
+        "Written by Eric Parker\r",
+        "Parsoft, Inc.",
+        "\r",
+        "\r",
+        "\r",
+        "Sound and B/W Rendering:\r",
+        "Trey Smith\r",
+        "\r",
+        "Manual and Documentation:\r",
+        "Jeff Morgan\r",
+        "\r",
+        "\r",
+        "Database Design:\r",
+        "Jeff Morgan\r",
+        "Eric Parker\r",
+        "\r",
+        "\r",
+        "Additional Programming:\r",
+        "Trey Smith\r",
+        "\r",
+        "\r",
+        "Special Thanks to:\r",
+        "Craig Fryar\r",
+        "Apple Computer\r",
+        "\r",
+        "\r",
+        "3D models and scenes were ",
+        "generated using MultiGen® ",
+        "from Software Systems of ",
+        "San Jose, CA.\r",
+        "\r",
+        "MultiGen is a unique ",
+        "interactive graphics modeling ",
+        "system designed for the rapid ",
+        "generation of out-the-window ",
+        "visual scenes and is in ",
+        "widespread use at major ",
+        "military and commercial ",
+        "simulation facilities around ",
+        "the world."
+      ]
     },
-    "trailing_bytes": 1292
+    "trailing_bytes": 0
   },
   "evidence": {
     "appledouble_resource_fork_offset": 82,
@@ -120,7 +884,5 @@
   },
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
-  "unresolved": [
-    "1292 trailing bytes are not decoded."
-  ]
+  "unresolved": []
 }

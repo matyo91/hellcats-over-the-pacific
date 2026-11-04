@@ -92,8 +92,14 @@ Important details:
 - All 14 `cicn` resources have parsed PixMaps, masks, monochrome bitmaps, embedded
   color tables and indexed pixels. Decoded RGB pixels match the existing PNGs
   exactly (zero differing pixels).
-- `PICT` headers and bounds are decoded and rendered exports are indexed, but
-  the full QuickDraw opcode streams are not yet enumerated.
+- `PICT` opcode streams are walked to `OpEndPic` (Inside Macintosh: Imaging With
+  QuickDraw, appendix A) and consumed exactly: PICT 128 is version 2 (one
+  `PackBitsRect`), PICTs 129 / 130 are version 1 `PackBitsRect` bands between
+  picture comments, and PICTs 131 / 1000 are version 1 text pictures whose
+  strings `inspect` lists. Rendered exports are indexed beside them, and the
+  three bitmap pictures, rendered independently from their opcodes (PackBits rows,
+  PICT 128's colour table), match their PNGs pixel for pixel. The two text
+  pictures are not rendered, since they need the System's fonts.
 - CODE records link the protected binary, Ghidra export, semantic decompilation,
   and function annotations found in that decompilation. CODE 0 has no function
   bodies: its `ID00.c` is an explicitly reconstructed structural export, and
@@ -131,14 +137,29 @@ ensures every discovered item has both binary and JSON companions.
 
 ## Remaining uncertainty
 
-- `DATA:0` is proven by CODE to initialize the A5 world with `ZERO:0`, but its
-  complete compression grammar and internal regions remain unresolved.
-- `MDPL:128` is a 594-byte mixed-field structure containing Geneva/font-like and
-  line-layout data, but no documented layout or executable consumer has been
-  established. No gameplay role is claimed.
+(`DATA:0` is resolved: CODE 1 0x34, the C runtime's start-up, copies its words up
+from CurStackBase and, after each zero word, clears as many bytes as the next word
+of `ZERO:0`. Its 1459 words hold 90 zero words, one per `ZERO:0` entry, and the
+expansion is exactly CODE 0's 0x225e bytes below A5. `inspect DATA 0` lists each
+run with its A5 offset; `DREL:0` then relocates its pointers.)
+
+- `MDPL:128` is mostly resolved, and no game code reads it: it is the layout
+  record of PICT 131's first text object, kept by the drawing program that
+  signed the picture's application comments 'MDPL'. Its directory blocks tile
+  the resource. Its three Geneva styles and their runs (bold 10, plain 10,
+  plain 9 from characters 0 / 26 / 38) match the picture's TxFace / TxSize
+  changes, and its 31 line starts cover the 311-character text. The first 17
+  match the picture's line starts and the later ones sit one character on. The
+  header before 0x5c and the block at 0x136..0x182 stay uninterpreted.
 - The primary `DITL:135` export remains eight bytes short. The 1.0.4 completion
   is useful corroboration, not proof that the missing 1.0.3 bytes were identical.
-- PICT QuickDraw opcode enumeration and independent render comparison remain to
-  be implemented.
-- Palette associations for `icI4`/`icI8` are not asserted solely from matching
-  IDs. Their pixel dimensions/depth and raw indices are verified.
+  No code opens it: ID05's only GetNewDialog (0x5f4) opens DLOG 1000.
+- The text PICTs (131, 1000) are not rendered independently: their exports'
+  glyphs depend on the System fonts.
+- The indexed icons are checked through the System's default colour tables
+  (clut 4 / clut 8, as the Finder draws them), not through any palette matched
+  by ID. Both icl4, both icl8 and both ics4 match their PNG exports pixel for
+  pixel, transparent export pixels aside. Both ics8 exports differ on the ramp
+  indices (215 and up), the same indices the icl8 exports render exactly, so
+  those two exports are the suspects. The strict mirror decodes icons from
+  their bytes through the same tables and does not read them.

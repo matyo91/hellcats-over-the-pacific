@@ -15,21 +15,21 @@
     {
       "evidence": "* LINK -$4a; itemHit = 1; saves A5-0x13a4 / -0x225e; early exit to 0x3116; GetNewDialog(0x85), JT $472, five BSR 0xec,",
       "function_or_context": "set_score_item_text",
-      "line": 1782,
+      "line": 1784,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "* (no summary); else GetNewDialog(133,...) $A97C,",
       "function_or_context": "show_mission_summary_dialog",
-      "line": 1794,
+      "line": 1796,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "dlg = GetNewDialog(0x85,0,-1);                /* $A97C: DLOG 133 \"Mission Summary\" */",
       "function_or_context": "show_mission_summary_dialog",
-      "line": 1822,
+      "line": 1824,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

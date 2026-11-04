@@ -477,9 +477,12 @@
     "format": "Hellcats A5 World Zero-Run Initialization Word Stream",
     "properties": {
       "byte_order": "big_endian",
-      "field_semantics": "partially_unresolved",
+      "consumer": "CODE 1 0x34 (C runtime start-up)",
+      "field_semantics": "verified",
+      "meaning": "zero bytes following each zero word of DATA 0, in order",
       "word_count": 90,
-      "word_width_bytes": 2
+      "word_width_bytes": 2,
+      "zero_byte_total": 5880
     },
     "trailing_bytes": 0
   },

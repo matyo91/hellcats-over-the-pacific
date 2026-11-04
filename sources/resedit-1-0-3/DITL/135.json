@@ -530,7 +530,7 @@
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
   "unresolved": [
-    "Binary layout and field semantics remain unidentified.",
+    "The layout is decoded; the payload ends inside item 9, at least 8 bytes of its header missing.",
     "Curated ResEdit payload differs from the independently recovered 1.0.4 resource-fork payload; both hashes and sizes are recorded and neither original source was overwritten."
   ]
 }

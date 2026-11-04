@@ -617,6 +617,54 @@ def compare_cicn_png(b: bytes, decoded: dict[str, Any], png: Path) -> dict[str, 
             "comparison": "decoded indexed pixels mapped through embedded cicn ColorTable versus PNG RGB pixels"}
 
 
+CLUT4 = [(0xFFFF, 0xFFFF, 0xFFFF), (0xFC00, 0xF37D, 0x052F), (0xFFFF, 0x648A, 0x028C), (0xDD6B, 0x08C2, 0x06A2),
+         (0xF2D7, 0x0856, 0x84EC), (0x46E3, 0x0000, 0xA53E), (0x0000, 0x0000, 0xD400), (0x0241, 0xAB54, 0xEAFF),
+         (0x1F21, 0xB793, 0x1431), (0x0000, 0x64AF, 0x11B0), (0x5600, 0x2C9D, 0x0524), (0x90D7, 0x7160, 0x3A34),
+         (0xC000, 0xC000, 0xC000), (0x8000, 0x8000, 0x8000), (0x4000, 0x4000, 0x4000), (0x0000, 0x0000, 0x0000)]
+
+
+def clut8() -> list[tuple[int, int, int]]:
+    """The System's default 8-bit table: the 6 x 6 x 6 cube from white without black (0..214), the
+    ten-step red, green, blue and grey ramps (215..254), black (255)."""
+    levels = (0xFF, 0xCC, 0x99, 0x66, 0x33, 0x00)
+    out = [(r, g, b) for r in levels for g in levels for b in levels][:215]
+    ramp = (0xEE, 0xDD, 0xBB, 0xAA, 0x88, 0x77, 0x55, 0x44, 0x22, 0x11)
+    out += [(v, 0, 0) for v in ramp] + [(0, v, 0) for v in ramp] + [(0, 0, v) for v in ramp] + [(v, v, v) for v in ramp]
+    return out + [(0, 0, 0)]
+
+
+def compare_indexed_icon_png(b: bytes, typ: str, png: Path) -> dict[str, Any]:
+    """An icl4 / icl8 / ics4 / ics8 icon's indices through the System's default 4- or 8-bit table
+    (as the Finder draws them) against its PNG export; pixels the export leaves transparent (its
+    family's mask) are not compared."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return {"status": "not_run", "reason": "Pillow is unavailable"}
+    size, depth = (32 if typ in ("icI4", "icI8") else 16), (4 if typ.endswith("4") else 8)
+    table = [tuple(c >> 8 for c in rgb) for rgb in CLUT4] if depth == 4 else clut8()
+    image = Image.open(png).convert("RGBA")
+    data = image.get_flattened_data() if hasattr(image, "get_flattened_data") else image.getdata()
+    pixels = list(data)
+    if pixels and not isinstance(pixels[0], tuple):
+        pixels = [tuple(pixels[k:k + 4]) for k in range(0, len(pixels), 4)]
+    differing, transparent, indices = 0, 0, set()
+    for k in range(size * size):
+        bit = k * depth
+        value = (b[bit // 8] >> (8 - depth - bit % 8)) & ((1 << depth) - 1)
+        if pixels[k][3] == 0:
+            transparent += 1
+        elif pixels[k][:3] != table[value]:
+            differing += 1
+            indices.add(value)
+    return {"status": "pixel_exact" if differing == 0 and image.size == (size, size) else "mismatch",
+            "png_path": str(png.relative_to(ROOT)), "png_dimensions": list(image.size),
+            "palette": f"System default clut {depth}", "compared_pixels": size * size - transparent,
+            "transparent_pixels_not_compared": transparent, "differing_pixels": differing,
+            "differing_indices": sorted(indices),
+            "comparison": "indices through the default colour table versus PNG pixels"}
+
+
 def compare_monochrome_icon_png(b: bytes, decoded: dict[str, Any], png: Path) -> dict[str, Any]:
     try:
         from PIL import Image
@@ -710,6 +758,107 @@ def decode_word_stream(b: bytes, fmt: str) -> dict[str, Any]:
     return d
 
 
+def decode_zero0(b: bytes) -> dict[str, Any]:
+    """ZERO 0: one word per zero word of DATA 0, the count of further zero bytes after it (CODE 1
+    0x34, the C runtime's start-up: MOVE.W (A2)+,D1, then D1 times CLR.B (A1)+ by DBF)."""
+    d = decode_word_stream(b, "Hellcats A5 World Zero-Run Initialization Word Stream")
+    d["properties"].update({"field_semantics": "verified", "zero_byte_total": sum(e["u16_be"] for e in d["elements"]),
+                            "meaning": "zero bytes following each zero word of DATA 0, in order",
+                            "consumer": "CODE 1 0x34 (C runtime start-up)"})
+    return d
+
+
+def decode_data0(b: bytes) -> dict[str, Any]:
+    """DATA 0: the application globals below A5, compressed. CODE 1 0x34 copies its words from
+    CurStackBase up (MOVE.W (A0)+,(A1)+); after each zero word it clears as many more bytes as
+    the next word of ZERO 0 says, until A1 reaches A5. With ZERO 0 and CODE 0's below-A5 size the
+    expansion is checked to end exactly at A5; each element is a run: copied words, or a zero run,
+    with its A5 offset."""
+    if len(b) % 2:
+        raise DecodeError("DATA 0 is not word-aligned")
+    words = [u16(b, o) for o in range(0, len(b), 2)]
+    zero = (RESEDIT / "ZERO" / "0.bin").read_bytes()
+    runs = [u16(zero, o) for o in range(0, len(zero), 2)]
+    below = u32((RESEDIT / "CODE" / "ID00.bin").read_bytes(), 4)
+    if words.count(0) != len(runs):
+        raise DecodeError(f"DATA 0 has {words.count(0)} zero words for {len(runs)} ZERO 0 entries")
+    elements, at, z, start = [], -below, 0, 0
+    for i, w in enumerate(words):
+        if w == 0:
+            if i + 1 > start:
+                elements.append({"index": len(elements) + 1, "kind": "words", "data_offset": 2 * start,
+                                 "a5_offset": at - 2 * (i + 1 - start) + 2, "byte_count": 2 * (i + 1 - start)})
+            at += 2
+            elements.append({"index": len(elements) + 1, "kind": "zero_run", "zero_entry": z + 1,
+                             "a5_offset": at, "byte_count": runs[z]})
+            at += runs[z]
+            z += 1
+            start = i + 1
+        else:
+            at += 2
+    if start < len(words):
+        elements.append({"index": len(elements) + 1, "kind": "words", "data_offset": 2 * start,
+                         "a5_offset": at - 2 * (len(words) - start), "byte_count": 2 * (len(words) - start)})
+    if at != 0:
+        raise DecodeError(f"DATA 0 with ZERO 0 expands to A5 {at:+#x}, not to A5")
+    d = base_decode("Hellcats A5 World Compressed Initializer Data", len(b))
+    d["properties"] = {"word_count": len(words), "zero_word_count": len(runs), "byte_order": "big_endian",
+                       "expanded_bytes": below, "expands_from_a5_offset": -below,
+                       "zero_runs_from": "ZERO 0", "consumer": "CODE 1 0x34 (C runtime start-up)",
+                       "structure_status": "verified"}
+    d["elements"] = elements
+    return d
+
+
+MDPL_DIRECTORY = (0x5C, 0x80, 0x8C, 0xBC, 0xC8, 0xD4)
+
+
+def decode_mdpl(b: bytes) -> dict[str, Any]:
+    """MDPL 128: the layout record of PICT 131's first text object, as the drawing program that
+    signed the picture's application comments 'MDPL' (kinds 100, objects 7 and 8) kept it; no game
+    code reads it. Proven by the bytes: the size at +4; a directory of (1, offset, length) blocks
+    tiling 0x136 to the end, the last naming the text (0x137 characters, not stored here); three
+    style records at 0x100 (18 bytes: height, ascent, font, face, size) and the style runs at 0x1c6,
+    which match PICT 131's TxFace / TxSize changes at characters 0, 26 and 38 (bold 10, plain 10,
+    plain 9, Geneva); the line count at 0x184 with its line starts at 0x188 (hard and wrapped
+    breaks; the first 17 equal the picture's, later ones one character on, the picture dropping a
+    character) and one (height, ascent) pair per line start up to the end. The header before 0x5c
+    and the block at 0x136..0x182 stay uninterpreted."""
+    if len(b) != 0x252 or u32(b, 4) != len(b):
+        raise DecodeError("MDPL size word does not match its length")
+    blocks = [{"index": i + 1, "directory_offset": o, "flag": u32(b, o), "offset": u32(b, o + 4),
+               "length": u32(b, o + 8)} for i, o in enumerate(MDPL_DIRECTORY)]
+    for prev, nxt in zip(blocks, blocks[1:-1]):
+        if prev["offset"] + prev["length"] != nxt["offset"]:
+            raise DecodeError("MDPL directory blocks do not tile")
+    if blocks[-2]["offset"] + blocks[-2]["length"] != len(b) or blocks[-1]["offset"] != len(b):
+        raise DecodeError("MDPL directory does not end at the resource's end")
+    styles = [{"index": k + 1, "offset": 0x100 + 0x12 * k, "line_height": u16(b, 0x102 + 0x12 * k),
+               "ascent": u16(b, 0x104 + 0x12 * k), "font_id": u16(b, 0x106 + 0x12 * k),
+               "face": b[0x108 + 0x12 * k], "size": u16(b, 0x10A + 0x12 * k)} for k in range(3)]
+    text_length, lines = u16(b, 0x182), u16(b, 0x184)
+    starts = [u16(b, 0x188 + 2 * k) for k in range(lines + 1)]
+    runs, o = [], 0x188 + 2 * (lines + 1)
+    while u16(b, o + 2) != 0xFFFF:
+        runs.append({"start": u16(b, o), "style": u16(b, o + 2)})
+        o += 4
+    runs_end = u16(b, o)
+    o += 4
+    metrics = [{"line_height": u16(b, o + 4 * k), "ascent": u16(b, o + 4 * k + 2)} for k in range((len(b) - o) // 4)]
+    if text_length != blocks[-1]["length"] or starts[-1] != text_length or len(metrics) != lines + 1 \
+            or o + 4 * len(metrics) != len(b):
+        raise DecodeError("MDPL line tables are inconsistent")
+    d = base_decode("Drawing-Program Text Object Layout (PICT 131's first text block)", len(b))
+    d["properties"] = {"size": len(b), "text_length": text_length, "line_count": lines, "line_starts": starts,
+                       "style_runs": runs, "style_runs_end": runs_end, "styles": styles, "line_metrics": metrics,
+                       "matching_picture": "PICT 131 (application comments 'MDPL' objects 7 and 8)",
+                       "game_code_references": 0,
+                       "uninterpreted_ranges": ["0x0000-0x005b", "0x0136-0x0181"],
+                       "structure_status": "partially_resolved"}
+    d["elements"] = blocks
+    return d
+
+
 def decode_data128(b: bytes) -> dict[str, Any]:
     if len(b) < 8:
         raise DecodeError("DATA 128 lacks the two CODE-referenced longs")
@@ -734,20 +883,197 @@ def decode_text128(b: bytes) -> dict[str, Any]:
     return d
 
 
+PICT_FIXED = {0x00: 0, 0x02: 8, 0x03: 2, 0x04: 1, 0x05: 2, 0x06: 4, 0x07: 4, 0x08: 2, 0x09: 8, 0x0A: 8,
+              0x0B: 4, 0x0C: 4, 0x0D: 2, 0x0E: 4, 0x0F: 4, 0x10: 8, 0x15: 2, 0x16: 2, 0x1A: 6, 0x1B: 6,
+              0x1C: 0, 0x1D: 6, 0x1E: 0, 0x1F: 6, 0x20: 8, 0x21: 4, 0x22: 6, 0x23: 2, 0xA0: 2}
+for _base, _n in ((0x30, 8), (0x38, 0), (0x40, 8), (0x48, 0), (0x50, 8), (0x58, 0), (0x60, 12), (0x68, 4),
+                  (0x78, 0), (0x88, 0)):
+    for _k in range(5):
+        PICT_FIXED[_base + _k] = _n
+PICT_NAMES = {0x00: "NOP", 0x01: "Clip", 0x02: "BkPat", 0x03: "TxFont", 0x04: "TxFace", 0x05: "TxMode",
+              0x06: "SpExtra", 0x07: "PnSize", 0x08: "PnMode", 0x09: "PnPat", 0x0A: "FillPat", 0x0B: "OvSize",
+              0x0C: "Origin", 0x0D: "TxSize", 0x0E: "FgColor", 0x0F: "BkColor", 0x10: "TxRatio",
+              0x11: "Version", 0x1E: "DefHilite", 0x28: "LongText", 0x29: "DHText", 0x2A: "DVText",
+              0x2B: "DHDVText", 0x2C: "FontName", 0x2E: "GlyphState", 0x31: "paintRect", 0x90: "BitsRect",
+              0x91: "BitsRgn", 0x98: "PackBitsRect", 0x99: "PackBitsRgn", 0xA0: "ShortComment",
+              0xA1: "LongComment", 0xFF: "OpEndPic", 0x0C00: "HeaderOp"}
+
+
+def _pict_pixels(b: bytes, o: int, v2: bool, packed: bool, rgn: bool) -> tuple[int, dict[str, Any]]:
+    """(Pack)BitsRect / Rgn: a bitmap (or, in version 2 with rowBytes bit 15, a pixel map and its
+    colour table), source and destination rects, mode, the mask region, then the rows (PackBits
+    rows carry a byte count, a word one past 250 row bytes; under 8 row bytes rows are unpacked)."""
+    rb = u16(b, o)
+    pixmap = bool(v2 and rb & 0x8000)
+    row_bytes = rb & 0x3FFF
+    bounds = rect(b, o + 2)
+    rows = struct.unpack(">h", b[o + 6:o + 8])[0] - struct.unpack(">h", b[o + 2:o + 4])[0]
+    o += 10
+    info: dict[str, Any] = {"pixmap": pixmap, "row_bytes": row_bytes, "bounds": bounds, "rows": rows}
+    if pixmap:
+        info["pixel_size"] = u16(b, o + 18)
+        o += 36
+        info["colour_table_entries"] = u16(b, o + 6) + 1
+        info["colour_table_offset"] = o
+        o += 8 + 8 * info["colour_table_entries"]
+    info["source"] = rect(b, o)
+    info["destination"] = rect(b, o + 8)
+    info["transfer_mode"] = u16(b, o + 16)
+    o += 18
+    if rgn:
+        o += u16(b, o)
+    info["row_data_offset"] = o
+    if not packed or row_bytes < 8:
+        o += rows * row_bytes
+    else:
+        for _ in range(rows):
+            o += (2 + u16(b, o)) if row_bytes > 250 else (1 + b[o])
+    return o, info
+
+
 def decode_pict(b: bytes) -> dict[str, Any]:
+    """A QuickDraw picture: size word, frame, then its opcode stream walked to OpEndPic (Inside
+    Macintosh: Imaging With QuickDraw, appendix A): version 1 one-byte opcodes, version 2 word
+    opcodes on word boundaries. Each opcode is an element with its offset and data length (pixel
+    opcodes with their bitmap's layout); the text the text opcodes draw is collected."""
     if len(b) < 10:
         raise DecodeError("PICT header truncated")
-    declared = u16(b, 0)
-    payload = b[10:]
-    version = "version_2" if b"\x00\x11\x02\xff" in payload[:64] else (
-        "version_1" if b"\x11\x01" in payload[:32] else "undetermined")
-    d = base_decode("QuickDraw Picture", 10)
-    d["trailing_bytes"] = len(b) - 10
-    d["properties"] = {"declared_size_word": declared, "actual_size_bytes": len(b),
-                       "bounds": rect(b, 2), "quickdraw_version": version,
-                       "opcode_stream_offset": 10, "opcode_decode_status": "not_implemented",
+    v2 = len(b) >= 14 and u16(b, 10) == 0x0011 and u16(b, 12) == 0x02FF
+    o, elements, texts, comments = 10, [], [], []
+    while True:
+        if o >= len(b):
+            raise DecodeError("PICT opcode stream ends without OpEndPic")
+        if v2:
+            o += o & 1
+            op, o = u16(b, o), o + 2
+        else:
+            op, o = b[o], o + 1
+        start = o
+        entry: dict[str, Any] = {"index": len(elements) + 1, "offset": start - (2 if v2 else 1),
+                                 "opcode": f"0x{op:04X}" if v2 else f"0x{op:02X}", "name": PICT_NAMES.get(op, "")}
+        if op == 0xFF:
+            entry["length"] = 0
+            elements.append(entry)
+            break
+        if op == 0x11:
+            o += 2 if v2 else 1
+        elif op == 0x0C00:
+            o += 24
+        elif op == 0x01 or 0x70 <= op <= 0x74 or 0x80 <= op <= 0x84:
+            o += u16(b, o)
+        elif op in (0x28, 0x29, 0x2A, 0x2B):
+            o += {0x28: 4, 0x29: 1, 0x2A: 1, 0x2B: 2}[op]
+            text = b[o + 1:o + 1 + b[o]].decode("mac_roman")
+            entry["text"] = text
+            texts.append(text)
+            o += 1 + b[o]
+        elif op in (0x2C, 0x2D, 0x2E):
+            if op == 0x2C:
+                entry["font_id"] = u16(b, o + 2)
+                entry["font_name"] = b[o + 5:o + 5 + b[o + 4]].decode("mac_roman")
+            o += 2 + u16(b, o)
+        elif op == 0xA0:
+            entry["kind"] = u16(b, o)
+            comments.append(u16(b, o))
+            o += 2
+        elif op == 0xA1:
+            entry["kind"] = u16(b, o)
+            comments.append(u16(b, o))
+            o += 4 + u16(b, o + 2)
+        elif op in (0x90, 0x91, 0x98, 0x99):
+            o, info = _pict_pixels(b, o, v2, op in (0x98, 0x99), op in (0x91, 0x99))
+            entry.update(info)
+        elif op in PICT_FIXED:
+            o += PICT_FIXED[op]
+        else:
+            raise DecodeError(f"PICT opcode 0x{op:X} at 0x{entry['offset']:X} is not decoded")
+        entry["length"] = o - start
+        elements.append(entry)
+    d = base_decode("QuickDraw Picture", o)
+    d["trailing_bytes"] = len(b) - o
+    d["properties"] = {"declared_size_word": u16(b, 0), "actual_size_bytes": len(b),
+                       "bounds": rect(b, 2), "quickdraw_version": "version_2" if v2 else "version_1",
+                       "opcode_stream_offset": 10, "opcode_decode_status": "verified",
+                       "opcode_count": len(elements), "comment_kinds": comments, "text": texts,
                        "render_exports": []}
+    d["elements"] = elements
     return d
+
+def _unpack_bits(b: bytes, o: int, row_bytes: int) -> tuple[bytes, int]:
+    """One PackBits row: a flag byte n, n + 1 literal bytes (n < 128) or 257 - n copies of the next
+    byte (n > 128; 128 is skipped)."""
+    out = bytearray()
+    while len(out) < row_bytes:
+        n = b[o]
+        o += 1
+        if n < 128:
+            out += b[o:o + n + 1]
+            o += n + 1
+        elif n > 128:
+            out += bytes([b[o]]) * (257 - n)
+            o += 1
+    return bytes(out[:row_bytes]), o
+
+
+def compare_pict_png(b: bytes, decoded: dict[str, Any], png: Path) -> dict[str, Any]:
+    """The picture's bitmap opcodes rendered independently onto a white frame (srcCopy, source and
+    destination the same size; 1-bit bits black, a pixel map's indices through its colour table)
+    and compared with the PNG export. Pictures that draw text need fonts and are not rendered."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return {"status": "not_run", "reason": "Pillow is unavailable"}
+    p = decoded["properties"]
+    if p.get("text"):
+        return {"status": "not_run", "png_path": str(png.relative_to(ROOT)),
+                "reason": "The picture draws text, which needs the System's fonts to render."}
+    frame = p["bounds"]
+    width, height = frame["width"], frame["height"]
+    canvas = [(255, 255, 255)] * (width * height)
+    for e in decoded["elements"]:
+        if "row_data_offset" not in e:
+            continue
+        if e["transfer_mode"] != 0 or e["source"]["width"] != e["destination"]["width"] \
+                or e["source"]["height"] != e["destination"]["height"]:
+            return {"status": "not_run", "reason": f"element {e['index']} is not a same-size srcCopy"}
+        colours = None
+        if e["pixmap"]:
+            ct = e["colour_table_offset"]
+            device = bool(u16(b, ct + 4) & 0x8000)
+            colours = {}
+            for k in range(e["colour_table_entries"]):
+                at = ct + 8 + 8 * k
+                colours[k if device else u16(b, at)] = tuple(u16(b, at + 2 + 2 * c) >> 8 for c in range(3))
+        depth = e.get("pixel_size", 1)
+        o, packed = e["row_data_offset"], e["name"] in ("PackBitsRect", "PackBitsRgn") and e["row_bytes"] >= 8
+        bounds, dst = e["bounds"], e["destination"]
+        for y in range(e["rows"]):
+            if packed:
+                if e["row_bytes"] > 250:
+                    count, o = u16(b, o), o + 2
+                else:
+                    count, o = b[o], o + 1
+                row, _ = _unpack_bits(b, o, e["row_bytes"])
+                o += count
+            else:
+                row, o = b[o:o + e["row_bytes"]], o + e["row_bytes"]
+            sy = bounds["top"] + y
+            if not dst["top"] <= sy < dst["bottom"]:
+                continue
+            for x in range(dst["left"] - bounds["left"], dst["right"] - bounds["left"]):
+                bit = x * depth
+                value = (row[bit // 8] >> (8 - depth - bit % 8)) & ((1 << depth) - 1)
+                colour = colours.get(value, (0, 0, 0)) if colours is not None else ((0, 0, 0) if value else (255, 255, 255))
+                canvas[(sy - frame["top"]) * width + bounds["left"] + x - frame["left"]] = colour
+    image = Image.open(png).convert("RGB")
+    actual = list(image.get_flattened_data() if hasattr(image, "get_flattened_data") else image.getdata())
+    if hasattr(image, "get_flattened_data") and actual and not isinstance(actual[0], tuple):
+        actual = [tuple(actual[k:k + 3]) for k in range(0, len(actual), 3)]
+    differing = sum(a != e for a, e in zip(actual, canvas)) + abs(len(actual) - len(canvas))
+    return {"status": "pixel_exact" if differing == 0 and image.size == (width, height) else "mismatch",
+            "png_path": str(png.relative_to(ROOT)), "png_dimensions": list(image.size),
+            "compared_pixels": min(len(actual), len(canvas)), "differing_pixels": differing,
+            "comparison": "independently rendered bitmap opcodes versus PNG pixels"}
 
 
 def decode_snd(b: bytes) -> dict[str, Any]:
@@ -865,12 +1191,13 @@ def decode_payload(typ: str, rid: int, b: bytes) -> tuple[dict[str, Any], str, l
         elif typ == "HEL1":
             decoded = decode_hel1(b, rid)
         elif typ == "ZERO":
-            decoded = decode_word_stream(b, "Hellcats A5 World Zero-Run Initialization Word Stream")
+            decoded = decode_zero0(b)
         elif typ == "DATA" and rid == 128:
             decoded = decode_data128(b)
         elif typ == "DATA" and rid == 0:
-            decoded = decode_unknown(b, typ)
-            decoded["format"] = "Hellcats A5 World Compressed Initializer Data"
+            decoded = decode_data0(b)
+        elif typ == "MDPL":
+            decoded = decode_mdpl(b)
         elif typ == "TEXT" and rid == 128:
             decoded = decode_text128(b)
         elif typ == "CODE":
@@ -890,7 +1217,16 @@ def decode_payload(typ: str, rid: int, b: bytes) -> tuple[dict[str, Any], str, l
         structure_status = decoded.get("properties", {}).get("structure_status")
         unresolved_format = structure_status not in (None, "verified")
         status = "VERIFIED" if complete and not unresolved_format else "UNKNOWN"
-        unresolved = [] if status == "VERIFIED" else ["Binary layout and field semantics remain unidentified."]
+        cut = next((e for e in decoded.get("elements", []) if isinstance(e, dict) and e.get("status") == "TRUNCATED"), None)
+        if status == "VERIFIED":
+            unresolved = []
+        elif structure_status == "partially_resolved":
+            unresolved = ["Partly decoded; the uninterpreted ranges are listed."]
+        elif structure_status == "partial_truncated" and cut is not None:
+            unresolved = [f"The layout is decoded; the payload ends inside item {cut['index']}, at least "
+                          f"{cut['minimum_missing_bytes']} bytes of its header missing."]
+        else:
+            unresolved = ["Binary layout and field semantics remain unidentified."]
         if decoded.get("trailing_bytes"):
             unresolved.append(f"{decoded['trailing_bytes']} trailing bytes are not decoded.")
         return decoded, status, unresolved
@@ -1148,14 +1484,18 @@ def build_records(write: bool) -> tuple[list[dict[str, Any]], list[str]]:
                 compare_cicn_png(payload, decoded, png) if png.is_file()
                 else {"status": "not_run", "reason": "PNG export is missing"}
             )
+        if typ == "PICT" and decode_status == "VERIFIED":
+            png = RESEDIT / typ / f"{rid}.png"
+            decoded["properties"]["png_pixel_comparison"] = (
+                compare_pict_png(payload, decoded, png) if png.is_file()
+                else {"status": "not_run", "reason": "PNG export is missing"}
+            )
         if typ in ("ICON", "ICN#", "ics#", "icI4", "icI8", "ics4", "ics8"):
             png = RESEDIT / typ / f"{rid}.png"
             if typ in ("ICON", "ICN#", "ics#") and png.is_file():
                 comparison = compare_monochrome_icon_png(payload, decoded, png)
             elif png.is_file():
-                comparison = {"status": "not_run",
-                              "png_path": str(png.relative_to(ROOT)),
-                              "reason": "No palette association is asserted for this raw indexed icon payload."}
+                comparison = compare_indexed_icon_png(payload, typ, png)
             else:
                 comparison = {"status": "not_run", "reason": "PNG export is missing"}
             decoded["properties"]["png_pixel_comparison"] = comparison
@@ -1260,13 +1600,22 @@ def build_records(write: bool) -> tuple[list[dict[str, Any]], list[str]]:
                 "unresolved": alternate_unresolved,
                 "note": "Comparison only; this does not replace the curated ResEdit payload.",
             }
+        if typ == "PICT" and decoded["properties"].get("png_pixel_comparison", {}).get("status") == "mismatch":
+            record["unresolved"].append("The rendered picture differs from its PNG export.")
         if typ == "cicn" and decoded["properties"]["png_pixel_comparison"]["status"] != "pixel_exact":
             record["unresolved"].append("The decoded cicn pixels do not have a verified pixel-exact PNG export.")
         if typ in ("icI4", "icI8", "ics4", "ics8"):
-            record["unresolved"].append("No palette association is asserted; indexed pixels require external Finder palette rules.")
+            comparison = decoded["properties"]["png_pixel_comparison"]
+            if comparison.get("status") == "mismatch":
+                record["unresolved"].append(
+                    f"The PNG export differs from the default colour table on {comparison['differing_pixels']} pixels "
+                    f"(indices {', '.join(map(str, comparison['differing_indices']))}); the icl8 exports, using the same "
+                    "indices, match the table exactly, so the export is the suspect.")
+            elif comparison.get("status") != "pixel_exact":
+                record["unresolved"].append("No palette association is checked; indexed pixels require external Finder palette rules.")
         if typ == "MDPL":
             record["claims"]["identity"] = "PROVEN"
-            record["unresolved"].append("The MDPL type name and internal fields have not been tied to a documented Apple structure.")
+            record["unresolved"].append("The MDPL layout's header (before 0x5c) and its block at 0x136..0x182 are not interpreted; the type is the drawing program's, not a documented Apple structure.")
         if not source_matches:
             record["unresolved"].append(
                 "Curated ResEdit payload differs from the independently recovered 1.0.4 resource-fork payload; both hashes and sizes are recorded and neither original source was overwritten."

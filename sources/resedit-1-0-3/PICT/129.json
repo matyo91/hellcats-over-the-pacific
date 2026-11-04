@@ -13,8 +13,278 @@
   },
   "code_references": [],
   "decoded": {
-    "consumed_bytes": 10,
-    "elements": [],
+    "consumed_bytes": 14637,
+    "elements": [
+      {
+        "index": 1,
+        "length": 1,
+        "name": "Version",
+        "offset": 10,
+        "opcode": "0x11"
+      },
+      {
+        "index": 2,
+        "length": 10,
+        "name": "Clip",
+        "offset": 12,
+        "opcode": "0x01"
+      },
+      {
+        "index": 3,
+        "kind": 130,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 23,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 4,
+        "kind": 142,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 26,
+        "opcode": "0xA0"
+      },
+      {
+        "bounds": {
+          "bottom": 51,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 0,
+          "width": 480
+        },
+        "destination": {
+          "bottom": 51,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 0,
+          "width": 480
+        },
+        "index": 5,
+        "length": 2689,
+        "name": "PackBitsRect",
+        "offset": 29,
+        "opcode": "0x98",
+        "pixmap": false,
+        "row_bytes": 60,
+        "row_data_offset": 58,
+        "rows": 51,
+        "source": {
+          "bottom": 51,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 0,
+          "width": 480
+        },
+        "transfer_mode": 0
+      },
+      {
+        "bounds": {
+          "bottom": 102,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 51,
+          "width": 480
+        },
+        "destination": {
+          "bottom": 102,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 51,
+          "width": 480
+        },
+        "index": 6,
+        "length": 2475,
+        "name": "PackBitsRect",
+        "offset": 2719,
+        "opcode": "0x98",
+        "pixmap": false,
+        "row_bytes": 60,
+        "row_data_offset": 2748,
+        "rows": 51,
+        "source": {
+          "bottom": 102,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 51,
+          "width": 480
+        },
+        "transfer_mode": 0
+      },
+      {
+        "bounds": {
+          "bottom": 153,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 102,
+          "width": 480
+        },
+        "destination": {
+          "bottom": 153,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 102,
+          "width": 480
+        },
+        "index": 7,
+        "length": 2409,
+        "name": "PackBitsRect",
+        "offset": 5195,
+        "opcode": "0x98",
+        "pixmap": false,
+        "row_bytes": 60,
+        "row_data_offset": 5224,
+        "rows": 51,
+        "source": {
+          "bottom": 153,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 102,
+          "width": 480
+        },
+        "transfer_mode": 0
+      },
+      {
+        "bounds": {
+          "bottom": 204,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 153,
+          "width": 480
+        },
+        "destination": {
+          "bottom": 204,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 153,
+          "width": 480
+        },
+        "index": 8,
+        "length": 2473,
+        "name": "PackBitsRect",
+        "offset": 7605,
+        "opcode": "0x98",
+        "pixmap": false,
+        "row_bytes": 60,
+        "row_data_offset": 7634,
+        "rows": 51,
+        "source": {
+          "bottom": 204,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 153,
+          "width": 480
+        },
+        "transfer_mode": 0
+      },
+      {
+        "bounds": {
+          "bottom": 255,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 204,
+          "width": 480
+        },
+        "destination": {
+          "bottom": 255,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 204,
+          "width": 480
+        },
+        "index": 9,
+        "length": 2428,
+        "name": "PackBitsRect",
+        "offset": 10079,
+        "opcode": "0x98",
+        "pixmap": false,
+        "row_bytes": 60,
+        "row_data_offset": 10108,
+        "rows": 51,
+        "source": {
+          "bottom": 255,
+          "height": 51,
+          "left": 0,
+          "right": 480,
+          "top": 204,
+          "width": 480
+        },
+        "transfer_mode": 0
+      },
+      {
+        "bounds": {
+          "bottom": 302,
+          "height": 47,
+          "left": 0,
+          "right": 480,
+          "top": 255,
+          "width": 480
+        },
+        "destination": {
+          "bottom": 302,
+          "height": 47,
+          "left": 0,
+          "right": 480,
+          "top": 255,
+          "width": 480
+        },
+        "index": 10,
+        "length": 2121,
+        "name": "PackBitsRect",
+        "offset": 12508,
+        "opcode": "0x98",
+        "pixmap": false,
+        "row_bytes": 60,
+        "row_data_offset": 12537,
+        "rows": 47,
+        "source": {
+          "bottom": 302,
+          "height": 47,
+          "left": 0,
+          "right": 480,
+          "top": 255,
+          "width": 480
+        },
+        "transfer_mode": 0
+      },
+      {
+        "index": 11,
+        "kind": 143,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 14630,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 12,
+        "kind": 131,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 14633,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 13,
+        "length": 0,
+        "name": "OpEndPic",
+        "offset": 14636,
+        "opcode": "0xFF"
+      }
+    ],
     "format": "QuickDraw Picture",
     "properties": {
       "actual_size_bytes": 14637,
@@ -26,17 +296,36 @@
         "top": 0,
         "width": 480
       },
+      "comment_kinds": [
+        130,
+        142,
+        143,
+        131
+      ],
       "declared_size_word": 14637,
-      "opcode_decode_status": "not_implemented",
+      "opcode_count": 13,
+      "opcode_decode_status": "verified",
       "opcode_stream_offset": 10,
+      "png_pixel_comparison": {
+        "compared_pixels": 144960,
+        "comparison": "independently rendered bitmap opcodes versus PNG pixels",
+        "differing_pixels": 0,
+        "png_dimensions": [
+          480,
+          302
+        ],
+        "png_path": "sources/resedit-1-0-3/PICT/129.png",
+        "status": "pixel_exact"
+      },
       "quickdraw_version": "version_1",
       "render_exports": [
         "sources/resedit-1-0-3/PICT/129.png",
         "sources/resedit-1-0-3/PICT/129.bmp"
       ],
-      "rendering_fidelity_status": "not_pixel_verified"
+      "rendering_fidelity_status": "not_pixel_verified",
+      "text": []
     },
-    "trailing_bytes": 14627
+    "trailing_bytes": 0
   },
   "evidence": {
     "appledouble_resource_fork_offset": 82,
@@ -119,7 +408,5 @@
   },
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
-  "unresolved": [
-    "14627 trailing bytes are not decoded."
-  ]
+  "unresolved": []
 }

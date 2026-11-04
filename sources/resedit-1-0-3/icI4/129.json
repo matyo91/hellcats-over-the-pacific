@@ -24,9 +24,18 @@
       "palette_reference": null,
       "pixel_data_bytes": 512,
       "png_pixel_comparison": {
+        "compared_pixels": 1024,
+        "comparison": "indices through the default colour table versus PNG pixels",
+        "differing_indices": [],
+        "differing_pixels": 0,
+        "palette": "System default clut 4",
+        "png_dimensions": [
+          32,
+          32
+        ],
         "png_path": "sources/resedit-1-0-3/icI4/129.png",
-        "reason": "No palette association is asserted for this raw indexed icon payload.",
-        "status": "not_run"
+        "status": "pixel_exact",
+        "transparent_pixels_not_compared": 0
       },
       "width": 32
     },
@@ -95,7 +104,5 @@
   },
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
-  "unresolved": [
-    "No palette association is asserted; indexed pixels require external Finder palette rules."
-  ]
+  "unresolved": []
 }

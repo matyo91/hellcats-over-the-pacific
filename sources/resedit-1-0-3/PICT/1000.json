@@ -13,8 +13,306 @@
   },
   "code_references": [],
   "decoded": {
-    "consumed_bytes": 10,
-    "elements": [],
+    "consumed_bytes": 776,
+    "elements": [
+      {
+        "index": 1,
+        "length": 1,
+        "name": "Version",
+        "offset": 10,
+        "opcode": "0x11"
+      },
+      {
+        "index": 2,
+        "kind": 130,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 12,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 3,
+        "kind": 150,
+        "length": 16,
+        "name": "LongComment",
+        "offset": 15,
+        "opcode": "0xA1"
+      },
+      {
+        "index": 4,
+        "kind": 154,
+        "length": 12,
+        "name": "LongComment",
+        "offset": 32,
+        "opcode": "0xA1"
+      },
+      {
+        "index": 5,
+        "length": 10,
+        "name": "Clip",
+        "offset": 45,
+        "opcode": "0x01"
+      },
+      {
+        "font_id": 3,
+        "font_name": "Geneva",
+        "index": 6,
+        "length": 11,
+        "name": "FontName",
+        "offset": 56,
+        "opcode": "0x2C"
+      },
+      {
+        "index": 7,
+        "length": 2,
+        "name": "TxFont",
+        "offset": 68,
+        "opcode": "0x03"
+      },
+      {
+        "index": 8,
+        "length": 2,
+        "name": "TxSize",
+        "offset": 71,
+        "opcode": "0x0D"
+      },
+      {
+        "index": 9,
+        "length": 6,
+        "name": "GlyphState",
+        "offset": 74,
+        "opcode": "0x2E"
+      },
+      {
+        "index": 10,
+        "length": 12,
+        "name": "DHDVText",
+        "offset": 81,
+        "opcode": "0x2B",
+        "text": "  1. Run "
+      },
+      {
+        "index": 11,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 94,
+        "opcode": "0x04"
+      },
+      {
+        "index": 12,
+        "length": 10,
+        "name": "DHText",
+        "offset": 96,
+        "opcode": "0x29",
+        "text": "Hellcats"
+      },
+      {
+        "index": 13,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 107,
+        "opcode": "0x04"
+      },
+      {
+        "index": 14,
+        "length": 70,
+        "name": "DHText",
+        "offset": 109,
+        "opcode": "0x29",
+        "text": "  from your original unlocked floppy.  Any installation copies made\r"
+      },
+      {
+        "index": 15,
+        "length": 37,
+        "name": "LongText",
+        "offset": 180,
+        "opcode": "0x28",
+        "text": "      from your original floppy "
+      },
+      {
+        "index": 16,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 218,
+        "opcode": "0x04"
+      },
+      {
+        "index": 17,
+        "length": 17,
+        "name": "DHText",
+        "offset": 220,
+        "opcode": "0x29",
+        "text": "after this time"
+      },
+      {
+        "index": 18,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 238,
+        "opcode": "0x04"
+      },
+      {
+        "index": 19,
+        "length": 44,
+        "name": "DHText",
+        "offset": 240,
+        "opcode": "0x29",
+        "text": "  will contain your unique serial number.\r"
+      },
+      {
+        "index": 20,
+        "length": 88,
+        "name": "LongText",
+        "offset": 285,
+        "opcode": "0x28",
+        "text": "  2. Record your serial number on the registration card provided with the package.\r"
+      },
+      {
+        "index": 21,
+        "length": 79,
+        "name": "DVText",
+        "offset": 374,
+        "opcode": "0x2A",
+        "text": "  3. Complete the card and mail it.  We will return to you (by mail only) an "
+      },
+      {
+        "index": 22,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 454,
+        "opcode": "0x04"
+      },
+      {
+        "index": 23,
+        "length": 11,
+        "name": "LongText",
+        "offset": 456,
+        "opcode": "0x28",
+        "text": "UNLOCK"
+      },
+      {
+        "index": 24,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 468,
+        "opcode": "0x04"
+      },
+      {
+        "index": 25,
+        "length": 3,
+        "name": "DHText",
+        "offset": 470,
+        "opcode": "0x29",
+        "text": "\r"
+      },
+      {
+        "index": 26,
+        "length": 11,
+        "name": "LongText",
+        "offset": 474,
+        "opcode": "0x28",
+        "text": "      "
+      },
+      {
+        "index": 27,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 486,
+        "opcode": "0x04"
+      },
+      {
+        "index": 28,
+        "length": 6,
+        "name": "DHText",
+        "offset": 488,
+        "opcode": "0x29",
+        "text": "CODE"
+      },
+      {
+        "index": 29,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 495,
+        "opcode": "0x04"
+      },
+      {
+        "index": 30,
+        "length": 17,
+        "name": "DHText",
+        "offset": 497,
+        "opcode": "0x29",
+        "text": ".  Any copy of "
+      },
+      {
+        "index": 31,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 515,
+        "opcode": "0x04"
+      },
+      {
+        "index": 32,
+        "length": 10,
+        "name": "DHText",
+        "offset": 517,
+        "opcode": "0x29",
+        "text": "Hellcats"
+      },
+      {
+        "index": 33,
+        "length": 1,
+        "name": "TxFace",
+        "offset": 528,
+        "opcode": "0x04"
+      },
+      {
+        "index": 34,
+        "length": 56,
+        "name": "DHText",
+        "offset": 530,
+        "opcode": "0x29",
+        "text": "  with your serial number can be unlocked by entering\r"
+      },
+      {
+        "index": 35,
+        "length": 93,
+        "name": "LongText",
+        "offset": 587,
+        "opcode": "0x28",
+        "text": "      this UNLOCK CODE in the box below.  Note: when entering the UNLOCK CODE, you must\r"
+      },
+      {
+        "index": 36,
+        "length": 87,
+        "name": "DVText",
+        "offset": 681,
+        "opcode": "0x2A",
+        "text": "      also enter an appropriate word from your manual—but this will be the last time!"
+      },
+      {
+        "index": 37,
+        "kind": 151,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 769,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 38,
+        "kind": 131,
+        "length": 2,
+        "name": "ShortComment",
+        "offset": 772,
+        "opcode": "0xA0"
+      },
+      {
+        "index": 39,
+        "length": 0,
+        "name": "OpEndPic",
+        "offset": 775,
+        "opcode": "0xFF"
+      }
+    ],
     "format": "QuickDraw Picture",
     "properties": {
       "actual_size_bytes": 776,
@@ -26,17 +324,49 @@
         "top": -1,
         "width": 438
       },
+      "comment_kinds": [
+        130,
+        150,
+        154,
+        151,
+        131
+      ],
       "declared_size_word": 776,
-      "opcode_decode_status": "not_implemented",
+      "opcode_count": 39,
+      "opcode_decode_status": "verified",
       "opcode_stream_offset": 10,
+      "png_pixel_comparison": {
+        "png_path": "sources/resedit-1-0-3/PICT/1000.png",
+        "reason": "The picture draws text, which needs the System's fonts to render.",
+        "status": "not_run"
+      },
       "quickdraw_version": "version_1",
       "render_exports": [
         "sources/resedit-1-0-3/PICT/1000.png",
         "sources/resedit-1-0-3/PICT/1000.bmp"
       ],
-      "rendering_fidelity_status": "not_pixel_verified"
+      "rendering_fidelity_status": "not_pixel_verified",
+      "text": [
+        "  1. Run ",
+        "Hellcats",
+        "  from your original unlocked floppy.  Any installation copies made\r",
+        "      from your original floppy ",
+        "after this time",
+        "  will contain your unique serial number.\r",
+        "  2. Record your serial number on the registration card provided with the package.\r",
+        "  3. Complete the card and mail it.  We will return to you (by mail only) an ",
+        "UNLOCK",
+        "\r",
+        "      ",
+        "CODE",
+        ".  Any copy of ",
+        "Hellcats",
+        "  with your serial number can be unlocked by entering\r",
+        "      this UNLOCK CODE in the box below.  Note: when entering the UNLOCK CODE, you must\r",
+        "      also enter an appropriate word from your manual—but this will be the last time!"
+      ]
     },
-    "trailing_bytes": 766
+    "trailing_bytes": 0
   },
   "evidence": {
     "appledouble_resource_fork_offset": 82,
@@ -119,7 +449,5 @@
   },
   "schema": "hellcats-resedit-resource-v1",
   "type_code_references": [],
-  "unresolved": [
-    "766 trailing bytes are not decoded."
-  ]
+  "unresolved": []
 }

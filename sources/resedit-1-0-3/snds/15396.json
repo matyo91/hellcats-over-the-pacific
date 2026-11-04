@@ -114,7 +114,7 @@
     {
       "evidence": "* GetNamedResource('snd ', 8(A6)) $A9A1 to -4, NIL -> MOVEQ #1; JT $28a, JT $27a; FreeMem CMPI.L #$3000 / BGE,",
       "function_or_context": "release_sound_slots",
-      "line": 2626,
+      "line": 2693,
       "scope": "resource_type_by_name_not_individual_id",
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
@@ -122,7 +122,7 @@
     {
       "evidence": "* C args: +8 Pascal name, +0xc short slot. h = GetNamedResource('snd ', name) ($A9A1); none -> return 1. HNoPurge (JT $28a, $A04A); HUnlock (JT $27a); if FreeMem < 0x3000 and MaxMem(&grow) < 0x3000: HUnlock, HPurge, ReleaseResource ($A9A3), return 1 (out of memory). Makes sure the resource is marked purgeable (GetResAttrs $A9A6; if bit 0x20 is clear, SetResAttrs | 0x20 $A9A7 and ChangedResource); A5-0xd62[slot] = h; returns 0. Callers: FUN_00001f8e (0x1fc8.., thirteen call sites). Ghidra could n",
       "function_or_context": "load_named_sound_into_slot",
-      "line": 2632,
+      "line": 2699,
       "scope": "resource_type_by_name_not_individual_id",
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
@@ -130,7 +130,7 @@
     {
       "evidence": "* No LINK; CLR.L both globals; GetNamedResource('snd ', A5-0x2128); BEQ out; JT $272; SndNewChannel(&chan, 0, $80, nil);",
       "function_or_context": "show_mission_summary_dialog",
-      "line": 1905,
+      "line": 1907,
       "scope": "resource_type_by_name_not_individual_id",
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
@@ -138,7 +138,7 @@
     {
       "evidence": "*   h = GetNamedResource('snd ' (0x736e6420), name = Pascal string at",
       "function_or_context": "play_named_sound_async",
-      "line": 1914,
+      "line": 1916,
       "scope": "resource_type_by_name_not_individual_id",
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
