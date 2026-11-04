@@ -639,6 +639,42 @@ def check_port_headers() -> None:
         fail("strict-port headers:\n  " + "\n  ".join(problems))
 
 
+def check_runtime_headers() -> None:
+    """Every routine of GAME_RUNTIME.md's index of routines outside the 740 is defined in the runtime and
+    its doc comment cites the address the index gives."""
+    doc = (REPO_ROOT / "docs" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
+    index = doc[doc.index("## Routines outside the 740"):]
+    rest = index.find("\n## ", 5)
+    index = index if rest < 0 else index[:rest]
+    sources = [(REPO_ROOT / p).read_text(encoding="utf-8").split("\n") for p in (
+        "godot/hellcats/runtime/unexported.gd", "godot/hellcats/runtime/overlay_loader.gd", "godot/hellcats/toolbox/toolbox.gd")]
+    problems, count = [], 0
+    for line in index.split("\n"):
+        cells = [c.strip() for c in line.split("|")[1:-1]]
+        if len(cells) < 4 or not re.match(r"0x[0-9a-f]+$", cells[1]):
+            continue
+        count += 1
+        address = int(cells[1], 16)
+        name = next(n for n in re.findall(r"`([^`]+)`", cells[3]) if not n.endswith(".gd"))
+        header = None
+        for lines in sources:
+            at = next((i for i, x in enumerate(lines) if re.match(rf"(static )?func {re.escape(name)}\(", x)), None)
+            if at is not None:
+                j, header = at - 1, []
+                while j >= 0 and lines[j].startswith("##"):
+                    header.insert(0, lines[j])
+                    j -= 1
+                break
+        if header is None:
+            problems.append(f"{cells[0]} {cells[1]}: {name} is not defined in the runtime")
+        elif not re.search(rf"0x0*{address:x}\b", " ".join(header)):
+            problems.append(f"{cells[0]} {cells[1]}: {name}'s doc comment does not cite it")
+    if count != 35:
+        problems.append(f"the index lists {count} routines, not 35")
+    if problems:
+        fail("runtime headers:\n  " + "\n  ".join(problems))
+
+
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
@@ -653,6 +689,7 @@ def main() -> int:
         ("entry-points", check_entry_points),
         ("call-annotations", check_trap_annotations),
         ("port-headers", check_port_headers),
+        ("runtime-headers", check_runtime_headers),
     ]
     optional = [
         ("optional-capstone", check_optional_capstone),
