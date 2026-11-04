@@ -85,16 +85,27 @@ func ansi_ldiv(result: int, numer: int, denom: int) -> void:
 func _ctype(c: int, mask: int) -> int:
 	return C68kScript.u16(C68kScript.s8(memory.read_u8(C68kScript.u32(a5 + A5_CTYPE_TABLE + (c & 0xff))))) & mask
 
+## 0x9a (FUN_0000009a).
 func ansi_isalnum(c: int) -> int: return _ctype(c, 0xd0)   ## 0x9a
+## 0xb6 (FUN_000000b6).
 func ansi_isalpha(c: int) -> int: return _ctype(c, 0xc0)   ## 0xb6
+## 0xd2 (FUN_000000d2).
 func ansi_iscntrl(c: int) -> int: return _ctype(c, 0x3)    ## 0xd2
+## 0xee (FUN_000000ee).
 func ansi_isdigit(c: int) -> int: return _ctype(c, 0x10)   ## 0xee
+## 0x10a (FUN_0000010a).
 func ansi_isgraph(c: int) -> int: return _ctype(c, 0xd8)   ## 0x10a
+## 0x126 (FUN_00000126).
 func ansi_islower(c: int) -> int: return _ctype(c, 0x80)   ## 0x126
+## 0x142 (FUN_00000142).
 func ansi_isprint(c: int) -> int: return _ctype(c, 0xdc)   ## 0x142
+## 0x15e (FUN_0000015e).
 func ansi_ispunct(c: int) -> int: return _ctype(c, 0x8)    ## 0x15e
+## 0x17a (FUN_0000017a).
 func ansi_isspace(c: int) -> int: return _ctype(c, 0x6)    ## 0x17a
+## 0x196 (FUN_00000196).
 func ansi_isupper(c: int) -> int: return _ctype(c, 0x40)   ## 0x196
+## 0x1b2 (FUN_000001b2).
 func ansi_isxdigit(c: int) -> int: return _ctype(c, 0x30)  ## 0x1b2
 
 ## 0x1ce: a lower-case character (class bit 7) has bit 5 flipped; the word is returned
@@ -349,6 +360,7 @@ func set_back_color_index(index: int) -> void:
 func design_x_to_screen(x: int) -> int:
 	return _design_to_screen(x, -0x1372)
 
+## 0x1680 (FUN_00001680).
 func design_y_to_screen(y: int) -> int:
 	return _design_to_screen(y, -0x1370)
 
@@ -621,15 +633,19 @@ func swap_mmu_mode_a5safe() -> void:
 func dispose_handle_a5safe(h: int) -> void:
 	_jt(JT_DISPOSE_HANDLE, [h])
 
+## 0x1a84 (FUN_00001a84).
 func hlock_a5safe(h: int) -> void:
 	_jt(JT_HLOCK, [h])
 
+## 0x1aa8 (FUN_00001aa8).
 func hunlock_a5safe(h: int) -> void:
 	_jt(JT_HUNLOCK, [h])
 
+## 0x1acc (FUN_00001acc).
 func hpurge_a5safe(h: int) -> void:
 	_jt(JT_HPURGE, [h])
 
+## 0x1af0 (FUN_00001af0).
 func hnopurge_a5safe(h: int) -> void:
 	_jt(JT_HNOPURGE, [h])
 

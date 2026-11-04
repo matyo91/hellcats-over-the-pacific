@@ -606,6 +606,39 @@ def check_trap_annotations() -> None:
         fail("call annotations:\n  " + "\n  ".join(problems))
 
 
+def check_port_headers() -> None:
+    """Every strict-port function cites the address it translates in its doc comment: a leading
+    "## 0xnnnn" that is one of its mapping rows' source addresses (overlay: file or runtime), or that
+    address elsewhere in the comment."""
+    mapping = json.loads((REPO_ROOT / "godot" / "strict_port" / "mappings" / "functions.json").read_text(encoding="utf-8"))
+    rows = mapping["functions"] if isinstance(mapping, dict) else mapping
+    targets: dict[tuple[str, str], list[int]] = {}
+    for r in rows:
+        targets.setdefault((r["target_file"], r["target_function"]), []).append(int(r["source_address"], 16))
+    texts: dict[str, list[str]] = {}
+    problems = []
+    for (path, name), addresses in sorted(targets.items()):
+        lines = texts.setdefault(path, (REPO_ROOT / path).read_text(encoding="utf-8").split("\n"))
+        at = next((i for i, line in enumerate(lines) if re.match(rf"(static )?func {re.escape(name)}\(", line)), None)
+        if at is None:
+            problems.append(f"{path}: {name} not found")
+            continue
+        header = []
+        j = at - 1
+        while j >= 0 and lines[j].startswith("##"):
+            header.insert(0, lines[j])
+            j -= 1
+        accepted = {a for x in addresses for a in (x, x - 0x20, x + 0x20)}
+        lead = re.match(r"## (0x[0-9a-f]+)", header[0]) if header else None
+        if lead:
+            if int(lead.group(1), 16) not in accepted:
+                problems.append(f"{path}: {name} leads with {lead.group(1)}, not its source address")
+        elif not any(re.search(rf"0x0*{a:x}\b", " ".join(header)) for a in accepted):
+            problems.append(f"{path}: {name} does not cite its source address")
+    if problems:
+        fail("strict-port headers:\n  " + "\n  ".join(problems))
+
+
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
@@ -619,6 +652,7 @@ def main() -> int:
         ("xrefs", check_xrefs),
         ("entry-points", check_entry_points),
         ("call-annotations", check_trap_annotations),
+        ("port-headers", check_port_headers),
     ]
     optional = [
         ("optional-capstone", check_optional_capstone),

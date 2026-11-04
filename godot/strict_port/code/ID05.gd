@@ -178,6 +178,7 @@ func encode_code28_to_buf54(value: int) -> int:
 func decode_code_to_long_a(code: int) -> int:
 	return _decode26(code)
 
+## 0xbde (FUN_00000bde).
 func decode_code_to_long_b(code: int) -> int:
 	return _decode26(code)
 
@@ -278,6 +279,7 @@ func get_machine_screen_fingerprint(machine: int, out_b: int, out_c: int, depth:
 func read_DATA128_pair(out1: int, out2: int) -> void:
 	_read_pair(0x44415441, out1, out2)
 
+## 0x214 (FUN_00000214).
 func read_TEXT128_pair(out1: int, out2: int) -> void:
 	_read_pair(0x54455854, out1, out2)
 
@@ -297,6 +299,7 @@ func _read_pair(type: int, out1: int, out2: int) -> void:
 func write_DATA128_pair(v1: int, v2: int) -> void:
 	_write_pair(0x44415441, v1, v2)
 
+## 0x270 (FUN_00000270).
 func write_TEXT128_pair(v1: int, v2: int) -> void:
 	_write_pair(0x54455854, v1, v2)
 

@@ -468,6 +468,7 @@ func add_rect_polygon(colour: int, x0: int, y0: int, x1: int, y1: int) -> void:
 func rebase_edge_rows_for_band(n: int) -> void:
 	_shift_edge_rows(C68kScript.s16(n), -1)
 
+## 0xdca (FUN_00000dca).
 func restore_edge_rows_after_band(n: int) -> void:
 	_shift_edge_rows(-C68kScript.s16(n), 1)
 

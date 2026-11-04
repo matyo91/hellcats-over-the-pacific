@@ -71,6 +71,7 @@ func _item_handle(dialog: int, item: int) -> int:
 func disable_dialog_control(dialog: int, item: int) -> void:
 	_trap(TRAP_HILITE_CONTROL, [0xff, _item_handle(dialog, item)])
 
+## 0x2e (FUN_0000002e).
 func enable_dialog_control(dialog: int, item: int) -> void:
 	_trap(TRAP_HILITE_CONTROL, [0, _item_handle(dialog, item)])
 
@@ -78,6 +79,7 @@ func enable_dialog_control(dialog: int, item: int) -> void:
 func hide_dialog_control(dialog: int, item: int) -> void:
 	_trap(TRAP_HIDE_CONTROL, [_item_handle(dialog, item)])
 
+## 0x78 (FUN_00000078).
 func show_dialog_control(dialog: int, item: int) -> void:
 	_trap(TRAP_SHOW_CONTROL, [_item_handle(dialog, item)])
 
@@ -198,6 +200,7 @@ func show_scenery_open_error_alert(message: int) -> int:
 func ask_save_changes() -> int:
 	return _caution(0x101)
 
+## 0x560 (FUN_00000560).
 func confirm_erase_high_scores() -> int:
 	return _caution(0x104)
 
@@ -622,6 +625,7 @@ func fuel_slider_dialog_filter(dialog: int, event: int, item_hit: int, item: int
 func scenario_selection_filter_proc(dialog: int, event: int, item_hit: int) -> int:
 	return _slider_filter(dialog, event, item_hit, 5)
 
+## 0xe48 (FUN_00000e48).
 func refuel_dialog_filter_proc(dialog: int, event: int, item_hit: int) -> int:
 	return _slider_filter(dialog, event, item_hit, 3)
 

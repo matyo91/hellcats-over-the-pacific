@@ -481,6 +481,7 @@ func _init(param_memory = null) -> void:
 	code_table[0x6eae] = Callable(self, "clear_flag_00020ae4")
 
 
+## 0x2e08 (FUN_00002e08; runtime 0x2de8).
 ## move.l 4(a7),d0 / bge / neg.l: NEG.L leaves 0x80000000 unchanged, so abs_int(INT_MIN) is INT_MIN.
 static func abs_int(value: int) -> int:
 	value = C68kScript.s32(value)
@@ -488,6 +489,7 @@ static func abs_int(value: int) -> int:
 		value = C68kScript.s32(-value)
 	return value
 
+## 0x3c68 (FUN_00003c68; runtime 0x3c48).
 ## Signature as restored in the semantic C (stack longs 8..0x1c(A6)); suba.l, signed cmp.l,
 ## add.l and asr.l #2 all wrap or shift at 32 bits.
 static func approx_dist3_xyz(ax: int, ay: int, az: int, bx: int, by: int, bz: int) -> int:
@@ -509,10 +511,12 @@ static func approx_dist3_xyz(ax: int, ay: int, az: int, bx: int, by: int, bz: in
 		dmax = d3
 	return C68kScript.s32(dmax + C68kScript.asr32(d1 + d2, 2))
 
+## 0x1358c (FUN_0001358c; runtime 0x1356c).
 ## Source parameter names, expression order, and byte result are preserved.
 static func contact_pair_hash(param_1: int, param_2: int) -> int:
 	return C68kScript.u8(C68kScript.u8(param_1) ^ (C68kScript.s8(param_2) << 2))
 
+## 0x3b98 (FUN_00003b98; runtime 0x3b78; also the false entry FUN_00003be0).
 ## Object position +0x18 / +0x1c / +0x20 minus the camera (suba.l, 32-bit); the metric is
 ## stored at +0x10 and also left in D0 (return restored in the semantic C).
 func update_object_camera_metric(obj: int) -> int:
@@ -536,6 +540,7 @@ func update_object_camera_metric(obj: int) -> int:
 	memory.write_u32(obj + 0x10, C68kScript.u32(dmax + C68kScript.asr32(d1 + d2, 2)))
 	return memory.read_s32(obj + 0x10)
 
+## 0x3c00 (FUN_00003c00; runtime 0x3be0; also the false entry FUN_00003c48).
 ## Signature (x, y, z) as restored in the semantic C (stack longs 8 / 0xc / 0x10(A6)).
 func compute_camera_abs_metric(x: int, y: int, z: int) -> int:
 	assert(memory != null, "compute_camera_abs_metric requires original global memory")
@@ -557,6 +562,7 @@ func compute_camera_abs_metric(x: int, y: int, z: int) -> int:
 		dmax = d3
 	return C68kScript.s32(dmax + C68kScript.asr32(d1 + d2, 2))
 
+## 0x1d76 (FUN_00001d76; runtime 0x1d56; also the false entry FUN_00001db8).
 ## Piecewise-linear lookup in the 256-word table (index angle >> 6 with the +0x3f bias of a
 ## negative angle, 6-bit fraction, muls.l, add.w / ext.l). Callers pass 0..0x3fff.
 func sin_fixed14(angle: int) -> int:
@@ -583,6 +589,7 @@ func sin_fixed14(angle: int) -> int:
 		delta = C68kScript.s32(delta + 0x3f)
 	return C68kScript.s16(memory.read_s16(DAT_0001ab6c + C68kScript.asr32(idx_src, 6) * 2) + C68kScript.s16(C68kScript.asr32(delta, 6)))
 
+## 0x1dd8 (FUN_00001dd8; runtime 0x1db8).
 ## Same code as sin_fixed14 on the cosine table.
 func cos_fixed14(angle: int) -> int:
 	assert(memory != null, "cos_fixed14 requires the original cos_table in memory")
@@ -608,6 +615,7 @@ func cos_fixed14(angle: int) -> int:
 		delta = C68kScript.s32(delta + 0x3f)
 	return C68kScript.s16(memory.read_s16(DAT_0001ad6c + C68kScript.asr32(idx_src, 6) * 2) + C68kScript.s16(C68kScript.asr32(delta, 6)))
 
+## 0x202a (FUN_0000202a; runtime 0x200a).
 ## Each cos / sin result is stored as a word, cos first (move.w d0,abs.l).
 func load_attitude_angle_sincos(angle1: int, angle2: int, angle3: int, angle4: int) -> void:
 	assert(memory != null, "load_attitude_angle_sincos requires original global memory")
@@ -631,6 +639,7 @@ func load_attitude_angle_sincos(angle1: int, angle2: int, angle3: int, angle4: i
 	memory.write_u16(DAT_0001d7f0, C68kScript.u16(value))
 	return
 
+## 0x20a0 (FUN_000020a0; runtime 0x2080).
 func load_attitude_angle_sincos_5_6(angle5: int, angle6: int) -> void:
 	assert(memory != null, "load_attitude_angle_sincos_5_6 requires original global memory")
 	var value: int
@@ -645,6 +654,7 @@ func load_attitude_angle_sincos_5_6(angle5: int, angle6: int) -> void:
 	memory.write_u16(DAT_0001d7e8, C68kScript.u16(value))
 	return
 
+## 0x20e6 (FUN_000020e6; runtime 0x20c6).
 ## ~Rx (angle 1), ~Ry (angle 2), ~Rz (angle 3); neg.w wraps at 16 bits.
 func fill_attitude_rotation_bases() -> void:
 	assert(memory != null, "fill_attitude_rotation_bases requires original global memory")
@@ -677,6 +687,7 @@ func fill_attitude_rotation_bases() -> void:
 	memory.write_u16(DAT_0001d7a4 + 0x10, 0x1000)
 	return
 
+## 0x21a0 (FUN_000021a0; runtime 0x2180).
 ## ~Ry from angle 4.
 func fill_attitude_rotation_basis_4() -> void:
 	assert(memory != null, "fill_attitude_rotation_basis_4 requires original global memory")
@@ -691,6 +702,7 @@ func fill_attitude_rotation_basis_4() -> void:
 	memory.write_u16(DAT_0001d78c + 0x10, memory.read_u16(DAT_0001d7ee))
 	return
 
+## 0x21e0 (FUN_000021e0; runtime 0x21c0).
 ## ~Rx from angle 4 (same matrix as basis 4).
 func fill_attitude_rotation_basis_4_rx() -> void:
 	assert(memory != null, "fill_attitude_rotation_basis_4_rx requires original global memory")
@@ -705,6 +717,7 @@ func fill_attitude_rotation_basis_4_rx() -> void:
 	memory.write_u16(DAT_0001d78c + 0x10, memory.read_u16(DAT_0001d7ee))
 	return
 
+## 0x2220 (FUN_00002220; runtime 0x2200).
 ## ~Rx (angle 5) and ~Ry (angle 6).
 func fill_attitude_rotation_bases_5_6() -> void:
 	assert(memory != null, "fill_attitude_rotation_bases_5_6 requires original global memory")
@@ -728,6 +741,7 @@ func fill_attitude_rotation_bases_5_6() -> void:
 	memory.write_u16(DAT_0001d75c + 0x10, memory.read_u16(DAT_0001d7e6))
 	return
 
+## 0x1d02 (FUN_00001d02; runtime 0x1ce2; also the false entry FUN_00001d56).
 ## dst[3i+j] = (a[3i]*b[j] + a[3i+1]*b[3+j] + a[3i+2]*b[6+j]) asr 12: muls.w 16x16 -> 32,
 ## add.l, asr.l #12, move.w. Returns a0 = b + 6 (the C's b_next). dst must not alias a or b.
 func matmul3x3_s16(a: int, b: int, dst: int) -> int:
@@ -761,6 +775,7 @@ func matmul3x3_s16(a: int, b: int, dst: int) -> int:
 			break
 	return b_next
 
+## 0x2562 (FUN_00002562; runtime 0x2542).
 ## out = R4 * Rz, temp = out * Rx, out = temp * Ry. temp is the frame local at a6 - 0x12
 ## (link.w a6,#-0x14), i.e. a7 - 0x16 with a7 = this function's entry stack pointer.
 func finalize_attitude_matrix_4ang(out: int) -> void:
@@ -773,6 +788,7 @@ func finalize_attitude_matrix_4ang(out: int) -> void:
 	matmul3x3_s16(temp, DAT_0001d7bc, out)
 	return
 
+## 0x25a8 (FUN_000025a8; runtime 0x2588).
 ## load_attitude_angle_sincos receives (angle1, angle2, angle3, angle4) = (param_2..4, param_1).
 ## finalize is entered with the stack 0x1c below this function's entry (link a6 = 4, five
 ## argument longs = 0x14, bsr return address = 4; the arguments are popped only at the end).
@@ -932,6 +948,7 @@ func build_attitude_matrix_6ang_alt(angle1: int, angle2: int, angle3: int, angle
 	a7 = entry_a7
 	return
 
+## 0x28dc (FUN_000028dc; runtime 0x28bc).
 ## out_i = (x * m[i] + y * m[3 + i] + z * m[6 + i] + 0x800) asr 12 per 12-byte record (words
 ## +2 / +6 / +0xa), stored as words. 32-bit count: dbra, then clr.w / subq.l / bcc.
 func transform_vecs12_by_matrix3(count: int, src: int, dst: int, matrix: int) -> void:
@@ -960,6 +977,7 @@ func transform_vecs12_by_matrix3(count: int, src: int, dst: int, matrix: int) ->
 		dst = dst + 0xc
 	return
 
+## 0x2976 (FUN_00002976; runtime 0x2956).
 ## Same rows stored as longs (move.l), dst += 12 per record.
 func transform_vecs12_to_int3_by_matrix3(count: int, src: int, dst: int, matrix: int) -> void:
 	assert(memory != null, "transform_vecs12_to_int3_by_matrix3 requires original global memory")
@@ -987,6 +1005,7 @@ func transform_vecs12_to_int3_by_matrix3(count: int, src: int, dst: int, matrix:
 		dst = dst + 0xc
 	return
 
+## 0x2a0e (FUN_00002a0e; runtime 0x29ee; also the false entry FUN_00002aba).
 ## For every visible object from visible_list_split to visible_count (word counts, 32-bit
 ## difference in a6, subq.w / cmpa.w #-1 on the address register): its +0x36 int3
 ## vertices at +0x4c, each shifted right by word +0x32 (asr.l, count mod 64) and cut to a
@@ -1033,6 +1052,7 @@ func transform_listed_object_vecs12_by_1d744() -> void:
 			dst = dst + 0xc
 	return
 
+## 0x2ada (FUN_00002ada; runtime 0x2aba).
 ## out_j = bits 12..43 of x * m[0][j] + y * m[1][j] + z * m[2][j] (muls.l 32x32 -> 64,
 ## add.l / addx.l), i.e. the 64-bit sum asr 12 cut to 32 bits; no rounding. The nine words
 ## are sign-extended into the frame (a6 - 0x24) first; that copy is kept in a local here
@@ -1064,6 +1084,7 @@ func transform_int3_vecs_by_matrix3(count: int, src: int, dst: int, matrix: int)
 		dst = dst + 0xc
 	return result
 
+## 0x1c5c (FUN_00001c5c; runtime 0x1c3c).
 ## Adds (dx, dy, dz) to count int3 vectors (add.l, stride 12; src and dst may alias). 32-bit
 ## count: dbra, then clr.w / subq.l / bcc. No frame (movem only).
 func translate_int3_vecs(count: int, src: int, dst: int, dx: int, dy: int, dz: int) -> void:
@@ -1087,6 +1108,7 @@ func translate_int3_vecs(count: int, src: int, dst: int, dx: int, dy: int, dz: i
 		src = src + 0xc
 	return
 
+## 0x2bd8 (FUN_00002bd8; runtime 0x2bb8).
 ## Walks the parent chain (+0x24) of obj; each parent's 0x18-byte slot (parent +0x30 +
 ## 0x18 * child byte +2) rotates (build_attitude_matrix_3ang when an angle word +2 / +4 / +6
 ## is non-zero) and translates (+8 / +0xc / +0x10). Point path (src or dst 0): the frame copy
@@ -1145,6 +1167,7 @@ func apply_template_chain_xform(obj: int, vert_count: int, src: int, dst: int) -
 		memory.write_u32(obj + 0x20, memory.read_u32(pos_x + 8))
 	return
 
+## 0x2d10 (FUN_00002d10; runtime 0x2cf0; also the false entry FUN_00002de8).
 ## As apply_template_chain_xform, but every slot rotates and the mesh offsets are not
 ## shifted. Frame as there; movem saves eight registers, so build_attitude_matrix_3ang is
 ## entered 0x58 below.
@@ -1199,6 +1222,7 @@ func apply_template_chain_xform_always(obj: int, vert_count: int, src: int, dst:
 		memory.write_u32(obj + 0x20, memory.read_u32(pos_x + 8))
 	return
 
+## 0x1cac (FUN_00001cac; runtime 0x1c8c).
 ## Multiplies count int3 vectors component-wise (muls.l 32 x 32 -> low 32 bits, stride 12;
 ## src and dst may alias). 32-bit count: dbra, then clr.w / subq.l / bcc.
 func scale_int3_vecs(count: int, src: int, dst: int, sx: int, sy: int, sz: int) -> void:
@@ -1222,6 +1246,7 @@ func scale_int3_vecs(count: int, src: int, dst: int, sx: int, sy: int, sz: int) 
 		src = src + 0xc
 	return
 
+## 0x4f8 (FUN_000004f8; runtime 0x4d8).
 ## Pops node_count nodes (dbra on the word) from the node-pointer stack below path_top;
 ## each rotates (build_attitude_matrix_3ang of node +2 / +4 / +6) and translates (+8 / +0xc /
 ## +0x10) the running position, which starts at the longs object +2 / +6 / +0xa. With a
@@ -1289,6 +1314,7 @@ func _jsr(address: int, args: Array, d0: int = 0):
 	assert(code_table.has(address), "jsr to unported code address 0x%x" % address)
 	return code_table[address].callv(args)
 
+## 0x5fa (FUN_000005fa; runtime 0x5da).
 ## For each of the sext word group +0x18 child records (group + 0x1a + 24 i): the record is
 ## stored at *path; child = long (host_world +0x8c) + record +0x14. A child of type byte 3
 ## recurses (path + 4, depth + 1); otherwise visitor(ctx, child, face, path + 4, depth + 1)
@@ -1332,6 +1358,7 @@ func traverse_scene_tree(visitor: int, ctx: int, path: int, depth: int, group: i
 				break
 	return
 
+## 0x6a6 (FUN_000006a6; runtime 0x686).
 ## traverse_scene_tree(visitor, ctx, path stack, 0, root) with root = long (host_world +0x8c)
 ## + long ((host_world +0x8c) + 24 * sext word host_world +0x90 + 0x8e). Frame link.w
 ## a6,#-0x6b8: the ten-slot path stack is at a6 - 0x28 (a7 - 0x2c); traverse is entered
@@ -1350,6 +1377,7 @@ func for_each_mission_scene_object(visitor: int, ctx: int) -> void:
 	a7 = entry_a7
 	return
 
+## 0xaba (FUN_00000aba; runtime 0xa9a).
 ## Scene visitor: for a face whose type nibble (byte +9 & 0xf0) is 0x80, places the node's
 ## vertices through the path (transform_through_node_chain into the frame buffer), averages
 ## the face's vertices (word indices from +0xe, count byte +8; each component asr.l by word
@@ -1399,6 +1427,7 @@ func nearest_type80_centroid_visitor(best: int, node: int, face: int, path: int,
 		memory.write_u32(best + 8, memory.read_u32(sum_x + 8))
 	return
 
+## 0xbea (FUN_00000bea; runtime 0xbca).
 ## 1 when the point's camera metric is below 0x33900; otherwise point x = 1000000000, the
 ## mission scene is searched with nearest_type80_centroid_visitor (runtime 0xa9a) and 1 is
 ## returned when a centroid was found whose metric is below 0x40741, else 0. No frame
@@ -1581,6 +1610,7 @@ static func _divs_l_32(dividend: int, divisor: int) -> int:
 		return C68kScript.s32(dividend)
 	return C68kScript.divs_trunc(C68kScript.s32(dividend), C68kScript.s32(divisor))
 
+## 0x6ec (FUN_000006ec; runtime 0x6cc).
 ## Map visitor (plot_mission_map_symbols through for_each_mission_scene_object).
 ## Land nodes (byte +0x16 bit 4, word +0x16 & 0x240 clear): vertices through the node chain,
 ## made player-relative (-player x / z), x and z divided by plot_ctx[0], the face outline
@@ -1670,6 +1700,7 @@ func collect_map_features(plot_ctx: int, node: int, face: int, path: int, depth:
 	a7 = entry_a7
 	return
 
+## 0x954 (FUN_00000954; runtime 0x934).
 ## Fills a map context through the mission scene (collect_map_features, runtime 0x6cc): zone
 ## points at ctx + 4 (count word ctx +0xb58), sites at ctx + 0x4b4 with kind bytes at +0x964
 ## and ranges at +0x9c8 (count word +0xb5a). Each zone point gets symbol 'A', or - at the
@@ -1740,6 +1771,7 @@ func plot_mission_map_symbols(scale: int, plot_symbol: int) -> void:
 		a7 = entry_a7
 	return
 
+## 0x3cca (FUN_00003cca; runtime 0x3caa).
 ## Approximate distance from the point to the segment start .. start + (word dx, dy, dz)
 ## (adda.w: only the low words of the deltas, sign-extended): both end distances (word
 ## results), then four bisection steps (dbra from 4, entered at the test) replacing the
@@ -1785,6 +1817,7 @@ static func segment_point_min_distance(x0: int, y0: int, z0: int, dx: int, dy: i
 		dist_end = dist_start
 	return dist_end
 
+## 0x114ca (FUN_000114ca; runtime 0x114aa).
 ## (a * b) mod 2^32 assembled from 16-bit halves: three muls.l, the cross sum masked to 16
 ## bits and shifted up (lsl.l #16), plus the low product.
 static func overlay_rng_mul_mix(a: int, b: int) -> int:
@@ -1793,6 +1826,7 @@ static func overlay_rng_mul_mix(a: int, b: int) -> int:
 	var cross: int = C68kScript.u32((b & 0xffff) * (a >> 0x10) + (a & 0xffff) * (b >> 0x10))
 	return C68kScript.s32(((cross & 0xffff) << 0x10) + (b & 0xffff) * (a & 0xffff))
 
+## 0x1150a (FUN_0001150a; runtime 0x114ea; also the false entry FUN_00011544).
 ## Seed at 0x2600c, ring longs 1..54 = previous * 0x1df5e0d + 1, cursor 0x260e4, then 10000
 ## discarded outputs.
 func overlay_rng_init(seed: int) -> void:
@@ -1818,6 +1852,7 @@ func overlay_rng_init(seed: int) -> void:
 			break
 	return
 
+## 0x11564 (FUN_00011564; runtime 0x11544).
 ## Lagged-Fibonacci step over the ring: the next slot (wrapping at 0x260e8, unsigned compares)
 ## becomes slot(+0x5c) + slot(+0xd8) (each wrapped by -0xdc); returns its high word.
 func overlay_rng_next() -> int:
@@ -1841,6 +1876,7 @@ func overlay_rng_next() -> int:
 	memory.write_u32(slot, sum)
 	return sum >> 0x10
 
+## 0x51ec (FUN_000051ec; runtime 0x51cc).
 ## Clears player_shot_ctl when it is obj's controller; when byte +1 != byte +2, clears the
 ## scene-root child table entry +0x14 of index byte +2 and, if byte +1 lies in [child_window_lo,
 ## child_window_hi] (sext words, signed), removes obj from the seven scatter slots; then x
@@ -1874,6 +1910,7 @@ func retire_entity(obj: int, d0_in: int = 0) -> int:
 	memory.write_u32(DAT_00024cf0, C68kScript.u32(memory.read_u32(DAT_00024cf0) + 1))
 	return d0
 
+## 0x1665a (FUN_0001665a; runtime 0x1663a).
 ## Bullet path this frame: segment from position - velocity / 2 (C truncation: +1 bias then
 ## asr.l #1) over the velocity (controller +8 / +0xc / +0x10) against the shape position;
 ## within range +0x14 (signed cmp.l): flag 4 of byte +6 -> 1 in 8 (rng & 7 == 0) latches the
@@ -1916,6 +1953,7 @@ func _bullet_segment_distance(bullet: int, bullet_ctl: int, target: int) -> int:
 			vx, vy, vz,
 			memory.read_s32(target + 0x18), memory.read_s32(target + 0x1c), memory.read_s32(target + 0x20))
 
+## 0x16724 (FUN_00016724; runtime 0x16704).
 ## Type 1 (player aircraft): snd_hit = 1; types 1 and 3 escape 3 times in 4 (rng & 3). Else a
 ## roll (rng & 0xff, signed word compares) sets one damage bit of word +0x684: <= 5 bit 0,
 ## <= 0x2a bit 1, <= 0x37 bit 2, <= 0x44 bit 3, <= 0x50 bit 4, <= 0x5d bit 5; above, bit 6
@@ -1959,6 +1997,7 @@ func apply_random_aircraft_damage(ctl: int, by_player: int) -> int:
 		memory.write_u16(flags, memory.read_u16(flags) | 0x8000)
 	return d0
 
+## 0x167f4 (FUN_000167f4; runtime 0x167d4).
 ## Same bullet segment against an aircraft; within range: 1 in 8 (rng & 7 == 0) damages the
 ## aircraft controller (by_player = sext word bullet controller +0x36) and retires the
 ## bullet; otherwise, when the aircraft controller is the player's, rng bit 0 sets snd_hit.
@@ -1983,6 +2022,7 @@ func bullet_hits_aircraft(bullet: int, aircraft: int) -> int:
 			memory.write_u16(DAT_0001b842, 1)
 	return d0
 
+## 0x14348 (FUN_00014348; runtime 0x14328).
 ## Calls the collision handler(s) at definition (controller +4) +0x12 of objects a and b,
 ## unless view_mode == 8 or either byte +5 has bit 0. One handler: (owner, other, 0). Two: the
 ## 10-entry pair table (cursor left at 0x26284 on the match) by definition type words in
@@ -2031,6 +2071,7 @@ func dispatch_collision(obj_a: int, obj_b: int, d0_in: int = 0) -> int:
 		return _jsr(handler_a, [obj_a, obj_b, 0], d0_in)
 	return _jsr(handler_b, [obj_b, obj_a, 0], d0_in)
 
+## 0x354 (FUN_00000354; runtime 0x334).
 ## Nearest object of the near list (low word of object_count, dbra) whose controller type word
 ## is 0x12 or 0x13 and whose approx_dist3_xyz to obj is below its range +0xc and below the best
 ## so far (signed cmp.l); returns 0x100 for type 0x12, 0x200 for 0x13, else 0.
@@ -2067,6 +2108,7 @@ func probe_nearest_facility_kind(object: int) -> int:
 			return 0x200
 	return 0
 
+## 0x488 (FUN_00000488; runtime 0x468).
 ## Kill tally: word +0x50 < 0, or a friendly air base (0x200) nearest -> word host_world +0xd2
 ## += 1; else type 0 does nothing and type t increments word host_world +0xb8 + 2t. Returns D0.
 func tally_destroyed_entity(entity: int, d0_in: int = 0) -> int:
@@ -2087,6 +2129,7 @@ func tally_destroyed_entity(entity: int, d0_in: int = 0) -> int:
 	memory.write_u16(counter, C68kScript.u16(memory.read_u16(counter) + 1))
 	return d0
 
+## 0x528a (FUN_0000528a; runtime 0x526a).
 ## No-op when byte +7 bit 1 (long +4 bit 1, set by retire_entity) is set. Retires the entity when
 ## it belongs to the scene root's published child window (+0x24 == scene_root, sext words
 ## child_window_lo <= byte +1 <= child_window_hi) or is not a shape (byte +0 != 2); a shape
@@ -2130,6 +2173,7 @@ func _call_spawn_effect(kind: int, word_34: int, word_36: int, byte_38: int, deb
 	a7 = entry_a7
 	return result
 
+## 0x11db4 (FUN_00011db4; runtime 0x11d94).
 func spawn_destruction_effect(obj: int, size: int) -> int:
 	assert(memory != null, "spawn_destruction_effect requires original global memory")
 	var ctl: int = memory.read_u32(obj + 8)
@@ -2168,6 +2212,7 @@ func spawn_destruction_effect(obj: int, size: int) -> int:
 		_call_spawn_effect(3, C68kScript.divs_trunc(C68kScript.s32(size * 3), 4), 0x2d, 1, 0, x, y, z)
 	return near
 
+## 0x15dc8 (FUN_00015dc8; runtime 0x15da8).
 ## Bullet controller tick (definition key 0xe, +2). When the bullet hit an object (+0x3c, set
 ## by bullet_hits_shape): destruction effect at its range +0x14 / 8 (C-truncating), or / 4 when
 ## its +0x1c is set; a kill tally when the bullet was the player's (word +0x36); cleanup of the
@@ -2203,6 +2248,7 @@ func tick_bullet(ctl: int) -> void:
 	retire_entity(obj)
 	return
 
+## 0x13070 (FUN_00013070; runtime 0x13050).
 ## Even-odd test of the point against a polygon of 12-byte vertices (words +2 = first, +10 =
 ## second coordinate) listed by vidx: for each edge from the previous vertex (the last one
 ## first) that straddles pz (signed word compares), count a crossing when both first
@@ -2249,12 +2295,14 @@ func _point_in_polygon(pa: int, pb: int, verts: int, count: int, vidx: int, off_
 				crossings = C68kScript.s16(crossings + 1)
 	return crossings & 1 ## not reached: the loop exits through its return
 
+## 0x1320a (FUN_0001320a; runtime 0x131ea).
 ## For each vertex index of the face (count word +0x14, list +0x18), the object vertex (+0x44,
 ## 12-byte longs) asr.l by the word shift (mod 64) minus the word origins goes to the same
 ## index of out as words +2 and +10 (xz) or +2 and +6 (xy).
 func project_face_vertices_xz(model: int, shift: int, face: int, origin_x: int, origin_z: int, out: int) -> void:
 	_project_face_vertices(model, shift, face, origin_x, origin_z, out, 8, 10)
 
+## 0x131ac (FUN_000131ac; runtime 0x1318c).
 func project_face_vertices_xy(model: int, shift: int, face: int, origin_x: int, origin_y: int, out: int) -> void:
 	_project_face_vertices(model, shift, face, origin_x, origin_y, out, 4, 6)
 
@@ -2320,6 +2368,7 @@ func _project_face_vertices(model: int, shift: int, face: int, origin_a: int, or
 		memory.write_u16(ov + dst_b, C68kScript.u16(C68kScript.asr32(memory.read_u32(mv + src_b), shift) - origin_b))
 		vidx = vidx + 2
 
+## 0x13346 (FUN_00013346; runtime 0x13326).
 ## Surface code at (x, z): walks entity_array_1 from the end (low word of its count, dbra),
 ## skipping objects whose |metric +0x10 - camera metric of the point| or approx distance
 ## exceeds their range +0x14, or whose long +4 has 0x42; tests their faces from the last
@@ -2364,6 +2413,7 @@ func surface_type_at_point(x: int, y_unused: int, z: int) -> int:
 			face = face - 0x20
 	return 0 ## not reached: the loop exits through its returns
 
+## 0x13452 (FUN_00013452; runtime 0x13432).
 ## surface_type_at_point(object x, y, z); no frame, so the callee is entered 0x10 below
 ## (three arguments, bsr).
 func surface_type_under_object(obj: int) -> int:
@@ -2374,6 +2424,7 @@ func surface_type_under_object(obj: int) -> int:
 	a7 = entry_a7
 	return result
 
+## 0x11c58 (FUN_00011c58; runtime 0x11c38).
 ## Effect spawn. Live play (word replay_state == 0) logs the call in the 16-entry ring 0x260ee
 ## + 24 * index (byte kind, byte_38 (+1, the low byte of the long argument), debris (+2), words
 ## +4 / +6, x / y / z longs +8.., frame +0x14; index + 1 & 0xf); while replaying only state -1
@@ -2439,6 +2490,7 @@ func spawn_effect(kind: int, word_34: int, word_36: int, byte_38: int, debris: i
 			a7 = entry_a7
 	return ctl
 
+## 0x5116 (FUN_00005116; runtime 0x50f6).
 ## Takes the first free slot (+0x14 == 0) of the scene root's table (+0x30, sext word count
 ## +0x2e, 0x18-byte records); when none is free the table grows by 10 records through
 ## heap_realloc_grow_only. The slot gets word +0 = low word of factory_arg,
@@ -2481,6 +2533,7 @@ func spawn_mission_pool_object(tmpl_obj: int, off_x: int, off_y: int, off_z: int
 		return 0
 	return obj
 
+## 0x173fe (FUN_000173fe; runtime 0x173de).
 ## Spawns the debris template at (x, y, z); its controller gets +0x32 = frame + 0x2d,
 ## velocities +8 / +0xc / +0x10 = (rng & 0xff) - 0x7f, word +0x36 = word +0xe asl 4 and
 ## angles +0x20 / +0x22 / +0x24 = (rng & 0xff) asl 6 (words). Returns the controller or 0.
@@ -2507,6 +2560,7 @@ func spawn_debris_fragment(x: int, y: int, z: int) -> int:
 	memory.write_u16(ctl + 0x24, C68kScript.u16((overlay_rng_next() & 0xff) << 6))
 	return ctl
 
+## 0x1958 (FUN_00001958; runtime 0x1938).
 ## Arena break: returns host_world +0x348 + heap_break, then heap_break += nbytes (no limit).
 func heap_sbrk(nbytes: int) -> int:
 	assert(memory != null, "heap_sbrk requires original global memory")
@@ -2514,6 +2568,7 @@ func heap_sbrk(nbytes: int) -> int:
 	memory.write_u32(DAT_00020c50, C68kScript.u32(memory.read_u32(DAT_00020c50) + nbytes))
 	return old_break
 
+## 0x1974 (FUN_00001974; runtime 0x1954).
 ## New small block of 1 << class bytes: class byte at +0, payload at +4 (-1 when sbrk fails).
 func heap_new_size_class_block(size_class: int) -> int:
 	var block: int = heap_sbrk(C68kScript.lsl32(1, size_class & 0x3f))
@@ -2522,6 +2577,7 @@ func heap_new_size_class_block(size_class: int) -> int:
 	memory.write_u8(block, C68kScript.u8(size_class))
 	return C68kScript.u32(block + 4)
 
+## 0x199a (FUN_0000199a; runtime 0x197a; also the false entry FUN_000019b0).
 ## New large block of units * 8 bytes (header: units, tag 0xff), freed into the ring; returns
 ## the ring cursor afterwards (0 when sbrk fails).
 func heap_add_large_block(units: int) -> int:
@@ -2571,6 +2627,7 @@ func heap_free_coalesce(payload: int) -> void:
 		memory.write_u32(cur + 4, block)
 	memory.write_u32(DAT_00020c60, cur)
 
+## 0x1a68 (FUN_00001a68; runtime 0x1a48).
 ## Allocate. Class = 2 + bit length of ((nbytes + 7) & ~3) - 1 >> 2 (lsr); classes up to 5 take
 ## the class list head (class byte rewritten) or a new class block. Larger requests need
 ## units = (nbytes + 7) >> 3 + 1 eight-byte units: first fit around the ring from the cursor
@@ -2616,6 +2673,7 @@ func heap_alloc(nbytes: int) -> int:
 	memory.write_u8(block + 4, 0xff)
 	return C68kScript.u32(block + 8)
 
+## 0x1b38 (FUN_00001b38; runtime 0x1b18; also the false entry FUN_00001b4c).
 ## Clears the usable payload: (units - 1) * 8 bytes for a large block, (1 << class) - 4 else.
 func heap_zero_payload(payload: int) -> void:
 	if memory.read_u8(payload - 4) == 0xff:
@@ -2623,11 +2681,13 @@ func heap_zero_payload(payload: int) -> void:
 	else:
 		memzero(payload, C68kScript.lsl32(1, memory.read_u8(payload - 4)) - 4)
 
+## 0x1b6c (FUN_00001b6c; runtime 0x1b4c).
 func heap_alloc_cleared(nbytes: int) -> int:
 	var block: int = heap_alloc(nbytes)
 	heap_zero_payload(block)
 	return block
 
+## 0x1b84 (FUN_00001b84; runtime 0x1b64).
 ## heap_alloc(count * elem_size) (muls.l), cleared when non-null.
 func heap_calloc(count: int, elem_size: int) -> int:
 	var block: int = heap_alloc(C68kScript.s32(C68kScript.s32(count) * C68kScript.s32(elem_size)))
@@ -2635,6 +2695,7 @@ func heap_calloc(count: int, elem_size: int) -> int:
 		heap_zero_payload(block)
 	return block
 
+## 0x1ba8 (FUN_00001ba8; runtime 0x1b88; also the false entry FUN_00001be4).
 ## Grows only: when new_size exceeds the usable size (unsigned), a cleared block of new_size is
 ## allocated, the old usable size copied (memmove_block) and the old block freed.
 func heap_realloc_grow_only(payload: int, new_size: int) -> int:
@@ -2650,6 +2711,7 @@ func heap_realloc_grow_only(payload: int, new_size: int) -> int:
 	heap_free_coalesce(payload)
 	return grown
 
+## 0x1a63e (FUN_0001a63e; runtime 0x1a61e).
 ## Overlap-safe copy of nbytes from src to dst; returns 0. The bytes copy forward unless
 ## src < dst and dst - src <= nbytes (signed), when they copy backward. The original moves
 ## longs where alignment allows and bytes otherwise; in either direction that choice does not
@@ -2672,6 +2734,7 @@ func memmove_block(src: int, dst: int, nbytes: int) -> int:
 		k += 1
 	return 0
 
+## 0x1a716 (FUN_0001a716; runtime 0x1a6f6).
 ## Clears nbytes at dst (nothing when nbytes is negative as a long); returns 0.
 func memzero(dst: int, nbytes: int) -> int:
 	assert(memory != null, "memzero requires original global memory")
@@ -2682,6 +2745,7 @@ func memzero(dst: int, nbytes: int) -> int:
 		k += 1
 	return 0
 
+## 0x45ba (FUN_000045ba; runtime 0x459a).
 ## New object from a scene descriptor. Kind 2: cleared 0x52-byte object; flag long +4 = zero-
 ## extended word desc +0x16 (byte +6 bit 5, i.e. word bit 13, also sets byte +5 bit 4);
 ## position +0x18.. from desc +2 / +6 / +0xa, +0xc from +0xe, +0x14 from +0x12; words +0x34 /
@@ -2741,6 +2805,7 @@ func _call_class_factory(obj: int, desc: int, extra: int, depth: int) -> int:
 		memory.write_u32(ctl, 0)
 	return ctl
 
+## 0x4690 (FUN_00004690; runtime 0x4670).
 ## alloc_object_from_desc, then the class factory with (obj, key, 0) (entered 0x18 below:
 ## two saved registers, three arguments, jsr). Returns the object.
 func instantiate_object_from_desc(desc: int) -> int:
@@ -2750,6 +2815,7 @@ func instantiate_object_from_desc(desc: int) -> int:
 		_call_class_factory(obj, desc, 0, 0x18)
 	return obj
 
+## 0x435a (FUN_0000435a; runtime 0x433a).
 ## Mission rates for an entity not flagged (byte +7 bit 1) in phases 1..5 (word host +0xa8):
 ## scale = 1 for byte +5 bit 1, else phase - 1. Unless +0xc is parked (1000000000), +0xc =
 ## template record +0xe * scale (muls.l) or, at scale 0, record / 2 (C truncation); a shape
@@ -2793,6 +2859,7 @@ func apply_entity_mission_rates(entity: int, path: int) -> void:
 		face_value = face_value + 0x20
 		i += 1
 
+## 0x46da (FUN_000046da; runtime 0x46ba).
 ## Instantiates pool slot `slot` of root from template record `type`: descriptor = host +0x8c +
 ## long (root +0x28 record + 0x18 * type + 0x2e); object into slot +0x14, +0x24 = root, byte +1
 ## = type, byte +2 = low byte of slot, byte +3 += 1 when slot == type, long +4 |= 1 when type <
@@ -2865,6 +2932,7 @@ func update_record_distance_band(rec: int, dist: int) -> int:
 	assert(memory != null, "update_record_distance_band requires original global memory")
 	return _distance_band(rec + 4, dist)
 
+## 0x4808 (FUN_00004808; runtime 0x47e8).
 ## Face records from the packed stream: heap_alloc(0x20 * faces (+ 6 * faces + 2 * word +0x38
 ## when byte +6 bit 1)) at +0x48; per face +8 = 0, +0xc long, bytes +0x10..+0x13, word +0x14 =
 ## zero-extended count byte +8, +0x16 / +0x17 = high / low nibble of byte +9, +0x1c = long
@@ -2906,6 +2974,7 @@ func build_object_poly_buffers(obj: int, src: int) -> void:
 			i += 1
 	memory.write_u16(DAT_0001daa2, 1)
 
+## 0x4916 (FUN_00004916; runtime 0x48f6).
 ## Every face: long +4 = sext word host_world +0x88 table [level], byte +0xf = 0xff.
 func set_object_faces_bw_pattern(obj: int, level: int) -> void:
 	assert(memory != null, "set_object_faces_bw_pattern requires original global memory")
@@ -2917,6 +2986,7 @@ func set_object_faces_bw_pattern(obj: int, level: int) -> void:
 		face = face + 0x20
 		i = C68kScript.s16(i + 1)
 
+## 0x4e06 (FUN_00004e06; runtime 0x4de6; also the false entry FUN_00004e4e).
 ## Unless byte +7 bit 1: position and +0x14 back to the template descriptor's, then
 ## apply_template_chain_xform(obj, 1, 0, 0) (entered 0x20 below: three saved registers, four
 ## arguments, bsr).
@@ -2934,6 +3004,7 @@ func reset_object_to_template_pose(obj: int) -> void:
 	apply_template_chain_xform(obj, 1, 0, 0)
 	a7 = entry_a7
 
+## 0x4e6e (FUN_00004e6e; runtime 0x4e4e).
 ## Activation. Kind 2 (shape): published on entity_array_1 (byte +7 bit 0) or object_pool;
 ## n = word +0x36 + word +0x3a (word add); +0x4c and +0x44 = heap_alloc(sext n * 12); face
 ## records from the descriptor stream after its n template vectors (build_object_poly_buffers);
@@ -3040,6 +3111,7 @@ func _call_shade_object_faces(obj: int, depth: int) -> void:
 	shade_object_faces(obj)
 	a7 = entry_a7
 
+## 0x147a (FUN_0000147a; runtime 0x145a).
 ## Claims palette slot byte +0xf in the current owner table. Direct mode (word 0x1d85a):
 ## face +4 = v | v << 8 with v = r + g + low byte of (b divs.w 3), 0 -> 1. Otherwise idx =
 ## sext word map[slot]; face +4 = idx | idx << 8; one more ColorSpec {idx, r * 256 - 1,
@@ -3067,6 +3139,7 @@ func queue_face_palette_entry(face: int) -> void:
 		var component: int = (memory.read_u8(face + 0xc + k) << 8) - 1
 		memory.write_u16(spec + 2 + 2 * k, C68kScript.u16(component) if component >= 0 else 0)
 
+## 0x1548 (FUN_00001548; runtime 0x1528).
 ## queue_face_palette_entry; with the multi-screen flag (host word +0xb4), the slot of every other
 ## non-null owner table (0x1da70..0x1da78) gets -face. The callers ignore D0.
 func write_face_palette_slot(face: int) -> void:
@@ -3079,6 +3152,7 @@ func write_face_palette_slot(face: int) -> void:
 		if table != 0 and memory.read_u32(DAT_0001da7c) != table:
 			memory.write_u32(table + memory.read_u8(face + 0xf) * 4, C68kScript.u32(-face))
 
+## 0x159e (FUN_0000159e; runtime 0x157e).
 ## Face colour for the view depth. 1: luma (19r + 38g + 7b) / 64, stretched (luma - 128) * 16 /
 ## 12 + 128 (divs.l), clamped, face +4 = sext word host +0x88 table [luma]; 4: face +4 = owner
 ## table [25r + 5g + b]; both set byte +0xf = 0xff. 8: re-queue a slot this face owns (table entry
@@ -3122,6 +3196,7 @@ func assign_face_colour(face: int) -> int:
 			return 1
 	return 1 ## not reached
 
+## 0x3e5c (FUN_00003e5c; runtime 0x3e3c).
 ## After the faces and the index trailer (+0x48 + 32 * faces + 2 * word +0x38): per face a 6-byte
 ## {long face +0xc, word 0}.
 func snapshot_face_colours(obj: int) -> void:
@@ -3136,6 +3211,7 @@ func snapshot_face_colours(obj: int) -> void:
 		snap = snap + 6
 		i += 1
 
+## 0x3ea0 (FUN_00003ea0; runtime 0x3e80).
 ## Flat shading of a kind-2 object (not byte +7 bit 1). Per face (unless byte +0x13 bit 2: I =
 ## 0xffff): I = (dx * light_x + dy * light_y + dz * light_z) asr 13 with d = normal point i (the
 ## +0x44 entries after the word +0x36 vertices) - vertex 0, as words; factor f = 0x8000 + I / 2
@@ -3209,6 +3285,7 @@ func shade_object_faces(obj: int) -> void:
 	if haze_option != 0 and (memory.read_u8(obj + 6) & 2) != 0:
 		snapshot_face_colours(obj)
 
+## 0x1562e (FUN_0001562e; runtime 0x1560e).
 ## Sutherland-Hodgman clip of one face (12-byte vertices, words +2 / +6 / +10) against y >= 0:
 ## kept vertices are copied, an edge crossing y = 0 adds base + (-base.y * (other - base)) /
 ## (other.y - base.y) (muls.l / divs.l, add.w) with y = 0, base being the vertex below 0. The
@@ -3255,6 +3332,7 @@ func _clip_y_cross(base: int, other: int, dst: int) -> void:
 		memory.write_u16(dst + off, C68kScript.u16(memory.read_s16(base + off) + q))
 	memory.write_u16(dst + 6, 0)
 
+## 0x15762 (FUN_00015762; runtime 0x15742).
 ## Sinking / tilting shape cut at the waterline: the template vectors (vertices + normal points)
 ## are rotated by build_attitude_matrix_3ang(ang1..3), placed by the template chain, the
 ## vertices rebased in their low WORDS by -(position << shift) and -(drop << shift) (y); each
@@ -3386,6 +3464,7 @@ func sink_object_shape_at_waterline(obj: int, ang1: int, ang2: int, ang3: int, d
 	shade_object_faces(obj)
 	return memory.read_s16(any_face)
 
+## 0x4958 (FUN_00004958; runtime 0x4938).
 ## Land outline at a detail level: the normal points are saved relative to vertex 0, the
 ## template vertices placed by the template chain (apply_template_chain_xform entered 0x1c48
 ## below the entry), then for every packed face the vertex outline is thinned - vertex 0 is
@@ -3541,6 +3620,7 @@ func build_land_outline_at_detail(obj: int, range_value: int, shift: int, limit:
 		d2 = C68kScript.u32(C68kScript.asr32(d2, 1))
 	memory.write_u16(obj + 0x32, C68kScript.u16(steps))
 
+## 0xdf5e (FUN_0000df5e; runtime 0xdf3e).
 ## Fills the 75 pose entries (0x14 bytes each) of a ring with (x, y, z) at +0 / +4 / +8
 ## (word index 0..0x4a, cmpi.w #$4a / ble). The other entry bytes are left as they are.
 func fill_pose_history(ring: int, x: int, y: int, z: int) -> void:
@@ -4512,6 +4592,7 @@ func init_trail_kind0(_obj: int, ctl: int) -> void:
 	memory.write_u16(ctl + 0x34, 0x4b)
 	memory.write_u16(ctl + 0x36, 1)
 
+## 0x16ad6 (FUN_00016ad6; runtime 0x16ab6).
 func init_trail_kind1(_obj: int, ctl: int) -> void:
 	memory.write_u16(ctl + 0x34, 0x4b)
 	memory.write_u16(ctl + 0x36, 1)
@@ -14215,10 +14296,12 @@ func init_span_table_32ba() -> void:
 	assert(memory != null, "init_span_table_32ba requires original global memory")
 	_init_span4_table(0x3222, 0x3334)
 
+## 0x3412 (FUN_00003412; runtime 0x33f2).
 func init_span_table_3466() -> void:
 	assert(memory != null, "init_span_table_3466 requires original global memory")
 	_init_span4_table(0x33ce, 0x34d6)
 
+## 0x35b4 (FUN_000035b4; runtime 0x3594).
 func init_span_table_3608() -> void:
 	assert(memory != null, "init_span_table_3608 requires original global memory")
 	_init_span4_table(0x3570, 0x3678)
@@ -15383,6 +15466,7 @@ func start_mission_scene(scene: int) -> void:
 func noop_stub_2e12() -> void:
 	pass
 
+## 0x3732 (FUN_00003732; runtime 0x3712).
 func overlay_init_noop() -> void:
 	pass
 
@@ -15422,6 +15506,7 @@ func overlay_initialise(ticks: int) -> void:
 const OVERLAY_HOOKS := [0x6fd6, 0x6eb6, 0x3aa4, 0x41f0, 0x44c8, 0x3da, 0x38d4, 0x4b0, 0xe80, 0xf72, 0x6578, 0x1074,
 		0xd23a, 0x72f0, 0x73ea, 0x1d56, 0x1db8, 0x2886, 0xe352, 0x1f02, 0x934, 0x63ec]
 
+## 0x1112 (FUN_00001112; runtime 0x10f2).
 func overlay_main_entry(host: int, ticks: int) -> void:
 	assert(memory != null, "overlay_main_entry requires original global memory")
 	var entry_a7: int = a7
@@ -17160,6 +17245,7 @@ func ai_bombing_run(ctl: int) -> void:
 	if not flown:
 		_ai_fly_step(ctl, entry_a7, 0x28)
 
+## 0x135a0 (FUN_000135a0; runtime 0x13580).
 func find_contact_record(param_1: int, param_2: int) -> int:
 	assert(memory != null, "find_contact_record requires original global memory")
 	var piVar1: int
