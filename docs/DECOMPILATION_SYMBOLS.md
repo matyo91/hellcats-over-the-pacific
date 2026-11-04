@@ -44,7 +44,7 @@ revalidated here.
 | `FUN_000039a8` / `FUN_00003aae` / `FUN_00003bc4` (ID02) | `vbl_sound_handler_ch0_unrolled` / `vbl_sound_handler_ch0_variant` / `vbl_sound_handler_two_channel` | STRONG INFERENCE | Lvl1DT[1] VBL hooks; in-code A5 cache; RTS-chain to previous vector; resample into SoundBase. |
 | `FUN_00003db8` (ID02) | `select_two_channel_sound_handler` | STRONG INFERENCE | arg == 1 → $0196 = A5−0x35c. |
 | `FUN_00003f54` (ID02) | `play_sample_on_channel` | STRONG INFERENCE | queue sample on ch 0..1 with optional sustain loop; see SOUND_SYSTEM.md. |
-| `FUN_00004050` (ID02) | `enqueue_sample_on_channel` | STRONG INFERENCE (purpose HYPOTHESIS) | queues nodes like play_sample_on_channel but leaves channel head unchanged. |
+| `FUN_00004050` (ID02) | `enqueue_sample_on_channel` | STRONG INFERENCE (purpose HYPOTHESIS; its service slot is never called by the overlay) | queues nodes like play_sample_on_channel but leaves channel head unchanged. |
 | `FUN_0000412e` (ID02) | `set_sound_playback_rate` | STRONG INFERENCE | 16.16 rate → step/len globals. |
 | `FUN_000041a6` (ID02) | `release_channel_loop` | STRONG INFERENCE | breaks sustain self-loops, ends in silence. |
 | `FUN_000042b0` (ID02) | `is_channel_playing` | STRONG INFERENCE | current buffer ≠ silence. |
@@ -53,7 +53,7 @@ revalidated here.
 | `FUN_0000195c` / `FUN_0000197c` (ID02) | `blit_image_clipped_to_region_a5safe` / `run_segment3_entry_and_unload_a5safe` | STRONG INFERENCE | CurrentA5 service thunks. |
 | `FUN_00000a42` (ID02) | `draw_thick_line_pixel_index_a5safe` | STRONG INFERENCE | fgColor raw index; 2-px MoveTo/LineTo. |
 | `FUN_00000a86` (ID02) | `draw_thick_xor_line_a5safe` | STRONG INFERENCE | black srcXor 2-px line. |
-| `FUN_00000ad0` (ID02) | `paint_view_horizon_bands_a5safe` | STRONG INFERENCE (purpose HYPOTHESIS) | top band + two tilted quads + bottom band in view region. |
+| `FUN_00000ad0` (ID02) | `paint_view_horizon_bands_a5safe` | STRONG INFERENCE (purpose PROVEN by its caller, draw_sky_and_ground) | top band + two tilted quads + bottom band in view region. |
 | `FUN_000015cc` (ID02) | `set_draw_color_index` | STRONG INFERENCE | fgColor = index (or B&W path). |
 | `FUN_00000f52` / `FUN_00000f74` (ID02) | `close_port_a5safe` / `swap_port_a5safe` | STRONG INFERENCE | ClosePort; SetPort returning previous port. |
 | `FUN_00000fa0` (ID02) | `paint_rect_color_index_a5safe` | STRONG INFERENCE | colour index + PaintRect. |
@@ -64,7 +64,7 @@ revalidated here.
 | `FUN_000014e6` (ID02) | `swap_mmu_mode_a5safe` | STRONG INFERENCE | SwapMMUMode(&A5−0x1000) via ID09 glue; slot −0x10c6. |
 | `FUN_000011ec` (ID02) | `draw_notched_frame_pair_a5safe` | STRONG INFERENCE mechanics | two notched frames (pen 2/1) from rect A5−0x119c, drawn twice. |
 | `FUN_000010ce` (ID02) | `build_notched_frame_poly` | STRONG INFERENCE mechanics | notched/chamfered frame polygon from a Rect. |
-| `FUN_00001308` (ID02) | `draw_text_in_columns_a5safe` | STRONG INFERENCE mechanics | columned DrawString output with FillRect backgrounds; slot −0x110e. |
+| `FUN_00001308` (ID02) | `draw_text_in_columns_a5safe` | STRONG INFERENCE mechanics (purpose PROVEN by its caller) | columned DrawString output with FillRect backgrounds; slot −0x110e; the full-screen numeric readouts of update_view_readouts_and_overlays. |
 | `FUN_00001656` / `FUN_00001680` (ID02) | `design_x_to_screen` / `design_y_to_screen` | STRONG INFERENCE | A5−0x149e·v/4800 + half view width/height. |
 | `FUN_00001632` / `FUN_0000001e` (ID02) | `set_back_color_index` / `abs_long` | STRONG INFERENCE | — |
 | `FUN_00002db8` / `FUN_00004d34` (ID02) | `wait_for_click_or_key` / `process_pending_update_events` | STRONG INFERENCE | modal input wait; update flush. |
@@ -83,7 +83,7 @@ revalidated here.
 | `FUN_00000006` / `000002a8` / `0000033c` (ID03) | `set_scaled_text_style` / `new_offscreen_bw_port` / `dispose_offscreen_bw_port` | STRONG INFERENCE | text style; 1-bit offscreen GrafPort create/dispose. |
 | `FUN_00000912` (ID03) | `draw_vector_number` | STRONG INFERENCE | stroke-font digits from A5−0x1fde. |
 | `FUN_0000035e` (ID03) | `draw_spinning_disc_indicator` | STRONG INFERENCE mechanics | grey disc + 4-phase rotating spoke (A5−0x2112), size A5−0x2114;  likely a bezel screw head (HYPOTHESIS). |
-| `FUN_00000514` (ID03) | `draw_ring_with_status_indicators` | STRONG INFERENCE mechanics | ring + up to 5 diagonal spinning indicators by flag bits. |
+| `FUN_00000514` (ID03) | `draw_ring_with_status_indicators` | STRONG INFERENCE mechanics (purpose PROVEN: every gauge's bezel) | ring + up to 5 diagonal spinning indicators by flag bits. |
 | `FUN_00000a3c` (ID03) | `antialias_downsample_bw_3x` | STRONG INFERENCE | 3× Gaussian (7×7, /969) downsample of 1-bit bitmap into grey palette pixels. |
 | `FUN_00003c02` (ID03) | `draw_instrument` | STRONG INFERENCE | bezel + type-switch (0..9) to per-gauge drawers; record A5−0x12a2. |
 | `FUN_00001876` (ID03) | `draw_altimeter` | STRONG INFERENCE | instrument type 0; label STR#129[65] "ALTITUDE". |
@@ -185,7 +185,7 @@ revalidated here.
 | `FUN_000071a2` (ID03) | `remap_panel_colours_identity` | STRONG INFERENCE | identity 256-entry table -> remap_cached_panel_colours. |
 | `FUN_00000038`..`FUN_000002ee` (ID02) | `ansi_div` … `ansi_strcmp` (20 C runtime functions) | PROVEN / STRONG INFERENCE | complete Ghidra C; ctype masks. |
 | `FUN_0000030c`..`FUN_00000412` (ID02) | `ansi_strchr` … `ansi_strncat` (9 string functions) | PROVEN | — |
-| `FUN_0000045a` (ID02) | `begin_overlay_session` | STRONG INFERENCE mechanics | UnloadSeg 4, memory + sound, hooks A5-0x1082 / -0x107e; documents end_overlay_session 0x4a4. |
+| `FUN_0000045a` (ID02) | `begin_overlay_session` | STRONG INFERENCE mechanics (callers: run_flight_session only) | UnloadSeg 4, memory + sound, hooks A5-0x1082 / -0x107e; documents end_overlay_session 0x4a4. |
 | `FUN_000004c6` (ID02) | `ensure_free_memory_and_init_sound` | PROVEN | FreeMem < 500000 -> MaxMem; init_sound_system. |
 | `FUN_00000930` (ID02) | `call_overlay_session_hooks` | PROVEN | hooks A5-0x1082, -0x107e, -0x107a(a, b), -0x1076. |
 | `FUN_000004fc` (ID02) | `run_flight_session` | STRONG INFERENCE | game loop around the overlay. |
@@ -197,7 +197,7 @@ revalidated here.
 | `FUN_00001edc` (ID02) | `load_named_sound_into_slot` | PROVEN | GetNamedResource snd, memory check 0x3000, purgeable, slot store. |
 | `FUN_00001f8e` (ID02) | `load_game_sounds` | STRONG INFERENCE | loads 11 named sounds into slots; memory-dependent slot 0; error dialog. |
 | `FUN_000020be` (ID02) | `lock_sound_slots` | PROVEN | HLock + slot = *h + 0x14. |
-| `FUN_0000212a` (ID02) | `reset_overlay_state` | HYPOTHESIS name | clears overlay data areas, calls overlay entry (A5-0x1388, TickCount). |
+| `FUN_0000212a` (ID02) | `reset_overlay_state` | STRONG INFERENCE (overlay main entry re-entered; callers via $4c2) | clears overlay data areas, calls overlay entry (A5-0x1388, TickCount), then apply_display_palettes and the settings. |
 | `FUN_0000435e` (ID02) | `position_window_on_screen` | PROVEN | centre horizontally, 1/3 down under the menu bar, MoveWindow. |
 | `FUN_00002192` (ID02) | `scan_display_devices` | STRONG INFERENCE | main / right / left monitors. |
 | `FUN_000027e4` (ID02) | `configure_display_from_main_device` | STRONG INFERENCE | — |
@@ -228,9 +228,9 @@ revalidated here.
 | `FUN_0000b2f4` (Pacific Conflict) | `clip_polygon_y_min` | STRONG INFERENCE | y >= DAT_00020aea. |
 | `FUN_0000b3aa` (Pacific Conflict) | `clip_polygon_y_max` | STRONG INFERENCE | y <= DAT_0001b73e. |
 | `FUN_00000aba` (Pacific Conflict) | `nearest_type80_centroid_visitor` | STRONG INFERENCE mechanics | nearest face centroid of type-0x80 objects. |
-| `FUN_00000bea` (Pacific Conflict) | `point_near_camera_or_type80_object` | HYPOTHESIS name | metric thresholds 0x33900 / 0x40741. |
+| `FUN_00000bea` (Pacific Conflict) | `point_near_camera_or_type80_object` | PROVEN mechanics | metric thresholds 0x33900 / 0x40741 (meaning open). |
 | `FUN_00000c4c` (Pacific Conflict) | `anchor_point_visitor` | STRONG INFERENCE mechanics | kind-1 node pose or nearest ground airfield point. |
-| `FUN_00000d6a` (Pacific Conflict) | `find_anchor_point` | HYPOTHESIS name | mode 0 / 1 over the scene. |
+| `FUN_00000d6a` (Pacific Conflict) | `find_anchor_point` | STRONG INFERENCE (callers start_mission_scene / respawn_player_at_anchor) | mode 0: the scene's kind-1 node (camera start); mode 1: the nearest runway face (respawn). |
 | `FUN_00000db0` (Pacific Conflict) | `ensure_handle_allocated` | STRONG INFERENCE | NewHandleClear / realloc when purged, HNoPurge. |
 | `FUN_00000e0a` (Pacific Conflict) | `lock_handle_nopurge` | STRONG INFERENCE | HLock + HNoPurge. |
 | `FUN_00000e32` (Pacific Conflict) | `unlock_handle_purgeable` | STRONG INFERENCE | HUnlock + HPurge. |
@@ -248,11 +248,11 @@ revalidated here.
 | `FUN_0000740a` (Pacific Conflict) | `process_flight_input_and_outcome` | STRONG INFERENCE | key handler + outcome code. |
 | `FUN_00006ff6` (Pacific Conflict) | `configure_renderer_for_display` | STRONG INFERENCE | — |
 | `FUN_00004210` (Pacific Conflict) | `refresh_object_colours_for_depth` | STRONG INFERENCE | hook A5-0x1096; per-depth object colouring. |
-| `FUN_000041ec` (Pacific Conflict) | `recolour_kind2_object` | HYPOTHESIS name | kind-2 objects: FUN_00003da8 + FUN_00003ea0. |
+| `FUN_000041ec` (Pacific Conflict) | `recolour_kind2_object` | STRONG INFERENCE (caller refresh_object_colours_for_depth) | kind-2 objects: update_object_distance_band + shade_object_faces. |
 | `FUN_00004916` (Pacific Conflict) | `set_object_faces_bw_pattern` | STRONG INFERENCE | face +4 = host pattern table [index]. |
 | `FUN_00003da8` (Pacific Conflict) | `update_object_distance_band` | STRONG INFERENCE | band +0x30 from thresholds DAT_0001b190. |
 | `FUN_00003e02` (Pacific Conflict) | `update_record_distance_band` | STRONG INFERENCE | same for record +4. |
-| `FUN_00003e5c` (Pacific Conflict) | `snapshot_face_colours` | HYPOTHESIS name | copy face colours after the face list. |
+| `FUN_00003e5c` (Pacific Conflict) | `snapshot_face_colours` | STRONG INFERENCE (copy PROVEN; its reader UNKNOWN) | copy face colours into the space reserved after the face list. |
 | `FUN_00003ea0` (Pacific Conflict) | `shade_object_faces` | STRONG INFERENCE | flat shading with light vector, haze blend at depth 8. |
 | `FUN_0000147a` (Pacific Conflict) | `queue_face_palette_entry` | STRONG INFERENCE | owner table + pending ColorSpec at host +0x72. |
 | `FUN_00001548` (Pacific Conflict) | `write_face_palette_slot` | STRONG INFERENCE | queue + mark slot on other monitors. |
@@ -397,7 +397,7 @@ revalidated here.
 | `FUN_000176b2` (Pacific Conflict) | `add_radar_track` | VERIFIED | DAT_0001b51c[≤ 6] (x, z, two words, flag) when metric ≤ DAT_00026666. |
 | `FUN_0001776a` (Pacific Conflict) | `reset_radar_tracks` | VERIFIED | DAT_00026672 = DAT_00026676 = 0. |
 | `FUN_0000c1aa` (Pacific Conflict) | `update_heading_tape` | STRONG INFERENCE | strip at host +0x1b8 scrolled by DAT_0001d80e. |
-| `FUN_0000ba2a` (Pacific Conflict) | `draw_panel_frame_lines` | HYPOTHESIS | colour runs from host +0x238..+0x258. |
+| `FUN_0000ba2a` (Pacific Conflict) | `draw_panel_frame_lines` | STRONG INFERENCE (host thick-line service in the panel colour) | two vertical and two horizontal lines from host +0x238..+0x258. |
 | `FUN_0000fe96` (Pacific Conflict) | `aircraft_notice_object` | STRONG INFERENCE | aircraft definition +0x16; radar tracks for the player, target acquisition for AI. |
 | `FUN_0000b49e` (Pacific Conflict) | `reset_overlay_display_state` | STRONG INFERENCE | reset_background_rows, reset_radar_tracks, caches. |
 | `FUN_0000e0a4` (Pacific Conflict) | `aircraft_destroy` | STRONG INFERENCE | aircraft definition +0xa. |
@@ -449,7 +449,7 @@ revalidated here.
 | `FUN_0001759e` (Pacific Conflict) | `register_ground_mark_template` | VERIFIED | effect-family handler (template / create / destroy / tick). |
 | `FUN_00017566` (Pacific Conflict) | `create_ground_mark_controller` | STRONG INFERENCE | effect-family handler (template / create / destroy / tick). |
 | `FUN_000175c0` (Pacific Conflict) | `tick_ground_mark` | VERIFIED | effect-family handler (template / create / destroy / tick). |
-| `FUN_000168ae` (Pacific Conflict) | `impact_one_time_in_16` | HYPOTHESIS | 1/16 chance ordnance_collision. |
+| `FUN_000168ae` (Pacific Conflict) | `impact_one_time_in_16` | HYPOTHESIS (unreferenced: the long at runtime 0x2a7fc is unrelocated scenery data) | 1/16 chance ordnance_collision. |
 | `FUN_000168d2` (Pacific Conflict) | `alloc_transformed_vertex_block` | VERIFIED | header + 12-byte points via template xform. |
 | `FUN_0001691c` (Pacific Conflict) | `alloc_copied_vertex_block` | VERIFIED | same, copied. |
 | `FUN_00016966` (Pacific Conflict) | `advance_route_waypoint` | STRONG INFERENCE | next waypoint within 5000. |

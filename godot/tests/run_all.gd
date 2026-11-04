@@ -171,6 +171,7 @@ const TEST_PATHS := [
 	"res://tests/strict_port/test_resedit_media.gd",
 	"res://tests/runtime/test_unexported_routines.gd",
 	"res://tests/runtime/test_sound_channels.gd",
+	"res://tests/runtime/test_event_mask.gd",
 ]
 
 func _init() -> void:

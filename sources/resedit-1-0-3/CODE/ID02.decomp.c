@@ -846,7 +846,9 @@ char * ansi_strncat /* Original: FUN_00000412 */ (char *dst /* param_1 */,char *
  * CLR.L result / JT $212 (CODE 0 entry seg 9 -> ID09 0x1b2 FreeMem), CMPI.L #100000 / BGE; CLR.L / PEA -4 /
  * JT $21a (ID09 0x1bc MaxMem); JSR (A5-0x107e); BSR 0x95a; BSR 0x20be lock_sound_slots - identical to the C.
  * The routine at 0x4a4..0x4c4 (end_overlay_session) has no inventory entry. */
-/* Original: FUN_0000045a; source: ID02.c. Recovered name: begin_overlay_session [STRONG INFERENCE mechanics / HYPOTHESIS role].
+/* Original: FUN_0000045a; source: ID02.c. Recovered name: begin_overlay_session [STRONG INFERENCE mechanics / STRONG INFERENCE role].
+ * Role evidence (was HYPOTHESIS): its only callers are the four BSRs of run_flight_session (0x558, 0x700,
+ * 0x7be, 0x7dc), each before a flight runs [PROVEN, tools/decomp/xrefs.py]: it opens the overlay's session for a flight.
  * Decoded from ID02.bin bytes at file 0x45a.
  * Ghidra could not decode this body (rebuilt as C below); bytes 0x45a..0x4a2 [PROVEN]: UnloadSeg(JT $a2, i.e. CODE 4) ($A9F1); ensure_free_memory_and_init_sound (0x4c6); calls the overlay hook A5-0x1082; JSR 0x1f8e; if FreeMem (JT $212 = ID09 0x1b2, $A01C) < 100000 then MaxMem(&grow) (JT $21a = ID09 0x1bc, $A11D) to compact the heap; calls the overlay hook A5-0x107e; JSR 0x95a; JSR 0x20be. The bytes that follow (0x4a4..0x4c4, not exported) are the matching end_overlay_session: if sound is enabled (A5-0x12ee) shutdown_sound (0x4318); overlay hook A5-0x1076; JSR 0x1e68; JSR 0x9fa; if A5-0x1028 DrawMenuBar ($A937). Callers: 0x558 (inside FUN_000004fc), 0x700, 0x7be, 0x7dc; end_overlay_session from 0x6e2, 0x7c4, 0x84c. The pair brackets running the game overlay (Pacific Conflict) [HYPOTHESIS].
  */
@@ -1258,7 +1260,10 @@ void draw_thick_xor_line_a5safe /* Original: FUN_00000a86 */ (int h0 /* param_1 
 /*
  * Original: FUN_00000ad0; source: ID02.c:663.
  * Recovered name: paint_view_horizon_bands_a5safe [STRONG INFERENCE structure /
- * HYPOTHESIS purpose].
+ * PROVEN caller].
+ * Purpose evidence (was HYPOTHESIS): its only caller is the overlay's draw_sky_and_ground, through host +0x27e
+ * (globals pointer A5-0x1388 + 0x27e = this service slot A5-0x110a) [PROVEN chain]: the view's sky and ground
+ * bands.
  * Ghidra truncated at $A8D8; body rebuilt as C. Bytes 0xad0..0xc66 [PROVEN].
  * CurrentA5 thunk; overlay service slot A5-0x110a (JT $3ea). Long args at
  * 8(A6) y1, $c y2, then words used: $16 cA, $1a cD, $1e xA, $22 xB, $26 cB, $2a cC.
@@ -1873,7 +1878,10 @@ void draw_notched_frame_pair_a5safe /* Original: FUN_000011ec */ (int solid /* p
 /*
  * Original: FUN_00001308; source: ID02.c:841.
  * Recovered name: draw_text_in_columns_a5safe [STRONG INFERENCE mechanics /
- * HYPOTHESIS purpose]. Overlay service slot A5-0x110e (JT $362).
+ * PROVEN caller]. Overlay service slot A5-0x110e (JT $362).
+ * Purpose evidence (was HYPOTHESIS): its only caller is the overlay's update_view_readouts_and_overlays,
+ * through host +0x27a (A5-0x1388 + 0x27a = A5-0x110e), for the numeric readouts it draws while the cockpit
+ * panel is down (panels_drawn clear) [PROVEN chain].
  * Ghidra exported only two truncated branches (on the long arg $18(A6)); body
  * rebuilt as C below. Args: text 8, column index $c, first byte $10, byte count $14,
  * layout flag $18, skip-fourth-label flag $1c. Bytes 0x1308..0x14e4 [PROVEN, condensed reading]:
@@ -2810,9 +2818,14 @@ void lock_sound_slots /* Original: FUN_000020be */ (void)
  * via JT $242 (CODE 0 entry seg 9 -> ID09 0x222), push result, CLR.W, A5-0x1040, BSR 0x2b0; -4 = A5-0x1006 +
  * A5-0x1012; push TickCount then PEA A5-0x1388, JSR (A0), ADDQ.L #8; BSR 0x4d24; BSR 0x2a44 - identical to
  * the C. */
-/* Original: FUN_0000212a; source: ID02.c. Recovered name: reset_overlay_state [HYPOTHESIS name].
+/* Original: FUN_0000212a; source: ID02.c. Recovered name: reset_overlay_state [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS name): the entry it calls with (&A5-0x1388, TickCount) is the overlay's
+ * main entry, which receives the host globals pointer A5-0x1388 (docs/OVERLAY_SERVICE_TABLE.md); 0x4d24 is
+ * apply_display_palettes (checked against its bytes by the runtime cases); its callers, through slot
+ * $4c2, are run_scenario_selection_dialog (ID04 0xe3c, after a mission is chosen) and the ID08 overlay
+ * loader (0x220) [PROVEN, tools/decomp/xrefs.py]: the overlay's state cleared and re-entered.
  * Decoded from ID02.bin bytes at file 0x212a.
- * Clears two memory areas with the 0x2b0 runtime routine (memset-like: address, 0, length): A5-0x1006 + A5-0x1022 + A5-0x101e (the overlay's bss, right after code + data) for A5-0x101a bytes (corrected: address and length were swapped here), and A5-0x1040 for GetPtrSize of it (JT $242, ID09 0x222, $A021); then calls the function at A5-0x1006 + A5-0x1012 (an overlay entry: base + offset) with (&A5-0x1388, TickCount); then JSR 0x4d24 and apply_settings_to_live_options (0x2a44) [PROVEN calls]. The TickCount argument suggests a random seed [HYPOTHESIS]. Body rebuilt as C below.
+ * Clears two memory areas with the 0x2b0 runtime routine (memset-like: address, 0, length): A5-0x1006 + A5-0x1022 + A5-0x101e (the overlay's bss, right after code + data) for A5-0x101a bytes (corrected: address and length were swapped here), and A5-0x1040 for GetPtrSize of it (JT $242, ID09 0x222, $A021); then calls the function at A5-0x1006 + A5-0x1012 (an overlay entry: base + offset) with (&A5-0x1388, TickCount); then JSR 0x4d24 (apply_display_palettes) and apply_settings_to_live_options (0x2a44) [PROVEN calls]. The TickCount argument suggests a random seed [HYPOTHESIS]. Body rebuilt as C below.
  */
 // WARNING: Control flow encountered bad instruction data
 
@@ -4935,6 +4948,9 @@ play_sample_on_channel /* Original: FUN_00003f54 */ (int channel /* param_1: 0 o
  * Original: FUN_00004050; source: ID02.c:2266-2296.
  * Recovered name: enqueue_sample_on_channel [STRONG INFERENCE mechanics /
  * HYPOTHESIS purpose].
+ * Only reference: install_overlay_service_table stores it (LEA $42a(A5) at 0x1bc2) into service slot
+ * A5-0x10da, and no overlay code calls that slot (host +0x2ae) [PROVEN, tools/decomp/xrefs.py and the
+ * strict port]: unused by this scenery.
  * Exported C complete; identical to play_sample_on_channel except that it does
  * NOT store the first node into the channel head (A5-0x7d0 + ch*0x238). Nodes
  * are allocated in free-list order with continuation = next free node, so the
@@ -5654,7 +5670,9 @@ void init_standard_colour_indices /* Original: FUN_00004b62 */ (void)
 /*
  * Original: FUN_00004c18; source: ID02.c:2643-2688.
  * Recovered name: check_device_color_state_changed [STRONG INFERENCE on
- * structure / HYPOTHESIS on purpose].
+ * structure / STRONG INFERENCE on purpose].
+ * Purpose evidence (was HYPOTHESIS): its only caller is redraw_main_window (BSR at 0x4df0) [PROVEN, tools/decomp/xrefs.py]: on a
+ * redraw of the main window, the colour index maps are rebuilt when the device's colour state changed.
  * Exported C matches bytes file 0x4c18..0x4d22 [PROVEN] once the build_palette_index_map
  * arguments Ghidra dropped are restored (fresh map -$20a / stored record +4, scratch -$40a).
  * - Clears word A5-0x102a and local "changed" flag (local_e).

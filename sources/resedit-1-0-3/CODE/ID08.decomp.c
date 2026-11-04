@@ -246,13 +246,14 @@ short alloc_and_read_resource_payload(short refNum) /* Original: FUN_00000348 */
  * Completes the ID08 bootstrap: UI/port setup then overlay load.
  *
  * Evidence: Capstone; JSR target 0x6 proven (disp $FBC4); 'HELL' immediate.
- * Unknown: exact Toolbox names for $A97C/$A982; meaning of 'HELL' check.
+ * Toolbox names [PROVEN, Inside Macintosh trap list]: $A97C GetNewDialog, $A982 CloseDialog (it closes the
+ * window but does not free the record; DisposDialog is $A983). Unknown: meaning of 'HELL' check.
  */
 /* VERIFIED (ID08::FUN_0000039c): ID08.bin 0x39c..0x446 checked against an independent capstone disassembly:
  * GetNewDialog(-4000 = the standard Get File dialog, nil, (WindowPtr)-1) ($A97C) only to place it:
  * position_window_on_screen (JT $48a -> ID02 0x435e), then its portRect top-left (+0x10 / +0x12) is
  * converted to global coordinates with SetPort ($A873) / LocalToGlobal ($A870) / SetPort(saved thePort
- * A5-0x160c), and the dialog is disposed ($A982 DisposDialog). SFGetFile(where, prompt A5-0x16d8, nil,
+ * A5-0x160c), and the dialog is closed ($A982 CloseDialog). SFGetFile(where, prompt A5-0x16d8, nil,
  * 1, {'HELL'}, nil, &reply) through JT $30a -> ID09 0x1a, the _Pack3 ($ADEA) selector-2 entry of the
  * package glue at 0x4 (selector = (return address - 0x18) / 2). On reply.good (-0x5a) the file name
  * (reply.fName -0x50) is copied by copy_pascal_string (JT $4d2 -> ID02 0x2ee4) to the record at
@@ -277,7 +278,7 @@ void bootstrap_window_and_load_overlay(void) /* Original: FUN_0000039c */
   SetPort((GrafPtr)dialog);                                /* $A873 */
   LocalToGlobal(&where);                                   /* $A870 */
   SetPort(savedPort);                                      /* $A873 */
-  DisposDialog(dialog);                                    /* $A982 */
+  CloseDialog(dialog);                                     /* $A982 */
   typeList[0] = 0x48454c4c;                                /* 'HELL' */
   SFGetFile(where,(Str255 *)(unaff_A5 + -0x16d8),(ProcPtr)0,1,typeList,(ProcPtr)0,&reply); /* JT $30a -> ID09 0x1a, _Pack3 selector 2 */
   if (reply.good != 0) {

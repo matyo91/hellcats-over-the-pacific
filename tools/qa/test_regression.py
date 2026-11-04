@@ -188,6 +188,7 @@ EXPECTED_RUNNER_PATHS = [
     "res://tests/strict_port/test_resedit_media.gd",
     "res://tests/runtime/test_unexported_routines.gd",
     "res://tests/runtime/test_sound_channels.gd",
+    "res://tests/runtime/test_event_mask.gd",
 ]
 
 EXPECTED_LOADER_TARGETS = [
@@ -489,14 +490,120 @@ def check_xrefs() -> None:
         (("Pacific Conflict", 0x155D8), ["overlay: long 0x155b8 at file 0x1aaf0 (after 0016)"]),
         (("ID05", 0x3BA), ["ID05: JSR d16(PC) at 0x57c"]),
         (("Pacific Conflict", 0x54), ["overlay: BSR.L at 0x16e6"]),
+        (("Pacific Conflict", 0x168AE), []),            # its value at runtime 0x2a7fc is not relocated
         (("ID05", 0xBA8), []),
     ]
     for (segment, target), expected in cases:
         got = xrefs.overlay_xrefs(target) if segment == "Pacific Conflict" else xrefs.segment_xrefs(segment, target)
-        if segment == "Pacific Conflict" and target == 0x54:
-            got = [r for r in got if "BSR" in r]        # its runtime value 0x34 also occurs as plain data
         if got != expected:
             fail(f"xrefs {segment} 0x{target:x}: {got}, expected {expected}")
+
+
+def check_entry_points() -> None:
+    """Every entry point the bytes publish is accounted for. Each CODE 0 jump-table entry names a
+    registry function start, a routine of GAME_RUNTIME.md's index, a segment's unload handle (offset
+    4, used only as PEA slot(A5) before _UnloadSeg), or an offset its segment's decomp documents; every
+    relocated overlay pointer into the code lands on a registry function start or a known entry."""
+    import struct
+    sys.path.insert(0, str(REPO_ROOT / "tools" / "decomp"))
+    import xrefs
+    rows = json.loads((REPO_ROOT / "docs" / "DECOMPILATION_INVENTORY.json").read_text(encoding="utf-8"))
+    rows = rows if isinstance(rows, list) else rows["functions"]
+    starts = {(r["segment"], int(r["original_address"], 16)) for r in rows}
+    runtime_doc = (REPO_ROOT / "docs" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
+    index = runtime_doc[runtime_doc.index("## Routines outside the 740"):]
+    indexed = {(m.group(1), int(m.group(2), 16)) for m in re.finditer(r"\| (ID0\d) \| (0x[0-9a-f]+) \|", index)}
+    code_dir = REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE"
+    problems = []
+    for e in json.loads((REPO_ROOT / "godot" / "hellcats" / "data" / "jump_table.json").read_text(encoding="utf-8"))["entries"]:
+        segment, target = f"ID0{e['segment']}", int(e["target"])
+        if (segment, target) in starts or (segment, target) in indexed:
+            continue
+        if target == 4:
+            uses = xrefs.segment_xrefs(segment, 4)[1:]
+            if uses and all(" PEA " in f" {u.split(': ', 1)[1]}" and struct.unpack(">H", (code_dir / f"{u.split(':')[0]}.bin").read_bytes()[
+                    int(u.rsplit("0x", 1)[1], 16) + 4:int(u.rsplit("0x", 1)[1], 16) + 6])[0] == 0xA9F1 for u in uses):
+                continue
+        decomp = (code_dir / f"{segment}.decomp.c").read_text(encoding="utf-8", errors="replace").lower()
+        if not re.search(rf"\b0x0*{target:x}\b", decomp):
+            problems.append(f"jump-table slot ${int(e['a5_offset']):x} -> {segment} 0x{target:x} is not accounted for")
+    image = (REPO_ROOT / "godot" / "hellcats" / "data" / "scenery" / "Pacific Conflict").read_bytes()
+    code = struct.unpack(">I", image[4:8])[0]
+    overlay_starts = {a - 0x20 for s, a in starts if s == "Pacific Conflict"}
+    known = {0x4B0, 0xD23A, 0x15134, 0x16208,        # runtime-written routines (GAME_RUNTIME.md)
+             0x12740, 0x12744,                       # clr.l d0; rts tails in face_object_to_camera
+             0x12F70, 0x14326,                       # the RTS-only stubs
+             0x177F0}                                # draw_radar_blip_depth8, a second entry
+    for cell in xrefs.relocated_cells(image):
+        target = struct.unpack(">I", image[cell + 0x20:cell + 0x24])[0]
+        if 0 < target < code and target not in overlay_starts and target not in known:
+            problems.append(f"overlay pointer at runtime 0x{cell:x} -> 0x{target:x} lands on no known entry")
+    if problems:
+        fail("entry points:\n  " + "\n  ".join(problems))
+
+
+def check_trap_annotations() -> None:
+    """Every call annotation a semantic decompilation writes beside its C is in the function's bytes
+    (its start up to the next registry function): a trap word (/* $Axxx */) issued there or by an ID09
+    glue routine it calls (that glue's body, up to the next entry); a jump-table slot (JT $xxx) used by
+    a JSR / PEA / LEA slot(A5); a branch target (BSR / JSR 0xnnnn) reached by a BSR or JSR d16(PC)."""
+    import struct
+    sys.path.insert(0, str(REPO_ROOT / "tools" / "decomp"))
+    import inventory_functions
+    import xrefs
+    rows = json.loads((REPO_ROOT / "docs" / "DECOMPILATION_INVENTORY.json").read_text(encoding="utf-8"))
+    rows = rows if isinstance(rows, list) else rows["functions"]
+    starts: dict[str, list[int]] = {}
+    for r in rows:
+        starts.setdefault(r["segment"], []).append(int(r["original_address"], 16))
+    for v in starts.values():
+        v.sort()
+    code_dir = REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE"
+    glue = (code_dir / "ID09.bin").read_bytes()
+    entries = json.loads((REPO_ROOT / "godot" / "hellcats" / "data" / "jump_table.json").read_text(encoding="utf-8"))["entries"]
+    targets = sorted({int(e["target"]) for e in entries if e["segment"] == 9} | set(starts["ID09"]))
+    issued_by_slot: dict[int, set[int]] = {}
+    for e in entries:
+        if e["segment"] != 9:
+            continue
+        t = int(e["target"])
+        end = next((x for x in targets if x > t), len(glue))
+        words = {struct.unpack(">H", glue[o:o + 2])[0] for o in range(t, end - 1, 2)}
+        issued_by_slot[int(e["a5_offset"])] = {w & ~0x400 for w in words if w >> 12 == 0xA}
+    problems = []
+    for path in sorted(code_dir.glob("*.decomp.c")):
+        segment = path.name.replace(".decomp.c", "")
+        if segment in ("ID00", "ID09"):
+            continue
+        image = (REPO_ROOT / "godot" / "hellcats" / "data" / "scenery" / "Pacific Conflict") if segment == "Pacific Conflict" else code_dir / f"{segment}.bin"
+        data = image.read_bytes()
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for d in inventory_functions.definitions(path):
+            if not d["original_ids"]:
+                continue
+            start = int(d["original_ids"][-1][4:], 16)
+            end = next((x for x in starts[segment] if x > start), len(data))
+            region = data[start:end]
+            body_words = {struct.unpack(">H", region[o:o + 2])[0] & ~0x400 for o in range(0, len(region) - 1, 2)}
+            glue_words = set()
+            for slot, words in issued_by_slot.items():
+                if struct.pack(">Hh", 0x4EAD, slot) in region:
+                    glue_words |= words
+            body = text[d["start"]:d["end"]]
+            for w in {int(x, 16) for x in re.findall(r"/\*[^*]*?\$([Aa][0-9A-Fa-f]{3})\b", body)}:
+                if w & ~0x400 not in body_words and w & ~0x400 not in glue_words:
+                    problems.append(f"{segment} {d['name']}: ${w:X} is neither in its bytes nor in a glue it calls")
+            # "JT $xxx": a JSR / PEA / LEA slot(A5) in its bytes.
+            for slot in {int(x, 16) for x in re.findall(r"/\*[^*]*?\bJT \$([0-9a-fA-F]{2,3})\b", body)}:
+                if not any(struct.pack(">Hh", op, slot) in region for op in [0x4EAD, 0x486D] + [0x41ED | (r << 9) for r in range(8)]):
+                    problems.append(f"{segment} {d['name']}: JT ${slot:x} is not used in its bytes")
+            # "BSR / JSR 0xnnnn": a branch from its bytes to that offset (overlay: file or runtime address).
+            for t in {int(x, 16) for x in re.findall(r"/\*[^*]*?\b(?:BSR|BSR\.[WLS]|JSR)\s+(?:file\s+)?0x([0-9a-fA-F]+)\b", body)}:
+                candidates = [t] + ([t + 0x20] if segment == "Pacific Conflict" else [])
+                if not any(xrefs.branches(region, c - start) for c in candidates):
+                    problems.append(f"{segment} {d['name']}: no branch to 0x{t:x} in its bytes")
+    if problems:
+        fail("call annotations:\n  " + "\n  ".join(problems))
 
 
 def main() -> int:
@@ -510,6 +617,8 @@ def main() -> int:
         ("runtime-coverage", check_runtime_coverage),
         ("source-extraction", check_source_extraction),
         ("xrefs", check_xrefs),
+        ("entry-points", check_entry_points),
+        ("call-annotations", check_trap_annotations),
     ]
     optional = [
         ("optional-capstone", check_optional_capstone),

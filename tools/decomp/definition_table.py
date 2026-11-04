@@ -66,6 +66,9 @@ def records() -> list[dict]:
             raise SystemExit(f"handler 0x{address:x} has no name")
         return found
 
+    sys.path.insert(0, str(ROOT / "tools" / "decomp"))
+    from xrefs import relocated_cells
+    relocated = relocated_cells(image)
     out = []
     for source, size, slot in [(s, z, None) for s, z in KEYED] + FIXED:
         at = source + DELTA
@@ -74,6 +77,9 @@ def records() -> list[dict]:
         if slot is not None and word != key:
             raise SystemExit(f"fixed record 0x{source:x}: first word {word} is not its slot's key {key}")
         handlers = [struct.unpack(">I", image[at + 2 + 4 * i:at + 6 + 4 * i])[0] for i in range(6)]
+        for i, h in enumerate(handlers):            # a real handler pointer is one the loader relocates
+            if h and source + 2 + 4 * i not in relocated:
+                raise SystemExit(f"record 0x{source:x} slot +0x{2 + 4 * i:x}: 0x{h:x} is not relocated")
         out.append({"key": key, "source": source, "size": size, "keyed": slot is None,
                     "handlers": [name(h) for h in handlers],
                     "factory": name(installed_factory(image, handlers[1])) if handlers[1] else "-"})
@@ -92,7 +98,8 @@ def document() -> str:
         "a key word and six handler longs (runtime addresses, file offset - 0x20); an object's definition",
         "(controller +4) is its record. The aircraft records (0x4a bytes) continue with the flight data that",
         "docs/DECOMPILATION_SYMBOLS.md's aircraft type record lists. Every record's first word equals its",
-        "key, including the fixed-slot ones, which are stored at their slot offset. Each slot's role is",
+        "key, including the fixed-slot ones, which are stored at their slot offset, and every non-zero handler",
+        "long is one the loader relocates (a real pointer). Each slot's role is",
         "its dispatcher's (in the strict port, godot/strict_port/code/pacific_conflict.gd):",
         "",
         "- +2 tick (controller): every frame, `advance_frame_and_tick_controllers` and",

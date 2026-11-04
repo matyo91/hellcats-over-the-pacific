@@ -4,7 +4,9 @@ extends RefCounted
 ## by the game thread through GetNextEvent / WaitNextEvent / EventAvail, with the mouse and the
 ## button for GetMouse / Button / StillDown and the keyboard map for GetKeys. Update and activate
 ## events come from the Window Manager when the queue holds nothing else. EventRecord: what +0,
-## message +2, when +6, where +0xa (v, h, global), modifiers +0xe.
+## message +2, when +6, where +0xa (v, h, global), modifiers +0xe. As PostEvent does, an event type
+## the system event mask (SysEvtMask, low memory $144; SetEventMask, ID09 0x18a) disables is not
+## queued: the game turns mouse-down and mouse-up off while flying (run_flight_session, 0xfff9).
 
 const NULL_EVENT := 0
 const MOUSE_DOWN := 1
@@ -32,6 +34,10 @@ var mouse := Vector2i(320, 240)
 var button := false
 var modifiers: int = 0
 var keymap := PackedByteArray()
+## The system event mask: the Mac's default, every event but key-up, until SetEventMask.
+const DEFAULT_EVENT_MASK := 0xffef
+const LM_SYS_EVT_MASK := 0x144
+var event_mask: int = DEFAULT_EVENT_MASK
 ## Set when the program exits (ExitToShell): the game thread then waits for the scene to end.
 var stopping := false
 
@@ -43,6 +49,8 @@ func _init(owner) -> void:
 # ---- the main thread's side ---------------------------------------------------------------------------
 
 func post(what: int, message: int, where: Vector2i, mods: int) -> void:
+	if (event_mask >> what) & 1 == 0:
+		return
 	_lock.lock()
 	_queue.append({"what": what, "message": message, "where": where, "modifiers": mods, "when": machine.ticks()})
 	_lock.unlock()
@@ -72,6 +80,13 @@ func post_key(key_code: int, char_code: int, down: bool, repeat: bool, mods: int
 	post(what, ((key_code & 0xff) << 8) | (char_code & 0xff), mouse, mods | (0 if button else BTN_STATE))
 
 # ---- the game thread's side --------------------------------------------------------------------------
+
+## SetEventMask(mask): the system event mask, kept here and in low memory (low_memory() writes it
+## back when the overlay image has covered it).
+func set_event_mask(mask: int) -> int:
+	event_mask = mask & 0xffff
+	memory.write_u16(LM_SYS_EVT_MASK, event_mask)
+	return 0
 
 func install(toolbox) -> void:
 	var t = toolbox

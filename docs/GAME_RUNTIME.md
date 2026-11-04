@@ -134,6 +134,26 @@ Replay.
 It fails when the program's thread dies or the runtime notes anything missing. It saves into
 `user://smoke_session_resources` (emptied first), never the player's `user://resources`.
 
+### Traps the game never issues
+
+The Toolbox installs 293 trap words. Scanning the original bytes at instruction boundaries (the host
+segments ID01..ID08 and the *Pacific Conflict* code; ID09's glue is answered by stand-ins instead) finds
+174 issued words (auto-pop variants folded). Of the other 119, three are still reached another way
+(_Open $A000 and SwapMMUMode $A05D by the strict port of ID09's glue, FlushEvents $A032 by a
+stand-in).
+The remaining 116 have no user besides their installation, in the game's bytes, the strict port, the
+runtime or the tests. They are cleanup candidates, kept for now because another scenery file opened
+with File > Open... could issue them:
+
+$A001 $A002 $A01C $A01F $A021 $A023 $A027 $A029 $A02A $A036 $A049 $A04A $A063 $A069 $A06A $A11D
+$A11E $A122 $A31E $A322 $A802 $A803 $A804 $A806 $A81F $A820 $A827 $A828 $A851 $A856 $A860 $A86D
+$A87C $A886 $A889 $A896 $A897 $A89E $A8A4 $A8AA $A8AB $A8B1 $A8B2 $A8B3 $A8B9 $A8C8 $A8C9 $A8D2
+$A8D4 $A8D5 $A8DC $A8DD $A8DE $A8E0 $A8E4 $A8E5 $A8E7 $A8F5 $A904 $A910 $A914 $A917 $A918 $A919
+$A91A $A925 $A927 $A929 $A92A $A92D $A936 $A93B $A944 $A949 $A94C $A950 $A956 $A95E $A961 $A962
+$A964 $A969 $A96D $A971 $A976 $A977 $A978 $A97F $A984 $A987 $A992 $A9A4 $A9A5 $A9CB $A9CE $A9CF
+$A9D1 $A9D8 $A9D9 $A9DA $A9DB $A9DC $AA15 $AA19 $AA1A $AA33 $AA34 $AA92 $AA93 $AA94 $AA96 $AA98
+$AA99 $AA9A $AA9B $AA9F
+
 ## Routines outside the 740
 
 Ghidra never defined these 35 routines, so they have no `.c` export and stay outside the registry;

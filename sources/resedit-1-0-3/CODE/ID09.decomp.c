@@ -328,4 +328,35 @@ byte * length_prefixed_bytes_to_c_string_in_place(byte *buffer)
   return buffer;
 }
 
-
+/* ID09 Toolbox glue reached through the jump table, decoded from ID09.bin [PROVEN, bytes; trap words
+ * and low-memory addresses as Inside Macintosh names them]. Each is Pascal: it pops the return address
+ * and its arguments (listed) and leaves any result in the slot the caller reserved; the game runtime
+ * answers them in godot/hellcats/toolbox (stand_ins by slot). The other ID09 entries are the exported
+ * functions above and the unexported IUCompString / NumToString / string glue (0x3d6 .. 0x416).
+ *
+ *   slot  offset  routine                                                        arguments
+ *   $1fa  0x18a   SetEventMask: pops the mask word into SysEvtMask ($144)        pops 2
+ *   $202  0x192   FlushEvents ($A032, mask and stop in D0)                       pops 4
+ *   $20a  0x19c   GetMBarHeight: the word MBarHeight ($BAA) into the result      0
+ *   $212  0x1b2   FreeMem ($A01C), the long into the result                      0
+ *   $21a  0x1bc   MaxMem ($A11D), grow through the VAR argument, the long into the result pops 4
+ *   $222  0x1cc   MaxApplZone, done inline from ApplLimit ($130) and HeapEnd ($114) 0
+ *   $22a  0x200   NewPtr ($A11E)                                                 pops 4
+ *   $232  0x20c   NewPtrClear ($A31E)                                            pops 4
+ *   $23a  0x218   DisposPtr ($A01F)                                              pops 4
+ *   $242  0x222   GetPtrSize ($A021; a negative result becomes 0)                pops 4
+ *   $24a  0x236   NewHandle ($A122)                                              pops 4
+ *   $252  0x242   NewHandleClear ($A322)                                         pops 4
+ *   $25a  0x24e   DisposHandle ($A023)                                           pops 4
+ *   $262  0x258   RecoverHandle ($A128)                                          pops 4
+ *   $26a  0x264   SetHandleSize ($A027)                                          pops 8
+ *   $272  0x270   HLock ($A029)                                                  pops 4
+ *   $27a  0x27a   HUnlock ($A02A)                                                pops 4
+ *   $282  0x284   HPurge ($A049)                                                 pops 4
+ *   $28a  0x28e   HNoPurge ($A04A)                                               pops 4
+ *   $292  0x298   MoreMasters ($A036)                                            0
+ *   $29a  0x29e   MemError: the word MemErr ($220) into the result               0
+ *   $2d2  0x3b0   HGetState ($A069), the byte into the result                    pops 4
+ *   $2da  0x3ba   GetMMUMode: the byte MMU32Bit ($CB2) into the result, which ID02 keeps in   0
+ *                 A5-0x1000, the byte swap_mmu_mode_a5safe passes to SwapMMUMode
+ */

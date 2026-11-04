@@ -60,7 +60,7 @@ const JT_COPY_PSTRING: int = 0x4d2      ## ID02 copy_pascal_string (C)
 const TRAP_GET_NEW_DIALOG: int = 0xa97c
 const TRAP_SET_PORT: int = 0xa873
 const TRAP_LOCAL_TO_GLOBAL: int = 0xa870
-const TRAP_DISPOSE_DIALOG: int = 0xa982
+const TRAP_CLOSE_DIALOG: int = 0xa982
 const LOCAL_LOAD_OVERLAY: int = 0x6     ## load_overlay_from_resource (C, no arguments)
 
 ## A call to a routine of this segment not ported yet, by its segment offset.
@@ -70,7 +70,7 @@ func _local(offset: int, args: Array) -> int:
 
 ## 0x39c: the standard Get File dialog (-4000) made only to find where it would go (placed by JT
 ## $48a, its portRect's top left made global in its port, the current port A5 - 0x160c restored,
-## disposed); SFGetFile there for 'HELL' files with the prompt A5 - 0x16d8; when one is chosen its
+## closed with CloseDialog $A982); SFGetFile there for 'HELL' files with the prompt A5 - 0x16d8; when one is chosen its
 ## name and volume go to the record *(A5 - 0x13ac) +0x2a / +0x28, A5 - 0x138a is set and the overlay
 ## is loaded (0x6).
 func bootstrap_window_and_load_overlay() -> void:
@@ -86,7 +86,7 @@ func bootstrap_window_and_load_overlay() -> void:
 	_trap(TRAP_SET_PORT, [dialog])
 	_trap(TRAP_LOCAL_TO_GLOBAL, [a6 - 0x66])
 	_trap(TRAP_SET_PORT, [saved])
-	_trap(TRAP_DISPOSE_DIALOG, [dialog])
+	_trap(TRAP_CLOSE_DIALOG, [dialog])
 	memory.write_u32(a6 - 0x10, 0x48454c4c)
 	_jt(JT_SF_GET_FILE, [a6 - 0x5a, 0, [memory.read_u32(a6 - 0x10)], 1, 0, C68kScript.u32(a5 - 0x16d8), memory.read_u32(a6 - 0x66)])
 	if memory.read_u8(a6 - 0x5a) == 0:

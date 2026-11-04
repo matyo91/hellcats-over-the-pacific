@@ -82,9 +82,9 @@ func install_glue(stand_ins: Dictionary) -> void:
 	files.install(stand_ins)
 	StandardFile.new(machine, self).install(stand_ins)
 	stand_ins[0x202] = func(_a: Array) -> int: return traps[0xa032].call([])     ## FlushEvents(mask, stop)
-	stand_ins[0x1fa] = func(_a: Array) -> int: return 0                            ## the event glue: pops its word
+	stand_ins[0x1fa] = func(a: Array) -> int: return events.set_event_mask(a[0])  ## SetEventMask (ID09 0x18a: the word into SysEvtMask $144)
 	stand_ins[0x20a] = func(_a: Array) -> int: return machine.MENU_BAR_HEIGHT       ## GetMBarHeight
-	stand_ins[0x2da] = func(_a: Array) -> int: return 0x100                        ## HasDeepScreens: true (Boolean in the high byte)
+	stand_ins[0x2da] = func(_a: Array) -> int: return 0x100                        ## GetMMUMode: 1, 32-bit addressing (flat memory; byte in the high byte)
 	stand_ins[0x1f2] = func(a: Array) -> int: return sys_environs(a[0])            ## SysEnvirons(version, VAR rec)
 	stand_ins[0x302] = func(a: Array) -> int: return c_to_pascal(a[0])             ## c2pstr in place
 	stand_ins[0x2f2] = func(a: Array) -> int: return num_to_string(a[1], a[0])     ## NumToString(n, VAR s)

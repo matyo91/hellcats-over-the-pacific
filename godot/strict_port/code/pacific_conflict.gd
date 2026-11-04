@@ -385,7 +385,8 @@ func _init(param_memory = null) -> void:
 	code_table[0x1915c] = Callable(self, "tick_turret")
 	code_table[0x12a0a] = Callable(self, "ordnance_tick")
 	code_table[0x19918] = Callable(self, "parachute_tick")
-	## Broad-phase collision tests (bsr targets of collect_far_objects, see _far_collision).
+	## Broad-phase collision tests (bsr targets of collect_far_objects, see _far_collision, which
+	## dispatches them by address; the bytes call them by BSR only, tools/decomp/xrefs.py).
 	code_table[0x13ec0] = func(a: int, b: int) -> int: return test_object_collision(a, b)
 	code_table[0x1427c] = func(a: int, b: int) -> void: handle_player_contact(a, b)
 	code_table[0x13e2e] = func(a: int, b: int) -> void: test_proximity_collision(a, b)
@@ -420,7 +421,8 @@ func _init(param_memory = null) -> void:
 	code_table[0x12718] = Callable(self, "face_object_to_camera")
 	code_table[0x12740] = func(_ctl: int) -> int: return 0
 	code_table[0x12744] = func(_ctl: int) -> int: return 0
-	## Collision pair handler (pair table entry at 0x2a7fc).
+	## impact_one_time_in_16: no reference in the overlay's code or relocated data (the long 0x1688e at
+	## runtime 0x2a7fc is past the loaded image and not relocated); kept for its byte-checked cases.
 	code_table[0x1688e] = func(a: int, b: int, _c: int = 0) -> int: return impact_one_time_in_16(a, b)
 	code_table[0x194fa] = Callable(self, "destroy_parachute_controller")
 	code_table[0x12f32] = func(a: int, b: int, _c: int = 0) -> void: ordnance_collision(a, b)
@@ -436,6 +438,8 @@ func _init(param_memory = null) -> void:
 	code_table[0x18b78] = Callable(self, "destroy_flak_controller")
 	code_table[0xe084] = Callable(self, "aircraft_destroy")
 	code_table[0xfe76] = func(a: int, b: int, _c: int = 0) -> void: aircraft_notice_object(a, b)
+	## release_ai_target: reached by BSR.W only (0x11294 / 0x11422 / 0x11438); registered for
+	## test_aircraft_notice.gd, which calls it by address.
 	code_table[0x1009c] = Callable(self, "release_ai_target")
 	code_table[0x100b4] = func(a: int, b: int, _c: int = 0) -> void: enemy_fighter_notice_object(a, b)
 	code_table[0xfb0a] = Callable(self, "animate_landing_gear")
@@ -472,7 +476,8 @@ func _init(param_memory = null) -> void:
 	code_table[0x120aa] = Callable(self, "init_effect_kind1_column")
 	code_table[0x11edc] = Callable(self, "init_effect_kind2_burst")
 	code_table[0x1215e] = Callable(self, "init_effect_kind3_debris_explosion")
-	## clear_flag_00020ae4 (file 0x6ece), reachable as a code address.
+	## clear_flag_00020ae4 (file 0x6ece): the bytes reach it only by the BSR.L at 0xd290 in
+	## mark_view_overlays_drawn (tools/decomp/xrefs.py); registered as a code address all the same.
 	code_table[0x6eae] = Callable(self, "clear_flag_00020ae4")
 
 
@@ -8695,7 +8700,7 @@ func create_singleton_type10_controller(obj: int, def_key: int) -> int:
 	memory.write_u32(DAT_00020b40, ctl)
 	return ctl
 
-## 0x168ae (collision pair handler, runtime 0x1688e): one rng in 16 (0xc below) the other object
+## 0x168ae (runtime 0x1688e; unreferenced, see code_table): one rng in 16 (0xc below) the other object
 ## takes an ordnance hit (ordnance_collision(other, self), 0x14 below). Returns the rng with its
 ## low word masked to & 0xf (ordnance_collision leaves D0 alone).
 func impact_one_time_in_16(self_obj: int, other_obj: int) -> int:

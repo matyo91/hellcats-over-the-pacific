@@ -165,3 +165,5 @@ ulonglong rt_udivmod32_core /* Original: FUN_000001c2 */ (uint dividend,uint div
 }
 
 
+/* ID01 file 0x22c, the segment's last word, is a bare RTS behind jump-table slot $6a, which no segment
+ * uses (no JSR / PEA / LEA $6a(A5); tools/decomp/xrefs.py) [PROVEN, bytes]. */

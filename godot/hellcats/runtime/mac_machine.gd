@@ -91,7 +91,13 @@ func _init() -> void:
 	low_memory()
 	init_a5_world()
 
-## The low-memory globals the code reads (written again after the overlay image covers them).
+## The low-memory globals the code reads (written again after the overlay image covers them). A scan of
+## the host segments' bytes (absolute .w operands, PEA constants aside) finds exactly SoundHook $196 and
+## SoundBase $266 (the sound code), CurrentA5 $904 (the a5safe routines), MBarHeight $BAA (the window
+## layout), and CurStackBase $908 / the word $A4A in ID01's C start-up, which init_a5_world replaces;
+## the ID09 glue's own globals (SysEvtMask, MemErr, MMU32Bit, ...) are answered by its stand-ins.
+## The overlay reads none (the same scan of its code). ScrnBase is written as well, though no game code
+## reads it.
 func low_memory() -> void:
 	memory.write_u32(LM_CUR_STACK_BASE, A5 - BELOW_A5)
 	memory.write_u32(LM_CURRENT_A5, A5)
@@ -99,6 +105,7 @@ func low_memory() -> void:
 	memory.write_u32(LM_SOUND_HOOK, toolbox.sounds.hook() if toolbox.sounds.hook() != 0 else NULL_VBL)
 	memory.write_u16(LM_MBAR_HEIGHT, MENU_BAR_HEIGHT)
 	memory.write_u32(LM_SCREEN_BASE, SCREEN_BASE)
+	memory.write_u16(toolbox.events.LM_SYS_EVT_MASK, toolbox.events.event_mask)
 
 ## The application globals as the C runtime's start-up (CODE 1 0x34) builds them: from CurStackBase
 ## up to A5, the words of DATA 0, each zero word followed by as many more zero bytes as the next

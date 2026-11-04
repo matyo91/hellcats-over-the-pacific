@@ -1784,7 +1784,7 @@ void set_score_item_text /* Original: FUN_00002d86 */ (int dlg,short item)
  * LINK -$4a; itemHit = 1; saves A5-0x13a4 / -0x225e; early exit to 0x3116; GetNewDialog(0x85), JT $472, five BSR 0xec,
  * BSR 0x6 x2, 0x17e6, 0xc4; pilot / current-mission branches with JT $4ea (0x18 bytes) and BSR 0x54 / 0x78; mode 3 adds
  * A5-0x12ce[0..11]; three BSR 0x1b8 variants; BSR 0x2d86; ShowWindow; TickCount; BSR 0x21d6 -> 0x192e; ModalDialog(JT $ca)
- * loop with exits on 3, 1 (+ confirm_end_mission == 2); BSR 0x189c; DisposDialog; award flag; SelectWindow; restores;
+ * loop with exits on 3, 1 (+ confirm_end_mission == 2); BSR 0x189c; DisposDialog; award flag; HideWindow (main window, $A916); restores;
  * D0 = itemHit; RTS - identical to the C. */
 /*
  * Original: FUN_00002de6; source: ID04.c:809.
@@ -1891,7 +1891,7 @@ short show_mission_summary_dialog /* Original: FUN_00002de6 */ (short pilot,shor
   }
   if ((itemHit == 1) && (*(short *)(unaff_A5 + -0x2228) == -1)) {
     *(short *)(unaff_A5 + -0x12f8) = 0;         /* mission number */
-    SelectWindow(*(int *)(unaff_A5 + -0x14ca)); /* $A916: main window */
+    HideWindow(*(int *)(unaff_A5 + -0x14ca));   /* $A916 (bytes 0x3104): the main window hidden */
     *(short *)(unaff_A5 + -0x14c6) = 0;
     *(short *)(unaff_A5 + -0x14c4) = 1;
   }

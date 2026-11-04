@@ -15,21 +15,21 @@
     {
       "evidence": "* TST.L 8 chooses the last pair; BSR 0x442e(0x102); CautionAlert(0x102, nil) $A988; JT $2fa (ID09 0x432)",
       "function_or_context": "format_int_decimal_pstring",
-      "line": 2559,
+      "line": 2567,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "*   CautionAlert(258, nil) $A988; p2cstr(msg) (JT $2fa).",
       "function_or_context": "show_caution_alert_with_number",
-      "line": 2574,
+      "line": 2582,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "CautionAlert(0x102,0);                        /* $A988, result discarded */",
       "function_or_context": "show_caution_alert_with_number",
-      "line": 2598,
+      "line": 2606,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     }

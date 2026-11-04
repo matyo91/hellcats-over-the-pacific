@@ -110,7 +110,7 @@ def build() -> list[dict]:
     out += [
         case("scan: main between two neighbours", "scan_display_devices", [], [], main_left),
         case("scan: main record has its map", "scan_display_devices", [], [], main_left + [[A5 - 0x1358 + 4, 4, 0x15F60]]),
-        case("scan: deep screens test true", "scan_display_devices", [], [], main_left + [[LOG_OF[("jt", 0x2DA)] - 4, 4, 0x100]]),
+        case("scan: GetMMUMode 32-bit", "scan_display_devices", [], [], main_left + [[LOG_OF[("jt", 0x2DA)] - 4, 4, 0x100]]),
         case("scan: mismatched devices", "scan_display_devices", [], [],
              [[a, s, v & ((1 << (8 * s)) - 1)] for a, s, v in device(0, 20, -640, 480, 0, flags=0) + device(1, 0, 0, 480, 640, kind=0)
               + device(2, 0, 640, 480, 1280, pixel_size=4)]),

@@ -875,8 +875,9 @@ Records are 0x1e bytes: +0 type, +2 tick, +6 create, +0xa destroy, +0xe pre-rend
   tails inside it.
 - **Cloud tick:** `follow_camera_offset`.
 - **Singleton factory:** `create_singleton_type10_controller` publishes `0x20b40`.
-- **Collision:** `impact_one_time_in_16` is a collision pair handler (one rng in 16
-  becomes an ordnance hit; it returns the masked rng).
+- **Collision:** `impact_one_time_in_16` (one rng in 16 becomes an ordnance hit; it returns
+  the masked rng). Nothing references it: the long once read as its handler record sits in
+  unrelocated scenery data past the loaded image.
 - **Pose ring fills:** `fill_pose_history_angles` / `_flags`.
 - `tools/strict_port/gen_controller_misc_cases.py` covers 20 states. The replay helper now
   also compares a returned D0 where a case records one, and calls a port function by name

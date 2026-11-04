@@ -691,7 +691,7 @@ const TRAP_PEN_SIZE: int = 0xa89b
 const TRAP_MOVE_TO: int = 0xa893
 const TRAP_LINE_TO: int = 0xa891
 const TRAP_PEN_MODE_LONG: int = 0xa862  ## long argument (0x21 / 0x1e mode words, pushed with PEA)
-const TRAP_SET_BACK_MODE: int = 0xa863
+const TRAP_BACK_COLOR: int = 0xa863
 const TRAP_PEN_MODE: int = 0xa89c
 const TRAP_SET_ENTRIES: int = 0xaa3f
 const TRAP_COPY_BITS: int = 0xa8ec
@@ -743,7 +743,7 @@ func apply_pending_color_entries_a5safe() -> void:
 func blit_pixels_via_port_a5safe(src_port: int, base: int, src_rect: int, dst_port: int, dst_rect: int) -> void:
 	memory.write_u32(memory.read_u32(memory.read_u32(C68kScript.u32(src_port + 2))), C68kScript.u32(base))
 	_trap(TRAP_PEN_MODE_LONG, [0x21])
-	_trap(TRAP_SET_BACK_MODE, [0x1e])
+	_trap(TRAP_BACK_COLOR, [0x1e])
 	var dst: int = C68kScript.u32(dst_port)
 	if dst == 0:
 		dst = memory.read_u32(C68kScript.u32(_current_a5() - 0x160c))
@@ -970,7 +970,7 @@ func blit_offscreen_frame_to_window(base: int, top: int, rows: int, mode: int) -
 		memory.write_u16(dst + 2, C68kScript.u16(memory.read_u16(dst + 2) + shift))
 		memory.write_u16(dst + 6, C68kScript.u16(memory.read_u16(dst + 6) + shift))
 	_trap(TRAP_PEN_MODE_LONG, [0x21])
-	_trap(TRAP_SET_BACK_MODE, [0x1e])
+	_trap(TRAP_BACK_COLOR, [0x1e])
 	var current: int = memory.read_u32(C68kScript.u32(world - 0x160c))
 	_trap(TRAP_COPY_BITS, [0, 0, dst, src, C68kScript.u32(current + 2), C68kScript.u32(memory.read_u32(C68kScript.u32(world - 0x103a)) + 2)])
 	a5 = saved
@@ -1094,7 +1094,7 @@ func install_menus() -> void:
 	_trap(TRAP_DRAW_MENU_BAR, [])
 
 const JT_MAX_MEM: int = 0x21a           ## MaxMem(VAR grow): function result long
-const JT_HAS_DEEP_SCREENS: int = 0x2da  ## Pascal Boolean function, no arguments (result in the high byte)
+const JT_GET_MMU_MODE: int = 0x2da      ## GetMMUMode (ID09 0x3ba: the byte MMU32Bit $CB2; Pascal, result in the high byte)
 const TRAP_GET_NAMED_RESOURCE: int = 0xa9a1
 const TRAP_RELEASE_RESOURCE: int = 0xa9a3
 const TRAP_GET_RES_ATTRS: int = 0xa9a6
@@ -1105,7 +1105,7 @@ const TRAP_SET_ENTRY_COLOR: int = 0xaa9c
 const TRAP_FRONT_WINDOW: int = 0xa924
 const TRAP_GET_GDEVICE: int = 0xaa32
 const TRAP_SET_GDEVICE: int = 0xaa31
-const TRAP_INDEX_TO_FORE: int = 0xaa97
+const TRAP_PM_FORE_COLOR: int = 0xaa97
 const TRAP_GET_DEVICE_LIST: int = 0xaa29
 const TRAP_GET_MAIN_DEVICE: int = 0xaa2a
 const TRAP_GET_NEXT_DEVICE: int = 0xaa2b
@@ -1211,7 +1211,7 @@ func build_palette_index_map(device: int, count_ptr: int, map_ptr: int, reverse_
 	var i: int = 0
 	memory.write_u16(count_ptr, i)
 	while i < count:
-		_trap(TRAP_INDEX_TO_FORE, [i])
+		_trap(TRAP_PM_FORE_COLOR, [i])
 		var colour: int = memory.read_s16(memory.read_u32(C68kScript.u32(a5 - 0x160c)) + 0x52)
 		memory.write_u16(C68kScript.u32(map_ptr + 2 * i), colour & 0xffff)
 		memory.write_u16(C68kScript.u32(reverse_ptr + 2 * colour), i)
@@ -1265,7 +1265,7 @@ func scan_display_devices() -> void:
 				memory.write_u32(rec, dev)
 				memory.write_u16(rec + 0xe, memory.read_u16(memory.read_u32(memory.read_u32(memory.read_u32(dev) + 0x16)) + 4) & 0x1fff)
 				var flag: int = 0
-				if (_jt(JT_HAS_DEEP_SCREENS, []) >> 8) & 0xff == 0 and (memory.read_u8(memory.read_u32(dev) + 0x14) & 1) != 0:
+				if (_jt(JT_GET_MMU_MODE, []) >> 8) & 0xff == 0 and (memory.read_u8(memory.read_u32(dev) + 0x14) & 1) != 0:
 					flag = 1
 				memory.write_u16(rec + 0x10, flag)
 				memory.write_u16(rec + 8, 1 if memory.read_u16(memory.read_u32(dev) + 4) != 0 else 0)
@@ -1339,7 +1339,7 @@ func draw_notched_frame_pair_a5safe(paint: int, colour: int, colour2: int) -> vo
 	_trap(TRAP_PEN_SIZE, [1, 1])
 	var inner: int = build_notched_frame_poly(memory.read_u16(rect), memory.read_u16(rect + 2), memory.read_u16(rect + 4), memory.read_u16(rect + 6))
 	_trap(TRAP_PEN_MODE_LONG, [0x21])
-	_trap(TRAP_SET_BACK_MODE, [0x1e])
+	_trap(TRAP_BACK_COLOR, [0x1e])
 	var c: int = colour
 	for k in 2:
 		set_draw_color_index(c & 0xffff)
@@ -1384,7 +1384,7 @@ func blit_image_clipped_to_region() -> void:
 		unlock = true
 		_jt(JT_HLOCK, [memory.read_u32(C68kScript.u32(a5 - 0x12b0))])
 	_trap(TRAP_PEN_MODE_LONG, [0x21])
-	_trap(TRAP_SET_BACK_MODE, [0x1e])
+	_trap(TRAP_BACK_COLOR, [0x1e])
 	var port: int = memory.read_u32(C68kScript.u32(a5 - 0x1496))
 	memory.write_u32(memory.read_u32(memory.read_u32(port + 2)), memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x12b0))))
 	var row_rec: int = C68kScript.u32(C68kScript.s32(memory.read_s16(C68kScript.u32(a5 - 0x13ae)) * 0x160) + memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13b2))))
@@ -1583,7 +1583,7 @@ func draw_text_in_columns_a5safe(text: int, column: int, first: int, count: int,
 		var top: int = C68kScript.u16(height - 0x14)
 		rect = [top << 16, (C68kScript.u16(top + 1) << 16) | width]
 		_trap(TRAP_PEN_MODE_LONG, [0x21])
-		_trap(TRAP_SET_BACK_MODE, [0x1e])
+		_trap(TRAP_BACK_COLOR, [0x1e])
 		_trap(TRAP_FILL_RECT, [C68kScript.u32(world - 0x161c), rect])
 		rect = [C68kScript.u16(height - 0x13) << 16, (height << 16) | width]
 		_trap(TRAP_FILL_RECT, [C68kScript.u32(world - 0x1614), rect])
@@ -1607,7 +1607,7 @@ func draw_text_in_columns_a5safe(text: int, column: int, first: int, count: int,
 	var right: int = C68kScript.u16(start + memory.read_u16(C68kScript.u32(world - 0x14d2 + 2 * C68kScript.s32(column))))
 	rect = [(C68kScript.u16(height - 0x13) << 16) | start, (height << 16) | right]
 	_trap(TRAP_PEN_MODE_LONG, [0x21])
-	_trap(TRAP_SET_BACK_MODE, [0x1e])
+	_trap(TRAP_BACK_COLOR, [0x1e])
 	_trap(TRAP_FILL_RECT, [C68kScript.u32(world - 0x1614), rect])
 	_trap(TRAP_TEXT_FACE, [1])
 	_trap(TRAP_MOVE_TO, [C68kScript.u16(height - 5), start])
@@ -1929,7 +1929,7 @@ func _main_pixmap() -> int:
 ## 0xd76), rescans and records the old depth in A5 - 0x137a; still unsupported clears A5 - 0x102e.
 ## Otherwise a window hidden that way is shown again in a running game, and A5 - 0x102e is set. With
 ## it set the screen globals come from the pixmap (scenery index - 0x13ae = -1, base, depth, height,
-## width, row bytes, the two-screen option from the settings). HasDeepScreens (byte in A5 - 0x1000)
+## width, row bytes, the two-screen option from the settings). GetMMUMode (byte in A5 - 0x1000)
 ## and the device's flag bit 0 give A5 - 0x1312, then A5 - 0x1000 = 1; the device bases go down a
 ## menu bar, the height loses it, A5 - 0x1028 is cleared and the window is laid out over (MBarHeight,
 ## 0, MBarHeight + height, width).
@@ -1967,7 +1967,7 @@ func configure_display_from_main_device() -> void:
 		memory.write_u16(C68kScript.u32(a5 - 0x137e), C68kScript.u16(memory.read_u16(pm + 0xc) - memory.read_u16(pm + 8)))
 		memory.write_u16(C68kScript.u32(a5 - 0x1378), memory.read_u16(_main_pixmap() + 4) & 0x1fff)
 		memory.write_u16(C68kScript.u32(a5 - 0x12d4), memory.read_u16(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac))) + 0x1c))
-	var deep: int = (_jt(JT_HAS_DEEP_SCREENS, []) >> 8) & 0xff
+	var deep: int = (_jt(JT_GET_MMU_MODE, []) >> 8) & 0xff      # the MMU mode: 1 = 32-bit addressing
 	memory.write_u8(C68kScript.u32(a5 - 0x1000), deep)
 	var flag: bool = deep == 0 and (memory.read_u8(memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x1036))) + 0x14) & 1) != 0
 	memory.write_u16(C68kScript.u32(a5 - 0x1312), 1 if flag else 0)

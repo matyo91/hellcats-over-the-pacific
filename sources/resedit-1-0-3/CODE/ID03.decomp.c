@@ -362,7 +362,9 @@ void draw_spinning_disc_indicator /* Original: FUN_0000035e */ (short cx,short c
 /*
  * Original: FUN_00000514; source: ID03.c:186.
  * Recovered name: draw_ring_with_status_indicators [STRONG INFERENCE mechanics /
- * HYPOTHESIS purpose]. Ghidra truncated at $A8B8; body rebuilt as C below.
+ * PROVEN purpose: the gauges' bezel]. Its six callers are the cockpit gauges: draw_instrument (0x3c22,
+ * 0x3c40), draw_flaps_indicator (0x4c58), draw_ammo_counter (0x4ee2), draw_fuel_gauge (0x5346) and
+ * draw_landing_gear_indicator (0x5516) [PROVEN, tools/decomp/xrefs.py], each drawing its bezel with it. Ghidra truncated at $A8B8; body rebuilt as C below.
  * Bytes 0x514..0x77c [PROVEN]. Words: d [8], w [$a], cy [$c], cx [$e];
  * flags = word [$10] (bits tested on its low byte $11; corrected from "long":
  * every caller pushes five words, LEA $a(A7) - e.g. draw_instrument passes 0x1b / 0xf).

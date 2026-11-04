@@ -2230,7 +2230,10 @@ void nearest_type80_centroid_visitor /* Original: FUN_00000aba */ (int *best /* 
 
 
 
-/* Original: FUN_00000bea; source: Pacific Conflict.c. Recovered name: point_near_camera_or_type80_object [HYPOTHESIS name].
+/* Original: FUN_00000bea; source: Pacific Conflict.c. Recovered name: point_near_camera_or_type80_object [PROVEN mechanics].
+ * Name evidence (was HYPOTHESIS name): a literal description of the checked body (below): 1 when the point's
+ * camera metric is under 0x33900, or a type-0x80 centroid exists and it is then under 0x40741, else 0.
+ * The thresholds' meaning stays open.
  * Ghidra C reviewed (function at overlay offset 0xbea).
  * Arg: point record (caller passes DAT_0001d824). Returns 1 when compute_camera_abs_metric < 0x33900; otherwise searches the nearest type-0x80 centroid (context initialised to 1000000000, nearest_type80_centroid_visitor) and returns 1 when one exists and the metric is then < 0x40741, else 0. Complete Ghidra C. Caller: Pacific Conflict.c ~9080. Meaning of the two thresholds [UNKNOWN].
  * Call-argument correction [PROVEN]: both compute_camera_abs_metric calls receive the
@@ -2338,7 +2341,12 @@ void anchor_point_visitor /* Original: FUN_00000c4c */ (int *ctx /* param_1: fin
 
 
 
-/* Original: FUN_00000d6a; source: Pacific Conflict.c. Recovered name: find_anchor_point [HYPOTHESIS name].
+/* Original: FUN_00000d6a; source: Pacific Conflict.c. Recovered name: find_anchor_point [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS name): it fills the anchor record from the mission scene (its visitor,
+ * 0xc4c): mode 0 the shallowest kind-1 node's position and its parent's attitude, which start_mission_scene
+ * makes the camera position; mode 1 the nearest runway face (type nibble 0x70) at height 0x43, where
+ * respawn_player_at_anchor puts the player [PROVEN flow, the strict port's checked bodies; callers by
+ * tools/decomp/xrefs.py].
  * Ghidra C reviewed (function at overlay offset 0xd6a).
  * Arg: output record (7 longs: x, y, z, three angles, found flag word +0x18), short mode. Copies the record into a visitor context with best key 1000000000 and mode, then for_each_mission_scene_object(anchor_point_visitor,...). Callers: Pacific Conflict.c ~5444 (mode 1) and ~5517 (mode 0), both on DAT_0001d83c. Mode 0 gives the kind-1 node position and attitude (a start position?), mode 1 the nearest airfield ground point at height 67 (a landing / respawn point?) [HYPOTHESIS].
  */
@@ -7411,7 +7419,11 @@ undefined4 update_record_distance_band /* Original: FUN_00003e02 */ (int rec /* 
 
 
 
-/* Original: FUN_00003e5c; source: Pacific Conflict.c. Recovered name: snapshot_face_colours [HYPOTHESIS name].
+/* Original: FUN_00003e5c; source: Pacific Conflict.c. Recovered name: snapshot_face_colours [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS name): the body is a copy of every face's colour long into the six bytes per
+ * face that build_object_poly_buffers reserves after the face records for objects with byte +6 bit 1, taken
+ * by shade_object_faces once the faces are shaded with haze [PROVEN, bytes]. No reader of the copy in the
+ * overlay's code (the strict port's) [UNKNOWN use].
  * Ghidra C reviewed (function at overlay offset 0x3e5c).
  * For each face of the object (count +0x3a, 0x20-byte records from +0x48): copies the long at face +0xc (the RGB bytes +0xc..+0xe and the palette slot +0xf) into a 6-byte entry of an array placed after the faces (at +0x48 + faces * 0x20 + (+0x38) * 2) with a zero word. Called by shade_object_faces when haze is on and object flag (+6 & 2) is set. Complete Ghidra C.
   * VERIFIED: checked against an independent capstone disassembly of the bytes
@@ -7640,7 +7652,10 @@ LAB_000040ea:
 
 
 
-/* Original: FUN_000041ec; source: Pacific Conflict.c. Recovered name: recolour_kind2_object [HYPOTHESIS name].
+/* Original: FUN_000041ec; source: Pacific Conflict.c. Recovered name: recolour_kind2_object [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS name): for an object of kind 2 (byte 0, a shape) it recomputes the distance
+ * band (update_object_distance_band) and the face shading (shade_object_faces); its callers are in
+ * refresh_object_colours_for_depth only [PROVEN, tools/decomp/xrefs.py].
  * Ghidra C reviewed (function at overlay offset 0x41ec).
  * For an object whose kind byte is 2: FUN_00003da8(object, object +0x10) then FUN_00003ea0(object) [UNKNOWN callees; called by refresh_object_colours_for_depth for colour depths, so presumably recomputes face colours]. Complete Ghidra C.
  */
@@ -15044,7 +15059,12 @@ uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_
  * +0x10 / 2 words), verticals at the +0x24c / +0x250 addresses, double-row horizontals of (dx / 2) at
  * +0x254 / +0x258; every loop is the dbra / clr.w / subq.l / bcc 32-bit counter idiom Ghidra rendered as
  * the CONCAT22 while-loops - identical to the C. */
-/* Original: FUN_0000ba2a; source: Pacific Conflict.c. Recovered name: draw_panel_frame_lines [HYPOTHESIS].
+/* Original: FUN_0000ba2a; source: Pacific Conflict.c. Recovered name: draw_panel_frame_lines [STRONG INFERENCE].
+ * Name evidence (was HYPOTHESIS): with host option +0x9e it draws the same two vertical and two
+ * horizontal lines through host +0x272 = A5-0x1116 draw_thick_line_pixel_index_a5safe (globals pointer
+ * A5-0x1388; docs/OVERLAY_SERVICE_TABLE.md) in the panel colour word +0x25c [PROVEN chain]; its only
+ * caller is update_view_readouts_and_overlays (BSR.W at 0xd21e) [PROVEN, tools/decomp/xrefs.py]. Which
+ * panel element the lines frame stays open.
  * Ghidra C reviewed (function at overlay offset 0xba2a).
  * Unless host option +0x9e: at depth 4 writes the colour byte host +0x25d (doubled into both nibbles) straight into the frame buffer along two vertical runs (rows +0x238..+0x23a and +0x23c..+0x23e from the pointers +0x24c / +0x250) and two double horizontal runs (+0x242..+0x244, +0x246..+0x248 from +0x254 / +0x258), with depth-8 / depth-1 variants after it [HYPOTHESIS: reticle or frame lines around a panel element; not identified]. Ghidra C (read in full).
  * VERIFIED: checked against an independent capstone disassembly of 0xba2a..0xbca6: host
@@ -27856,7 +27876,8 @@ uint bullet_hits_aircraft /* Original: FUN_000167f4 */ (int bullet /* bullet obj
 
 /* Original: FUN_000168ae; source: Pacific Conflict.c. Recovered name: impact_one_time_in_16 [HYPOTHESIS].
  * Ghidra C reviewed (function at overlay offset 0x168ae).
- * Handler stored in a data record (runtime 0x2a7fc): with probability 1/16 calls ordnance_collision(other, self), i.e. the other ordnance object counts the contact as an impact [HYPOTHESIS: contact with something soft such as trees]. Ghidra C.
+ * With probability 1/16 calls ordnance_collision(other, self), i.e. the other ordnance object counts the contact as an impact [HYPOTHESIS: contact with something soft such as trees]. Ghidra C.
+ * Unreferenced [PROVEN]: no branch or relocated long names it; the "data record" once cited, the long 0x1688e at runtime 0x2a7fc lies in the scenery bytes past the loaded image (code 0x1a75c + data 0xdc8 end at 0x1b524) and is not in either relocation table: a coincidental value, not a pointer (tools/decomp/xrefs.py, the relocation tables).
  */
 /* VERIFIED (FUN_000168ae): 0x168ae..0x168d0 checked against an independent capstone disassembly and
  * found identical to the C: r = overlay_rng_next; andi.w #$f changes only the low word, so the
@@ -29152,6 +29173,14 @@ void erase_radar_blip_depth8 /* Original: FUN_00017780 */ (short x /* blip scree
   (dst2 + row_bytes + 1)[1] = (dst + panel_row_bytes + 1)[1];
   return;
 }
+
+/* Second entry at overlay offset 0x17810 (runtime 0x177f0), inside erase_radar_blip_depth8's Ghidra
+ * extent (not in Ghidra's export, so no registry row or mapping of its own): the depth-8 radar blip
+ * draw, *DAT_0001da94. configure_renderer_for_display stores its address there for depth 8 (the
+ * relocated long at runtime 0x70ec = file 0x710c; tools/decomp/xrefs.py) [PROVEN]. MOVEA.L $1b5a0, A1 starts it; it
+ * writes the blip's 12-byte cross at (x, y) in the colour byte host +0x1e7, where
+ * erase_radar_blip_depth8 restores those bytes from the saved panel [PROVEN, bytes; strict port
+ * draw_radar_blip_depth8, checked by tools/strict_port/gen_radar_blip_cases.py]. */
 
 
 

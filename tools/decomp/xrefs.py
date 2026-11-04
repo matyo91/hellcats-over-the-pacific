@@ -8,12 +8,13 @@ For a CODE segment (ID01..ID09) and a file offset:
   - through the CODE 0 jump table (godot/hellcats/data/jump_table.json): the A5 slots naming it, and
     in every segment the JSR / PEA / LEA slot(A5) that use them.
 For the overlay and a file offset (Ghidra's addresses; runtime = file - 0x20):
-  - BSR.S / .W / .L to it, and every long equal to its runtime address (JSR / LEA / PEA abs.L, and
-    data such as definition records), reported with the two bytes before it.
+  - BSR.S / .W / .L to it, and every relocated long equal to its runtime address (JSR / LEA / PEA
+    abs.L, and data such as definition records), reported with the two bytes before it; with
+    --unrelocated, also equal values the loader does not relocate (coincidences, not pointers).
 
 Usage:
   python3 tools/decomp/xrefs.py ID05 0x3ba
-  python3 tools/decomp/xrefs.py "Pacific Conflict" 0x155d8
+  python3 tools/decomp/xrefs.py "Pacific Conflict" 0x155d8 [--unrelocated]
 """
 from __future__ import annotations
 
@@ -83,22 +84,48 @@ def segment_xrefs(segment: str, target: int) -> list[str]:
     return out
 
 
-def overlay_xrefs(target: int) -> list[str]:
+def relocated_cells(b: bytes) -> set[int]:
+    """The runtime addresses of the longs the loader relocates: the header's two tables after the
+    code and data (8-byte entries: offset, flags; bit 7 of the flags skips the entry; the second
+    table's offsets are relative to the data, after the code), as ID08 and the runtime read them."""
+    def u32(o: int) -> int:
+        return struct.unpack(">I", b[o:o + 4])[0]
+    code, data = u32(4), u32(8)
+    first, second = u32(24) // 8, u32(28) // 8
+    at, cells = OVERLAY_DELTA + code + data, set()
+    for i in range(first + second):
+        offset, flags = u32(at), u32(at + 4)
+        at += 8
+        if not (flags >> 7) & 1:
+            cells.add(offset + (code if i >= first else 0))
+    return cells
+
+
+def overlay_xrefs(target: int, unrelocated: bool = False) -> list[str]:
+    """Branches to `target`, and the longs holding its runtime address that the loader relocates
+    (real pointers: absolute operands, tables); with `unrelocated`, also equal values the loader
+    leaves alone (coincidences in data, or past the image), marked as such."""
     b = OVERLAY.read_bytes()
     out = [f"overlay: {r}" for r in branches(b, target)]
     runtime = target - OVERLAY_DELTA
+    cells = relocated_cells(b)
     for o in range(0, len(b) - 3, 2):
         if struct.unpack(">I", b[o:o + 4])[0] == runtime:
-            out.append(f"overlay: long 0x{runtime:x} at file 0x{o:x} (after {b[o - 2:o].hex()})")
+            if o - OVERLAY_DELTA in cells:
+                out.append(f"overlay: long 0x{runtime:x} at file 0x{o:x} (after {b[o - 2:o].hex()})")
+            elif unrelocated:
+                out.append(f"overlay: unrelocated value 0x{runtime:x} at file 0x{o:x} (not a pointer)")
     return out
 
 
 def main(argv: list[str]) -> int:
+    unrelocated = "--unrelocated" in argv
+    argv = [a for a in argv if a != "--unrelocated"]
     if len(argv) != 3:
         print(__doc__.strip())
         return 2
     segment, target = argv[1], int(argv[2], 0)
-    refs = overlay_xrefs(target) if segment == "Pacific Conflict" else segment_xrefs(segment, target)
+    refs = overlay_xrefs(target, unrelocated) if segment == "Pacific Conflict" else segment_xrefs(segment, target)
     for r in refs:
         print(r)
     if not refs:

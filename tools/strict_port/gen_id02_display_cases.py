@@ -5,7 +5,7 @@ configure_display_from_main_device, apply_settings_to_live_options) by running t
 The set-up is gen_id02_session_cases.py's (ID02.bin at 0x30000, A5 = 0x20000, ID01 behind slot $3a, the Memory, Resource
 and alert stand-ins, the overlay hooks, redraw_main_window running for real in 1-bit mode) with the
 device traps (three devices walked by GetNextDevice, the main one scripted per case), the window,
-palette and origin traps, HasDeepScreens, the view-buffer slots ($1aa / $1b2 / $1d2) and the overlay's
+palette and origin traps, GetMMUMode, the view-buffer slots ($1aa / $1b2 / $1d2) and the overlay's
 settings hooks (A5 - 0x10a2 / - 0x1092 / - 0x104e / - 0x1096) as logging stand-ins, and the unexported
 offscreen-port close (0xd24) as an offset-keyed stand-in. scan_display_devices, configure_palette_
 entries, select_palette_for_depth, show_caution_alert_with_number and fatal_memory_error_exit run
@@ -123,7 +123,7 @@ def build() -> list[dict]:
     out += [
         case("configure: depth 8", cfg, [], []),
         case("configure: depth 1", cfg, [], [], [[a, s, v & ((1 << (8 * s)) - 1)] for a, s, v in device(1, 0, 0, 480, 640, 1)]),
-        case("configure: deep screens", cfg, [], [], [[LOG_OF[("jt", 0x2DA)] - 4, 4, 0x100]]),
+        case("configure: GetMMUMode 32-bit", cfg, [], [], [[LOG_OF[("jt", 0x2DA)] - 4, 4, 0x100]]),
         case("configure: depth 2 stays", cfg, [], [], [[DEVS[1] + 0x90 + 0x20, 2, 2], [session.WINDOW + 0x6E, 1, 1]]),
         case("configure: depth 2, then a depth 8 main", cfg, [], [], [[DEVS[1] + 0x90 + 0x20, 2, 2], [session.WINDOW + 0x6E, 1, 1]],
              {("trap", 0xAA2A): [H[1], H[2]]}),
