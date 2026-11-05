@@ -13,7 +13,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_contact_pair_hash.gd",
       "renamed_from": "FUN_0001358c",
       "blocked_by": []
@@ -30,7 +30,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_find_contact_record.gd",
       "renamed_from": "FUN_000135a0",
       "blocked_by": []
@@ -47,7 +47,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_reset_radar_tracks.gd",
       "renamed_from": "FUN_0001776a",
       "blocked_by": []
@@ -64,7 +64,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_abs_int.gd",
       "renamed_from": "FUN_00002e08",
       "blocked_by": []
@@ -81,7 +81,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_approx_dist3_xyz.gd",
       "renamed_from": "FUN_00003c68",
       "blocked_by": []
@@ -98,7 +98,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_camera_metric.gd",
       "renamed_from": "FUN_00003b98",
       "blocked_by": []
@@ -115,7 +115,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_camera_metric.gd",
       "renamed_from": "FUN_00003c00",
       "blocked_by": []
@@ -166,7 +166,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_bases.gd",
       "renamed_from": "FUN_0000202a",
       "blocked_by": []
@@ -183,7 +183,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_bases.gd",
       "renamed_from": "FUN_000020a0",
       "blocked_by": []
@@ -200,7 +200,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_bases.gd",
       "renamed_from": "FUN_000020e6",
       "blocked_by": []
@@ -217,7 +217,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_bases.gd",
       "renamed_from": "FUN_000021a0",
       "blocked_by": []
@@ -234,7 +234,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_bases.gd",
       "renamed_from": "FUN_000021e0",
       "blocked_by": []
@@ -251,7 +251,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_bases.gd",
       "renamed_from": "FUN_00002220",
       "blocked_by": []
@@ -268,7 +268,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_matrix.gd",
       "renamed_from": "FUN_00001d02",
       "blocked_by": []
@@ -285,7 +285,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_matrix.gd",
       "renamed_from": "FUN_00002562",
       "blocked_by": []
@@ -302,7 +302,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_matrix.gd",
       "renamed_from": "FUN_000025a8",
       "blocked_by": []
@@ -319,7 +319,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_00002428",
       "blocked_by": []
@@ -336,7 +336,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_00002464",
       "blocked_by": []
@@ -353,7 +353,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_00002488",
       "blocked_by": []
@@ -370,7 +370,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_000024d6",
       "blocked_by": []
@@ -387,7 +387,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_000024f8",
       "blocked_by": []
@@ -404,7 +404,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_0000253e",
       "blocked_by": []
@@ -421,7 +421,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_000025d6",
       "blocked_by": []
@@ -438,7 +438,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_0000262e",
       "blocked_by": []
@@ -455,7 +455,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_00002654",
       "blocked_by": []
@@ -472,7 +472,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_000026cc",
       "blocked_by": []
@@ -489,7 +489,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_00002700",
       "blocked_by": []
@@ -506,7 +506,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_variants.gd",
       "renamed_from": "FUN_0000276e",
       "blocked_by": []
@@ -523,7 +523,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_transform_vecs12.gd",
       "renamed_from": "FUN_000028dc",
       "blocked_by": []
@@ -540,7 +540,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_transform_vecs12.gd",
       "renamed_from": "FUN_00002976",
       "blocked_by": []
@@ -574,7 +574,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_transform_int3.gd",
       "renamed_from": "FUN_00002ada",
       "blocked_by": []
@@ -591,7 +591,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_chain_xform.gd",
       "renamed_from": "FUN_00001c5c",
       "blocked_by": []
@@ -608,7 +608,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_chain_xform.gd",
       "renamed_from": "FUN_00002bd8",
       "blocked_by": []
@@ -625,7 +625,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_chain_xform.gd",
       "renamed_from": "FUN_00002d10",
       "blocked_by": []
@@ -659,7 +659,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_node_chain.gd",
       "renamed_from": "FUN_000004f8",
       "blocked_by": []
@@ -676,7 +676,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_scene_traversal.gd",
       "renamed_from": "FUN_000005fa",
       "blocked_by": []
@@ -693,7 +693,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_scene_traversal.gd",
       "renamed_from": "FUN_000006a6",
       "blocked_by": []
@@ -710,7 +710,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_type80_visitor.gd",
       "renamed_from": "FUN_00000aba",
       "blocked_by": []
@@ -727,7 +727,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_type80_visitor.gd",
       "renamed_from": "FUN_00000bea",
       "blocked_by": []
@@ -744,7 +744,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_clip_polygon.gd",
       "renamed_from": "FUN_0000b190",
       "blocked_by": []
@@ -761,7 +761,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_clip_polygon.gd",
       "renamed_from": "FUN_0000b242",
       "blocked_by": []
@@ -778,7 +778,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_clip_polygon.gd",
       "renamed_from": "FUN_0000b2f4",
       "blocked_by": []
@@ -795,7 +795,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_clip_polygon.gd",
       "renamed_from": "FUN_0000b3aa",
       "blocked_by": []
@@ -812,7 +812,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_collect_map_features.gd",
       "renamed_from": "FUN_000006ec",
       "blocked_by": []
@@ -846,7 +846,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_segment_point_min_distance.gd",
       "renamed_from": "FUN_00003cca",
       "blocked_by": []
@@ -863,7 +863,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_rng_retire.gd",
       "renamed_from": "FUN_000114ca",
       "blocked_by": []
@@ -880,7 +880,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_rng_retire.gd",
       "renamed_from": "FUN_0001150a",
       "blocked_by": []
@@ -897,7 +897,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_rng_retire.gd",
       "renamed_from": "FUN_00011564",
       "blocked_by": []
@@ -914,7 +914,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_rng_retire.gd",
       "renamed_from": "FUN_000051ec",
       "blocked_by": []
@@ -931,7 +931,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_bullet_hits.gd",
       "renamed_from": "FUN_0001665a",
       "blocked_by": []
@@ -948,7 +948,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_bullet_hits.gd",
       "renamed_from": "FUN_00016724",
       "blocked_by": []
@@ -965,7 +965,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_bullet_hits.gd",
       "renamed_from": "FUN_000167f4",
       "blocked_by": []
@@ -982,7 +982,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_dispatch_collision.gd",
       "renamed_from": "FUN_00014348",
       "blocked_by": []
@@ -999,7 +999,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_facility_tally_cleanup.gd",
       "renamed_from": "FUN_00000354",
       "blocked_by": []
@@ -1033,7 +1033,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_facility_tally_cleanup.gd",
       "renamed_from": "FUN_0000528a",
       "blocked_by": []
@@ -1050,7 +1050,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_spawn_destruction_effect.gd",
       "renamed_from": "FUN_00011db4",
       "blocked_by": []
@@ -1084,7 +1084,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_surface_type.gd",
       "renamed_from": "FUN_00013070",
       "blocked_by": []
@@ -1101,7 +1101,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_surface_type.gd",
       "renamed_from": "FUN_0001310e",
       "blocked_by": []
@@ -1118,7 +1118,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_surface_type.gd",
       "renamed_from": "FUN_000131ac",
       "blocked_by": []
@@ -1135,7 +1135,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_surface_type.gd",
       "renamed_from": "FUN_0001320a",
       "blocked_by": []
@@ -1152,7 +1152,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_surface_type.gd",
       "renamed_from": "FUN_00013346",
       "blocked_by": []
@@ -1169,7 +1169,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_surface_type.gd",
       "renamed_from": "FUN_00013452",
       "blocked_by": []
@@ -1186,7 +1186,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_spawn_effect.gd",
       "renamed_from": "FUN_00011c58",
       "blocked_by": []
@@ -1203,7 +1203,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_pool_spawn.gd",
       "renamed_from": "FUN_00005116",
       "blocked_by": []
@@ -1220,7 +1220,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_spawn_effect.gd",
       "renamed_from": "FUN_000173fe",
       "blocked_by": []
@@ -1237,7 +1237,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_00001958",
       "blocked_by": []
@@ -1254,7 +1254,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_00001974",
       "blocked_by": []
@@ -1271,7 +1271,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_0000199a",
       "blocked_by": []
@@ -1288,7 +1288,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_000019d0",
       "blocked_by": []
@@ -1322,7 +1322,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_00001b38",
       "blocked_by": []
@@ -1339,7 +1339,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_00001b6c",
       "blocked_by": []
@@ -1356,7 +1356,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_00001b84",
       "blocked_by": []
@@ -1390,7 +1390,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_0001a63e",
       "blocked_by": []
@@ -1407,7 +1407,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_0001a716",
       "blocked_by": []
@@ -1424,7 +1424,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_creation.gd",
       "renamed_from": "FUN_000045ba",
       "blocked_by": []
@@ -1441,7 +1441,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_creation.gd",
       "renamed_from": "FUN_00004690",
       "blocked_by": []
@@ -1458,7 +1458,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_creation.gd",
       "renamed_from": "FUN_0000435a",
       "blocked_by": []
@@ -1475,7 +1475,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_pool_spawn.gd",
       "renamed_from": "FUN_000046da",
       "blocked_by": []
@@ -1492,7 +1492,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_buffers.gd",
       "renamed_from": "FUN_00003da8",
       "blocked_by": []
@@ -1509,7 +1509,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_buffers.gd",
       "renamed_from": "FUN_00003e02",
       "blocked_by": []
@@ -1526,7 +1526,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_buffers.gd",
       "renamed_from": "FUN_00004808",
       "blocked_by": []
@@ -1543,7 +1543,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_buffers.gd",
       "renamed_from": "FUN_00004916",
       "blocked_by": []
@@ -1560,7 +1560,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_buffers.gd",
       "renamed_from": "FUN_00004e06",
       "blocked_by": []
@@ -1577,7 +1577,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_activate.gd",
       "renamed_from": "FUN_00004e6e",
       "blocked_by": []
@@ -1594,7 +1594,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_shading.gd",
       "renamed_from": "FUN_0000147a",
       "blocked_by": []
@@ -1611,7 +1611,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_shading.gd",
       "renamed_from": "FUN_00001548",
       "blocked_by": []
@@ -1628,7 +1628,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_shading.gd",
       "renamed_from": "FUN_0000159e",
       "blocked_by": []
@@ -1645,7 +1645,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_shading.gd",
       "renamed_from": "FUN_00003e5c",
       "blocked_by": []
@@ -1662,7 +1662,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_shading.gd",
       "renamed_from": "FUN_00003ea0",
       "blocked_by": []
@@ -1679,7 +1679,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sink.gd",
       "renamed_from": "FUN_0001562e",
       "blocked_by": []
@@ -1696,7 +1696,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sink.gd",
       "renamed_from": "FUN_00015762",
       "blocked_by": []
@@ -1713,7 +1713,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_land_outline.gd",
       "renamed_from": "FUN_00004958",
       "blocked_by": []
@@ -1730,7 +1730,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_0000df5e",
       "blocked_by": []
@@ -1764,7 +1764,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000115b0",
       "blocked_by": []
@@ -1781,7 +1781,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00011aae",
       "blocked_by": []
@@ -1798,7 +1798,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00011afe",
       "blocked_by": []
@@ -1815,7 +1815,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000127c6",
       "blocked_by": []
@@ -1832,7 +1832,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000150c8",
       "blocked_by": []
@@ -1849,7 +1849,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_0001530e",
       "blocked_by": []
@@ -1883,7 +1883,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000155ec",
       "blocked_by": []
@@ -1900,7 +1900,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00015b92",
       "blocked_by": []
@@ -1917,7 +1917,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00016a3a",
       "blocked_by": []
@@ -1951,7 +1951,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000173a2",
       "blocked_by": []
@@ -1968,7 +1968,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00017566",
       "blocked_by": []
@@ -1985,7 +1985,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000188ba",
       "blocked_by": []
@@ -2002,7 +2002,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00018b52",
       "blocked_by": []
@@ -2019,7 +2019,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000190c0",
       "blocked_by": []
@@ -2036,7 +2036,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_000193b6",
       "blocked_by": []
@@ -2053,7 +2053,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00019a1a",
       "blocked_by": []
@@ -2070,7 +2070,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_factories.gd",
       "renamed_from": "FUN_00019b82",
       "blocked_by": []
@@ -2087,7 +2087,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_init.gd",
       "renamed_from": "FUN_0001203a",
       "blocked_by": []
@@ -2104,7 +2104,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_init.gd",
       "renamed_from": "FUN_000120ca",
       "blocked_by": []
@@ -2121,7 +2121,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_init.gd",
       "renamed_from": "FUN_00011efc",
       "blocked_by": []
@@ -2138,7 +2138,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_init.gd",
       "renamed_from": "FUN_0001217e",
       "blocked_by": []
@@ -2155,7 +2155,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_create.gd",
       "renamed_from": "FUN_0000dff0",
       "blocked_by": []
@@ -2172,7 +2172,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_create.gd",
       "renamed_from": "FUN_0000e0ce",
       "blocked_by": []
@@ -2189,7 +2189,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_create.gd",
       "renamed_from": "FUN_0000e1e6",
       "blocked_by": []
@@ -2206,7 +2206,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_create.gd",
       "renamed_from": "FUN_0000e2a4",
       "blocked_by": []
@@ -2223,7 +2223,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_create.gd",
       "renamed_from": "FUN_0000e340",
       "blocked_by": []
@@ -2240,7 +2240,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_create.gd",
       "renamed_from": "FUN_00018956",
       "blocked_by": []
@@ -2257,7 +2257,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_create.gd",
       "renamed_from": "FUN_00019130",
       "blocked_by": []
@@ -2274,7 +2274,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_animate.gd",
       "renamed_from": "FUN_000123ce",
       "blocked_by": []
@@ -2291,7 +2291,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_animate.gd",
       "renamed_from": "FUN_00012466",
       "blocked_by": []
@@ -2308,7 +2308,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_animate.gd",
       "renamed_from": "FUN_00012486",
       "blocked_by": []
@@ -2342,7 +2342,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_animate.gd",
       "renamed_from": "FUN_000115fc",
       "blocked_by": []
@@ -2359,7 +2359,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_animate.gd",
       "renamed_from": "FUN_000175de",
       "blocked_by": []
@@ -2376,7 +2376,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_debris.gd",
       "renamed_from": "FUN_00012296",
       "blocked_by": []
@@ -2393,7 +2393,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_effect_debris.gd",
       "renamed_from": "FUN_00012528",
       "blocked_by": []
@@ -2410,7 +2410,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_ticks.gd",
       "renamed_from": "FUN_000175c0",
       "blocked_by": []
@@ -2427,7 +2427,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_ticks.gd",
       "renamed_from": "FUN_00019bbc",
       "blocked_by": []
@@ -2444,7 +2444,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_ticks.gd",
       "renamed_from": "FUN_000189d0",
       "blocked_by": []
@@ -2461,7 +2461,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_ticks.gd",
       "renamed_from": "FUN_000174c4",
       "blocked_by": []
@@ -2478,7 +2478,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_ticks.gd",
       "renamed_from": "FUN_000116fc",
       "blocked_by": []
@@ -2529,7 +2529,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016ac4",
       "blocked_by": []
@@ -2546,7 +2546,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016ad6",
       "blocked_by": []
@@ -2563,7 +2563,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016ae8",
       "blocked_by": []
@@ -2580,7 +2580,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016b4c",
       "blocked_by": []
@@ -2597,7 +2597,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016b9e",
       "blocked_by": []
@@ -2614,7 +2614,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016c24",
       "blocked_by": []
@@ -2631,7 +2631,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016c6a",
       "blocked_by": []
@@ -2648,7 +2648,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_00016e06",
       "blocked_by": []
@@ -2665,7 +2665,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_trails.gd",
       "renamed_from": "FUN_0001702a",
       "blocked_by": []
@@ -2682,7 +2682,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sinking_step.gd",
       "renamed_from": "FUN_00014bea",
       "blocked_by": []
@@ -2733,7 +2733,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_inverse_trig.gd",
       "renamed_from": "FUN_00001e3a",
       "blocked_by": []
@@ -2750,7 +2750,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_inverse_trig.gd",
       "renamed_from": "FUN_00001ebc",
       "blocked_by": []
@@ -2767,7 +2767,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_inverse_trig.gd",
       "renamed_from": "FUN_0000e372",
       "blocked_by": []
@@ -2784,7 +2784,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_inverse_trig.gd",
       "renamed_from": "FUN_00001f22",
       "blocked_by": []
@@ -2801,7 +2801,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_turret.gd",
       "renamed_from": "FUN_00015bf6",
       "blocked_by": []
@@ -2818,7 +2818,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_turret.gd",
       "renamed_from": "FUN_00015d20",
       "blocked_by": []
@@ -2835,7 +2835,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_turret.gd",
       "renamed_from": "FUN_00015d78",
       "blocked_by": []
@@ -2852,7 +2852,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_turret.gd",
       "renamed_from": "FUN_0001917c",
       "blocked_by": []
@@ -2886,7 +2886,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_blast_damage.gd",
       "renamed_from": "FUN_00014f48",
       "blocked_by": []
@@ -2903,7 +2903,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_blast_damage.gd",
       "renamed_from": "FUN_00012b66",
       "blocked_by": []
@@ -2920,7 +2920,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flak_gun.gd",
       "renamed_from": "FUN_00018c96",
       "blocked_by": []
@@ -2937,7 +2937,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_wave_spawner.gd",
       "renamed_from": "FUN_0000e262",
       "blocked_by": []
@@ -2954,7 +2954,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_wave_spawner.gd",
       "renamed_from": "FUN_000180c8",
       "blocked_by": []
@@ -2971,7 +2971,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_spawner.gd",
       "renamed_from": "FUN_00017dd4",
       "blocked_by": []
@@ -2988,7 +2988,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_firing_ship.gd",
       "renamed_from": "FUN_00012840",
       "blocked_by": []
@@ -3005,7 +3005,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_firing_ship.gd",
       "renamed_from": "FUN_00015356",
       "blocked_by": []
@@ -3039,7 +3039,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_handlers.gd",
       "renamed_from": "FUN_00011ae6",
       "blocked_by": []
@@ -3056,7 +3056,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_handlers.gd",
       "renamed_from": "FUN_00017d16",
       "blocked_by": []
@@ -3073,7 +3073,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_handlers.gd",
       "renamed_from": "FUN_00017db8",
       "blocked_by": []
@@ -3090,7 +3090,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_handlers.gd",
       "renamed_from": "FUN_00018040",
       "blocked_by": []
@@ -3124,7 +3124,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_handlers.gd",
       "renamed_from": "FUN_00018bba",
       "blocked_by": []
@@ -3141,7 +3141,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_handlers.gd",
       "renamed_from": "FUN_0000e0a4",
       "blocked_by": []
@@ -3158,7 +3158,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_handlers.gd",
       "renamed_from": "FUN_0000fe0a",
       "blocked_by": []
@@ -3175,7 +3175,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_handlers.gd",
       "renamed_from": "FUN_00010cd8",
       "blocked_by": []
@@ -3192,7 +3192,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_handlers.gd",
       "renamed_from": "FUN_000176b2",
       "blocked_by": []
@@ -3209,7 +3209,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_notice.gd",
       "renamed_from": "FUN_0000fe96",
       "blocked_by": []
@@ -3226,7 +3226,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_notice.gd",
       "renamed_from": "FUN_000100bc",
       "blocked_by": []
@@ -3243,7 +3243,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_fighter_notice.gd",
       "renamed_from": "FUN_000100d4",
       "blocked_by": []
@@ -3260,7 +3260,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlap_dispatch.gd",
       "renamed_from": "FUN_00005832",
       "blocked_by": []
@@ -3277,7 +3277,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_landing_gear.gd",
       "renamed_from": "FUN_0000fb2a",
       "blocked_by": []
@@ -3294,7 +3294,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_damage_helpers.gd",
       "renamed_from": "FUN_00008784",
       "blocked_by": []
@@ -3311,7 +3311,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_damage_helpers.gd",
       "renamed_from": "FUN_00011670",
       "blocked_by": []
@@ -3362,7 +3362,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_damage_helpers.gd",
       "renamed_from": "FUN_00017ffe",
       "blocked_by": []
@@ -3379,7 +3379,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_damage_state.gd",
       "renamed_from": "FUN_00010650",
       "blocked_by": []
@@ -3396,7 +3396,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_aircraft_tick.gd",
       "renamed_from": "FUN_0000e5aa",
       "blocked_by": []
@@ -3413,7 +3413,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_helpers.gd",
       "renamed_from": "FUN_0000e42a",
       "blocked_by": []
@@ -3430,7 +3430,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_helpers.gd",
       "renamed_from": "FUN_0000e468",
       "blocked_by": []
@@ -3447,7 +3447,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_helpers.gd",
       "renamed_from": "FUN_0000e4a4",
       "blocked_by": []
@@ -3464,7 +3464,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_helpers.gd",
       "renamed_from": "FUN_0000e570",
       "blocked_by": []
@@ -3481,7 +3481,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_helpers.gd",
       "renamed_from": "FUN_00010c2c",
       "blocked_by": []
@@ -3498,7 +3498,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_helpers.gd",
       "renamed_from": "FUN_00010cb2",
       "blocked_by": []
@@ -3515,7 +3515,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_steering.gd",
       "renamed_from": "FUN_000102d6",
       "blocked_by": []
@@ -3532,7 +3532,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_steering.gd",
       "renamed_from": "FUN_00010558",
       "blocked_by": []
@@ -3549,7 +3549,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_steering.gd",
       "renamed_from": "FUN_00010360",
       "blocked_by": []
@@ -3566,7 +3566,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_steering.gd",
       "renamed_from": "FUN_000109ba",
       "blocked_by": []
@@ -3583,7 +3583,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_steering.gd",
       "renamed_from": "FUN_00010b2e",
       "blocked_by": []
@@ -3600,7 +3600,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_misc.gd",
       "renamed_from": "FUN_00006e74",
       "blocked_by": []
@@ -3634,7 +3634,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_misc.gd",
       "renamed_from": "FUN_00014af2",
       "blocked_by": [
@@ -3653,7 +3653,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_misc.gd",
       "renamed_from": "FUN_000137da",
       "blocked_by": []
@@ -3670,7 +3670,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_misc.gd",
       "renamed_from": "FUN_00019430",
       "blocked_by": []
@@ -3687,7 +3687,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_model.gd",
       "renamed_from": "FUN_0000e792",
       "blocked_by": []
@@ -3721,7 +3721,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_000111ae",
       "blocked_by": []
@@ -3738,7 +3738,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_000111da",
       "blocked_by": []
@@ -3755,7 +3755,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_000112e0",
       "blocked_by": []
@@ -3772,7 +3772,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_0001820a",
       "blocked_by": []
@@ -3789,7 +3789,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_000110f4",
       "blocked_by": []
@@ -3806,7 +3806,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00010b84",
       "blocked_by": []
@@ -3823,7 +3823,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00010ce8",
       "blocked_by": []
@@ -3840,7 +3840,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00010d68",
       "blocked_by": []
@@ -3857,7 +3857,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00010da8",
       "blocked_by": []
@@ -3874,7 +3874,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00010de8",
       "blocked_by": []
@@ -3908,7 +3908,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00010ecc",
       "blocked_by": []
@@ -3925,7 +3925,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00010f68",
       "blocked_by": []
@@ -3942,7 +3942,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_000168d2",
       "blocked_by": []
@@ -3959,7 +3959,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_0001691c",
       "blocked_by": []
@@ -3976,7 +3976,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
       "renamed_from": "FUN_00016966",
       "blocked_by": []
@@ -4061,7 +4061,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
       "renamed_from": "FUN_000128b6",
       "blocked_by": []
@@ -4078,7 +4078,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
       "renamed_from": "FUN_00012a2a",
       "blocked_by": []
@@ -4095,7 +4095,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
       "renamed_from": "FUN_00012d34",
       "blocked_by": []
@@ -4112,7 +4112,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
       "renamed_from": "FUN_00012f52",
       "blocked_by": []
@@ -4129,7 +4129,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_parachute.gd",
       "renamed_from": "FUN_0001951a",
       "blocked_by": []
@@ -4146,7 +4146,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_parachute.gd",
       "renamed_from": "FUN_0001952e",
       "blocked_by": []
@@ -4163,7 +4163,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_parachute.gd",
       "renamed_from": "FUN_00019938",
       "blocked_by": []
@@ -4180,7 +4180,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
       "renamed_from": "FUN_000116e8",
       "blocked_by": []
@@ -4214,7 +4214,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
       "renamed_from": "FUN_00018942",
       "blocked_by": []
@@ -4231,7 +4231,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
       "renamed_from": "FUN_00012738",
       "blocked_by": []
@@ -4248,7 +4248,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
       "renamed_from": "FUN_000127aa",
       "blocked_by": []
@@ -4265,7 +4265,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
       "renamed_from": "FUN_00019b30",
       "blocked_by": []
@@ -4316,7 +4316,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
       "renamed_from": "FUN_0000df98",
       "blocked_by": []
@@ -4350,7 +4350,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_000115da",
       "blocked_by": []
@@ -4367,7 +4367,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_00011b48",
       "blocked_by": []
@@ -4384,7 +4384,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_0001281e",
       "blocked_by": []
@@ -4401,7 +4401,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_00015bd4",
       "blocked_by": []
@@ -4418,7 +4418,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_00016a78",
       "blocked_by": []
@@ -4435,7 +4435,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_00017098",
       "blocked_by": []
@@ -4452,7 +4452,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_000173dc",
       "blocked_by": []
@@ -4469,7 +4469,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_0001759e",
       "blocked_by": []
@@ -4486,7 +4486,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_000188f4",
       "blocked_by": []
@@ -4503,7 +4503,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_0001910e",
       "blocked_by": []
@@ -4520,7 +4520,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_0001940e",
       "blocked_by": []
@@ -4537,7 +4537,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
       "renamed_from": "FUN_00019a54",
       "blocked_by": []
@@ -4554,7 +4554,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_radar.gd",
       "renamed_from": "FUN_0001771a",
       "blocked_by": []
@@ -4571,7 +4571,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_radar.gd",
       "renamed_from": "FUN_00017736",
       "blocked_by": []
@@ -4605,7 +4605,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_radar.gd",
       "renamed_from": "FUN_00017b68",
       "blocked_by": []
@@ -4622,7 +4622,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
       "renamed_from": "FUN_00011b96",
       "blocked_by": []
@@ -4639,7 +4639,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
       "renamed_from": "FUN_00011c2c",
       "blocked_by": []
@@ -4656,7 +4656,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
       "renamed_from": "FUN_00009550",
       "blocked_by": []
@@ -4673,7 +4673,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
       "renamed_from": "FUN_000095ac",
       "blocked_by": []
@@ -4690,7 +4690,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
       "renamed_from": "FUN_000096ae",
       "blocked_by": []
@@ -4707,7 +4707,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_plume.gd",
       "renamed_from": "FUN_00011796",
       "blocked_by": []
@@ -4724,7 +4724,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_plume.gd",
       "renamed_from": "FUN_00011940",
       "blocked_by": []
@@ -4741,7 +4741,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_plume.gd",
       "renamed_from": "FUN_00011a90",
       "blocked_by": []
@@ -4758,7 +4758,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_pre_render.gd",
       "renamed_from": "FUN_00018a34",
       "blocked_by": []
@@ -4775,7 +4775,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_pre_render.gd",
       "renamed_from": "FUN_00019394",
       "blocked_by": []
@@ -4792,7 +4792,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_pre_render.gd",
       "renamed_from": "FUN_00015e62",
       "blocked_by": []
@@ -4809,7 +4809,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_polygon.gd",
       "renamed_from": "FUN_00012fd2",
       "blocked_by": []
@@ -4826,7 +4826,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_polygon.gd",
       "renamed_from": "FUN_00013268",
       "blocked_by": []
@@ -4877,7 +4877,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_dots.gd",
       "renamed_from": "FUN_00015f3e",
       "blocked_by": []
@@ -4894,7 +4894,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_dots.gd",
       "renamed_from": "FUN_00015fb8",
       "blocked_by": []
@@ -4911,7 +4911,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_dots.gd",
       "renamed_from": "FUN_00016128",
       "blocked_by": []
@@ -4928,7 +4928,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_dots.gd",
       "renamed_from": "FUN_00016230",
       "blocked_by": []
@@ -4945,7 +4945,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_list.gd",
       "renamed_from": "FUN_00001c04",
       "blocked_by": []
@@ -4962,7 +4962,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_list.gd",
       "renamed_from": "FUN_000052dc",
       "blocked_by": []
@@ -4979,7 +4979,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_list.gd",
       "renamed_from": "FUN_000053f8",
       "blocked_by": []
@@ -4996,7 +4996,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_visibility.gd",
       "renamed_from": "FUN_00002802",
       "blocked_by": []
@@ -5013,7 +5013,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_visibility.gd",
       "renamed_from": "FUN_000058ec",
       "blocked_by": []
@@ -5030,7 +5030,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_visibility.gd",
       "renamed_from": "FUN_0000555a",
       "blocked_by": []
@@ -5047,7 +5047,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_collision.gd",
       "renamed_from": "FUN_00013e4e",
       "blocked_by": []
@@ -5064,7 +5064,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_collision.gd",
       "renamed_from": "FUN_00013eae",
       "blocked_by": []
@@ -5081,7 +5081,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_collision.gd",
       "renamed_from": "FUN_000135e8",
       "blocked_by": []
@@ -5098,7 +5098,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_collision.gd",
       "renamed_from": "FUN_0001429c",
       "blocked_by": []
@@ -5115,7 +5115,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_collision.gd",
       "renamed_from": "FUN_0001346c",
       "blocked_by": []
@@ -5132,7 +5132,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_collision.gd",
       "renamed_from": "FUN_00013ee0",
       "blocked_by": []
@@ -5149,7 +5149,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
       "renamed_from": "FUN_0001383c",
       "blocked_by": []
@@ -5166,7 +5166,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
       "renamed_from": "FUN_00013980",
       "blocked_by": []
@@ -5183,7 +5183,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
       "renamed_from": "FUN_00014198",
       "blocked_by": []
@@ -5200,7 +5200,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
       "renamed_from": "FUN_00014830",
       "blocked_by": []
@@ -5217,7 +5217,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
       "renamed_from": "FUN_00013cdc",
       "blocked_by": []
@@ -5234,7 +5234,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
       "renamed_from": "FUN_00005df8",
       "blocked_by": []
@@ -5251,7 +5251,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
       "renamed_from": "FUN_0000947c",
       "blocked_by": []
@@ -5268,7 +5268,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
       "renamed_from": "FUN_000094d2",
       "blocked_by": []
@@ -5285,7 +5285,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
       "renamed_from": "FUN_000044a4",
       "blocked_by": []
@@ -5302,7 +5302,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
       "renamed_from": "FUN_0001377a",
       "blocked_by": []
@@ -5319,7 +5319,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_camera.gd",
       "renamed_from": "FUN_0000739a",
       "blocked_by": []
@@ -5336,7 +5336,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_camera.gd",
       "renamed_from": "FUN_000088a0",
       "blocked_by": []
@@ -5353,7 +5353,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_camera.gd",
       "renamed_from": "FUN_00008abe",
       "blocked_by": []
@@ -5387,7 +5387,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
       "renamed_from": "FUN_00017868",
       "blocked_by": []
@@ -5404,7 +5404,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
       "renamed_from": "FUN_00017948",
       "blocked_by": []
@@ -5421,7 +5421,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
       "renamed_from": "FUN_00017a34",
       "blocked_by": []
@@ -5438,7 +5438,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
       "renamed_from": "FUN_00017a60",
       "blocked_by": []
@@ -5455,7 +5455,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_views.gd",
       "renamed_from": "FUN_0000879e",
       "blocked_by": []
@@ -5472,7 +5472,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_views.gd",
       "renamed_from": "FUN_00008972",
       "blocked_by": []
@@ -5489,7 +5489,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_views.gd",
       "renamed_from": "FUN_00008ff4",
       "blocked_by": []
@@ -5506,7 +5506,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_tracking_camera.gd",
       "renamed_from": "FUN_00008c30",
       "blocked_by": []
@@ -5523,7 +5523,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_frame_loop.gd",
       "renamed_from": "FUN_00006fb8",
       "blocked_by": []
@@ -5557,7 +5557,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_frame_loop.gd",
       "renamed_from": "FUN_000092e4",
       "blocked_by": []
@@ -5574,7 +5574,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_clouds.gd",
       "renamed_from": "FUN_00019aa2",
       "blocked_by": []
@@ -5608,7 +5608,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_altitude_bands.gd",
       "renamed_from": "FUN_00005a14",
       "blocked_by": []
@@ -5625,7 +5625,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_ground_scatter.gd",
       "renamed_from": "FUN_00005e28",
       "blocked_by": []
@@ -5642,7 +5642,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_00000032",
       "blocked_by": []
@@ -5693,7 +5693,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_000027a2",
       "blocked_by": []
@@ -5710,7 +5710,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_000027cc",
       "blocked_by": []
@@ -5744,7 +5744,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_000041ec",
       "blocked_by": []
@@ -5761,7 +5761,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_00006ece",
       "blocked_by": []
@@ -5778,7 +5778,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_00009ae0",
       "blocked_by": []
@@ -5795,7 +5795,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_0000b460",
       "blocked_by": []
@@ -5812,7 +5812,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
       "renamed_from": "FUN_0000b49e",
       "blocked_by": []
@@ -5846,7 +5846,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000c572",
       "blocked_by": []
@@ -5863,7 +5863,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000c664",
       "blocked_by": []
@@ -5880,7 +5880,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000c80c",
       "blocked_by": []
@@ -5897,7 +5897,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000c8d6",
       "blocked_by": []
@@ -5914,7 +5914,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000c948",
       "blocked_by": []
@@ -5931,7 +5931,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000c9c2",
       "blocked_by": []
@@ -5948,7 +5948,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000ca44",
       "blocked_by": []
@@ -5999,7 +5999,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000cc12",
       "blocked_by": []
@@ -6016,7 +6016,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000ccca",
       "blocked_by": []
@@ -6033,7 +6033,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000ce1c",
       "blocked_by": []
@@ -6050,7 +6050,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
       "renamed_from": "FUN_0000cec4",
       "blocked_by": []
@@ -6101,7 +6101,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_readouts.gd",
       "renamed_from": "FUN_0001a75e",
       "blocked_by": []
@@ -6118,7 +6118,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_panel_frame.gd",
       "renamed_from": "FUN_0000ba2a",
       "blocked_by": []
@@ -6135,7 +6135,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heading_tape.gd",
       "renamed_from": "FUN_0000c11e",
       "blocked_by": []
@@ -6152,7 +6152,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heading_tape.gd",
       "renamed_from": "FUN_0000c17e",
       "blocked_by": []
@@ -6169,7 +6169,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heading_tape.gd",
       "renamed_from": "FUN_0000c1aa",
       "blocked_by": []
@@ -6186,7 +6186,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sky_ground.gd",
       "renamed_from": "FUN_0000b4b6",
       "blocked_by": []
@@ -6220,7 +6220,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_copy_rect.gd",
       "renamed_from": "FUN_0000bfb0",
       "blocked_by": []
@@ -6271,7 +6271,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_line4.gd",
       "renamed_from": "FUN_0000d5b0",
       "blocked_by": []
@@ -6288,7 +6288,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_line4.gd",
       "renamed_from": "FUN_0000db60",
       "blocked_by": []
@@ -6305,7 +6305,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
       "renamed_from": "FUN_00009d34",
       "blocked_by": []
@@ -6322,7 +6322,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
       "renamed_from": "FUN_00009da6",
       "blocked_by": []
@@ -6339,7 +6339,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
       "renamed_from": "FUN_00009ef8",
       "blocked_by": []
@@ -6356,7 +6356,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
       "renamed_from": "FUN_00009fc4",
       "blocked_by": []
@@ -6373,7 +6373,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
       "renamed_from": "FUN_00009b8c",
       "blocked_by": []
@@ -6390,7 +6390,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
       "renamed_from": "FUN_0000a07e",
       "blocked_by": []
@@ -6407,7 +6407,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
       "renamed_from": "FUN_0000a16e",
       "blocked_by": []
@@ -6424,7 +6424,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
       "renamed_from": "FUN_0000a220",
       "blocked_by": []
@@ -6441,7 +6441,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
       "renamed_from": "FUN_0000a2f2",
       "blocked_by": []
@@ -6458,7 +6458,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
       "renamed_from": "FUN_0000a512",
       "blocked_by": []
@@ -6475,7 +6475,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
       "renamed_from": "FUN_0000a676",
       "blocked_by": []
@@ -6492,7 +6492,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
       "renamed_from": "FUN_0000b028",
       "blocked_by": []
@@ -6509,7 +6509,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_transform_object.gd",
       "renamed_from": "FUN_0000a75e",
       "blocked_by": []
@@ -6526,7 +6526,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_render_objects.gd",
       "renamed_from": "FUN_0000ac72",
       "blocked_by": []
@@ -6543,7 +6543,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_sort_parts.gd",
       "renamed_from": "FUN_0001443a",
       "blocked_by": []
@@ -6560,7 +6560,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_span_fill.gd",
       "renamed_from": "FUN_00003734",
       "blocked_by": []
@@ -6594,7 +6594,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_span4.gd",
       "renamed_from": "FUN_00003266",
       "blocked_by": []
@@ -6611,7 +6611,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_span4.gd",
       "renamed_from": "FUN_000032ba",
       "blocked_by": []
@@ -6628,7 +6628,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_span4.gd",
       "renamed_from": "FUN_00003412",
       "blocked_by": []
@@ -6662,7 +6662,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_span4.gd",
       "renamed_from": "FUN_000035b4",
       "blocked_by": []
@@ -6696,7 +6696,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_scan_convert.gd",
       "renamed_from": "FUN_00002e14",
       "blocked_by": []
@@ -6713,7 +6713,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_000019b0",
       "blocked_by": []
@@ -6730,7 +6730,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_00001a48",
       "blocked_by": []
@@ -6747,7 +6747,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_heap.gd",
       "renamed_from": "FUN_00001b4c",
       "blocked_by": []
@@ -6781,7 +6781,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_attitude_matrix.gd",
       "renamed_from": "FUN_00001d56",
       "blocked_by": []
@@ -6832,7 +6832,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_template_chain_xform.gd",
       "renamed_from": "FUN_00002de8",
       "blocked_by": []
@@ -6849,7 +6849,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_camera_metric.gd",
       "renamed_from": "FUN_00003be0",
       "blocked_by": []
@@ -6866,7 +6866,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_camera_metric.gd",
       "renamed_from": "FUN_00003c48",
       "blocked_by": []
@@ -6883,7 +6883,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_object_buffers.gd",
       "renamed_from": "FUN_00004e4e",
       "blocked_by": []
@@ -6900,7 +6900,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_helpers.gd",
       "renamed_from": "FUN_0000e512",
       "blocked_by": []
@@ -6917,7 +6917,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_rng_retire.gd",
       "renamed_from": "FUN_00011544",
       "blocked_by": []
@@ -6934,7 +6934,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
       "renamed_from": "FUN_00000020",
       "blocked_by": []
@@ -6951,7 +6951,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
       "renamed_from": "FUN_00001294",
       "blocked_by": []
@@ -6968,7 +6968,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
       "renamed_from": "FUN_00001300",
       "blocked_by": []
@@ -6985,7 +6985,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
       "renamed_from": "FUN_0000131c",
       "blocked_by": []
@@ -7002,7 +7002,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
       "renamed_from": "FUN_00000db0",
       "blocked_by": []
@@ -7019,7 +7019,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
       "renamed_from": "FUN_00000e0a",
       "blocked_by": []
@@ -7036,7 +7036,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
       "renamed_from": "FUN_00000e32",
       "blocked_by": []
@@ -7053,7 +7053,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
       "renamed_from": "FUN_00000e5a",
       "blocked_by": []
@@ -7138,7 +7138,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
       "renamed_from": "FUN_00000c4c",
       "blocked_by": []
@@ -7155,7 +7155,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
       "renamed_from": "FUN_00000d6a",
       "blocked_by": []
@@ -7172,7 +7172,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
       "renamed_from": "FUN_0000d298",
       "blocked_by": []
@@ -7189,7 +7189,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
       "renamed_from": "FUN_0000d34c",
       "blocked_by": []
@@ -7206,7 +7206,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_start.gd",
       "renamed_from": "FUN_00004210",
       "blocked_by": []
@@ -7240,7 +7240,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_flight_start.gd",
       "renamed_from": "FUN_0000923e",
       "blocked_by": []
@@ -7308,7 +7308,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
       "renamed_from": "FUN_00001112",
       "blocked_by": []
@@ -7325,7 +7325,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
       "renamed_from": "FUN_000018d6",
       "blocked_by": []
@@ -7342,7 +7342,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
       "renamed_from": "FUN_00002e12",
       "blocked_by": []
@@ -7359,7 +7359,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
       "renamed_from": "FUN_00003732",
       "blocked_by": []
@@ -7393,7 +7393,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_mission_tables.gd",
       "renamed_from": "FUN_00000054",
       "blocked_by": []
@@ -7410,7 +7410,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_mission_tables.gd",
       "renamed_from": "FUN_000016e2",
       "blocked_by": []
@@ -7427,7 +7427,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_distant_dots.gd",
       "renamed_from": "FUN_000162ba",
       "blocked_by": []
@@ -7461,7 +7461,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_slew_mode.gd",
       "renamed_from": "FUN_0000f810",
       "blocked_by": []
@@ -7478,7 +7478,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_game_sounds.gd",
       "renamed_from": "FUN_000096f4",
       "blocked_by": []
@@ -7886,7 +7886,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
       "renamed_from": "FUN_000001ce",
       "blocked_by": []
@@ -7937,7 +7937,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
       "renamed_from": "FUN_0000024a",
       "blocked_by": []
@@ -7954,7 +7954,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
       "renamed_from": "FUN_000002b0",
       "blocked_by": []
@@ -8141,7 +8141,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
       "renamed_from": "FUN_000003f6",
       "blocked_by": []
@@ -8243,7 +8243,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
       "renamed_from": "FUN_00002ee4",
       "blocked_by": []
@@ -8260,7 +8260,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
       "renamed_from": "FUN_00003d36",
       "blocked_by": []
@@ -8277,7 +8277,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
       "renamed_from": "FUN_00003d50",
       "blocked_by": []
@@ -8294,7 +8294,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
       "renamed_from": "FUN_00003db8",
       "blocked_by": []
@@ -8447,7 +8447,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
       "renamed_from": "FUN_00004b62",
       "blocked_by": []
@@ -8515,7 +8515,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
       "renamed_from": "FUN_000014e6",
       "blocked_by": []
@@ -8685,7 +8685,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_00000a86",
       "blocked_by": []
@@ -8719,7 +8719,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_00000e3e",
       "blocked_by": []
@@ -8787,7 +8787,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_00001e68",
       "blocked_by": []
@@ -8804,7 +8804,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_000020be",
       "blocked_by": []
@@ -8821,7 +8821,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_00002fa0",
       "blocked_by": []
@@ -8838,7 +8838,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_00003590",
       "blocked_by": []
@@ -8855,7 +8855,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_00004318",
       "blocked_by": []
@@ -8889,7 +8889,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_0000442e",
       "blocked_by": []
@@ -8940,7 +8940,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
       "renamed_from": "FUN_0000462c",
       "blocked_by": []
@@ -8974,7 +8974,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
       "renamed_from": "FUN_000010ce",
       "blocked_by": []
@@ -9076,7 +9076,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
       "renamed_from": "FUN_000030fa",
       "blocked_by": []
@@ -9093,7 +9093,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
       "renamed_from": "FUN_00001edc",
       "blocked_by": []
@@ -9110,7 +9110,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
       "renamed_from": "FUN_000046b4",
       "blocked_by": []
@@ -9127,7 +9127,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
       "renamed_from": "FUN_00004738",
       "blocked_by": []
@@ -9144,7 +9144,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
       "renamed_from": "FUN_000048ae",
       "blocked_by": []
@@ -9161,7 +9161,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
       "renamed_from": "FUN_00002192",
       "blocked_by": []
@@ -9212,7 +9212,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_draw.gd",
       "renamed_from": "FUN_00001876",
       "blocked_by": []
@@ -9246,7 +9246,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_draw.gd",
       "renamed_from": "FUN_00004c18",
       "blocked_by": []
@@ -9314,7 +9314,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_memory.gd",
       "renamed_from": "FUN_00001f8e",
       "blocked_by": []
@@ -9331,7 +9331,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_memory.gd",
       "renamed_from": "FUN_00000ad0",
       "blocked_by": []
@@ -9348,7 +9348,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_menu.gd",
       "renamed_from": "FUN_00001308",
       "blocked_by": []
@@ -9365,7 +9365,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_menu.gd",
       "renamed_from": "FUN_00003174",
       "blocked_by": []
@@ -9382,7 +9382,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000728",
       "blocked_by": []
@@ -9399,7 +9399,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000746",
       "blocked_by": []
@@ -9416,7 +9416,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000754",
       "blocked_by": []
@@ -9433,7 +9433,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_000007a8",
       "blocked_by": []
@@ -9501,7 +9501,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_000008d6",
       "blocked_by": []
@@ -9535,7 +9535,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000964",
       "blocked_by": []
@@ -9552,7 +9552,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000a62",
       "blocked_by": []
@@ -9569,7 +9569,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000a90",
       "blocked_by": []
@@ -9637,7 +9637,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000bc2",
       "blocked_by": []
@@ -9654,7 +9654,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
       "renamed_from": "FUN_00000bde",
       "blocked_by": []
@@ -9671,7 +9671,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_00000004",
       "blocked_by": []
@@ -9688,7 +9688,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_000000b0",
       "blocked_by": []
@@ -9705,7 +9705,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_000000f4",
       "blocked_by": []
@@ -9722,7 +9722,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_00000116",
       "blocked_by": []
@@ -9739,7 +9739,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_0000017c",
       "blocked_by": []
@@ -9773,7 +9773,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_000001dc",
       "blocked_by": []
@@ -9790,7 +9790,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_0000024c",
       "blocked_by": []
@@ -9807,7 +9807,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_0000026c",
       "blocked_by": []
@@ -9824,7 +9824,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_00000512",
       "blocked_by": []
@@ -9841,7 +9841,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_00000598",
       "blocked_by": []
@@ -9858,7 +9858,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_00000666",
       "blocked_by": []
@@ -9875,7 +9875,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_000007b0",
       "blocked_by": []
@@ -9909,7 +9909,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_000008a2",
       "blocked_by": []
@@ -9960,7 +9960,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_0000096e",
       "blocked_by": []
@@ -9977,7 +9977,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_000009d8",
       "blocked_by": []
@@ -10011,7 +10011,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_00000d84",
       "blocked_by": []
@@ -10028,7 +10028,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
       "renamed_from": "FUN_00000dca",
       "blocked_by": []
@@ -10045,7 +10045,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id07_09.gd",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
@@ -10096,7 +10096,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id07_09.gd",
       "renamed_from": "FUN_00000348",
       "blocked_by": []
@@ -10113,7 +10113,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id07_09.gd",
       "renamed_from": "FUN_000003c2",
       "blocked_by": []
@@ -10147,7 +10147,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
@@ -10164,7 +10164,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_0000002e",
       "blocked_by": []
@@ -10181,7 +10181,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000054",
       "blocked_by": []
@@ -10198,7 +10198,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000078",
       "blocked_by": []
@@ -10215,7 +10215,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_0000009c",
       "blocked_by": []
@@ -10232,7 +10232,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_000000c4",
       "blocked_by": []
@@ -10249,7 +10249,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_000000ec",
       "blocked_by": []
@@ -10266,7 +10266,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000120",
       "blocked_by": []
@@ -10317,7 +10317,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000220",
       "blocked_by": []
@@ -10351,7 +10351,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000362",
       "blocked_by": []
@@ -10385,7 +10385,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_0000044e",
       "blocked_by": []
@@ -10402,7 +10402,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_000004f0",
       "blocked_by": []
@@ -10436,7 +10436,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000560",
       "blocked_by": []
@@ -10453,7 +10453,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_00000588",
       "blocked_by": []
@@ -10470,7 +10470,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
       "renamed_from": "FUN_000018e0",
       "blocked_by": []
@@ -10504,7 +10504,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_00000f4e",
       "blocked_by": []
@@ -10521,7 +10521,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_00001106",
       "blocked_by": []
@@ -10538,7 +10538,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_0000116a",
       "blocked_by": []
@@ -10555,7 +10555,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_000014a0",
       "blocked_by": []
@@ -10589,7 +10589,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_0000150e",
       "blocked_by": []
@@ -10606,7 +10606,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_00001562",
       "blocked_by": []
@@ -10623,7 +10623,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_0000158c",
       "blocked_by": []
@@ -10640,7 +10640,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_00001638",
       "blocked_by": []
@@ -10657,7 +10657,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_000016c4",
       "blocked_by": []
@@ -10674,7 +10674,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_000017e6",
       "blocked_by": []
@@ -10691,7 +10691,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_0000189c",
       "blocked_by": []
@@ -10708,7 +10708,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_000018b0",
       "blocked_by": []
@@ -10725,7 +10725,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_00003124",
       "blocked_by": []
@@ -10742,7 +10742,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_00003178",
       "blocked_by": []
@@ -10759,7 +10759,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
       "renamed_from": "FUN_00003a56",
       "blocked_by": []
@@ -10810,7 +10810,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
       "renamed_from": "FUN_00000a8e",
       "blocked_by": []
@@ -10861,7 +10861,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
       "renamed_from": "FUN_0000192e",
       "blocked_by": []
@@ -10895,7 +10895,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
       "renamed_from": "FUN_00002d86",
       "blocked_by": []
@@ -10929,7 +10929,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
       "renamed_from": "FUN_00003260",
       "blocked_by": []
@@ -10997,7 +10997,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
       "renamed_from": "FUN_00001bc8",
       "blocked_by": []
@@ -11031,7 +11031,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
       "renamed_from": "FUN_00001f5e",
       "blocked_by": []
@@ -11065,7 +11065,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
       "renamed_from": "FUN_000033d6",
       "blocked_by": []
@@ -11150,7 +11150,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
@@ -11167,7 +11167,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
       "renamed_from": "FUN_000000c8",
       "blocked_by": []
@@ -11218,7 +11218,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
       "renamed_from": "FUN_00000214",
       "blocked_by": []
@@ -11235,7 +11235,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
       "renamed_from": "FUN_00000270",
       "blocked_by": []
@@ -11252,7 +11252,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
       "renamed_from": "FUN_000002c8",
       "blocked_by": []
@@ -11269,7 +11269,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
       "renamed_from": "FUN_000004e4",
       "blocked_by": []
@@ -11337,7 +11337,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id08_09_glue.gd",
       "renamed_from": "FUN_0000039c",
       "blocked_by": []
@@ -11371,7 +11371,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_render.gd",
       "renamed_from": "FUN_00000318",
       "blocked_by": []
@@ -11388,7 +11388,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id06_render.gd",
       "renamed_from": "FUN_00000e10",
       "blocked_by": []
@@ -11405,7 +11405,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
@@ -11422,7 +11422,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_00000056",
       "blocked_by": []
@@ -11439,7 +11439,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_0000008a",
       "blocked_by": []
@@ -11456,7 +11456,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_000000a6",
       "blocked_by": []
@@ -11473,7 +11473,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_000000c8",
       "blocked_by": []
@@ -11490,7 +11490,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_000000f4",
       "blocked_by": []
@@ -11507,7 +11507,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_000002a8",
       "blocked_by": []
@@ -11524,7 +11524,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_0000033c",
       "blocked_by": []
@@ -11541,7 +11541,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_00005718",
       "blocked_by": []
@@ -11558,7 +11558,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_00005c36",
       "blocked_by": []
@@ -11575,7 +11575,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_00005cb6",
       "blocked_by": []
@@ -11592,7 +11592,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
       "renamed_from": "FUN_000071a2",
       "blocked_by": []
@@ -11609,7 +11609,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
       "renamed_from": "FUN_00003832",
       "blocked_by": []
@@ -11626,7 +11626,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
       "renamed_from": "FUN_0000146a",
       "blocked_by": []
@@ -11643,7 +11643,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
       "renamed_from": "FUN_00001844",
       "blocked_by": []
@@ -11660,7 +11660,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
       "renamed_from": "FUN_0000077e",
       "blocked_by": []
@@ -11677,7 +11677,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
       "renamed_from": "FUN_00000912",
       "blocked_by": []
@@ -11694,7 +11694,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
       "renamed_from": "FUN_00003f24",
       "blocked_by": []
@@ -11711,7 +11711,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
       "renamed_from": "FUN_00004b32",
       "blocked_by": []
@@ -11728,7 +11728,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
       "renamed_from": "FUN_00005158",
       "blocked_by": []
@@ -11745,7 +11745,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
       "renamed_from": "FUN_00004110",
       "blocked_by": []
@@ -11762,7 +11762,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
       "renamed_from": "FUN_00005860",
       "blocked_by": []
@@ -11779,7 +11779,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
       "renamed_from": "FUN_00005ab6",
       "blocked_by": []
@@ -11796,7 +11796,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
       "renamed_from": "FUN_00001538",
       "blocked_by": []
@@ -11813,7 +11813,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
       "renamed_from": "FUN_0000035e",
       "blocked_by": []
@@ -11830,7 +11830,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
       "renamed_from": "FUN_00000514",
       "blocked_by": []
@@ -11847,7 +11847,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_0000532e",
       "blocked_by": []
@@ -11864,7 +11864,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_000054fe",
       "blocked_by": []
@@ -11881,7 +11881,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00004c42",
       "blocked_by": []
@@ -11898,7 +11898,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00004ecc",
       "blocked_by": []
@@ -11915,7 +11915,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00001fee",
       "blocked_by": []
@@ -11932,7 +11932,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_000022fe",
       "blocked_by": []
@@ -11949,7 +11949,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00002600",
       "blocked_by": []
@@ -11966,7 +11966,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00001876",
       "blocked_by": []
@@ -11983,7 +11983,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00001b48",
       "blocked_by": []
@@ -12000,7 +12000,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00002950",
       "blocked_by": []
@@ -12017,7 +12017,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00004790",
       "blocked_by": []
@@ -12034,7 +12034,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00004304",
       "blocked_by": []
@@ -12051,7 +12051,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00003c02",
       "blocked_by": []
@@ -12068,7 +12068,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_000038fc",
       "blocked_by": []
@@ -12085,7 +12085,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_000032b8",
       "blocked_by": []
@@ -12102,7 +12102,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
       "renamed_from": "FUN_00002d1c",
       "blocked_by": []
@@ -12119,7 +12119,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_remap.gd",
       "renamed_from": "FUN_00006c1c",
       "blocked_by": []
@@ -12136,7 +12136,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id03_downsample.gd",
       "renamed_from": "FUN_00000a3c",
       "blocked_by": []
@@ -12170,7 +12170,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
       "renamed_from": "FUN_0000045a",
       "blocked_by": []
@@ -12187,7 +12187,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
       "renamed_from": "FUN_000004c6",
       "blocked_by": []
@@ -12204,7 +12204,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
       "renamed_from": "FUN_00000930",
       "blocked_by": []
@@ -12221,7 +12221,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
       "renamed_from": "FUN_00004d34",
       "blocked_by": []
@@ -12255,7 +12255,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
       "renamed_from": "FUN_00004db0",
       "blocked_by": []
@@ -12272,7 +12272,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
       "renamed_from": "FUN_00002334",
       "blocked_by": []
@@ -12289,7 +12289,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
       "renamed_from": "FUN_000027e4",
       "blocked_by": []
@@ -12323,7 +12323,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
       "renamed_from": "FUN_000029f2",
       "blocked_by": []
@@ -12357,7 +12357,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
       "renamed_from": "FUN_000035bc",
       "blocked_by": []
@@ -12408,7 +12408,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
       "renamed_from": "FUN_00002f1e",
       "blocked_by": []
@@ -12425,7 +12425,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
       "renamed_from": "FUN_00002fd4",
       "blocked_by": []
@@ -12442,7 +12442,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_commands.gd",
       "renamed_from": "FUN_000035e4",
       "blocked_by": []
@@ -12459,7 +12459,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_commands.gd",
       "renamed_from": "FUN_000036a2",
       "blocked_by": []
@@ -12493,7 +12493,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
       "renamed_from": "FUN_00003aae",
       "blocked_by": []
@@ -12527,7 +12527,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
       "renamed_from": "FUN_00003dd0",
       "blocked_by": []
@@ -12544,7 +12544,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_startup.gd",
       "renamed_from": "FUN_00002bbc",
       "blocked_by": []
@@ -12561,7 +12561,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_startup.gd",
       "renamed_from": "FUN_0000309a",
       "blocked_by": []
@@ -12578,7 +12578,7 @@
       "structurally_verified": true,
       "behaviorally_verified": true,
       "integrated": true,
-      "runtime_verified": false,
+      "runtime_verified": true,
       "deterministic_test": "godot/tests/strict_port/test_id02_flight.gd",
       "renamed_from": "FUN_000004fc",
       "blocked_by": []

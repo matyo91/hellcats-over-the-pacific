@@ -2110,6 +2110,18 @@ and new hashes. The checker never edits the manifest or GDScript. Its Python
 test makes a temporary altered source copy and proves drift is detected while
 the real manifest remains byte-identical.
 
+`python3 tools/strict_port/check_callees.py` checks the call structure: every
+mapped function a semantic C body calls must be reached by the ported body (by
+name, through a jump-table slot, a segment offset or an overlay code address,
+directly or through the port file's private helpers). A miss is a shortcut the
+original does not take, such as an inlined copy of a callee; a callee reached
+only through a computed address is listed in its `ALLOWED` table with why. It
+also checks the reverse: a ported body calls no mapped function that none of the
+C bodies mapped to it calls (an extra call would let the runtime evidence credit
+a function the original does not run there), C calls by Ghidra name
+(`FUN_000002b0`) resolved by address and calls Ghidra left as labels listed in
+`EXTRA_ALLOWED` with their evidence. QA runs it as `strict-port-callees`.
+
 Adding a port is therefore an explicit review operation: translate the current
 source, add independent vectors/evidence, add one manifest row with the reviewed
 hash, run synchronization and tests, then advance each milestone separately.

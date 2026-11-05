@@ -157,9 +157,17 @@ func ansi_strcpy(dst: int, src: int) -> int:
 			break
 	return C68kScript.u32(dst)
 
-## 0x2d8: copy src over dst's terminator; returns dst.
+## 0x2d8: src copied over dst's terminator, its own included (the copy inline, as in the bytes:
+## no call to strcpy); returns dst.
 func ansi_strcat(dst: int, src: int) -> int:
-	ansi_strcpy(C68kScript.u32(dst + _strlen(dst)), src)
+	var out: int = C68kScript.u32(dst + _strlen(dst))
+	var k: int = 0
+	while true:
+		var b: int = memory.read_u8(C68kScript.u32(src + k))
+		memory.write_u8(C68kScript.u32(out + k), b)
+		k += 1
+		if b == 0:
+			break
 	return C68kScript.u32(dst)
 
 func _strlen(s: int) -> int:
@@ -698,6 +706,8 @@ func new_offscreen_cport(row_bytes: int, base: int, bounds_tl: int, bounds_br: i
 	memory.write_u32(pixmap + 10, C68kScript.u32(bounds_br))
 	memory.write_u32(port + 0x10, C68kScript.u32(bounds_tl))
 	memory.write_u32(port + 0x14, C68kScript.u32(bounds_br))
+	# &bounds in the original: the rect argument passed by value, which the port keeps in variables
+	# (its arguments are not in memory), so RectRgn gets its two longs.
 	_trap(TRAP_RECT_RGN, [[C68kScript.u32(bounds_tl), C68kScript.u32(bounds_br)], memory.read_u32(port + 0x18)])
 	return port
 
@@ -1049,30 +1059,27 @@ func freemem_a5safe() -> int:
 
 ## 0x1d48: the message (a C string, made Pascal in place) in a caution alert (ALRT 0x102, placed
 ## with position_alert_template): number 0 shows it alone (ParamText with the strings at A5 -
-## 0xd0e / - 0xd0c / - 0xd0a), otherwise with the number as a decimal Pascal string built in the
-## frame (and the strings at A5 - 0xd08 / - 0xd06, or - 0xd04 / - 0xd02 for a nil message);
-## the message is made C again.
+## 0xd0e / - 0xd0c / - 0xd0a), otherwise with the number as a decimal Pascal string that
+## format_int_decimal_pstring builds in the frame (buf at -0xa(a6)), and the strings at A5 - 0xd08
+## / - 0xd06, or - 0xd04 / - 0xd02 for a nil message; the message is made C again.
 func show_caution_alert_with_number(message: int, number: int) -> void:
 	_jt(JT_C2PSTR, [C68kScript.u32(message)])
 	if (number & 0xffff) == 0:
-		_trap(TRAP_PARAM_TEXT, [C68kScript.u32(a5 - 0xd0a), C68kScript.u32(a5 - 0xd0c), _pstr_at(C68kScript.u32(a5 - 0xd0e)), C68kScript.u32(message)])
+		_trap(TRAP_PARAM_TEXT, [C68kScript.u32(a5 - 0xd0a), C68kScript.u32(a5 - 0xd0c), C68kScript.u32(a5 - 0xd0e), C68kScript.u32(message)])
 	else:
-		var digits: Array = _decimal_pstring(C68kScript.s16(number))
+		assert(a7 != 0, "show_caution_alert_with_number needs a7 with a number (its text is in the frame)")
+		var a6: int = a7 - 4
+		var entry: int = a7
+		a7 = a6 - 0xe - 8                                  # below buf / s: two arguments, then the bsr
+		var text: int = C68kScript.u32(format_int_decimal_pstring(C68kScript.s16(number), a6 - 0xa))
+		a7 = entry
 		if C68kScript.u32(message) != 0:
-			_trap(TRAP_PARAM_TEXT, [C68kScript.u32(a5 - 0xd06), C68kScript.u32(a5 - 0xd08), digits, C68kScript.u32(message)])
+			_trap(TRAP_PARAM_TEXT, [C68kScript.u32(a5 - 0xd06), C68kScript.u32(a5 - 0xd08), text, C68kScript.u32(message)])
 		else:
-			_trap(TRAP_PARAM_TEXT, [C68kScript.u32(a5 - 0xd02), C68kScript.u32(a5 - 0xd04), digits, C68kScript.u32(message)])
+			_trap(TRAP_PARAM_TEXT, [C68kScript.u32(a5 - 0xd02), C68kScript.u32(a5 - 0xd04), text, C68kScript.u32(message)])
 	position_alert_template(0x102)
 	_trap(TRAP_CAUTION_ALERT, [0, 0x102])
 	_jt(JT_P2CSTR, [C68kScript.u32(message)])
-
-## A Pascal string in memory as its bytes (length first): how the stand-ins log a string argument
-## whose buffer may be the caller's frame.
-func _pstr_at(p: int) -> Array:
-	var out: Array = []
-	for k in memory.read_u8(p) + 1:
-		out.append(memory.read_u8(C68kScript.u32(p + k)))
-	return out
 
 ## 0x1dd4: once (A5 - 0xd12): dialog 0x8b (GetNewDialog, behind all), placed and shown, waits
 ## for a click (Button down, then up) and is disposed.
@@ -1133,12 +1140,13 @@ const A5_DEVICE_RECORDS: int = -0x136e  ## device records of 0x16: +0 GDHandle, 
 ## (res attribute 0x20, SetResAttrs + ChangedResource, unless already set), stored in the slot
 ## (A5 - 0xd62) and 0 returned.
 func load_named_sound_into_slot(name: int, slot: int) -> int:
+	assert(a7 != 0, "load_named_sound_into_slot needs a7 (MaxMem's grow is in its frame)")
 	var h: int = C68kScript.u32(_trap(TRAP_GET_NAMED_RESOURCE, [C68kScript.u32(name), 0x736e6420]))
 	if h == 0:
 		return 1
 	_jt(JT_HNOPURGE, [h])
 	_jt(JT_HUNLOCK, [h])
-	if C68kScript.s32(_jt(JT_FREE_MEM, [])) < 0x3000 and C68kScript.s32(_jt(JT_MAX_MEM, [[]])) < 0x3000:
+	if C68kScript.s32(_jt(JT_FREE_MEM, [])) < 0x3000 and C68kScript.s32(_jt(JT_MAX_MEM, [C68kScript.u32(a7 - 4 - 0xa)])) < 0x3000:
 		_jt(JT_HUNLOCK, [h])
 		_jt(JT_HPURGE, [h])
 		_trap(TRAP_RELEASE_RESOURCE, [h])
@@ -1453,7 +1461,7 @@ func check_device_color_state_changed() -> void:
 		if not changed:
 			continue
 		if d == 1:
-			_jt(JT_PALETTE_CHANGED, [memory.read_u32(C68kScript.u32(a5 - 0x1354)), []])
+			_jt(JT_PALETTE_CHANGED, [memory.read_u32(C68kScript.u32(a5 - 0x1354)), a6 - 0x20a])   # fresh_map
 		a7 = entry_a7 - 0x40e - 0x12
 		build_palette_index_map(d, a6 - 4, memory.read_u32(rec + 4), a6 - 0x40a)
 		a7 = entry_a7
@@ -1506,18 +1514,28 @@ func realloc_and_clear_handle_a5safe(h: int, size: int) -> void:
 ## 11, 10 and 8, slot 8 from A5 - 0xca4 when A5 - 0xcae is missing, which also counts as a
 ## failure). Any failure shows the sound error dialog once.
 func load_game_sounds() -> void:
+	assert(a7 != 0, "load_game_sounds needs a7 (MaxMem's grow is in its frame)")
+	var entry: int = a7
+	var a6: int = entry - 4
+	memory.write_u32(a6 - 6, 0)                          # grow, -6(a6)
+	# Each load below the frame: link, the six bytes of locals, its two arguments, the return.
+	var load := func(name: int, slot: int) -> int:
+		a7 = entry - 4 - 6 - 6 - 4
+		var r: int = load_named_sound_into_slot(name, slot)
+		a7 = entry
+		return r
 	memory.write_u32(C68kScript.u32(a5 - 0x112a), C68kScript.u32(a5 + A5_SOUND_SLOTS))
 	release_sound_slots()
 	var failed: int = 0
-	_jt(JT_MAX_MEM, [[]])
+	_jt(JT_MAX_MEM, [a6 - 6])
 	var free: int = C68kScript.s32(_jt(JT_FREE_MEM, []))
-	failed |= load_named_sound_into_slot(C68kScript.u32(a5 + (-0xd00 if free > 0x2e400 else -0xcf8)), 0)
+	failed |= load.call(C68kScript.u32(a5 + (-0xd00 if free > 0x2e400 else -0xcf8)), 0)
 	for pair in [[-0xcea, 5], [-0xce6, 2], [-0xce2, 9], [-0xcd0, 6], [-0xcca, 7], [-0xcc4, 1], [-0xcc0, 0xc], [-0xcba, 0xb],
 			[-0xcb4, 0xa]]:
-		failed |= load_named_sound_into_slot(C68kScript.u32(a5 + pair[0]), pair[1])
-	if load_named_sound_into_slot(C68kScript.u32(a5 - 0xcae), 8) != 0:
+		failed |= load.call(C68kScript.u32(a5 + pair[0]), pair[1])
+	if load.call(C68kScript.u32(a5 - 0xcae), 8) != 0:
 		failed |= 1
-		failed |= load_named_sound_into_slot(C68kScript.u32(a5 - 0xca4), 8)
+		failed |= load.call(C68kScript.u32(a5 - 0xca4), 8)
 	if (failed & 0xffff) != 0:
 		show_sound_error_dialog_once()
 
@@ -1717,9 +1735,11 @@ func begin_overlay_session() -> void:
 	ensure_free_memory_and_init_sound()
 	a7 = entry
 	_hook(A5_HOOK_PREPARE)
+	a7 = entry - 4 - 4 - 4                               # link, grow, the return
 	load_game_sounds()
+	a7 = entry
 	if C68kScript.s32(_jt(JT_FREE_MEM, [])) < 0x186a0:
-		_jt(JT_MAX_MEM, [[]])
+		_jt(JT_MAX_MEM, [C68kScript.u32(a7 - 4 - 0x4)])
 	_hook(A5_HOOK_START)
 	_local(LOCAL_SESSION_SETUP, [])
 	lock_sound_slots()
@@ -1730,7 +1750,7 @@ func ensure_free_memory_and_init_sound() -> void:
 	assert(a7 != 0, "ensure_free_memory_and_init_sound needs a7 (MaxMem's grow is in its frame)")
 	memory.write_u32(a7 - 4 - 4, 0)
 	if C68kScript.s32(_jt(JT_FREE_MEM, [])) < 0x7a120:
-		_jt(JT_MAX_MEM, [[]])
+		_jt(JT_MAX_MEM, [C68kScript.u32(a7 - 4 - 0x4)])
 	if memory.read_u16(C68kScript.u32(a5 - 0x12ee)) != 0:
 		init_sound_system(0)
 
@@ -1895,7 +1915,7 @@ func layout_game_window_and_view(top: int, left: int, bottom: int, right: int) -
 	memory.write_u16(C68kScript.u32(a5 - 0x1372), w)
 	var window: int = memory.read_u32(C68kScript.u32(a5 - 0x14ca))
 	if window == 0:
-		window = C68kScript.u32(_trap(TRAP_NEW_CWINDOW, [0, 0, 0xffffffff, 2, 0, _pstr_at(C68kScript.u32(a5 - 0xc92)),
+		window = C68kScript.u32(_trap(TRAP_NEW_CWINDOW, [0, 0, 0xffffffff, 2, 0, C68kScript.u32(a5 - 0xc92),
 				[memory.read_u32(a6 - 8), memory.read_u32(a6 - 4)], 0]))
 		memory.write_u32(C68kScript.u32(a5 - 0x14ca), window)
 		memory.write_u32(C68kScript.u32(a5 - 0x14ae), C68kScript.u32(_trap(TRAP_NEW_PALETTE, [0, 0, 0, 0xd])))
@@ -2155,13 +2175,13 @@ func show_resource_file_error_box() -> void:
 	assert(a7 != 0, "show_resource_file_error_box needs a7 (its rect is in its frame)")
 	var a6: int = a7 - 4
 	_trap(TRAP_SET_RECT, [0x84, 0x164, 0x3c, 0x98, a6 - 8])
-	var window: int = C68kScript.u32(_trap(TRAP_NEW_WINDOW, [0, 0, 0xffffffff, 1, 1, _pstr_at(C68kScript.u32(a5 - 0xc50)), a6 - 8, 0]))
+	var window: int = C68kScript.u32(_trap(TRAP_NEW_WINDOW, [0, 0, 0xffffffff, 1, 1, C68kScript.u32(a5 - 0xc50), a6 - 8, 0]))
 	_trap(TRAP_SET_PORT, [window])
 	_trap(TRAP_TEXT_FONT, [0])
 	_trap(TRAP_MOVE_TO, [0x14, 4])
-	_trap(TRAP_DRAW_STRING, [_pstr_at(memory.read_u32(C68kScript.u32(a5 - 0xd72)))])
+	_trap(TRAP_DRAW_STRING, [memory.read_u32(C68kScript.u32(a5 - 0xd72))])
 	_trap(TRAP_MOVE_TO, [0x28, 4])
-	_trap(TRAP_DRAW_STRING, [_pstr_at(memory.read_u32(C68kScript.u32(a5 - 0xd6e)))])
+	_trap(TRAP_DRAW_STRING, [memory.read_u32(C68kScript.u32(a5 - 0xd6e))])
 	while (_trap(TRAP_BUTTON, []) >> 8) & 0xff == 0:
 		pass
 
@@ -2676,7 +2696,7 @@ func main() -> void:
 	initialize_application()
 	a7 = entry
 	_trap(TRAP_UNLOAD_SEG, [C68kScript.u32(a5 + 0xa2)])
-	_jt(JT_MAX_MEM, [[]])
+	_jt(JT_MAX_MEM, [C68kScript.u32(a7 - 4 - 0x6)])
 	_local(LOCAL_MAIN_SETUP, [])
 	memory.write_u16(C68kScript.u32(a5 - 0x14c4), 1)
 	var flag: int = _jt(JT_GET_SETTINGS_FLAG, []) & 0xffff

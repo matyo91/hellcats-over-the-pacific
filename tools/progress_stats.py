@@ -60,6 +60,7 @@ def collect() -> tuple[dict[str, Any], list[str]]:
             "ported_gdscript_functions": sum(row.get("translation_status") != "NOT_PORTED" for row in mappings),
             "behaviorally_verified_translations": sum(bool(row.get("behaviorally_verified")) for row in mappings),
             "integrated_translations": sum(bool(row.get("integrated")) for row in mappings),
+            "runtime_verified_translations": sum(bool(row.get("runtime_verified")) for row in mappings),
         },
         "resources": {
             "identified_resources": int(resources.get("resource_count", 0)),
@@ -80,6 +81,7 @@ def render_text(stats: dict[str, Any]) -> str:
         "ported_gdscript_functions": "ported to GDScript",
         "behaviorally_verified_translations": "behaviorally verified translations",
         "integrated_translations": "integrated translations",
+        "runtime_verified_translations": "run in the runtime's sessions (runtime verified)",
         "identified_resources": "identified resources",
         "parsed_resources": "parsed resources",
         "unresolved_resource_formats": "unresolved resource formats",

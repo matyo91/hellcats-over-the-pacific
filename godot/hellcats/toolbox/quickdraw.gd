@@ -127,7 +127,7 @@ func port_bits(port: int) -> Array:
 	if is_color(memory, port):
 		var pm: int = memory.read_u32(memory.read_u32(port + 2))
 		return [memory.read_u32(pm), memory.read_u16(pm + 4) & 0x3fff, read_rect(pm + 6), maxi(memory.read_u16(pm + 0x20), 1)]
-	return [memory.read_u32(port + 2), memory.read_u16(port + 6) & 0x3fff, read_rect(port + 8), 1 if (memory.read_u16(port + 6) & 0x8000) == 0 else 8]
+	return [memory.read_u32(port + 2), memory.read_u16(port + 6) & 0x3fff, read_rect(port + 8), 1 if (memory.read_u16(port + 6) & 0x8000) == 0 else machine.screen_depth]
 
 ## A bitmap or PixMap argument (CopyBits): [baseAddr, rowBytes, bounds, depth]. A colour port's
 ## portBits (port + 2) is its PixMap's handle, marked by the two high bits of the rowBytes field
@@ -159,16 +159,17 @@ func init_port(port: int, color: bool) -> void:
 		var pm: int = heap.new_handle(50, true)
 		var p: int = memory.read_u32(pm)
 		memory.write_u32(p, machine.SCREEN_BASE)
-		memory.write_u16(p + 4, width | 0x8000)
+		memory.write_u16(p + 4, machine.screen_row_bytes() | 0x8000)
 		write_rect(p + 6, Rect2i(0, 0, width, height))
-		memory.write_u16(p + 0x20, 8)
+		memory.write_u16(p + 0x20, machine.screen_depth)
 		memory.write_u32(port + 2, pm)
 		memory.write_u16(port + 6, 0xc000)
 		for k in 3:
 			memory.write_u16(port + 0x2a + 2 * k, 0xffff)
 	else:
 		memory.write_u32(port + 2, machine.SCREEN_BASE)
-		memory.write_u16(port + 6, width | 0x8000)
+		# The screen as a BitMap; on a deep screen the high bit marks it as 8 bits a pixel here.
+		memory.write_u16(port + 6, machine.screen_row_bytes() | (0x8000 if machine.screen_depth > 1 else 0))
 		write_rect(port + 8, Rect2i(0, 0, width, height))
 	write_rect(port + 0x10, Rect2i(0, 0, width, height))
 	memory.write_u32(port + 0x18, new_region(Rect2i(0, 0, width, height)))
@@ -381,6 +382,24 @@ func _plot(bits: Array, x: int, y: int, on: bool, mode: int, fg: int, bk: int) -
 				black = black and not on
 		memory.write_u8(at, (v | mask) if black else (v & ~mask))
 		return
+	if depth != 8:                                   # 2 or 4 bits a pixel: the same modes on the index
+		var full: int = (1 << depth) - 1
+		var cur: int = _read_pixel(bits, x, y)
+		var nv: int = cur
+		match m:
+			0:
+				nv = fg if (on if (mode & 4) == 0 else not on) else bk
+			1:
+				if on:
+					nv = fg
+			2:
+				if on:
+					nv = cur ^ full
+			3:
+				if on:
+					nv = bk
+		_write_pixel(bits, x, y, nv & full)
+		return
 	var at8: int = row + col
 	match m:
 		0:
@@ -559,8 +578,8 @@ func copy_bits(src: Array, dst: Array, sr: Rect2i, dr: Rect2i, mode: int, clip: 
 				continue
 			if src[3] == 1:
 				_plot(dst, x, y, v == 1, mode, BLACK, WHITE)
-			elif dst[3] == 8 and (mode & 3) == 0:
-				_write_pixel8(dst, x, y, v)
+			elif dst[3] > 1 and (mode & 3) == 0:
+				_write_pixel(dst, x, y, v)
 			else:
 				_plot(dst, x, y, v != WHITE, mode, v, WHITE)
 
@@ -577,6 +596,20 @@ func _read_pixel(bits: Array, x: int, y: int) -> int:
 	var depth: int = bits[3]
 	var bit: int = col * depth
 	return (memory.read_u8(row + (bit >> 3)) >> (8 - depth - (bit & 7))) & ((1 << depth) - 1)
+
+## One pixel's index written at any depth above 1 (masked to the depth).
+func _write_pixel(bits: Array, x: int, y: int, v: int) -> void:
+	var depth: int = bits[3]
+	if depth == 8:
+		_write_pixel8(bits, x, y, v)
+		return
+	var bounds: Rect2i = bits[2]
+	var at: int = bits[0] + (y - bounds.position.y) * bits[1]
+	var bit: int = (x - bounds.position.x) * depth
+	at += bit >> 3
+	var shift: int = 8 - depth - (bit & 7)
+	var full: int = (1 << depth) - 1
+	memory.write_u8(at, (memory.read_u8(at) & ~(full << shift)) | ((v & full) << shift))
 
 func _write_pixel8(bits: Array, x: int, y: int, v: int) -> void:
 	var bounds: Rect2i = bits[2]
@@ -597,8 +630,8 @@ func draw_image(port: int, image: Image, r: Rect2i) -> void:
 			var key: int = c.to_rgba32()
 			if not cache.has(key):
 				cache[key] = color_index(c.r8 << 8, c.g8 << 8, c.b8 << 8)
-			if bits[3] == 8:
-				_write_pixel8(bits, x, y, cache[key])
+			if bits[3] > 1:
+				_write_pixel(bits, x, y, cache[key])
 			else:
 				_plot(bits, x, y, cache[key] > 127, SRC_COPY, BLACK, WHITE)
 
@@ -608,7 +641,7 @@ func init_graf(the_port: int) -> int:
 	globals = the_port & 0xffffffff
 	var bits: int = globals + QD_SCREEN_BITS
 	memory.write_u32(bits, machine.SCREEN_BASE)
-	memory.write_u16(bits + 4, width)
+	memory.write_u16(bits + 4, machine.screen_row_bytes())
 	write_rect(bits + 6, Rect2i(0, 0, width, height))
 	var patterns := {QD_WHITE: [0, 0], QD_BLACK: [0xff, 0xff], QD_GRAY: [0xaa, 0x55], QD_LT_GRAY: [0x88, 0x22],
 			QD_DK_GRAY: [0x77, 0xdd]}
@@ -627,16 +660,17 @@ func make_main_device() -> void:
 	var pm: int = heap.new_handle(50, true)
 	var p: int = memory.read_u32(pm)
 	memory.write_u32(p, machine.SCREEN_BASE)
-	memory.write_u16(p + 4, width | 0x8000)
+	memory.write_u16(p + 4, machine.screen_row_bytes() | 0x8000)
 	write_rect(p + 6, Rect2i(0, 0, width, height))
 	memory.write_u32(p + 0x16, 0x00480000)
 	memory.write_u32(p + 0x1a, 0x00480000)
-	memory.write_u16(p + 0x20, 8)
+	memory.write_u16(p + 0x20, machine.screen_depth)
 	memory.write_u16(p + 0x22, 1)
-	memory.write_u16(p + 0x24, 8)
+	memory.write_u16(p + 0x24, machine.screen_depth)
 	main_device = heap.new_handle(62, true)
 	var g: int = memory.read_u32(main_device)
-	memory.write_u16(g + 0x14, 0xb801)
+	# gdDevType (colour, or monochrome at depth 1); ext32Device (bit 8) on a 24-bit Mac's 32-bit screen
+	memory.write_u16(g + 0x14, (0xb801 if machine.screen_depth > 1 else 0xb800) | (0x100 if machine.addressing_24 else 0))
 	memory.write_u32(g + 0x16, pm)
 	write_rect(g + 0x22, Rect2i(0, 0, width, height))
 

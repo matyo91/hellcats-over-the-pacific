@@ -67,9 +67,6 @@ func _local(offset: int, args: Array) -> int:
 func _g(offset: int) -> int:
 	return C68kScript.u32(a5 + offset)
 
-func _box(p: int) -> Array:
-	return [memory.read_u32(p), memory.read_u32(p + 4)]
-
 ## 0x6: the text face and size for a design point size: plain and size * 10 / 3 (as a word) in
 ## 1-bit mode (A5 - 0x137a = 1), else bold and size * 10, both through scale_design_4800.
 func set_scaled_text_style(size: int) -> void:
@@ -168,11 +165,11 @@ func new_offscreen_bw_port(width: int, height: int) -> int:
 	var port: int = C68kScript.u32(_jt(JT_NEW_PTR, [0x6c]))
 	memory.write_u32(a6 - 0x12, port)
 	_trap(TRAP_OPEN_PORT, [port])
-	_trap(TRAP_SET_PORT_BITS, [[memory.read_u32(a6 - 0xe), memory.read_u32(a6 - 0xa), memory.read_u32(a6 - 6)]])
+	_trap(TRAP_SET_PORT_BITS, [a6 - 0xe])
 	memory.write_u32(port + 0x10, memory.read_u32(a6 - 8))
 	memory.write_u32(port + 0x14, memory.read_u32(a6 - 4))
 	_trap(TRAP_PORT_SIZE, [height & 0xffff, width & 0xffff])
-	_trap(TRAP_RECT_RGN, [_box(a6 - 8), memory.read_u32(port + 0x18)])
+	_trap(TRAP_RECT_RGN, [a6 - 8, memory.read_u32(port + 0x18)])
 	return port
 
 ## 0x33c: ClosePort, then the bits and the record disposed.
@@ -232,6 +229,8 @@ func open_cport_on_buffer(port: int, row_bytes: int, base: int, rect_top_left: i
 	memory.write_u32(pm + 0xa, C68kScript.u32(rect_bottom_right))
 	memory.write_u32(p + 0x10, C68kScript.u32(rect_top_left))
 	memory.write_u32(p + 0x14, C68kScript.u32(rect_bottom_right))
+	# &bounds in the original: the rect argument passed by value, which the port keeps in variables
+	# (its arguments are not in memory), so RectRgn gets its two longs.
 	_trap(TRAP_RECT_RGN, [[C68kScript.u32(rect_top_left), C68kScript.u32(rect_bottom_right)], memory.read_u32(p + 0x18)])
 	return p
 
@@ -281,7 +280,7 @@ func make_inset_face_oval_region(rect: int, size: int, h: int, v: int) -> int:
 	_trap(TRAP_INSET_RECT, [dv, dh, C68kScript.u32(r)])
 	var rgn: int = C68kScript.u32(_trap(TRAP_NEW_RGN, []))
 	_trap(TRAP_OPEN_RGN, [])
-	_trap(TRAP_FRAME_OVAL, [_box(r)])
+	_trap(TRAP_FRAME_OVAL, [r])
 	_trap(TRAP_CLOSE_RGN, [rgn])
 	return rgn
 
@@ -302,7 +301,7 @@ func composite_instrument_bitmap(port: int, size: int, _unused: int, a: int, b: 
 		memory.write_u32(a6 - 0x10, memory.read_u32(p + 0x10))
 		memory.write_u32(a6 - 0xc, memory.read_u32(p + 0x14))
 		_trap(TRAP_OFFSET_RECT, [dv, dh, C68kScript.u32(a6 - 0x10)])
-		_trap(TRAP_COPY_BITS, [0, 3, _box(a6 - 0x10), _box(p + 0x10), C68kScript.u32(memory.read_u32(_g(A5_PANEL_PORT)) + 2),
+		_trap(TRAP_COPY_BITS, [0, 3, a6 - 0x10, p + 0x10, C68kScript.u32(memory.read_u32(_g(A5_PANEL_PORT)) + 2),
 				C68kScript.u32(p + 2)])
 	else:
 		var entry: int = a7
@@ -434,9 +433,9 @@ func draw_split_display_box(width: int, height: int, _unused: int, a: int, b: in
 	memory.write_u16(a6 - 4, C68kScript.u16(scale_design_4800(width) + memory.read_u16(a6 - 8)))
 	memory.write_u16(a6 - 6, C68kScript.u16(scale_design_4800(height) + memory.read_u16(rect)))
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(0)])
-	_trap(TRAP_PAINT_RECT, [_box(rect)])
+	_trap(TRAP_PAINT_RECT, [rect])
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(2)])
-	_trap(TRAP_FRAME_RECT, [_box(rect)])
+	_trap(TRAP_FRAME_RECT, [rect])
 	_trap(TRAP_INSET_RECT, [3, 3, C68kScript.u32(rect)])
 	var span: int = C68kScript.u16(memory.read_u16(a6 - 4) - memory.read_u16(a6 - 8))
 	memory.write_u16(a6 - 0x20, span)
@@ -514,7 +513,7 @@ func draw_numbered_bevel_box(rect: int, number: int) -> void:
 	memory.write_u16(a6 - 8, C68kScript.u16(top + bevel))
 	memory.write_u16(a6 - 2, C68kScript.u16(right - bevel))
 	memory.write_u16(a6 - 4, C68kScript.u16(bottom - bevel))
-	_trap(TRAP_PAINT_RECT, [_box(a6 - 8)])
+	_trap(TRAP_PAINT_RECT, [a6 - 8])
 	draw_bevelled_frame(left, top, C68kScript.u16(left + bevel), C68kScript.u16(top + bevel), C68kScript.u16(right - bevel),
 			C68kScript.u16(bottom - bevel), right, bottom)
 	memory.write_u32(r, memory.read_u32(a6 - 8))
@@ -629,7 +628,7 @@ func begin_instrument_supersample(size: int, a: int, b: int, _unused: int, port_
 	_face_rect(a6, size, k)
 	var rgn: int = C68kScript.u32(_trap(TRAP_NEW_RGN, []))
 	_trap(TRAP_OPEN_RGN, [])
-	_trap(TRAP_FRAME_OVAL, [_box(a6 - 8)])
+	_trap(TRAP_FRAME_OVAL, [a6 - 8])
 	_trap(TRAP_CLOSE_RGN, [rgn])
 	_trap(TRAP_SET_CLIP, [rgn])
 	_trap(TRAP_DISPOSE_RGN, [rgn])
@@ -680,9 +679,9 @@ func draw_spinning_disc_indicator(h: int, v: int) -> void:
 	memory.write_u16(a6 - 8, bottom)
 	memory.write_u16(a6 - 6, right)
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(2)])
-	_trap(TRAP_PAINT_OVAL, [_box(a6 - 0xc)])
+	_trap(TRAP_PAINT_OVAL, [a6 - 0xc])
 	_trap(TRAP_OPEN_RGN, [])
-	_trap(TRAP_FRAME_OVAL, [_box(a6 - 0xc)])
+	_trap(TRAP_FRAME_OVAL, [a6 - 0xc])
 	_trap(TRAP_CLOSE_RGN, [disc])
 	var cx: int = C68kScript.u16(C68kScript.divs_trunc(C68kScript.s16(C68kScript.u16(right - left)), 2) + left)
 	var cy: int = C68kScript.u16(C68kScript.divs_trunc(C68kScript.s16(C68kScript.u16(bottom - top)), 2) + top)
@@ -722,11 +721,11 @@ func draw_ring_with_status_indicators(size: int, pen: int, v: int, h: int, flags
 	memory.write_u16(a6 - 2, C68kScript.u16(scale_design_4800(size) + memory.read_u16(a6 - 6)))
 	memory.write_u16(a6 - 4, C68kScript.u16(scale_design_4800(size) + memory.read_u16(a6 - 8)))
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(0)])
-	_trap(TRAP_PAINT_OVAL, [_box(a6 - 8)])
+	_trap(TRAP_PAINT_OVAL, [a6 - 8])
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(2)])
 	var p: int = C68kScript.divs_trunc(C68kScript.s16(pen), 0xa) & 0xffff
 	_trap(TRAP_PEN_SIZE, [p, p])
-	_trap(TRAP_FRAME_OVAL, [_box(a6 - 8)])
+	_trap(TRAP_FRAME_OVAL, [a6 - 8])
 	var d: int = C68kScript.asr32(C68kScript.u32(C68kScript.u32(half) * 0xb50), 12)
 	var spots: Array = [[-1, -1], [1, -1], [1, 1], [-1, 1]]
 	a7 = entry - 4 - 0xc - 4 - 4
@@ -1149,9 +1148,9 @@ func draw_percent_scale_gauge(w: int, h: int, digits: int, pen: int, v: int, h0:
 	memory.write_u16(a6 - 6, bottom)
 	memory.write_u16(a6 - 4, right)
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(0)])
-	_trap(TRAP_PAINT_RECT, [_box(a6 - 0xa)])
+	_trap(TRAP_PAINT_RECT, [a6 - 0xa])
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(3 if memory.read_u16(_g(A5_COLOUR_MODE)) == 1 else 2)])
-	_trap(TRAP_FRAME_RECT, [_box(a6 - 0xa)])
+	_trap(TRAP_FRAME_RECT, [a6 - 0xa])
 	var hc: int = C68kScript.s16(C68kScript.u16(h0 - 0x14))
 	var half_bar: int = C68kScript.divs_trunc(C68kScript.s16(bar_span), 2)
 	var bar_left: int = _jt(JT_ROUND_H, [C68kScript.u16(half_bar + hc - 0x3c)]) & 0xffff
@@ -1160,7 +1159,7 @@ func draw_percent_scale_gauge(w: int, h: int, digits: int, pen: int, v: int, h0:
 	var half_h: int = C68kScript.divs_trunc(C68kScript.s16(h), 2)
 	memory.write_u16(a6 - 0x12, _jt(JT_ROUND_V, [C68kScript.u16(v - half_h + 0x1e)]) & 0xffff)
 	memory.write_u16(a6 - 0xe, _jt(JT_ROUND_V, [C68kScript.u16(half_h + v - 0x1e)]) & 0xffff)
-	_trap(TRAP_FRAME_RECT, [_box(a6 - 0x12)])
+	_trap(TRAP_FRAME_RECT, [a6 - 0x12])
 	var mark_left: int = C68kScript.u16(half_bar + hc - 0x8c)
 	var mark_right: int = C68kScript.u16(mark_left + 0x32)
 	var base: int = C68kScript.u16(half_h + v - 0x1e)
@@ -1220,14 +1219,14 @@ func draw_panel_section_with_numbered_boxes() -> void:
 	memory.write_u16(rect, _v(0x2ee))
 	memory.write_u16(a6 - 4, _h(0x190))
 	memory.write_u16(a6 - 6, _v(0x618))
-	_trap(TRAP_PAINT_RECT, [_box(rect)])
+	_trap(TRAP_PAINT_RECT, [rect])
 	var mode: int = memory.read_u16(_g(A5_COLOUR_MODE))
 	if mode == 1 or mode == 4:
 		_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(0)])
 	else:
 		_jt(JT_FORE_PANEL_COLOUR, [_jt(JT_PANEL_COLOUR, [0, 1, 0]) & 0xffff])
 	_trap(TRAP_INSET_RECT, [2, 2, C68kScript.u32(rect)])
-	_trap(TRAP_PAINT_RECT, [_box(rect)])
+	_trap(TRAP_PAINT_RECT, [rect])
 	memory.write_u32(_g(-0x11aa), memory.read_u32(rect))
 	memory.write_u32(_g(-0x11a6), memory.read_u32(rect + 4))
 	memory.write_u16(_g(-0x11a0), _h(-0xa))
@@ -1337,7 +1336,7 @@ func draw_artificial_horizon(size: int, _tick: int, pen: int, v: int, h: int, sp
 	memory.write_u16(a6 - 0x18, C68kScript.u16(scale_design_4800(size) + memory.read_u16(rect) - 2))
 	var face: int = C68kScript.u32(_trap(TRAP_NEW_RGN, []))
 	_trap(TRAP_OPEN_RGN, [])
-	_trap(TRAP_FRAME_OVAL, [_box(rect)])
+	_trap(TRAP_FRAME_OVAL, [rect])
 	_trap(TRAP_CLOSE_RGN, [face])
 	var inset: int = make_inset_face_oval_region(rect, size, v, h)
 	_trap(TRAP_DIFF_RGN, [face, inset, face])
@@ -1432,7 +1431,7 @@ func draw_gyro_instrument(size: int, tick: int, pen: int, v: int, h: int, card: 
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(2)])
 	var p: int = C68kScript.divs_trunc(C68kScript.s16(pen), 0xa) & 0xffff
 	_trap(TRAP_PEN_SIZE, [p, p])
-	_trap(TRAP_FRAME_RECT, [_box(rect)])
+	_trap(TRAP_FRAME_RECT, [rect])
 	memory.write_u16(_g(-0x11ec), C68kScript.u16(memory.read_u16(a6 - 0x24) + 1))
 	memory.write_u16(_g(-0x11ea), C68kScript.u16(memory.read_u16(a6 - 0x20) - memory.read_u16(_g(-0x11ec)) - 1))
 	memory.write_u16(_g(-0x11ee), C68kScript.u16(scale_design_4800(0x32) + memory.read_u16(rect)))
@@ -1499,9 +1498,9 @@ func _gyro_card(entry: int, a6: int, rect: int, tick: int, pen: int) -> void:
 			memory.read_u32(rect), memory.read_u32(rect + 4)]))
 	_trap(TRAP_SET_PORT, [cport])
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(0)])
-	_trap(TRAP_PAINT_RECT, [_box(rect)])
+	_trap(TRAP_PAINT_RECT, [rect])
 	if memory.read_u16(_g(A5_COLOUR_MODE)) == 1:
-		_trap(TRAP_COPY_BITS, [0, 3, _box(port + 0x10), _box(port + 0x10), C68kScript.u32(cport + 2), C68kScript.u32(port + 2)])
+		_trap(TRAP_COPY_BITS, [0, 3, port + 0x10, port + 0x10, C68kScript.u32(cport + 2), C68kScript.u32(port + 2)])
 	else:
 		a7 = entry - 4 - 0x54 - 0x10 - 4
 		antialias_downsample_bw_3x(port, 0, 0, height & 0xffff, width & 0xffff, memory.read_u32(memory.read_u32(_g(-0x11d4))))
@@ -1557,7 +1556,7 @@ func draw_turn_and_bank_indicator(size: int, tick: int, pen: int, v: int, h: int
 	memory.write_u16(a6 - 0x26, scale_design_4800(C68kScript.u16(x - 0x3c)) & 0xffff)
 	memory.write_u16(a6 - 0x24, scale_design_4800(C68kScript.u16(y - half + 0x3c)) & 0xffff)
 	memory.write_u16(a6 - 0x22, scale_design_4800(C68kScript.u16(x + 0x5a)) & 0xffff)
-	_trap(TRAP_PAINT_RECT, [_box(a6 - 0x28)])
+	_trap(TRAP_PAINT_RECT, [a6 - 0x28])
 	var needle: int = C68kScript.u16(memory.read_s16(a6 + 0xa) * 3)
 	_face_stroke(a6, 0x2d55, needle, 1, 1)
 	_face_stroke(a6, 0x32aa, needle, 1, 1)
@@ -1830,7 +1829,7 @@ func prepare_instrument_panel() -> void:
 		memory.write_u16(r + 6, C68kScript.u16(memory.read_u16(r + 2) + memory.read_u16(_g(-0x11ea))))
 		memory.write_u16(r + 4, C68kScript.u16(memory.read_u16(r) + memory.read_u16(_g(-0x11e8))))
 		_trap(TRAP_FORE_COLOR, [0x21])
-		_trap(TRAP_PAINT_RECT, [_box(r)])
+		_trap(TRAP_PAINT_RECT, [r])
 		_trap(TRAP_SET_PORT, [memory.read_u32(a6 - 0x22)])
 		_jt(JT_HUNLOCK, [memory.read_u32(_g(-0x12b0))])
 		found = true
@@ -1912,7 +1911,7 @@ func _draw_new_panel(entry: int, a6: int, r: int) -> void:
 	memory.write_u16(_g(-0x12a6), _v(0x29e))
 	_lend_panel_bitmap(a6)
 	_jt(JT_FORE_PANEL_COLOUR, [_panel_colour(0)])
-	_trap(TRAP_PAINT_RECT, [_box(memory.read_u32(_g(A5_PANEL_PORT)) + 0x10)])
+	_trap(TRAP_PAINT_RECT, [memory.read_u32(_g(A5_PANEL_PORT)) + 0x10])
 	_trap(TRAP_PEN_SIZE, [1, 1])
 	var frame: int = C68kScript.u32(_trap(TRAP_NEW_RGN, []))
 	memory.write_u32(a6 - 0x12, frame)

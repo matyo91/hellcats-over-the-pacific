@@ -123,7 +123,7 @@ def run(c: dict, base: list[list[int]]) -> tuple[list[list[int]], int]:
 def main() -> None:
     base = common()
     logs = [[e[0], e[1], e[2], e[3], e[4], e[5], {str(i): n for i, n in e[6].items()}] + e[7:] for e in CALL_LOGS]
-    out = {"memory_size": MEMORY_SIZE, "a5": A5, "stack_guard": list(STACK_GUARD), "common_writes": base, "call_logs": logs, "cases": []}
+    out = {"memory_size": MEMORY_SIZE, "a5": A5, "stack_top": STACK_TOP, "stack_guard": list(STACK_GUARD), "common_writes": base, "call_logs": logs, "cases": []}
     for c in build():
         changes, d0 = run(c, base)
         entry = {"name": c["name"], "method": c["method"], "args": c["args"], "writes": c["writes"], "changes": changes}

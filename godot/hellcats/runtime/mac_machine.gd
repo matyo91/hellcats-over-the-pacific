@@ -35,10 +35,27 @@ const HEAP_END := 0x6f0000
 const SOUND_BASE := 0x6f0000
 const NULL_VBL := 0x6f8000
 const CODE2_BASE := 0x080000
+## Where CODE 6 sits (its original bytes): render_scanline_spans keeps its data and saved registers
+## inside its own code (0x39e / 0x3ae). Clear of CODE 2 (0x80000 + 0x4e1a) and of the A5 world.
+const CODE6_BASE := 0x088000
 const SCREEN_BASE := 0x700000
 const SCREEN_WIDTH := 640
 const SCREEN_HEIGHT := 480
 const MENU_BAR_HEIGHT := 20
+## The screen's depth in bits per pixel (8, the default, 4 or 1 for a black-and-white Mac), set before
+## a machine is made: the screen device, the ports and screenBits follow it, and the original picks
+## its renderer from the device's pixelSize (configure_display_from_main_device, ID02 0x27e4).
+static var screen_depth: int = 8
+## A 24-bit Mac with a 32-bit screen (a Mac II's colour card): the program starts in 24-bit mode and
+## the screen device carries ext32Device, so the original swaps to 32-bit addressing around its
+## screen accesses (configure_display_from_main_device's A5 - 0x1312, ID02 0x27e4). The memory
+## ignores the address's high byte either way and the screen fits in 24 bits.
+static var addressing_24: bool = false
+## The volume's name (GetVol): a hard disk's by default. "Hellcats" is the original floppy, which
+## the program will not run from: ID08 load_overlay_from_resource stops (alert 0x105) and quits when
+## the name is its A5 - 0x16e2, and ID05 build_protection_code_strings first writes a new code into
+## an unregistered TEXT 128 when it is A5 - 0xca (both "Hellcats").
+static var volume_name: String = "Macintosh HD"
 
 ## Low-memory globals the code reads.
 const LM_TICKS := 0x16a
@@ -48,6 +65,7 @@ const LM_CURRENT_A5 := 0x904
 const LM_MBAR_HEIGHT := 0xbaa
 const LM_SCREEN_BASE := 0x824
 const LM_CUR_STACK_BASE := 0x908
+const LM_SYS_EVT_MASK := 0x144     ## the event manager's (event_manager.gd)
 
 var memory
 var toolbox
@@ -62,7 +80,9 @@ var exited := false
 ## (`parked`), so no script runs on it while the engine shuts down.
 var halting := false
 ## The addressing mode SwapMMUMode keeps (0: 24-bit, the only one this machine has).
-var mmu_mode: int = 0
+## The addressing mode (MMU32Bit, $CB2): 1 for 32-bit, 0 for 24-bit; GetMMUMode reads it and
+## SwapMMUMode changes it.
+var mmu_mode: int = 1
 ## The Mac cursor's level (HideCursor / ShowCursor / InitCursor): shown at 0, hidden below.
 var cursor_level: int = 0
 var parked := false
@@ -81,6 +101,7 @@ func idle(msec: int) -> void:
 	OS.delay_msec(msec)
 
 func _init() -> void:
+	mmu_mode = 0 if addressing_24 else 1
 	memory = MacMemory.new()
 	toolbox = Toolbox.new(self)
 	segments = SegmentLoader.new(self)
@@ -102,10 +123,31 @@ func low_memory() -> void:
 	memory.write_u32(LM_CUR_STACK_BASE, A5 - BELOW_A5)
 	memory.write_u32(LM_CURRENT_A5, A5)
 	memory.write_u32(LM_SOUND_BASE, SOUND_BASE)
-	memory.write_u32(LM_SOUND_HOOK, toolbox.sounds.hook() if toolbox.sounds.hook() != 0 else NULL_VBL)
+	memory.write_u32(LM_SOUND_HOOK, NULL_VBL)
 	memory.write_u16(LM_MBAR_HEIGHT, MENU_BAR_HEIGHT)
 	memory.write_u32(LM_SCREEN_BASE, SCREEN_BASE)
 	memory.write_u16(toolbox.events.LM_SYS_EVT_MASK, toolbox.events.event_mask)
+
+## The low-memory globals low_memory() sets, as [address, bytes], whose values the program may change
+## since (SoundHook: init_sound_system / shutdown_sound, ID02 0x4318).
+const LOW_MEMORY_GLOBALS := [[LM_CUR_STACK_BASE, 4], [LM_CURRENT_A5, 4], [LM_SOUND_BASE, 4],
+		[LM_SOUND_HOOK, 4], [LM_MBAR_HEIGHT, 2], [LM_SCREEN_BASE, 4], [LM_SYS_EVT_MASK, 2]]
+
+## Their values now (the overlay loader takes them before the image covers them).
+func save_low_memory() -> Array:
+	var out: Array = []
+	for g in LOW_MEMORY_GLOBALS:
+		out.append(memory.read_u32(g[0]) if g[1] == 4 else memory.read_u16(g[0]))
+	return out
+
+## Puts back what save_low_memory() took.
+func restore_low_memory(saved: Array) -> void:
+	for i in LOW_MEMORY_GLOBALS.size():
+		var g: Array = LOW_MEMORY_GLOBALS[i]
+		if g[1] == 4:
+			memory.write_u32(g[0], saved[i])
+		else:
+			memory.write_u16(g[0], saved[i])
 
 ## The application globals as the C runtime's start-up (CODE 1 0x34) builds them: from CurStackBase
 ## up to A5, the words of DATA 0, each zero word followed by as many more zero bytes as the next
@@ -132,14 +174,10 @@ func init_a5_world() -> void:
 		var cell: int = A5 + Files.s16(drel, k)
 		memory.write_u32(cell, (memory.read_u32(cell) + A5) & 0xffffffff)
 
-## Strict-port routines the loaders dispatch, when recording ("ID02.gd:main" -> true): null unless a
-## session sets it (the smoke session's --coverage). Calls between routines of one port file do not
-## pass through the loaders, so this is a lower bound of what runs.
+## What ran, when recording (smoke_session.gd --coverage; null otherwise): the strict port's own
+## functions are recorded by the instrumented copies (tools/strict_port/coverage_copies.py) into this
+## same dictionary, the runtime-written routines by cover_key below.
 var coverage = null
-
-func cover(port, method: String) -> void:
-	if coverage != null:
-		coverage["%s:%s" % [port.get_script().resource_path.get_file(), method]] = true
 
 ## A routine the runtime writes outside the 740 (unexported.gd, overlay_loader.gd), as
 ## "runtime:ID02+0x4a4" or "runtime:overlay+0x15134".
@@ -161,8 +199,28 @@ func log_line(text: String) -> void:
 func ticks() -> int:
 	return int(Time.get_ticks_msec() * 60 / 1000) & 0xffffffff
 
+static func screen_row_bytes() -> int:
+	return SCREEN_WIDTH * screen_depth / 8
+
+## The screen as one palette index a pixel (the display and screenshots read it): at depth 8 the
+## bytes themselves; at depth 4 each nibble, high first (the device table's 16 entries); at depth 1
+## a set bit is black (index 255) and a clear one white (0).
 func screen_bytes() -> PackedByteArray:
-	return memory._bytes.slice(SCREEN_BASE, SCREEN_BASE + SCREEN_WIDTH * SCREEN_HEIGHT)
+	if screen_depth == 8:
+		return memory._bytes.slice(SCREEN_BASE, SCREEN_BASE + SCREEN_WIDTH * SCREEN_HEIGHT)
+	assert(screen_depth == 1 or screen_depth == 4, "screen depth %d is not supported" % screen_depth)
+	var packed: PackedByteArray = memory._bytes.slice(SCREEN_BASE, SCREEN_BASE + screen_row_bytes() * SCREEN_HEIGHT)
+	var out := PackedByteArray()
+	out.resize(SCREEN_WIDTH * SCREEN_HEIGHT)
+	for i in packed.size():
+		var b: int = packed[i]
+		if screen_depth == 4:
+			out[i * 2] = b >> 4
+			out[i * 2 + 1] = b & 0xf
+		else:
+			for k in 8:
+				out[i * 8 + k] = 255 if (b & (0x80 >> k)) != 0 else 0
+	return out
 
 ## The stack pointer a routine called from outside the ports gets: below every port's frame.
 func free_stack() -> int:

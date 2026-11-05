@@ -434,7 +434,9 @@ char * get_dialog_item_text_upper /* Original: FUN_000004e4 */ (int dlg /* param
  * Recovered name: run_protection_dialog [STRONG INFERENCE].
  * Ghidra truncated at $A874; body rebuilt as C. Bytes file 0x560..0x726 [PROVEN].
  * Args: long *a [8(A6)], long *b [$c(A6)]. Caller [PROVEN]: ID08 file 0x298 via
- * JT $572 (overlay load sequence; a/b were read by read_DATA128_pair).
+ * JT $572 (overlay load sequence; a/b were read by read_DATA128_pair, but the code-string
+ * builder at 0x3ba rereads both from TEXT 128 (read_TEXT128_pair) before the check, so the code
+ * compared is TEXT 128's first long [PROVEN, runtime id05_03ba and the protection session]).
  *   GetPort(&save) $A874; InitCursor $A850;
  *   code-string builder (file 0x3ba; see code_dialog_filter header)
  *     (a, outA=-$100, b, outB=-$200);

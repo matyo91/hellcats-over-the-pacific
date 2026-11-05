@@ -119,8 +119,10 @@ func reverse_lookup_colour_map(value: int) -> int:
 ## 0x1dc: a long-aligned block of `size` bytes (NewPtr size + 12; MaxMem first when FreeMem is
 ## under 0x7a120) with the size at -4 and the allocation at -8; 0 when NewPtr fails.
 func alloc_aligned_clear(size: int) -> int:
+	assert(a7 != 0, "alloc_aligned_clear needs a7 (MaxMem's grow is in its frame)")
+	memory.write_u32(C68kScript.u32(a7 - 4 - 0xc), 0)  # grow, -$c(a6)
 	if C68kScript.s32(_jt(JT_FREE_MEM, [])) < 0x7a120:
-		_jt(JT_MAX_MEM, [[]])
+		_jt(JT_MAX_MEM, [C68kScript.u32(a7 - 4 - 0xc)])
 	var p: int = C68kScript.u32(_jt(JT_NEW_PTR, [C68kScript.u32(size + 0xc)]))
 	if p == 0:
 		return 0

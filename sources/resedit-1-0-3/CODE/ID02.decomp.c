@@ -3236,6 +3236,10 @@ void refresh_display_if_changed /* Original: FUN_000029f2 */ (void)
  *   S+0x06 -> A5-0x12e8   (menu 4 item 5 toggle)
  *   S+0x08 -> A5-0x12e6   (menu 4 item 6 toggle)        change -> (A5-0x1092)
  *   S+0x0a -> A5-0x12e4;  S+0x0c -> A5-0x12ea and A5-0x103c
+ *     [PROVEN, bytes] S+0x0a (overlay host +0xa4: the player's 'G' landing approach and
+ *     begin_flight_for_rank's start state) has no writer in ID01-ID09 (a d16 scan after
+ *     -$13ac(A5)) and is 0 in both HEL1 127 payloads (ResEdit 1.0.3 and the 1.0.4 fork), so
+ *     only a hand-edited settings record sets it.
  *   S+0x10 -> A5-0x12e0   (menu 5 items 1..5 radio)     change -> (A5-0x1092)
  *   S+0x12 -> A5-0x12de   (menu 5 item 7)  only if word A5-0x137a == 8,
  *                         change -> (A5-0x1096); else forced 0

@@ -48,7 +48,16 @@ func _init(owner) -> void:
 		code_routines[segment] = {}
 		port.code_routines = code_routines[segment]
 		port.jt_routines = _slots_for(port)
+		# A slot's address (A5 + offset, taken with LEA slot(A5)) called through a pointer reaches the
+		# slot's routine, as link_overlay gives the overlay: ID06 0x272 stores slot $192
+		# (render_scanline_spans) in the renderer record that rasterize_and_present calls through.
+		for offset in port.jt_routines:
+			code_routines[segment][machine.A5 + offset] = port.jt_routines[offset]
 	instances[2].code_base = machine.CODE2_BASE
+	var code6: PackedByteArray = machine.Files.load_bytes("CODE", 6)
+	for k in code6.size():
+		machine.memory.write_u8(machine.CODE6_BASE + k, code6[k])
+	instances[6].code_base = machine.CODE6_BASE
 	# Ported routines a port calls by their offset in its segment (`_local`).
 	var methods: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(SEGMENT_METHODS))
 	for segment_key in methods:
@@ -87,12 +96,18 @@ func _slot(caller, e: Dictionary) -> Callable:
 			if pascal:
 				list.reverse()
 			if list.size() != arity:
-				machine.note_missing("arity:%s" % method, "%d args for %d parameters" % [list.size(), arity])
+				# A C call may pass fewer or more arguments than the callee declares: the caller pops
+				# them, and the callee reads only those its path needs. The original does both through
+				# the overlay's host table: (+0x80)(0) at overlay 0x6b5e into rasterize_and_present's
+				# three (only dest is read when it is 0), and its 7-argument line hooks into
+				# draw_thick_xor_line_a5safe's four at depth 1. Missing ones are 0 here. A Pascal
+				# callee pops its own, so a mismatch there is a wiring error.
+				if pascal:
+					machine.note_missing("arity:%s" % method, "%d args for %d parameters" % [list.size(), arity])
 				list.resize(arity)
 				for k in arity:
 					if list[k] == null:
 						list[k] = 0
-			machine.cover(callee, method)
 			var result = callee.callv(method, list)
 			if has_stack:
 				callee.a7 = saved
@@ -112,7 +127,6 @@ func _local_call(port, method: String) -> Callable:
 		for k in arity:
 			if list[k] == null:
 				list[k] = 0
-		machine.cover(port, method)
 		var r = port.callv(method, list)
 		return 0 if r == null else int(r)
 
@@ -159,7 +173,6 @@ func call_procedure(address: int, params: Array) -> int:
 			var saved: int = callee.a7 if has_stack_pointer(callee) else 0
 			if has_stack_pointer(callee):
 				callee.a7 = machine.free_stack()
-			machine.cover(callee, e["method"])
 			var r = callee.callv(e["method"], list)
 			if has_stack_pointer(callee):
 				callee.a7 = saved

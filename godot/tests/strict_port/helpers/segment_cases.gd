@@ -92,6 +92,10 @@ static func _stub(mem, base: int, sizes: Array, result_size: int, results: Array
 			elif spec is int or spec is float:
 				for k in int(spec):           # a pointer to a buffer: its longs, as the emulator side logs them
 					values.append(mem.read_u32((int(args[i]) + 4 * k) & 0xffffffff))
+			elif spec is String and spec == "pstr":
+				var at: int = int(args[i]) & 0xffffffff   # a pointer to a Pascal string: its bytes, length first
+				for k in mem.read_u8(at) + 1:
+					values.append(mem.read_u8((at + k) & 0xffffffff))
 			else:
 				values.append(int(args[i]) & ((1 << (8 * int(sizes[i]))) - 1))
 		if derefs.get("-1") == "digest":

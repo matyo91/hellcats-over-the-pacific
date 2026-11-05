@@ -6856,8 +6856,8 @@ func update_view_clip_bounds() -> void:
 ## apply_template_chain_xform(obj, 1, 0, 0) (0x34 below). A user (byte +6 bit 1 clear) counts the
 ## shared block's users down (word +0), setting deferred_free_flag at 0. An owner walks its block
 ## list (word count +0, longs from +4): a block still in use releases every object_pool object
-## pointing at it (recursively), still-used blocks print a warning through the host
-## (overlay_printf, unported; 0x28 below like the recursion), and each block and then the list
+## pointing at it (recursively), still-used blocks print a warning (overlay_printf, 0x28 below
+## like the recursion), and each block and then the list
 ## are freed. +0x2c = 0.
 func release_fractal_reference(obj: int) -> void:
 	assert(memory != null, "release_fractal_reference requires original global memory")

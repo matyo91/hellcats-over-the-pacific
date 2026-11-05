@@ -65,13 +65,18 @@ func encode_base26_6chars(dst: int, value: int) -> int:
 ## 0x7a8: value = value * 26 (MULU.L) + (letter - 'A', sign-extended byte) over six letters;
 ## stored at *out_value.
 func decode_base26_6chars(src: int, out_value: int) -> void:
-	memory.write_u32(out_value, _decode26(src))
-
-func _decode26(src: int) -> int:
 	var v: int = 0
 	for k in 6:
 		v = C68kScript.u32(C68kScript.u32(v * 26) + C68kScript.s16(C68kScript.s8(memory.read_u8(C68kScript.u32(src + k))) - 0x41))
-	return v
+	memory.write_u32(out_value, v)
+
+## The three decoders' common shape (link a6, one long local at -4(a6)): decode_base26_6chars into
+## the local, which is returned.
+func _decode_into_frame(code: int) -> int:
+	assert(a7 != 0, "the base-26 decoders need a7 (their value is a frame local)")
+	var local: int = a7 - 8                          # -4(a6), a6 = entry - 4
+	decode_base26_6chars(code, local)
+	return memory.read_u32(local)
 
 ## 0x7f6: up to twelve random bytes of the overlay (base + (rand low word) MODU.L size) are
 ## recorded (address, original byte at A5 - 0xb4) and set to 0xff; nothing for a null base.
@@ -162,7 +167,7 @@ func pack_fields_to_code_buf68(f: int, a: int, b: int, c: int, e: int) -> int:
 ## 0xb10: the six-letter code decoded and split: bits 16..31, bits 12..15 << 7, bits 8..11 << 7,
 ## bits 5..7 << 2, bits 0..4 (words).
 func unpack_fields_from_code(code: int, o1: int, o2: int, o3: int, o4: int, o5: int) -> void:
-	var v: int = _decode26(code)
+	var v: int = _decode_into_frame(code)
 	memory.write_u16(o1, (C68kScript.asr32(v, 16) & 0xffff))
 	memory.write_u16(o2, ((C68kScript.asr32(v, 12) & 0xf) << 7))
 	memory.write_u16(o3, ((C68kScript.asr32(v, 8) & 0xf) << 7))
@@ -176,11 +181,11 @@ func encode_code28_to_buf54(value: int) -> int:
 
 ## 0xba8 / 0xbde: the decoded value of a six-letter code.
 func decode_code_to_long_a(code: int) -> int:
-	return _decode26(code)
+	return _decode_into_frame(code)
 
 ## 0xbde (FUN_00000bde).
 func decode_code_to_long_b(code: int) -> int:
-	return _decode26(code)
+	return _decode_into_frame(code)
 
 ## 0xbc2: value encoded at A5 - 0x40 (returned).
 func encode_long_to_buf40(value: int) -> int:

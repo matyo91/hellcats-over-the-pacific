@@ -720,6 +720,40 @@ def check_unused_traps() -> str:
     return f"{len(others) - 3} unused of {len(installed)} installed"
 
 
+def check_runtime_coverage_doc() -> str:
+    """docs/RUNTIME_COVERAGE.md is what tools/strict_port/coverage_gaps.py generates now."""
+    try:
+        import capstone  # type: ignore  # noqa: F401
+    except Exception:
+        return "skipped (capstone not installed)"
+    import subprocess
+    r = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "strict_port" / "coverage_gaps.py"), "--check"],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        fail(r.stdout.strip() or r.stderr.strip())
+    return "up to date"
+
+
+def check_callees() -> str:
+    """Each strict-port function reaches what its semantic C calls (no inlined shortcut)."""
+    import subprocess
+    r = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "strict_port" / "check_callees.py")],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        fail(r.stdout.strip() or r.stderr.strip())
+    return r.stdout.strip().removeprefix("PASS ")
+
+
+def check_coverage_copies() -> str:
+    """The coverage instrumentation credits each strict-port function in its own body."""
+    import subprocess
+    r = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "strict_port" / "coverage_copies.py"), "--check"],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        fail(r.stdout.strip() or r.stderr.strip())
+    return "every function records itself"
+
+
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
@@ -740,6 +774,9 @@ def main() -> int:
         ("optional-capstone", check_optional_capstone),
         ("optional-ghidra", check_optional_ghidra),
         ("optional-unused-traps", check_unused_traps),
+        ("strict-port-callees", check_callees),
+        ("coverage-copies", check_coverage_copies),
+        ("optional-runtime-coverage-doc", check_runtime_coverage_doc),
     ]
     try:
         for name, fn in checks:

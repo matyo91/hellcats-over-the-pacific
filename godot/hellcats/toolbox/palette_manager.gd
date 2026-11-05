@@ -26,7 +26,13 @@ func _init(owner, toolbox) -> void:
 	memory = owner.memory
 	heap = toolbox.heap
 	qd = toolbox.quickdraw
+	# The device's own table: the default 8-bit one, or at depth 4 the default 16 colours (the rest
+	# of the 256 unused); at depth 1 the 8-bit one serves, white 0 and black 255.
 	table = Images.clut8()
+	if machine.screen_depth == 4:
+		var four: Array = Images.clut4()
+		for k in 16:
+			table[k] = four[k]
 
 func colours() -> Array:
 	_lock.lock()
@@ -34,8 +40,9 @@ func colours() -> Array:
 	_lock.unlock()
 	return out
 
-static func device_index(entry: int) -> int:
-	return clampi(entry + 1, 1, 254)
+## The device index palette entry `entry` owns: never the device's first (white) or last (black).
+func device_index(entry: int) -> int:
+	return clampi(entry + 1, 1, (14 if machine.screen_depth == 4 else 254))
 
 func set_device(index: int, c: Color) -> void:
 	_lock.lock()
@@ -157,7 +164,7 @@ func nearest(c: Color) -> int:
 	var t: Array = colours()
 	var best: int = 0
 	var best_d: int = 1 << 60
-	for k in 256:
+	for k in (16 if machine.screen_depth == 4 else 256):
 		var d: int = int(pow(t[k].r8 - c.r8, 2) + pow(t[k].g8 - c.g8, 2) + pow(t[k].b8 - c.b8, 2))
 		if d < best_d:
 			best_d = d

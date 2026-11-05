@@ -8,7 +8,10 @@ extends RefCounted
 ## So the runtime gives the image the address 0x01000000 (its 24 low bits are 0, see
 ## mac_memory.gd): the host sees a nonzero pointer, the bytes land at 0. When the file is closed
 ## the relocated longs get that 0x01000000 taken off again, the low-memory globals the image covered
-## are written back, and the overlay's port is linked: its entry (image + header +0x14) and the
+## get back the values they held when the file was opened (the program's own: after a first mission
+## SoundHook is the empty task shutdown_sound put back, and a handler written there instead would be
+## saved by the next init_sound_system as its own predecessor, ID02 0x3dd0 / 0x4318, and chain to
+## itself), and the overlay's port is linked: its entry (image + header +0x14) and the
 ## hooks it installs in the host world (OVERLAY_HOOKS) become code addresses the host can call,
 ## and the host's jump-table slots become addresses the overlay can call. A scenery opened again
 ## (File > Open…) is loaded the same way over the old image, with a port of its own.
@@ -28,6 +31,7 @@ var methods: Dictionary = {}       ## runtime address -> ported method name
 ## The scenery file being loaded (its bytes, from FSOpen until the image is linked).
 var _pending: PackedByteArray
 var _pending_name := ""
+var _low_memory: Array = []
 
 func _init(owner) -> void:
 	machine = owner
@@ -49,6 +53,7 @@ func _on_open(name: String, bytes: PackedByteArray) -> void:
 		machine.toolbox.heap.reserve(total + 4, IMAGE_BASE)
 		_pending = bytes
 		_pending_name = name
+		_low_memory = machine.save_low_memory()
 
 func _link_pending() -> void:
 	if _pending.is_empty():
@@ -69,12 +74,13 @@ func _link_pending() -> void:
 			continue
 		var cell: int = IMAGE_BASE + offset + (code if i >= first else 0)
 		memory.write_u32(cell, (memory.read_u32(cell) - IMAGE_BASE) & 0xffffffff)
-	machine.low_memory()
+	machine.restore_low_memory(_low_memory)
 	_attach(_u32(bytes, 20))
 	machine.log_line("overlay %s loaded: code 0x%x, %d relocations" % [name, code, first + second])
 
 func _attach(entry: int) -> void:
 	port = Overlay.new(machine.memory)
+	var own: Array = port.code_table.keys()          # the port's own routines, before the host slots
 	var segments = machine.segments
 	segments.link_overlay(port)
 	segments.register_address(IMAGE_BASE + entry, func(args: Array) -> int:
@@ -86,9 +92,14 @@ func _attach(entry: int) -> void:
 	for hook in Overlay.OVERLAY_HOOKS:
 		segments.register_address(hook, _hook(hook))
 	# Its own registrations include routines without a result, whose callers read D0 as an int: each
-	# answers 0 then.
+	# answers 0 then. They are C routines called through pointers, so a call may pass more arguments
+	# than one declares (every definition +0xe pre-render hook gets (controller, phase),
+	# transform_and_project_object; animate_landing_gear and shadow_pre_render declare only the
+	# controller): the extra ones are dropped, as segment_loader.gd's C slots do; Godot's callv
+	# would neither run the routine nor report the mismatch. The host slots link_overlay added take
+	# any arguments (...args) and are left as they are.
 	for address in port.code_table.keys():
-		port.code_table[address] = _with_result(port.code_table[address])
+		port.code_table[address] = _with_result(port.code_table[address], own.has(address))
 	# The overlay also jumps through code addresses it stores (controller ticks, collision hooks):
 	# every ported routine is reachable by its runtime address, with its arguments as they come.
 	for address in methods:
@@ -109,9 +120,10 @@ const UNPORTED := {}
 ## Overlay routines outside the 740 written here from their bytes (runtime address -> method below).
 const WRITTEN := {0xd23a: "_d23a", 0x4b0: "_04b0"}
 
-static func _with_result(routine: Callable) -> Callable:
+static func _with_result(routine: Callable, trim: bool = false) -> Callable:
+	var arity: int = routine.get_argument_count() if trim else -1
 	return func(...args: Array):
-		var r = routine.callv(args)
+		var r = routine.callv(args.slice(0, arity) if arity >= 0 and args.size() > arity else args)
 		return 0 if r == null else r
 
 func _positional(method: String) -> Callable:
@@ -125,7 +137,6 @@ func _positional(method: String) -> Callable:
 		for k in arity:
 			if list[k] == null:
 				list[k] = 0
-		machine.cover(port, method)
 		var r = port.callv(method, list)
 		return 0 if r == null else int(r)
 
@@ -168,7 +179,6 @@ func _hook(address: int) -> Callable:
 				list[k] = 0
 		var saved: int = port.a7
 		port.a7 = machine.free_stack()
-		machine.cover(port, method)
 		var result = port.callv(method, list)
 		port.a7 = saved
 		return 0 if result == null else int(result)
@@ -179,7 +189,6 @@ var test_stubs: Dictionary = {}
 func _run(method: String, args: Array = []) -> int:
 	if test_stubs.has(method):
 		return int(test_stubs[method].call(args))
-	machine.cover(port, method)
 	var r = port.callv(method, args)
 	return 0 if r == null else int(r)
 

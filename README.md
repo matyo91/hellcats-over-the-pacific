@@ -194,6 +194,7 @@ python3 tools/decomp/inventory_functions.py --check
 python3 tools/progress_stats.py --check
 python3 tools/resedit.py verify
 python3 tools/strict_port/check_sync.py --json
+python3 tools/strict_port/check_callees.py
 python3 tools/qa/test_regression.py
 python3 tools/hellcats/gen_runtime_cases.py --check
 python3 tools/decomp/definition_table.py --check
@@ -202,8 +203,11 @@ python3 tools/decomp/definition_table.py --check
 git diff --check
 ```
 
-An end-to-end headless session of the game (about 90 seconds; it never touches the
-player's saved pilots) is run separately:
+An end-to-end headless session of the game (about seven minutes; it never touches
+the player's saved pilots) is run separately; its header lists its options and the
+runs whose coverage is the evidence for `runtime_verified`, and
+[`docs/RUNTIME_COVERAGE.md`](docs/RUNTIME_COVERAGE.md) says why each function it
+has not run has not:
 
 ```sh
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot \

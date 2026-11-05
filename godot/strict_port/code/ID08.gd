@@ -88,7 +88,7 @@ func bootstrap_window_and_load_overlay() -> void:
 	_trap(TRAP_SET_PORT, [saved])
 	_trap(TRAP_CLOSE_DIALOG, [dialog])
 	memory.write_u32(a6 - 0x10, 0x48454c4c)
-	_jt(JT_SF_GET_FILE, [a6 - 0x5a, 0, [memory.read_u32(a6 - 0x10)], 1, 0, C68kScript.u32(a5 - 0x16d8), memory.read_u32(a6 - 0x66)])
+	_jt(JT_SF_GET_FILE, [a6 - 0x5a, 0, a6 - 0x10, 1, 0, C68kScript.u32(a5 - 0x16d8), memory.read_u32(a6 - 0x66)])
 	if memory.read_u8(a6 - 0x5a) == 0:
 		return
 	var rec: int = memory.read_u32(memory.read_u32(C68kScript.u32(a5 - 0x13ac)))

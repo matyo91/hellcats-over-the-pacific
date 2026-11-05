@@ -7,7 +7,6 @@ extends RefCounted
 ## back, as the File Manager does), and the bytes go to the buffer.
 
 const VOLUME := "res://hellcats/data/scenery"
-const VOLUME_NAME := "Macintosh HD"   ## not the original floppy's name (ID08 refuses to run from it)
 const NO_ERR := 0
 const FNF_ERR := -43
 const EOF_ERR := -39
@@ -127,9 +126,9 @@ func get_fpos(ref: int, pos_ptr: int) -> int:
 
 ## The default volume: its name (a Pascal string) and reference number -1.
 func get_vol(name_ptr: int, vref_ptr: int) -> int:
-	memory.write_u8(name_ptr, VOLUME_NAME.length())
-	for k in VOLUME_NAME.length():
-		memory.write_u8(name_ptr + 1 + k, VOLUME_NAME.unicode_at(k))
+	memory.write_u8(name_ptr, machine.volume_name.length())
+	for k in machine.volume_name.length():
+		memory.write_u8(name_ptr + 1 + k, machine.volume_name.unicode_at(k))
 	memory.write_u16(vref_ptr, VREF)
 	return NO_ERR
 

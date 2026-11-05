@@ -92,11 +92,11 @@ def runtime_dispatch(source_root: Path):
 
 
 def runtime_coverage(source_root: Path):
-    """The strict-port routines a passing smoke session dispatched ("ID02.gd:main"), recorded with
-    smoke_session.gd --coverage into godot/tests/runtime/fixtures/smoke_coverage.json; a mapping is
-    runtime_verified when its target is listed. A lower bound: calls between routines of one port
-    file do not pass through the loaders. Its "runtime:" entries are the runtime-written routines
-    outside the 740 that ran (no mapping). None when the file is absent."""
+    """What a passing smoke session ran, recorded by smoke_session.gd --coverage into
+    godot/tests/runtime/fixtures/smoke_coverage.json: every strict-port function ("ID02.gd:main",
+    from the instrumented copies tools/strict_port/coverage_copies.py writes) and the runtime-written
+    routines outside the 740 ("runtime:ID02+0x4a4", which match no mapping). A mapping is
+    runtime_verified when its target is listed. None when the file is absent."""
     path = source_root / "godot/tests/runtime/fixtures/smoke_coverage.json"
     if not path.is_file():
         return None

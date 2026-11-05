@@ -229,19 +229,30 @@ func _menu_box(t: Array) -> Rect2i:
 		widest = maxi(widest, w)
 	return Rect2i(t[1], machine.MENU_BAR_HEIGHT - 1, widest + 34, _items(h).size() * ROW + 2)
 
+## The screen bytes under a pulled-down menu (its shadow included), whole bytes of each row at any
+## depth.
 func _save(box: Rect2i) -> PackedByteArray:
 	var out := PackedByteArray()
+	var span: Vector2i = _byte_span(box)
 	for y in range(box.position.y, mini(box.end.y + 1, machine.SCREEN_HEIGHT)):
-		for x in range(box.position.x, mini(box.end.x + 1, machine.SCREEN_WIDTH)):
-			out.append(memory.read_u8(machine.SCREEN_BASE + y * machine.SCREEN_WIDTH + x))
+		var row: int = machine.SCREEN_BASE + y * machine.screen_row_bytes()
+		for b in range(span.x, span.y):
+			out.append(memory.read_u8(row + b))
 	return out
 
 func _restore(saved: PackedByteArray, box: Rect2i) -> void:
 	var i: int = 0
+	var span: Vector2i = _byte_span(box)
 	for y in range(box.position.y, mini(box.end.y + 1, machine.SCREEN_HEIGHT)):
-		for x in range(box.position.x, mini(box.end.x + 1, machine.SCREEN_WIDTH)):
-			memory.write_u8(machine.SCREEN_BASE + y * machine.SCREEN_WIDTH + x, saved[i])
+		var row: int = machine.SCREEN_BASE + y * machine.screen_row_bytes()
+		for b in range(span.x, span.y):
+			memory.write_u8(row + b, saved[i])
 			i += 1
+
+func _byte_span(box: Rect2i) -> Vector2i:
+	var depth: int = machine.screen_depth
+	var right: int = mini(box.end.x + 1, machine.SCREEN_WIDTH)
+	return Vector2i(box.position.x * depth / 8, (right * depth + 7) / 8)
 
 func _draw_menu(h: int, box: Rect2i, choice: int) -> void:
 	var port: int = qd.window_manager_port()
