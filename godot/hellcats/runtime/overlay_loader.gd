@@ -99,6 +99,7 @@ func _attach(entry: int) -> void:
 			port.code_table[address] = _unported(address)
 	port.code_table[0x16208] = func(...args: Array) -> int: return _16208()
 	port.code_table[0x15134] = func(...args: Array) -> int:
+		machine.cover_key("runtime:overlay+0x15134")
 		args.resize(3)
 		return _15134(int(args[0] if args[0] != null else 0), int(args[1] if args[1] != null else 0), int(args[2] if args[2] != null else 0))
 
@@ -124,6 +125,7 @@ func _positional(method: String) -> Callable:
 		for k in arity:
 			if list[k] == null:
 				list[k] = 0
+		machine.cover(port, method)
 		var r = port.callv(method, list)
 		return 0 if r == null else int(r)
 
@@ -145,6 +147,7 @@ func _hook(address: int) -> Callable:
 		return func(args: Array) -> int:
 			var saved: int = port.a7
 			port.a7 = machine.free_stack()
+			machine.cover_key("runtime:overlay+0x%x" % address)
 			var r: int = call(WRITTEN[address])
 			port.a7 = saved
 			return r
@@ -165,6 +168,7 @@ func _hook(address: int) -> Callable:
 				list[k] = 0
 		var saved: int = port.a7
 		port.a7 = machine.free_stack()
+		machine.cover(port, method)
 		var result = port.callv(method, list)
 		port.a7 = saved
 		return 0 if result == null else int(result)
@@ -175,6 +179,7 @@ var test_stubs: Dictionary = {}
 func _run(method: String, args: Array = []) -> int:
 	if test_stubs.has(method):
 		return int(test_stubs[method].call(args))
+	machine.cover(port, method)
 	var r = port.callv(method, args)
 	return 0 if r == null else int(r)
 

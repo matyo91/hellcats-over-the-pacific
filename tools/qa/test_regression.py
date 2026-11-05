@@ -189,6 +189,9 @@ EXPECTED_RUNNER_PATHS = [
     "res://tests/runtime/test_unexported_routines.gd",
     "res://tests/runtime/test_sound_channels.gd",
     "res://tests/runtime/test_event_mask.gd",
+    "res://tests/runtime/test_menu_bar.gd",
+    "res://tests/runtime/test_alert.gd",
+    "res://tests/runtime/test_dialog_edit.gd",
 ]
 
 EXPECTED_LOADER_TARGETS = [
@@ -675,6 +678,48 @@ def check_runtime_headers() -> None:
         fail("runtime headers:\n  " + "\n  ".join(problems))
 
 
+def check_unused_traps() -> str:
+    """docs/GAME_RUNTIME.md's "Traps the game never issues": its counts and its word list are the
+    runtime's installed trap words against the words the original bytes issue at instruction
+    boundaries (ID01..ID08 and the overlay's code; auto-pop variants folded)."""
+    try:
+        import capstone  # type: ignore
+    except Exception:
+        return "skipped (capstone not installed)"
+    runtime_src = "\n".join(p.read_text(encoding="utf-8") for p in sorted((GODOT_ROOT / "hellcats").glob("**/*.gd")))
+    installed = {int(w, 16) for w in re.findall(r"install\((0xa[0-9a-f]{3})", runtime_src)}
+    for group in re.findall(r"for word in \[([^\]]*)\]", runtime_src):
+        installed |= {int(w, 16) for w in re.findall(r"0xa[0-9a-f]{3}", group)}
+    fold = lambda w: w & ~0x400 if w & 0x800 else w
+    md = capstone.Cs(capstone.CS_ARCH_M68K, capstone.CS_MODE_M68K_020)
+    md.skipdata = True
+    issued: set[int] = set()
+
+    def scan(b: bytes, start: int, end: int) -> None:
+        for ins in md.disasm(b[start:end], start):
+            w = int.from_bytes(b[ins.address:ins.address + 2], "big")
+            if w >> 12 == 0xA:
+                issued.add(fold(w))
+    for n in range(1, 9):
+        b = (REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE" / f"ID0{n}.bin").read_bytes()
+        scan(b, 0, len(b))
+    s = (GODOT_ROOT / "hellcats" / "data" / "scenery" / "Pacific Conflict").read_bytes()
+    scan(s, 0x20, 0x20 + int.from_bytes(s[4:8], "big"))
+    others = {w for w in installed if fold(w) not in issued}
+    text = (REPO_ROOT / "docs" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
+    section = text.split("### Traps the game never issues", 1)[1].split("\n## ", 1)[0]
+    listed = {int(w, 16) for w in re.findall(r"\$(A[0-9A-F]{3})", section)}
+    pattern = r"installs (\d+) trap words|finds (\d+) issued|other (\d+), three|remaining (\d+) have"
+    numbers = [int("".join(m)) for m in re.findall(pattern, " ".join(section.split()))]
+    expected = [len(installed), len(installed) - len(others), len(others), len(others) - 3]
+    if numbers != expected:
+        fail(f"GAME_RUNTIME.md unused traps: counts {numbers}, the bytes give {expected}")
+    if listed != others:
+        fail("GAME_RUNTIME.md unused traps: listed but issued or not installed "
+             f"{sorted(hex(w) for w in listed - others)}, missing {sorted(hex(w) for w in others - listed)}")
+    return f"{len(others) - 3} unused of {len(installed)} installed"
+
+
 def main() -> int:
     checks = [
         ("runner-layout", check_runner_layout),
@@ -694,6 +739,7 @@ def main() -> int:
     optional = [
         ("optional-capstone", check_optional_capstone),
         ("optional-ghidra", check_optional_ghidra),
+        ("optional-unused-traps", check_unused_traps),
     ]
     try:
         for name, fn in checks:

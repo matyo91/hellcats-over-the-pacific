@@ -72,10 +72,47 @@ def source_hash(path: Path, function_name: str) -> str:
     return hashlib.sha256(function.encode("utf-8")).hexdigest()
 
 
+def runtime_dispatch(source_root: Path):
+    """Whether the game runtime dispatches a mapping: its method maps (godot/hellcats/data/
+    segment_methods.json by segment and file offset, overlay_methods.json by runtime address, file
+    offset - 0x20) route the original address to the target function. None when they are absent."""
+    data = source_root / "godot/hellcats/data"
+    if not (data / "segment_methods.json").is_file() or not (data / "overlay_methods.json").is_file():
+        return None
+    segments = json.loads((data / "segment_methods.json").read_text(encoding="utf-8"))
+    overlay = {int(k, 16): v for k, v in json.loads((data / "overlay_methods.json").read_text(encoding="utf-8")).items()}
+
+    def dispatched(row: dict) -> bool:
+        address = int(row["source_address"], 16)
+        match = re.search(r"/ID0(\d)\.gd$", row["target_file"])
+        if match:
+            return segments.get(match.group(1), {}).get(hex(address)) == row["target_function"]
+        return overlay.get(address - 0x20) == row["target_function"]
+    return dispatched
+
+
+def runtime_coverage(source_root: Path):
+    """The strict-port routines a passing smoke session dispatched ("ID02.gd:main"), recorded with
+    smoke_session.gd --coverage into godot/tests/runtime/fixtures/smoke_coverage.json; a mapping is
+    runtime_verified when its target is listed. A lower bound: calls between routines of one port
+    file do not pass through the loaders. Its "runtime:" entries are the runtime-written routines
+    outside the 740 that ran (no mapping). None when the file is absent."""
+    path = source_root / "godot/tests/runtime/fixtures/smoke_coverage.json"
+    if not path.is_file():
+        return None
+    return set(json.loads(path.read_text(encoding="utf-8")))
+
+
+def runtime_key(row: dict) -> str:
+    return f"{Path(row['target_file']).name}:{row['target_function']}"
+
+
 def check(manifest_path: Path, source_root: Path) -> tuple[dict, list[str]]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     rows = manifest.get("functions", [])
     errors: list[str] = []
+    dispatched = runtime_dispatch(source_root)
+    covered = runtime_coverage(source_root)
     counts = {status: 0 for status in sorted(ALLOWED_STATUSES)}
     tested = structural = behavioral = integrated = runtime = 0
 
@@ -118,7 +155,13 @@ def check(manifest_path: Path, source_root: Path) -> tuple[dict, list[str]]:
         structural += int(bool(row.get("structurally_verified")))
         behavioral += int(bool(row.get("behaviorally_verified")))
         integrated += int(bool(row.get("integrated")))
+        if dispatched is not None and bool(row.get("integrated")) != dispatched(row):
+            errors.append(f"{identity}: integrated is {bool(row.get('integrated'))}, the runtime's method maps say "
+                          f"{dispatched(row)}")
         runtime += int(bool(row.get("runtime_verified")))
+        if covered is not None and bool(row.get("runtime_verified")) != (runtime_key(row) in covered):
+            errors.append(f"{identity}: runtime_verified is {bool(row.get('runtime_verified'))}, the smoke "
+                          f"session's coverage says {runtime_key(row) in covered}")
 
     inventory_path = source_root / "docs/DECOMPILATION_INVENTORY.json"
     decompiled_total = 0

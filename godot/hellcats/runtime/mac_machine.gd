@@ -132,6 +132,21 @@ func init_a5_world() -> void:
 		var cell: int = A5 + Files.s16(drel, k)
 		memory.write_u32(cell, (memory.read_u32(cell) + A5) & 0xffffffff)
 
+## Strict-port routines the loaders dispatch, when recording ("ID02.gd:main" -> true): null unless a
+## session sets it (the smoke session's --coverage). Calls between routines of one port file do not
+## pass through the loaders, so this is a lower bound of what runs.
+var coverage = null
+
+func cover(port, method: String) -> void:
+	if coverage != null:
+		coverage["%s:%s" % [port.get_script().resource_path.get_file(), method]] = true
+
+## A routine the runtime writes outside the 740 (unexported.gd, overlay_loader.gd), as
+## "runtime:ID02+0x4a4" or "runtime:overlay+0x15134".
+func cover_key(key: String) -> void:
+	if coverage != null:
+		coverage[key] = true
+
 ## Records something the game reached that the runtime does not provide yet (once per key).
 func note_missing(key: String, detail: String = "") -> void:
 	if not missing.has(key):

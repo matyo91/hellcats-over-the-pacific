@@ -65,7 +65,13 @@ func install(toolbox) -> void:
 	t.install(0xa990, func(a: Array) -> int: return get_itext(a[1], a[0]))                    ## GetIText(h, VAR text)
 	t.install(0xa98f, func(a: Array) -> int: return set_itext(a[1], a[0]))                    ## SetIText(h, text)
 	t.install(0xa97e, func(a: Array) -> int:                                                  ## SelIText(d, item, start, end)
-		set_edit(a[3] & 0xffffffff, qd.s16(a[2]) - 1)
+		var sd: int = a[3] & 0xffffffff
+		var index: int = qd.s16(a[2]) - 1
+		var whole := false
+		if dialogs.has(sd) and index >= 0 and index < dialogs[sd]["items"].size():
+			var n: int = _text(dialogs[sd]["items"][index]["handle"]).size()
+			whole = qd.s16(a[1]) <= 0 and qd.s16(a[0]) >= n
+		set_edit(sd, index, whole)
 		return 0)
 	t.install(0xa984, func(a: Array) -> int: return find_ditem(a[1], a[0]))                   ## FindDItem(d, pt)
 	t.install(0xa827, func(_a: Array) -> int: return 0)                                       ## HideDItem
@@ -126,10 +132,19 @@ func install(toolbox) -> void:
 # ---- dialogs ------------------------------------------------------------------------------------------
 
 ## The current edit field: the dialog's state and its record's editField (+0xa4, the item number - 1).
-func set_edit(d: int, index: int) -> void:
+## The active edit field (editField +0xa4) and whether its whole text is selected, as TextEdit
+## keeps it: SelIText over the whole text and Tab select all of it, a click places the caret.
+## Typing replaces a selected text; Backspace clears it.
+func set_edit(d: int, index: int, select_all: bool = false) -> void:
 	if dialogs.has(d):
+		var old: int = dialogs[d]["edit"]
 		dialogs[d]["edit"] = index
+		dialogs[d]["sel_all"] = select_all
 		memory.write_u16(d + 0xa4, index & 0xffff)
+		if windows.is_visible(d):
+			for k in [old, index]:
+				if k >= 0 and k < dialogs[d]["items"].size():
+					_draw_item(d, dialogs[d]["items"][k])
 
 func get_new_dialog(id: int, storage: int, behind: int) -> int:
 	var bytes: PackedByteArray = Files.load_bytes("DLOG", qd.s16(id))
@@ -168,7 +183,7 @@ func _attach_items(d: int, ditl_id: int) -> void:
 		if items[i]["type"] == EDIT_TEXT:
 			first_edit = i
 			break
-	dialogs[d] = {"items": items, "edit": first_edit, "default": 0}
+	dialogs[d] = {"items": items, "edit": first_edit, "default": 0, "sel_all": false}
 	memory.write_u16(d + 0xa4, (first_edit) & 0xffff)
 	memory.write_u16(d + 0xa8, 1)
 
@@ -271,8 +286,9 @@ func _set_ctl(h: int, field: int, v: int) -> int:
 	memory.write_u16(c + field, v & 0xffff)
 	var lo: int = qd.s16(memory.read_u16(c + 0x14))
 	var hi: int = qd.s16(memory.read_u16(c + 0x16))
-	if field == 0x16 and hi < lo:
+	if field == 0x16 and hi < lo:                    # as the Control Manager: a max below the min becomes it
 		hi = lo
+		memory.write_u16(c + 0x16, hi & 0xffff)
 	memory.write_u16(c + 0x12, clampi(qd.s16(memory.read_u16(c + 0x12)), lo, maxi(hi, lo)) & 0xffff)
 	_redraw_control(h)
 	return 0
@@ -314,7 +330,7 @@ func _in_port(port: int, draw: Callable) -> void:
 	draw.call(port)
 	memory.write_u32(qd.globals, saved)
 
-## A scroll bar (procID 16..): framed, arrow boxes at its ends, and when active (max above min,
+## A scroll bar (procID 16..): framed, arrow boxes at its ends with their arrows, and when active (max above min,
 ## not hilited 255) a gray track with the thumb at the value; other kinds as a framed title.
 func _draw_standalone(h: int) -> void:
 	var c: int = memory.read_u32(h)
@@ -338,6 +354,9 @@ func _draw_standalone(h: int) -> void:
 		var last := Rect2i(r.end - Vector2i(arrow, arrow), Vector2i(arrow, arrow))
 		qd.frame_rect(port, first)
 		qd.frame_rect(port, last)
+		if arrow == 16:
+			_draw_arrow(port, first, vertical, false)
+			_draw_arrow(port, last, vertical, true)
 		var lo: int = qd.s16(memory.read_u16(c + 0x14))
 		var hi: int = qd.s16(memory.read_u16(c + 0x16))
 		if hi <= lo or memory.read_u8(c + 0x11) == 0xff:
@@ -351,6 +370,21 @@ func _draw_standalone(h: int) -> void:
 				else Rect2i(track.position.x + at, r.position.y, arrow, arrow)
 		qd.fill_rect(port, thumb, white, qd.PAT_COPY)
 		qd.frame_rect(port, thumb))
+
+## The outline arrow in a 16-pixel arrow box, as the System's standard scroll bar (CDEF 1) draws it,
+## active or not (not the game's evidence: the System's look). UP_ARROW is the up arrow, rows of
+## [y, x...] in the box; the others are its flips and transposes.
+const UP_ARROW := [[3, 8], [4, 7, 9], [5, 6, 10], [6, 5, 11], [7, 4, 12], [8, 3, 13],
+		[9, 2, 3, 4, 5, 11, 12, 13, 14], [10, 5, 11], [11, 5, 11], [12, 5, 11],
+		[13, 5, 6, 7, 8, 9, 10, 11]]
+
+func _draw_arrow(port: int, box: Rect2i, vertical: bool, flip: bool) -> void:
+	var black := [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
+	for row in UP_ARROW:
+		var y: int = 15 - row[0] if flip else row[0]
+		for k in range(1, row.size()):
+			var at := Vector2i(row[k], y) if vertical else Vector2i(y, row[k])
+			qd.fill_rect(port, Rect2i(box.position + at, Vector2i(1, 1)), black, qd.PAT_COPY)
 
 ## The part of a visible, active control of `w` under the local point (VAR c set; 0 without one):
 ## a scroll bar's arrows 20 / 21, page areas 22 / 23 and thumb 129; a dialog's button 10, check
@@ -433,6 +467,10 @@ func track_control(h: int, start: Vector2i, action: int) -> int:
 	events.flush_mouse_ups()
 	return part
 
+func _set_hilite(h: int, state: int) -> void:
+	memory.write_u8(memory.read_u32(h) + 0x11, state)
+	_redraw_control(h)
+
 func _redraw_control(h: int) -> void:
 	h &= 0xffffffff
 	if _standalone.has(h):
@@ -511,8 +549,23 @@ func _draw_item(d: int, e: Dictionary) -> void:
 						qd.draw_line(port, box.position, box.end - Vector2i(1, 1))
 						qd.draw_line(port, Vector2i(box.end.x - 1, box.position.y), Vector2i(box.position.x, box.end.y - 1))
 				qd.set_pen_loc(port, Vector2i(r.position.x + 17, r.position.y + (r.size.y - 16) / 2 + 13))
+			# An inactive control (hilite 255): on a colour port its title in grayish text
+			# (palette_manager.grayish), as System 7's CDEF 0; on a black-and-white port
+			# grey-patterned over (below).
+			var colour_dim: bool = dim and qd.is_color(memory, port)
+			var saved_fg: int = memory.read_u32(port + 0x50)
+			if colour_dim:
+				memory.write_u32(port + 0x50, machine.toolbox.palettes.grayish())
 			qd.draw_text(port, title)
-			if dim:
+			memory.write_u32(port + 0x50, saved_fg)
+			var lit: int = memory.read_u8(c + 0x11)
+			if lit > 0 and lit < 254:                   # hilited (the part being tracked): CDEF 0's look
+				if e["type"] == BUTTON:
+					qd.paint_round(port, r, 16, 16, black, qd.PAT_XOR)
+				else:
+					var lit_box := Rect2i(r.position.x + 2, r.position.y + (r.size.y - 12) / 2, 12, 12)
+					qd.frame_rect(port, lit_box.grow(-1))
+			if dim and not colour_dim:
 				qd.fill_rect(port, r.grow(-1), [0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55], qd.PAT_BIC)
 		STATIC_TEXT, EDIT_TEXT:
 			var text: PackedByteArray = _text(e["handle"])
@@ -522,6 +575,11 @@ func _draw_item(d: int, e: Dictionary) -> void:
 			if e["type"] == EDIT_TEXT:
 				qd.frame_rect(port, r.grow(3))
 			_text_box(port, text, r)
+			var state: Dictionary = dialogs.get(d, {})
+			if e["type"] == EDIT_TEXT and state.get("sel_all", false) and text.size() > 0 \
+					and state["items"].find(e) == state["edit"]:
+				var w: int = mini(qd.string_width(port, text), r.size.x)
+				qd.fill_rect(port, Rect2i(r.position, Vector2i(w, 16)), black, qd.PAT_XOR)
 		ICON:
 			var bytes: PackedByteArray = Files.load_bytes("ICON", e.get("resource", 0))
 			if bytes.size() >= 128:
@@ -569,6 +627,12 @@ func _text_box(port: int, text: PackedByteArray, r: Rect2i) -> void:
 
 # ---- the modal loop -------------------------------------------------------------------------------------
 
+## ModalDialog: each event goes first to the filter (a Pascal BOOLEAN function of dialog, event,
+## VAR itemHit); a true result with itemHit set ends the call. The Toolbox returns on any true result,
+## but every filter of the game sets itemHit when it answers true (duty_roster_filter_proc ID04 0x5e4,
+## fuel_slider_dialog_filter 0xa8e, map_dialog_filter_proc 0x3902, code_dialog_filter ID05 0x2c8).
+## Otherwise the default handling: a click in an enabled item, Return / Enter the default item
+## (aDefItem +0xa8: 1 for a dialog, the stage's for an alert), Tab to the next edit field.
 func modal_dialog(filter: int, item_ptr: int) -> int:
 	var d: int = windows.front_window()
 	if not dialogs.has(d):
@@ -600,6 +664,28 @@ func _handle(d: int, event: int) -> int:
 				if items[i]["enabled"] and (items[i]["box"] as Rect2i).has_point(p):
 					if items[i]["type"] == EDIT_TEXT:
 						set_edit(d, i)
+					if items[i]["type"] in [BUTTON, CHECKBOX, RADIO]:
+						# As DialogSelect through FindControl / TrackControl: an inactive control
+						# (hilite 255) is not hit; an active one is hilited while the mouse is in it
+						# and counts only when the button is let go inside.
+						var h: int = items[i]["handle"]
+						var c: int = memory.read_u32(h)
+						if memory.read_u8(c + 0x11) == 0xff:
+							return 0
+						var part: int = 10 if items[i]["type"] == BUTTON else 11
+						var box: Rect2i = items[i]["box"]
+						var inside := true
+						_set_hilite(h, part)
+						while events.is_button_down() and not events.has_mouse_up():
+							var now: bool = box.has_point(events.mouse_position() - origin)
+							if now != inside:
+								inside = now
+								_set_hilite(h, part if inside else 0)
+							machine.idle(10)
+						events.flush_mouse_ups()
+						_set_hilite(h, 0)
+						if not box.has_point(events.mouse_position() - origin):
+							return 0
 					return i + 1
 		3, 5:
 			var c: int = memory.read_u8(event + 5)
@@ -610,13 +696,18 @@ func _handle(d: int, event: int) -> int:
 				for k in range(1, items.size() + 1):
 					var j: int = (edit + k) % items.size()
 					if items[j]["type"] == EDIT_TEXT:
-						set_edit(d, j)
+						set_edit(d, j, true)
 						break
 				return 0
 			if edit >= 0:
 				var e: Dictionary = items[edit]
 				var text: PackedByteArray = _text(e["handle"])
-				if c == 0x08:
+				if state.get("sel_all", false) and (c == 0x08 or c >= 0x20):
+					text = PackedByteArray()
+					state["sel_all"] = false
+					if c >= 0x20:
+						text.append(c)
+				elif c == 0x08:
 					if text.size() > 0:
 						text.resize(text.size() - 1)
 				elif c >= 0x20:
@@ -631,6 +722,11 @@ func _handle(d: int, event: int) -> int:
 
 ## An alert: the ALRT's window (a modal box) over its item list, the default item outlined when
 ## its first stage says so, the loop until an item is hit; the item number is returned.
+## StopAlert / NoteAlert / CautionAlert would also draw the System's icon 0 / 1 / 2 at (10, 20); it
+## is not drawn: those icons are the System's, not in the game's resources (only ICON 128 is).
+## Only the first stage is read: every ALRT of the game has the stage word 0x5555 (four stages of
+## 5: the default box, item 1 the default, sound 1), so the Alert Manager's stage count (ACount)
+## changes nothing.
 func alert(id: int, filter: int) -> int:
 	var bytes: PackedByteArray = Files.load_bytes("ALRT", qd.s16(id))
 	if bytes.is_empty():

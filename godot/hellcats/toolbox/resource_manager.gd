@@ -43,6 +43,8 @@ func install(toolbox) -> void:
 	toolbox.install(0xa81f, func(a: Array) -> int: return get_resource(fourcc(a[1]), a[0]))   ## Get1Resource
 	toolbox.install(0xa9a1, func(a: Array) -> int: return get_named(fourcc(a[1]), a[0]))      ## GetNamedResource(type, name)
 	toolbox.install(0xa820, func(a: Array) -> int: return get_named(fourcc(a[1]), a[0]))      ## Get1NamedResource
+	# Resources stay loaded: every ReleaseResource of the game follows a read-only use (DATA 128 in
+	# ID05, a 'snd ' in ID02 / ID04, a PICT in ID04), so none relies on a later reload from disk.
 	toolbox.install(0xa9a3, func(_a: Array) -> int: return 0)                                  ## ReleaseResource
 	toolbox.install(0xa992, func(a: Array) -> int: return detach(a[0]))                        ## DetachResource
 	toolbox.install(0xa9a2, func(_a: Array) -> int: return 0)                                  ## LoadResource
@@ -55,6 +57,9 @@ func install(toolbox) -> void:
 			write(h)
 		return 0)
 	toolbox.install(0xa994, func(_a: Array) -> int: return APPLICATION_FILE)                   ## CurResFile
+	# One resource map: the game's file with the saved resources over it (user://resources), so the
+	# file UseResFile picks (A5-0x1002 around the HEL2 panel cache, ID03 0x5cc4) changes neither
+	# lookups nor where AddResource / WriteResource land.
 	toolbox.install(0xa998, func(_a: Array) -> int: return 0)                                  ## UseResFile
 	toolbox.install(0xa9a4, func(_a: Array) -> int: return APPLICATION_FILE)                   ## HomeResFile
 	toolbox.install(0xa99b, func(_a: Array) -> int: return 0)                                  ## SetResLoad

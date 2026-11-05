@@ -34,12 +34,26 @@ func _font(id: int, face: int) -> Font:
 		_fonts[key] = f
 	return _fonts[key]
 
+func _symbol_font(name: String, face: int) -> Font:
+	var key := "%s:%d" % [name, face & BOLD]
+	if not _fonts.has(key):
+		var f := SystemFont.new()
+		f.font_names = PackedStringArray([name])
+		f.antialiasing = TextServer.FONT_ANTIALIASING_NONE
+		f.hinting = TextServer.HINTING_NORMAL
+		f.font_weight = 700 if (face & BOLD) != 0 else 400
+		_fonts[key] = f
+	return _fonts[key]
+
 static func _size(size: int) -> int:
 	return size if size > 0 else DEFAULT_SIZE
 
 ## The system font's own glyphs below 0x20: 0x11 the command sign, 0x12 the check mark, 0x14 the
 ## Apple logo.
 const SYSTEM_GLYPHS := {0x11: 0x2318, 0x12: 0x2713, 0x13: 0x25c6, 0x14: 0xf8ff}
+## Faces for those symbols when the stand-in text face has none (Geneva, the usual stand-in for
+## Chicago, has no command sign or check mark).
+const SYMBOL_FACES := ["Apple Symbols", "Zapf Dingbats", "Lucida Grande", "Menlo", "Arial Unicode MS", "DejaVu Sans"]
 
 static func mac_char(c: int) -> int:
 	if SYSTEM_GLYPHS.has(c):
@@ -68,6 +82,14 @@ func _render(c: int, id: int, size: int, face: int) -> Dictionary:
 	var rid: RID = font.get_rids()[0]
 	var cp: int = mac_char(c)
 	var index: int = ts.font_get_glyph_index(rid, size, cp, 0)
+	if index == 0 and SYSTEM_GLYPHS.has(c):                  # the first symbol face that has it
+		for name in SYMBOL_FACES:
+			var r: RID = _symbol_font(name, face).get_rids()[0]
+			var i: int = ts.font_get_glyph_index(r, size, cp, 0)
+			if i != 0:
+				rid = r
+				index = i
+				break
 	var fsize := Vector2i(size, 0)
 	ts.font_render_glyph(rid, fsize, index)
 	var advance: int = int(round(ts.font_get_glyph_advance(rid, size, index).x))

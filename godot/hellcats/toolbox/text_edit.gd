@@ -136,7 +136,7 @@ func update(h: int, area: Rect2i) -> int:
 	var style: Array = [memory.read_u16(port + 0x44), memory.read_u16(port + 0x46), memory.read_u16(port + 0x48), memory.read_u16(port + 0x4a)]
 	memory.write_u16(port + 0x44, memory.read_u16(te + 0x4a))
 	memory.write_u16(port + 0x46, memory.read_u16(te + 0x4c))
-	memory.write_u16(port + 0x48, qd.SRC_OR)
+	memory.write_u16(port + 0x48, memory.read_u16(te + 0x4e))       # the record's txMode (TENew: the port's)
 	memory.write_u16(port + 0x4a, memory.read_u16(te + 0x50))
 	for line in memory.read_u16(te + 0x5e):
 		var top: int = dest.position.y + line * height

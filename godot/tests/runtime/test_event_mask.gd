@@ -25,7 +25,7 @@ func run() -> bool:
 	ok = Assertions.assert_equal(_whats(events), [1], "every event again once the mask is 0xffff") and ok
 	machine.low_memory()
 	ok = Assertions.assert_equal(machine.memory.read_u16(0x144), 0xffff, "low_memory keeps the game's mask") and ok
-	return ok
+	return run_idle() and ok
 
 func _whats(events) -> Array:
 	var out: Array = []
@@ -35,3 +35,19 @@ func _whats(events) -> Array:
 			break
 		out.append(int(e["what"]))
 	return out
+
+## Null events: the first two polls of a tick return at once (the flight loop's two a frame); a
+## tight idle loop beyond that sleeps.
+func run_idle() -> bool:
+	var machine = MacMachine.new()
+	var events = machine.toolbox.events
+	var start: int = Time.get_ticks_usec()
+	events.next_event(0xffff, true)
+	events.next_event(0xffff, true)
+	var two: int = Time.get_ticks_usec() - start
+	start = Time.get_ticks_usec()
+	for k in 8:
+		events.next_event(0xffff, true)
+	var eight: int = Time.get_ticks_usec() - start
+	var ok := Assertions.assert_true(two < 1500, "two null polls return at once (%d us)" % two)
+	return Assertions.assert_true(eight >= 6000, "a tight loop of null polls sleeps (%d us)" % eight) and ok

@@ -92,6 +92,7 @@ func _slot(caller, e: Dictionary) -> Callable:
 				for k in arity:
 					if list[k] == null:
 						list[k] = 0
+			machine.cover(callee, method)
 			var result = callee.callv(method, list)
 			if has_stack:
 				callee.a7 = saved
@@ -111,6 +112,7 @@ func _local_call(port, method: String) -> Callable:
 		for k in arity:
 			if list[k] == null:
 				list[k] = 0
+		machine.cover(port, method)
 		var r = port.callv(method, list)
 		return 0 if r == null else int(r)
 
@@ -157,6 +159,7 @@ func call_procedure(address: int, params: Array) -> int:
 			var saved: int = callee.a7 if has_stack_pointer(callee) else 0
 			if has_stack_pointer(callee):
 				callee.a7 = machine.free_stack()
+			machine.cover(callee, e["method"])
 			var r = callee.callv(e["method"], list)
 			if has_stack_pointer(callee):
 				callee.a7 = saved
@@ -186,7 +189,10 @@ func is_routine(address: int) -> bool:
 
 ## A segment routine the port calls by its offset (not exported by the port: the runtime's own).
 func register_local(segment: int, offset: int, routine: Callable) -> void:
-	code_routines[segment][offset] = routine
+	var key: String = "runtime:ID%02d+0x%x" % [segment, offset]
+	code_routines[segment][offset] = func(a: Array):
+		machine.cover_key(key)
+		return routine.call(a)
 
 ## A code address reached through a pointer, known to every segment.
 func register_address(address: int, routine: Callable) -> void:

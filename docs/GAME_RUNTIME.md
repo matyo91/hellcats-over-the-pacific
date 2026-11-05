@@ -87,9 +87,11 @@ Between flights (Escape interrupts one) the menus and their ⌘ keys work: Missi
 Map, Instant Replay, Resume, the Options and Scenery toggles.
 
 Input during a flight is the original's: the mouse is the stick (its button the guns) and only
-keys are read, so the menus are reached by their ⌘ keys (the menu bar does not open on a click, and
-other events are drained); HideCursor / ShowCursor / InitCursor keep the Mac cursor's level, which
-hides Godot's pointer during the flight.
+keys are read: run_flight_session (ID02 0x4fc) sets the event mask to 0xfff9 (SetEventMask), so
+mouse-down and mouse-up are not even queued (event_manager.gd). Its own ⌘-key switch (table 0x650,
+on key-up) knows only ⌘T, ⌘1..5, ⌘Q, ⌘S and ⌘E; any other ⌘ key, such as ⌘M (Mission Map) or ⌘X,
+does nothing until the flight is interrupted. HideCursor / ShowCursor / InitCursor keep the Mac
+cursor's level, which hides Godot's pointer during the flight.
 
 The strict port passes the rects that traps change in place (InsetRect, OffsetRect) by their
 frame address, as the original pushes them, so the change lands where the program reads it back;
@@ -124,15 +126,14 @@ stubbed): every written routine but the IUCompString glue, whose comparison is t
 and not in the game's bytes; Toolbox traps and Pascal glue stubbed on the emulator side).
 
 An end-to-end session is `tests/runtime/smoke_session.gd`, kept out of `run_all.gd` because it runs
-for about a minute and a half:
-`Godot --headless --path godot --script res://tests/runtime/smoke_session.gd [-- --shots <dir>]`.
-Driven as a player would, the program goes through the start-up dialogs and Select a Mission into the
-cockpit. The session then throttles up, flies the chase, tower and cockpit views, works the gear,
-flaps and stick, and uses the menus' command keys (triple time, detail, sound, map, status, resume).
-It pauses and resumes, ejects, returns to the desktop through the mission summary, and tries Instant
-Replay.
-It fails when the program's thread dies or the runtime notes anything missing. It saves into
-`user://smoke_session_resources` (emptied first), never the player's `user://resources`.
+for minutes of real time (its `END`):
+`Godot --headless --path godot --script res://tests/runtime/smoke_session.gd [-- --shots <dir>] [--coverage <file>]`.
+It drives the program as a player would, through two missions, the menus by key and by mouse, and
+the dialogs; its header lists the steps. It fails when the program's thread dies or the runtime notes
+anything missing, and it saves into `user://smoke_session_resources` (emptied first), never the
+player's `user://resources`. `--coverage` writes the routines it dispatched, the evidence behind the
+mappings' `runtime_verified` (`tests/runtime/fixtures/smoke_coverage.json`, read by
+`tools/strict_port/check_sync.py`).
 
 ### Traps the game never issues
 
@@ -143,7 +144,8 @@ segments ID01..ID08 and the *Pacific Conflict* code; ID09's glue is answered by 
 stand-in).
 The remaining 116 have no user besides their installation, in the game's bytes, the strict port, the
 runtime or the tests. They are cleanup candidates, kept for now because another scenery file opened
-with File > Open... could issue them:
+with File > Open... could issue them (counts and list checked against the bytes by
+`tools/qa/test_regression.py`, optional-unused-traps):
 
 $A001 $A002 $A01C $A01F $A021 $A023 $A027 $A029 $A02A $A036 $A049 $A04A $A063 $A069 $A06A $A11D
 $A11E $A122 $A31E $A322 $A802 $A803 $A804 $A806 $A81F $A820 $A827 $A828 $A851 $A856 $A860 $A86D

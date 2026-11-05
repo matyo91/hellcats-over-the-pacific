@@ -46,6 +46,13 @@ func install(toolbox) -> void:
 		draw_menu_bar()
 		return 0)
 	t.install(0xa938, func(a: Array) -> int:                                       ## HiliteMenu(id)
+		# As the Toolbox's: nothing when that title is already the highlighted one. The game's event
+		# loop (ID02 0x2fd4) calls HiliteMenu(0) on every pass; redrawing the bar each time would
+		# repaint it continuously. That loop and the flight start (0x51a) are the game's only HiliteMenu(0)
+		# calls, so a menu command's modal dialog (High Scores, About) runs with its title still
+		# highlighted, as on the Mac.
+		if qd.s16(a[0]) == hilited:
+			return 0
 		hilited = qd.s16(a[0])
 		draw_menu_bar()
 		return 0)
@@ -105,8 +112,8 @@ func _enable(h: int, item: int, on: bool) -> int:
 	var flags: int = memory.read_u32(p + 0xa)
 	var bit: int = 1 << (qd.s16(item) & 31)
 	memory.write_u32(p + 0xa, (flags | bit) if on else (flags & ~bit))
-	if qd.s16(item) == 0:
-		draw_menu_bar()
+	# Item 0 (the whole menu) changes only the flags, as the Toolbox's: the game redraws the bar itself
+	# (set_menu_item_enabled, ID02 0x3590, calls DrawMenuBar after it).
 	return 0
 
 func _enabled(h: int, item: int) -> bool:
@@ -143,6 +150,7 @@ func draw_menu_bar() -> void:
 	qd.fill_rect(port, Rect2i(0, 0, machine.SCREEN_WIDTH, bar - 1), white, qd.PAT_COPY, qd.BLACK, qd.WHITE)
 	memory.write_u16(port + 0x44, 0)
 	memory.write_u16(port + 0x4a, 12)
+	var gray: int = machine.toolbox.palettes.grayish()
 	for t in _layout():
 		var h: int = t[0]
 		var on: bool = memory.read_s16(memory.read_u32(h)) == hilited and hilited != 0
@@ -150,9 +158,10 @@ func draw_menu_bar() -> void:
 			qd.fill_rect(port, Rect2i(t[1], 0, t[2] - t[1], bar - 1), [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff], qd.PAT_COPY, qd.BLACK, qd.WHITE)
 		qd.set_pen_loc(port, Vector2i(t[1] + 6, 14))
 		var dim: bool = (memory.read_u32(memory.read_u32(h) + 0xa) & 1) == 0
-		_draw_label(port, _title(h), qd.WHITE if on else (128 if dim else qd.BLACK))
+		_draw_label(port, _title(h), qd.WHITE if on else (gray if dim else qd.BLACK))
 
-## Text at the pen in the system font, in one palette index (black, white on a highlight, grey dimmed).
+## Text at the pen in the system font, in one palette index (black, white on a highlight, grayish
+## dimmed: palette_manager.grayish).
 func _draw_label(port: int, text: PackedByteArray, colour: int) -> void:
 	var pen: Vector2i = qd.pen_loc(port)
 	var bits: Array = qd.port_bits(port)
@@ -244,6 +253,7 @@ func _draw_menu(h: int, box: Rect2i, choice: int) -> void:
 	qd.frame_rect(port, box)
 	var y: int = box.position.y + 1
 	var items: Array = _items(h)
+	var gray: int = machine.toolbox.palettes.grayish()
 	for i in items.size():
 		var at: int = items[i]
 		var text: PackedByteArray = _text(at)
@@ -255,7 +265,7 @@ func _draw_menu(h: int, box: Rect2i, choice: int) -> void:
 			for x in range(box.position.x + 1, box.end.x - 1, 2):
 				qd.fill_rect(port, Rect2i(x, y + ROW / 2, 1, 1), black, qd.PAT_COPY, qd.BLACK, qd.WHITE)
 		else:
-			var colour: int = qd.WHITE if on else (qd.BLACK if _enabled(h, i + 1) else 128)
+			var colour: int = qd.WHITE if on else (qd.BLACK if _enabled(h, i + 1) else gray)
 			if memory.read_u8(attrs + 2) != 0:
 				qd.set_pen_loc(port, Vector2i(box.position.x + 3, y + 12))
 				_draw_label(port, PackedByteArray([memory.read_u8(attrs + 2)]), colour)

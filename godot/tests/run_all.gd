@@ -172,6 +172,9 @@ const TEST_PATHS := [
 	"res://tests/runtime/test_unexported_routines.gd",
 	"res://tests/runtime/test_sound_channels.gd",
 	"res://tests/runtime/test_event_mask.gd",
+	"res://tests/runtime/test_menu_bar.gd",
+	"res://tests/runtime/test_alert.gd",
+	"res://tests/runtime/test_dialog_edit.gd",
 ]
 
 func _init() -> void:

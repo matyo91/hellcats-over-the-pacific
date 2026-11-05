@@ -146,6 +146,12 @@ func pm_color(background: bool, entry: int) -> int:
 		memory.write_u32(port + (0x54 if background else 0x50), device_index(e))
 	return 0
 
+## The grey of dimmed text (menus, inactive controls), as System 7 draws "grayish" text on a colour
+## screen: halfway between the black text and the white background, the device's nearest entry (the
+## game's palettes move it, so it is looked up each time).
+func grayish() -> int:
+	return nearest(Color8(0x80, 0x80, 0x80))
+
 ## The device index nearest a colour.
 func nearest(c: Color) -> int:
 	var t: Array = colours()

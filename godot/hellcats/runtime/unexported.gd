@@ -366,6 +366,8 @@ func id04_0644() -> int:
 		if _jt(0x502, [rec, a6 - 0x214, 0x1e]) & 0xffff != 0:          # strncmp (JT $502, 0x976)
 			changed = true
 			_jt(0x50a, [rec, a6 - 0x214, 0x1e])
+		# As the original: a name of 30 characters or more is copied without its NUL (strncpy, 30), so
+		# c2pstr runs on into record +0x1e..+0x1f up to the status word +0x20 (0 for an active pilot).
 		_jt(0x302, [rec])
 	if changed:
 		_trap(0xa9aa, [memory.read_u32(_g(-0x13a8))])

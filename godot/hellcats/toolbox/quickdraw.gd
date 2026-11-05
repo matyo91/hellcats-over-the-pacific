@@ -619,7 +619,8 @@ func init_graf(the_port: int) -> int:
 	return 0
 
 ## The one screen as Color QuickDraw describes it (Inside Macintosh V), in the heap: a GDevice
-## (gdType +4 = 0, clutType: indexed; gdFlags +0x14: colour device, main screen, screen device;
+## (gdType +4 = 0, clutType: indexed; gdFlags +0x14 = 0xb801: gdDevType (colour), mainScreen, allInit,
+## screenDevice, screenActive; not ext32Device, bit 8, which scan_display_devices (ID02 0x2192) tests;
 ## gdRect +0x22) whose gdPMap (+0x16) is a handle to a PixMap: baseAddr the screen, rowBytes 640 |
 ## 0x8000, bounds 0, 0, 480, 640, 72 dpi, pixelSize (+0x20) 8, one 8-bit component.
 func make_main_device() -> void:

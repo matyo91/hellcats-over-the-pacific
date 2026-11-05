@@ -56,6 +56,10 @@ func install(toolbox) -> void:
 		resize(a[3], Vector2i(qd.s16(a[2]), qd.s16(a[1])))
 		return 0)
 	t.install(0xa92c, func(a: Array) -> int: return find_window(a[1], a[0]))                ## FindWindow(pt, VAR w): part
+	# The update region is the whole window (InvalRect / InvalRgn invalidate it all): BeginUpdate
+	# validates it without narrowing visRgn, so EndUpdate has nothing to restore. Drawing in an update
+	# is a superset of the Mac's clipped drawing; the game's update handlers (handle_update_event,
+	# ID02 0x4d6a, and the dialogs) redraw their whole windows, so the pixels are the same.
 	t.install(0xa922, func(a: Array) -> int:                                                ## BeginUpdate
 		_updates.erase(a[0] & 0xffffffff)
 		return 0)

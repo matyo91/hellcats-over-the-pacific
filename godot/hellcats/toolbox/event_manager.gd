@@ -38,6 +38,8 @@ var keymap := PackedByteArray()
 const DEFAULT_EVENT_MASK := 0xffef
 const LM_SYS_EVT_MASK := 0x144
 var event_mask: int = DEFAULT_EVENT_MASK
+var _null_tick: int = -1
+var _null_polls: int = 0
 ## Set when the program exits (ExitToShell): the game thread then waits for the scene to end.
 var stopping := false
 
@@ -163,7 +165,16 @@ func next_event(mask: int, take: bool) -> Dictionary:
 	if found.is_empty() and windows != null:
 		found = windows.pending_event(mask, take)
 	if found.is_empty():
-		machine.idle(2)
+		# A null event returns at once, as the Toolbox's; only a tight idle loop (more than two null
+		# polls in one tick: the event loop between flights) sleeps, to spare the host. The flight
+		# loop polls twice a frame (ID02 run_flight_session) and is not slowed.
+		var tick: int = machine.ticks()
+		if tick == _null_tick:
+			_null_polls += 1
+		else:
+			_null_tick = tick
+			_null_polls = 1
+		machine.idle(2 if _null_polls > 2 else 0)
 		found = {"what": NULL_EVENT, "message": 0, "where": mouse_position(), "modifiers": modifiers | (0 if is_button_down() else BTN_STATE),
 				"when": machine.ticks()}
 	return found
