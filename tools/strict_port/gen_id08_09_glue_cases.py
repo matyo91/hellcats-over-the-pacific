@@ -6,7 +6,7 @@ Each segment is loaded at 0x30000 with A5 = 0x20000; low memory (ROMBase, ROM85,
 CPUFlag, KbdType, BootDrive, FSFCBLen, SysMap...) is written per case. The parameter-block OS traps
 (_Open, _HFSDispatch, _GetVolInfo) are "trap_a0" stand-ins (segment_stubs.a0_trap: D0 and the block
 logged, VAR fields written into the block, the flags set from the result); everything else is a
-logging stand-in, and ID08's load_overlay_from_resource (0x6, not ported yet) an offset-keyed one
+logging stand-in, and ID08's load_overlay_from_resource (0x6) an offset-keyed one
 ("local" here, "addr" with the offset in the fixture). Each case records the original's entry stack
 pointer ("a7"): both glues build their parameter blocks on the stack. test_id08_09_glue.gd replays
 both fixtures (helpers/segment_cases.gd).

@@ -2,7 +2,7 @@
 """Generate comparison cases for resolve_bailout_outcome, update_bailout_view and
 begin_replay_view by running the ORIGINAL bytes. The parachute and the player each get a
 controller with a pose ring; facilities near the player are object_pool entries. Returned D0 is
-compared where it matters. test_views.gd replays the cases.
+compared where it matters. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_view_cases.py  (writes the fixture JSON)
 """

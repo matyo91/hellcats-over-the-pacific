@@ -13,7 +13,7 @@ show_resource_file_error_box, start_new_mission and poll_and_dispatch_event run 
 
 main never returns: the run stops when its loop comes back to the poll the third time (two passes);
 the port gets the same bound as "event_loop_passes" = 2. Each case records the original's entry stack
-pointer ("a7"). test_id02_startup.gd replays the cases (helpers/segment_cases.gd).
+pointer ("a7"). test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_startup_cases.py  (writes the fixture JSON)
 """

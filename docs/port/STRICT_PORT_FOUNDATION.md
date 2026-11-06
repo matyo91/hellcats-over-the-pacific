@@ -63,7 +63,7 @@ Saved registers are not modelled where no result reads them.
 |---|---|---|
 | `_jt(offset, args)` | a jump-table slot, `JSR offset(A5)` | the runtime's segment loader (`jump_table.json`) |
 | `_local(offset, args)` | a routine of the same segment by its offset | `segment_methods.json` |
-| `_jsr(address, args)` / `_bsr_unported(file_offset, args)` | an overlay code address | the overlay's `code_table` (`overlay_methods.json`) |
+| `_jsr(address, args)` / `_bsr_file(file_offset, args)` | an overlay code address | the overlay's `code_table` (`overlay_methods.json`) |
 | `_trap(word, args)` | an A-line trap | the runtime's Toolbox |
 | `_call_address(address, args)` | a pointer held in memory | the runtime's code routines |
 

@@ -6,7 +6,7 @@ ORIGINAL bytes.
 ID04.bin is loaded at 0x30000 with A5 = 0x20000. Every trap and jump-table slot is a logging
 stand-in on both sides (segment_stubs.py): GetDItem writes a fixed item type, handle and box
 through its VAR arguments into the caller's frame (the ports model A7); rect arguments in the
-frame are logged by value; GetCtlValue answers 0, 0, 1. test_id04_dialog.gd replays the cases
+frame are logged by value; GetCtlValue answers 0, 0, 1. test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id04_dialog_cases.py  (writes the fixture JSON)

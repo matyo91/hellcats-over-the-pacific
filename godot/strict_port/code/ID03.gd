@@ -57,7 +57,8 @@ func _call_address(address: int, args: Array) -> int:
 	assert(code_routines.has(address), "code address %x has no routine" % address)
 	return code_routines[address].call(args)
 
-## A call to a routine of this segment not ported yet, by its segment offset.
+## A call to a routine of this segment by its offset: one Ghidra did not export, which the runtime
+## writes from its bytes (runtime/machine/unexported.gd).
 func _local(offset: int, args: Array) -> int:
 	assert(code_routines.has(offset), "segment routine %x has no stand-in" % offset)
 	return code_routines[offset].call(args)

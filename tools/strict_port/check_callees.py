@@ -4,7 +4,7 @@
 For every mapping, the mapped functions the semantic .decomp.c body calls (by name) must be
 reached by the ported body: called by name, through a jump-table constant (_jt, by
 runtime/data/jump_table.json), a segment offset (_local, segment_methods.json) or an overlay
-code address (_jsr / _bsr_unported, overlay_methods.json), directly or through the port file's
+code address (_jsr / _bsr_file, overlay_methods.json), directly or through the port file's
 own private helpers (names starting with '_', followed transitively). A callee the port never
 reaches is a shortcut the original does not take: an inlined copy, another routine (as ID05's
 decoders once skipped decode_base26_6chars). A port that computes a callee's address cannot be
@@ -92,7 +92,7 @@ def reached(text: str, body: str, segment: str | None, jt: dict, segments: dict,
     """The names a ported body reaches: called directly or through a slot, offset or address."""
     consts = dict(re.findall(r"^const (\w+): int = (0x[0-9a-f]+|\d+)", text, re.M))
     names = set(CALL.findall(body))
-    for kind, arg in re.findall(r"\b(_jt|_jsr|_bsr_unported|_local)\(\s*(\w+)", body):
+    for kind, arg in re.findall(r"\b(_jt|_jsr|_bsr_file|_local)\(\s*(\w+)", body):
         value = consts.get(arg, arg if re.fullmatch(r"0x[0-9a-f]+|\d+", arg) else None)
         if value is None:
             continue
@@ -101,7 +101,7 @@ def reached(text: str, body: str, segment: str | None, jt: dict, segments: dict,
             names.add(jt.get(n, ""))
         elif kind == "_jsr":
             names.add(overlay.get(n, ""))
-        elif kind == "_bsr_unported":
+        elif kind == "_bsr_file":
             names.add(overlay.get(n - 0x20, ""))         # a file address; overlay methods are by runtime address
         elif segment is not None:
             names.add(segments.get(segment, {}).get(hex(n), ""))

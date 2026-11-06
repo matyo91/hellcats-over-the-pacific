@@ -6,7 +6,7 @@ items, sound shutdown, window / alert placement, palettes) by running the ORIGIN
 Layout as gen_id02_trapfree_cases.py (ID02 at 0x30000, A5 = CurrentA5 = 0x20000; the main screen
 rect, MBarHeight 0xbaa, a window, an alert template behind GetResource, twenty sound slots,
 palettes). Every jump-table slot and trap is a logging stand-in on both sides
-(segment_stubs.py); bytes pushed with MOVE.B -(A7) are logged as bytes. test_id02_toolbox.gd
+(segment_stubs.py); bytes pushed with MOVE.B -(A7) are logged as bytes. test_replays.gd
 replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_toolbox_cases.py  (writes the fixture JSON)

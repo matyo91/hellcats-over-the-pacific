@@ -6,7 +6,7 @@ Each case builds a prepared object with seeded random faces: BSP children (+0x10
 tree), +0x12 chains (always to a later face, so they end), +0x13 flags (bit 0 two-sided, bit 1
 hidden, bit 4 set at random to see it cleared), +0x1c distances around the object distance, and
 normals / vertices so face_is_back_facing (run as ported) gives a mix of answers. Cases run with
-near mode off and on. test_face_emit.gd replays the cases (helpers/original_cases.gd).
+near mode off and on. test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_face_emit_cases.py  (writes the fixture JSON)
 """

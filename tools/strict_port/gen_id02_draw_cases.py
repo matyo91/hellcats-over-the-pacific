@@ -6,7 +6,7 @@ wrapper, check_device_color_state_changed) by running the ORIGINAL bytes.
 Layout as gen_id02_trapfree_cases.py. Every slot, trap and the service called through A5 - 0x1096
 is a logging stand-in on both sides (segment_stubs.py; the service is an "addr" stub). The colour
 state check builds its maps in its frame (the port models A7); the new map it reports to JT $182
-is not logged (its tail past the count is uninitialised frame). test_id02_draw.gd replays the
+is not logged (its tail past the count is uninitialised frame). test_replays.gd replays the
 cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_draw_cases.py  (writes the fixture JSON)

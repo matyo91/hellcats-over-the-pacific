@@ -10,7 +10,7 @@ the JT $172 idle routine and the overlay's entry (A5 - 0x1006 + - 0x1012) as log
 the unexported overlay-globals sync (0x4d24) as an offset-keyed stand-in; do_menu_command runs for real
 (HiWord / LoWord scripted; its own stand-ins are listed here for gen_id02_menu_cases.py). GetNextEvent answers an "outseq" of event records, FindWindow an "out" window, each
 scripted per case. update_menu_items and handle_activate_event run for real. Each case records the
-original's entry stack pointer ("a7"). test_id02_events.gd replays the cases (helpers/segment_cases.gd).
+original's entry stack pointer ("a7"). test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_events_cases.py  (writes the fixture JSON)
 """

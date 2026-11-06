@@ -5,12 +5,12 @@ grid and plotting callback) by running the ORIGINAL bytes.
 
 ID04.bin is loaded at 0x30000 with A5 = 0x20000; ID01's sparse switch helpers (slots $2a / $32)
 run for real (ID01.bin at 0x3C000). Every trap and other slot is a logging stand-in on both sides
-(segment_stubs.py, the first batch's stubs and more); the two segment routines not ported yet
+(segment_stubs.py, the first batch's stubs and more); the two segment routines it calls
 (track_map_bearing_and_distance 0x3614, show_mission_summary_dialog 0x2de6) are "addr" stand-ins,
 keyed by their runtime address here and by their segment offset in the fixture. GlobalToLocal and
 GetMouse write fixed points, StillDown answers true, true, false; a case may replace the call logs.
 Each case records the original's stack pointer on entry ("a7"), so frame addresses passed to the
-stand-ins match. test_id04_filter.gd replays the cases (helpers/segment_cases.gd).
+stand-ins match. test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id04_filter_cases.py  (writes the fixture JSON)
 """

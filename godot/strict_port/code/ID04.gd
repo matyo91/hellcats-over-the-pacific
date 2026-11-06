@@ -549,7 +549,8 @@ const TRAP_DRAW_CHAR: int = 0xa883
 const LOCAL_TRACK_MAP_BEARING: int = 0x3614  ## track_map_bearing_and_distance (C: dialog, event; not exported)
 const LOCAL_MISSION_SUMMARY: int = 0x2de6    ## show_mission_summary_dialog (C: word, which, arg): word
 
-## A call to a routine of this segment not ported yet, by its segment offset.
+## A call to a routine of this segment by its offset: one Ghidra did not export, which the runtime
+## writes from its bytes (runtime/machine/unexported.gd).
 func _local(offset: int, args: Array) -> int:
 	assert(code_routines.has(offset), "segment routine %x has no stand-in" % offset)
 	return code_routines[offset].call(args)

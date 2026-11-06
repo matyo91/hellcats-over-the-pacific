@@ -6,7 +6,7 @@ faces) fill the visible list: pre-transformed ones (pass 1), plain ones, one wit
 (deferred to pass 3, drawn with its parent's draw order), one asking for its parts to be sorted
 (byte +6 bit 1: sort_group_parts_by_distance runs as ported) and an unlinked one (skipped). View
 1 allows near mode (objects within their range) and draws mission_child4 last. The face output
-pointer is a logging stub returning 1; everything else runs as ported. test_render_objects.gd
+pointer is a logging stub returning 1; everything else runs as ported. test_replays.gd
 replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_render_objects_cases.py  (writes the fixture JSON)

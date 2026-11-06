@@ -5,7 +5,7 @@ Queued dot objects (single points and two-point trails, controller byte +0x3b bi
 several depths in front of an identity camera, some off screen or behind; the erase and plot
 routines (depth_routine_da84 / _da80) are logging stubs (the plot logs its dot record by value).
 Faces mostly have no palette slot; one case runs a colour tally, one assigns a colour through
-assign_face_colour at depth 1 (host luma table). test_distant_dots.gd replays the cases
+assign_face_colour at depth 1 (host luma table). test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_distant_dots_cases.py  (writes the fixture JSON)

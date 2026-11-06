@@ -3,7 +3,7 @@
 bytes. Coordinates are 4-bit pixels (two per byte). Lines in every octant (shallow and steep, both
 directions), horizontal, vertical, diagonal and single-point lines, from odd and even pixels, are
 drawn on a patterned 4-bit screen with even and odd row bytes; the restore cases copy the same
-pixels back from a patterned backup bitmap with its own row bytes. test_line4.gd replays the cases
+pixels back from a patterned backup bitmap with its own row bytes. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_line4_cases.py  (writes the fixture JSON)

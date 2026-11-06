@@ -1714,7 +1714,8 @@ const LOCAL_SESSION_SETUP: int = 0x95a       ## lock_session_handles (not export
 const LOCAL_SYNC_SCREEN_GLOBALS: int = 0x4d96 ## restore_screen_globals (not exported): SetGDevice, the screen globals copied back
 const LOCAL_AFTER_REDRAW: int = 0xa26        ## redraw_panel_readouts_locked (not exported)
 
-## A call to a routine of this segment not ported yet (or not exported), by its segment offset.
+## A call to a routine of this segment by its offset: one Ghidra did not export, which the runtime
+## writes from its bytes (runtime/machine/unexported.gd).
 func _local(offset: int, args: Array) -> int:
 	assert(code_routines.has(offset), "segment routine %x has no stand-in" % offset)
 	return code_routines[offset].call(args)

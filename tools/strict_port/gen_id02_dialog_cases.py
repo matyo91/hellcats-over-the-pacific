@@ -6,7 +6,7 @@ polygon, view frame outline, FreeMem, the caution alert with a number, the sound
 Layout as gen_id02_trapfree_cases.py. Every slot and trap is a logging stand-in on both sides
 (segment_stubs.py): ParamText logs its third string by content (it may be the caller's frame);
 Button is scripted up, down, down, up so the click-wait loops end; GetNewDialog / GetMenu /
-GetResource / OpenPoly / NewPtr return prepared records. test_id02_dialog.gd replays the cases
+GetResource / OpenPoly / NewPtr return prepared records. test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_dialog_cases.py  (writes the fixture JSON)

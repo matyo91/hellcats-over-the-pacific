@@ -2,7 +2,7 @@
 """Generate comparison cases for point_in_polygon_xy, project_face_vertices_yz and
 point_over_face_xz by running the ORIGINAL bytes. Same method as gen_plume_cases.py; the
 returned D0 is compared. The routines are called by name in the port (no dispatch table).
-test_polygon.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_polygon_cases.py  (writes the fixture JSON)
 """

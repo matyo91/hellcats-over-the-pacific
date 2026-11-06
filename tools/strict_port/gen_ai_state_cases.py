@@ -10,7 +10,7 @@ update_aircraft_entity; other kinds run the per-kind fly routines of ai_fly_tabl
 the attack run, the scripted mission with its landing approach); the landing glide (0x1a1a6) is run directly. A frame that drops a bomb or
 fires the guns needs a live object pool, so spawn_weapon_entity (file 0x12840) and
 spawn_ordnance_oriented (file 0x15d20) are stubbed on both sides: they record their arguments
-(longs at ARGS_WEAPON / ARGS_ORDNANCE) and return 0 (no object). test_ai_states.gd replays the
+(longs at ARGS_WEAPON / ARGS_ORDNANCE) and return 0 (no object). test_replays.gd replays the
 cases through the strict port (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_ai_state_cases.py  (writes the fixture JSON)

@@ -9,7 +9,7 @@ their controllers are real heap blocks, freed by the original heap_free; the def
 hook is a logged code pointer. The land outline's frame lies 0x1c00 below the entry, so the stack
 guard is widened. A negative tolerance must leave the outline's range sum positive: otherwise the
 original's +0x32 shift count never ends (as the port documents), so table entries stay small.
-test_altitude_bands.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_altitude_band_cases.py  (writes the fixture JSON)
 """

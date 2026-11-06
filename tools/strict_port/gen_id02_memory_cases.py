@@ -6,7 +6,7 @@ load_game_sounds, paint_view_horizon_bands_a5safe) by running the ORIGINAL bytes
 Layout as gen_id02_trapfree_cases.py. Every slot and trap is a logging stand-in on both sides
 (segment_stubs.py); ExitToShell returns (the RTS after it ends the routine); GetNamedResource is
 scripted so the eleventh sound is missing and its fallback loads; Button is scripted down / up for
-the sound error dialog; MemError reads its log's result word. test_id02_memory.gd replays the
+the sound error dialog; MemError reads its log's result word. test_replays.gd replays the
 cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_memory_cases.py  (writes the fixture JSON)

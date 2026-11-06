@@ -6,7 +6,7 @@ face_object_to_camera, follow_camera_offset, create_singleton_type10_controller,
 impact_one_time_in_16 and fill_pose_history_angles / _flags. Same method as
 gen_ordnance_cases.py; cases marked with_d0 also record the returned D0, and cases with a
 "method" are called by name in the port (no dispatch table reaches them).
-test_controller_misc.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_controller_misc_cases.py  (writes the fixture JSON)
 """

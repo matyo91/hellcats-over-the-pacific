@@ -5,9 +5,9 @@ running the ORIGINAL bytes.
 
 The set-up is gen_id04_filter_cases.py's (ID04.bin at 0x30000, A5 = 0x20000, ID01's switch helpers
 at 0x3C000, the same logging stand-ins) with a few more traps and slots; the map's plotting service
-(*(A5 - 0x1052)) is an "addr" stand-in at 0x3B000, and the segment routines not ported yet stay
+(*(A5 - 0x1052)) is an "addr" stand-in at 0x3B000, and the segment routines it calls stay
 offset-keyed stand-ins ("local" here). GetDItem writes the same box for every item. Each case
-records the original's entry stack pointer ("a7"). test_id04_draw.gd replays the cases
+records the original's entry stack pointer ("a7"). test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id04_draw_cases.py  (writes the fixture JSON)

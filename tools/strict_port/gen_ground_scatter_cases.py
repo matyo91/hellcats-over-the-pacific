@@ -6,7 +6,7 @@ world z offset); some lie beyond 0x4d58 and are re-placed by the overlay RNG (on
 heading circle or in the square). The scatter objects are children of the scene root, so a
 reused object's scene record is also its template-chain slot. The land list is empty, so
 surface_type_at_point returns the default surface byte; other surfaces come from cached bytes.
-The pool spawn is stubbed on both sides and logs every call. test_ground_scatter.gd replays the
+The pool spawn is stubbed on both sides and logs every call. test_replays.gd replays the
 cases (helpers/original_cases.gd); the stack guard is widened to 0x1000 for the callees' frames.
 
 Usage: python3 tools/strict_port/gen_ground_scatter_cases.py  (writes the fixture JSON)

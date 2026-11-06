@@ -5,8 +5,8 @@ transform_int3_vecs_asr_by_1d744 by running the ORIGINAL bytes.
 Objects and heaps are built in the interpreter as in gen_object_list_cases.py. The four broad-
 phase collision tests collect_far_objects calls (test_object_collision 0x13ee0,
 handle_player_contact 0x1429c, test_proximity_collision 0x13e4e,
-test_player_vs_type0e_proximity 0x13eae; not ported) log their calls on both sides, so the pairs
-tested and their order are compared. test_visibility.gd replays the cases.
+test_player_vs_type0e_proximity 0x13eae) log their calls on both sides, so the pairs
+tested and their order are compared. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_visibility_cases.py  (writes the fixture JSON)
 """

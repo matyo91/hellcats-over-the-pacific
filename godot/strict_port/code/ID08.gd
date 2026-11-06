@@ -63,7 +63,8 @@ const TRAP_LOCAL_TO_GLOBAL: int = 0xa870
 const TRAP_CLOSE_DIALOG: int = 0xa982
 const LOCAL_LOAD_OVERLAY: int = 0x6     ## load_overlay_from_resource (C, no arguments)
 
-## A call to a routine of this segment not ported yet, by its segment offset.
+## A call to a routine of this segment by its offset: one Ghidra did not export, which the runtime
+## writes from its bytes (runtime/machine/unexported.gd).
 func _local(offset: int, args: Array) -> int:
 	assert(code_routines.has(offset), "segment routine %x has no stand-in" % offset)
 	return code_routines[offset].call(args)

@@ -6,7 +6,7 @@ overlay_rng_init(1), applies its writes, runs parachute_tick (0x19938, runtime 0
 destroy_parachute_controller (0x1951a, runtime 0x194fa) in the m68k_emu interpreter and records
 every byte changed outside the stack. The shadow needs a live object pool, so
 spawn_mission_pool_object (file 0x5116) is stubbed on both sides (arguments recorded at
-ARGS_POOL, returns 0). test_parachute.gd replays the cases (helpers/original_cases.gd).
+ARGS_POOL, returns 0). test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_parachute_cases.py  (writes the fixture JSON)
 """

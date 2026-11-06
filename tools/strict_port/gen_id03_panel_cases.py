@@ -5,7 +5,7 @@ and the arc scale ticks) by running the ORIGINAL bytes.
 The set-up is gen_id03_glyph_cases.py's (ID03.bin at 0x30000, A5 = 0x20000, ID02.bin behind its
 slots, scripted panel-coordinate slots and sine / cosine routines) with the panel colour slots
 ($45a / $36a / $3a2 / $3e2) and the polygon and rect traps as logging stand-ins. Each case records
-the original's entry stack pointer ("a7"). test_id03_panel.gd replays the cases
+the original's entry stack pointer ("a7"). test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_panel_cases.py  (writes the fixture JSON)

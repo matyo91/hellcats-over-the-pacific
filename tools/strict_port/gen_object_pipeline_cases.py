@@ -7,7 +7,7 @@ an eye so some vertices land behind the near plane. submit_object_faces runs ove
 faces (transformed or not, force_near_clip off / on) in near modes 0, 1 and 2 with kept back
 faces; the face output pointer (depth_routine_ab4) is a logging stub returning 1, and the face
 polygons stay off the view axis, so point_in_polygon_xy runs (as ported) without a hit and
-dispatch_collision is not reached. test_object_pipeline.gd replays the cases
+dispatch_collision is not reached. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_object_pipeline_cases.py  (writes the fixture JSON)

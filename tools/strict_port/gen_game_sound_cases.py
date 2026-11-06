@@ -6,7 +6,7 @@ aircraft (gear, flaps, stalled engine, rpm) and the engine-sound state. The host
 (+0x2aa play, +0x2b2 rate, +0x2b6 is playing, +0x2ba stop channel 1, +0x2be stop channel) log
 their calls on both sides and return the long just before their log (the case's "playing"
 answer). play_game_sound / stop_game_sound / stop_all_sound_channels run for real.
-test_game_sounds.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_game_sound_cases.py  (writes the fixture JSON)
 """

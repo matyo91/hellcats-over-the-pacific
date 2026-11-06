@@ -2,7 +2,7 @@
 """Generate comparison cases for spawn_cloud_layer and spawn_camera_relative_object by running the
 ORIGINAL bytes. The pool spawn is stubbed on both sides and logs every call's arguments, so all ten
 cloud placements are compared; one case gives spawn_camera_relative_object a real controller to
-fill (by name, with a stub returning 0 the fill is skipped). test_clouds.gd replays the cases.
+fill (by name, with a stub returning 0 the fill is skipped). test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_cloud_cases.py  (writes the fixture JSON)
 """

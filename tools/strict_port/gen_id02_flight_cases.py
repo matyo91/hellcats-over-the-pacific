@@ -8,7 +8,7 @@ A5 - 0x108e / - 0x108a, step A5 - 0x107a) as "addr" stand-ins, end_overlay_sessi
 screen-globals sync (0x4d96) and quit (0x2eaa) as offset-keyed stand-ins. Per case: GetNextEvent's
 answers (key events, then the other events of each frame, in call order), the key hook's results
 (the flight ends on the first non-zero one), TickCount climbing 4 a call, and JT $da's answer.
-Each case records the original's entry stack pointer ("a7"). test_id02_flight.gd replays the cases
+Each case records the original's entry stack pointer ("a7"). test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_flight_cases.py  (writes the fixture JSON)

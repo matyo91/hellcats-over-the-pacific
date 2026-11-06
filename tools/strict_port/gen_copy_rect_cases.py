@@ -3,7 +3,7 @@
 bytes. A patterned source area is copied into a patterned destination for every destination
 and source alignment (bytes at depth 8, 4-bit pixels at depth 4), with column counts that leave
 leading, whole-long / whole-word and trailing parts, a count that ends inside the leading part,
-negative row strides and a single row. test_copy_rect.gd replays the cases
+negative row strides and a single row. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_copy_rect_cases.py  (writes the fixture JSON)

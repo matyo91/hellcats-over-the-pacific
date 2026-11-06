@@ -7,7 +7,7 @@ one (gen_object_list_cases.Setup) with the small size classes 2..5 seeded with f
 blocks, so no host sbrk is needed. The mission scene is a group root descriptor (kind 3, no class
 factory) with eight group children (no grandchildren), so instantiation, activation and the vertex
 copies all run as ported. Host word +0x90 picks child 3 instead of 2 as mission_child2or3.
-test_mission_tables.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_mission_tables_cases.py  (writes the fixture JSON)
 """

@@ -9,7 +9,7 @@ mission hook (A5 - 0x109a) and GetPort / GetItem ("out" results), OpenDeskAcc, S
 are logging stand-ins; the unexported settings save (0x2da0) and quit (0x2eaa) are offset-keyed stand-ins;
 run_flight_session runs for real (its key hook answers 5 at once: quit). set_view_size_option, start_new_mission and
 apply_settings_to_live_options run for real. Each case records the original's entry stack pointer
-("a7"). test_id02_commands.gd replays the cases (helpers/segment_cases.gd).
+("a7"). test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_commands_cases.py  (writes the fixture JSON)
 """

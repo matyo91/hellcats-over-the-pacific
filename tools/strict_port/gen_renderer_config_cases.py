@@ -7,7 +7,7 @@ state on a real heap (gen_object_list_cases.Setup), an unchanged configuration o
 geometry, and odd / negative sizes exercise the rounding. The mission is already built
 (mission_child0 set), so init_mission_object_tables (tested on its own) is not re-run;
 mission_child4's faces 1..4 carry the depth-1 flag. update_view_clip_bounds runs as ported.
-test_renderer_config.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_renderer_config_cases.py  (writes the fixture JSON)
 """

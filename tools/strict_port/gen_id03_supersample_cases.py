@@ -5,7 +5,7 @@ ring with status indicators (ID03 0x1538 / 0x35e / 0x514) by running the ORIGINA
 The set-up is gen_id03_boxes_cases.py's (ID03.bin at 0x30000, A5 = 0x20000, ID02.bin behind its
 slots, NewPtr handing out the bits and the port record) with SetClip, DisposeRgn, SetOrigin, GetClip
 and PaintOval as logging stand-ins too; new_offscreen_bw_port runs for real on both sides. Each case records the
-original's entry stack pointer ("a7"). test_id03_supersample.gd replays the cases
+original's entry stack pointer ("a7"). test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_supersample_cases.py  (writes the fixture JSON)

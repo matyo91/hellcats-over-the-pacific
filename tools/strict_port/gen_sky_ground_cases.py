@@ -8,7 +8,7 @@ span filler logs the two buffer pointers it is handed by address). Cases cover d
 the panels drawn and undrawn, both horizon orders, the corner codes (0xf all ground, 0 all sky,
 mixed), a cached geometry, a flat horizon and depth 1 on even / odd frames. Depth 1 is only
 tested with a sloped horizon and mixed corners: otherwise the original hands it unset registers
-and frame words. test_sky_ground.gd replays the cases (helpers/original_cases.gd).
+and frame words. test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_sky_ground_cases.py  (writes the fixture JSON)
 """

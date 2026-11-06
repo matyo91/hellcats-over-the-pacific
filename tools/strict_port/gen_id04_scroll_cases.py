@@ -7,7 +7,7 @@ ID04.bin is loaded at 0x30000 with A5 = 0x20000; the dense switch of scroll_bar_
 poll_click_or_key_event runs ID01's helper for real (ID01.bin at 0x3C000, JMP in slot $3a). Every
 trap and other slot is a logging stand-in on both sides (segment_stubs.py): GetDItem writes a fixed
 box into the caller's frame, GetPort / SndNewChannel / GetFontInfo write fixed VAR results; a case
-may replace the call logs to vary GetNextEvent's event and SysEnvirons' record. test_id04_scroll.gd
+may replace the call logs to vary GetNextEvent's event and SysEnvirons' record. test_replays.gd
 replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id04_scroll_cases.py  (writes the fixture JSON)

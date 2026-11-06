@@ -7,7 +7,7 @@ host text routine (host +0x27a), a logging stub that also records the first thre
 text it receives. The drawn-panels half runs the sky / ground (with its geometry cached, so no
 row buffers are reallocated), heading tape, panel frame lines (into a small depth-8 screen) and
 instruments as ported, over the gauge fixture's host layout (gen_gauge_cases.base) with an empty
-radar; the host routines they reach are logging stubs. test_readouts.gd replays the cases
+radar; the host routines they reach are logging stubs. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_readout_cases.py  (writes the fixture JSON)

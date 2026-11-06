@@ -4,7 +4,7 @@
 Covers plot_dot_depth8 / erase_dots_depth8, plot_dot_depth4 / erase_dots_depth4 and plot_dot_bw
 on a small fake screen (host +6 base, +0x10 row bytes). plot_dot_bw fills its polygon through
 host +0x7c, which is logged on both sides together with the 4 points it is given (8 longs read
-through the polygon pointer). test_dots.gd replays the cases (helpers/original_cases.gd).
+through the polygon pointer). test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_dot_cases.py  (writes the fixture JSON)
 """

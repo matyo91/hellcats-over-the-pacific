@@ -14,7 +14,7 @@ heap (gen_object_list_cases.Setup, block 0x2c000..0x30000); step 0 in view 1 re-
 session buffers over handles into free memory; one case points host +0x26a at clear_flag_00020ae4
 so the panels stay pending. Depth-1 panel cases use a sloped horizon over 20 cached rows (a flat
 one leaves the host routine's x arguments unset in the original), and the depth-1 layout runs on
-an odd frame (see the case). test_frame_step.gd replays the cases (helpers/original_cases.gd).
+an odd frame (see the case). test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_frame_step_cases.py  (writes the fixture JSON)
 """

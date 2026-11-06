@@ -6,7 +6,7 @@ handle_player_contact, point_in_face_by_axis and test_object_collision. Objects,
 heap are built in the interpreter (gen_object_list_cases.Setup); a contact record that should
 already exist is made by the original create_shape_contact_record during setup. The collision
 handler (definition +0x12) logs its calls on both sides; the terrain paths (handle_terrain_contact,
-test_terrain_collision) have their own cases in gen_terrain_cases.py. test_collision.gd replays them.
+test_terrain_collision) have their own cases in gen_terrain_cases.py. test_replays.gd replays them.
 
 Usage: python3 tools/strict_port/gen_collision_cases.py  (writes the fixture JSON)
 """

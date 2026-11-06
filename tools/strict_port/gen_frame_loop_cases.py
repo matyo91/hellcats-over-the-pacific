@@ -2,7 +2,7 @@
 """Generate comparison cases for the frame loop (advance_frame_and_tick_controllers,
 run_simulation_tick, reset_distance_base_globals) by running the ORIGINAL bytes. Controller ticks
 log their calls on both sides; the effect log holds only end marks, so replaying respawns nothing.
-test_frame_loop.gd replays the cases.
+test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_frame_loop_cases.py  (writes the fixture JSON)
 """

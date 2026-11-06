@@ -2,7 +2,7 @@
 """Generate comparison cases for the radar blip routines (erase / draw for 8-bit, 4-bit and 1-bit
 screens, including the depth-8 draw entry 0x17810 inside erase_radar_blip_depth8) by running the
 ORIGINAL bytes on a fake frame and saved panel (the binary image's own bytes, the same on both
-sides). The 1-bit host rectangle call (+0x276) is logged. test_radar_blips.gd replays the cases.
+sides). The 1-bit host rectangle call (+0x276) is logged. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_radar_blip_cases.py  (writes the fixture JSON)
 """

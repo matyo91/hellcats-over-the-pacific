@@ -6,7 +6,7 @@ overlay_rng_init(1), applies its writes, runs ordnance_tick (0x12a2a, runtime 0x
 ordnance_collision (0x12f52, runtime 0x12f32) in the m68k_emu interpreter and records every byte
 changed outside the stack. Effects and trails need a live object pool, so
 spawn_mission_pool_object (file 0x5116) is stubbed on both sides: it records its arguments at
-ARGS_POOL and returns 0. test_ordnance.gd replays the cases (helpers/original_cases.gd).
+ARGS_POOL and returns 0. test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_ordnance_cases.py  (writes the fixture JSON)
 """

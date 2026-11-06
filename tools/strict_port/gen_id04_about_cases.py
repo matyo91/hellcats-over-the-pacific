@@ -7,7 +7,7 @@ helper for real (ID01.bin at 0x3C000). Every trap and slot is a logging stand-in
 (segment_stubs.py): GetNextEvent's event kind follows an "outseq" list call by call, TickCount,
 Button and GetResource answer scripted sequences, rects and the version string are logged by
 value. A case replaces the call logs to script another session. Each case records the original's
-entry stack pointer ("a7"). test_id04_about.gd replays the cases (helpers/segment_cases.gd).
+entry stack pointer ("a7"). test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id04_about_cases.py  (writes the fixture JSON)
 """

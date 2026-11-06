@@ -5,7 +5,7 @@ Covers set_view_distance, cycle_view_distance, reset_radar_tracks, update_radar_
 update_radar_scope. Their host and depth routines (host +0x28e button draw, host +0x272 line,
 *0x1da90 blip erase, *0x1da94 blip draw) are pointed at fake addresses whose calls are logged on
 both sides (long count, then the arguments of each call), so call order and arguments are
-compared with the memory. test_radar.gd replays the cases (helpers/original_cases.gd).
+compared with the memory. test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_radar_cases.py  (writes the fixture JSON)
 """

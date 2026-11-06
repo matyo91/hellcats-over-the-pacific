@@ -7,7 +7,7 @@ seeded pseudo-random table (every class bit pattern occurs), strtok's saved posi
 0x1508. ansi_ldiv reaches ID01 through jump-table slots $5a / $62: ID01.bin is copied to 0x6000
 and the slots hold JMP to its rt_sdiv32 / rt_smod32, so the original divide runs too. Arguments
 are pushed as the routines read them (MPW C ints are words). Strings and buffers live at 0xa000.
-test_id02_crt.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_crt_cases.py  (writes the fixture JSON)
 """

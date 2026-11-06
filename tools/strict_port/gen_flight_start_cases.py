@@ -10,7 +10,7 @@ are left alone at the other depths, pattern faces through set_object_faces_bw_pa
 depth-4 case through init_depth4_colour_state on a real heap. The flight-start cases cover ranks
 0..2, host word +0xa4, depth 1 and the host-words copy. The mouse cases cover the locked
 controls, the mouse path at several pointer positions and the auto-steer path toward the
-designated aircraft. test_flight_start.gd replays the cases (helpers/original_cases.gd).
+designated aircraft. test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_flight_start_cases.py  (writes the fixture JSON)
 """

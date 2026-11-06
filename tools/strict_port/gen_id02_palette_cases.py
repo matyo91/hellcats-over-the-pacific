@@ -8,7 +8,7 @@ Layout as gen_id02_trapfree_cases.py. Every slot and trap is a logging stand-in 
 devices (records with a pixmap handle) are walked by scripted GetNextDevice results; MaxMem's VAR
 argument (the caller's frame) is not logged. rebuild_all_palette_index_maps hands its frame to
 build_palette_index_map, so the port models A7 (segment_cases passes the fixture's stack top).
-test_id02_palette.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_palette_cases.py  (writes the fixture JSON)
 """

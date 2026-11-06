@@ -7,7 +7,7 @@ The start-up cases begin from the run-writer and span tables the original initia
 palette maps, light vector, frame counter, view distance and the 22 host hooks. The respawn cases
 use the anchor fixture's mission scene (gen_anchor_present_cases.scene_case) for the runway search
 or skip it (0x1d854), with a player controller, its pose ring and definition, an empty contact
-table and a pending replay object. test_overlay_entry.gd replays the cases
+table and a pending replay object. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_overlay_entry_cases.py  (writes the fixture JSON)

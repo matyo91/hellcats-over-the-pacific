@@ -4,7 +4,7 @@
 Each definition record's first create hook (+6) stores the template object and redirects +6 to
 the controller factory; the slot variants (effect, trail, shadow, cloud) fill the first empty
 slot and redirect past a threshold. Same method as gen_controller_misc_cases.py, with the
-returned D0 (always 0) recorded. test_template_registration.gd replays the cases.
+returned D0 (always 0) recorded. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_template_registration_cases.py  (writes the fixture JSON)
 """

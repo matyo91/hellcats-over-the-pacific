@@ -7,7 +7,7 @@ globals the routines read at absolute addresses: SoundBase (0x266), the sound ho
 CurrentA5 (0x904 = A5, which the interrupt-level sound routines reload). A5 = 0x20000. Each sound
 channel record (A5 - 0x7d0 + 0x238 * ch) has a playing node and a free list of nodes (0x1c bytes,
 +0x14 next) in a node pool; the palette lookups get the eight fixed entries (A5 - 0x350) and a
-table of extra entries. test_id02_trapfree.gd replays the cases (helpers/segment_cases.gd).
+table of extra entries. test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_trapfree_cases.py  (writes the fixture JSON)
 """

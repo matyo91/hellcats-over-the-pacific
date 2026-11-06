@@ -8,7 +8,7 @@ helpers already ported run for real on both sides, the two not exported (the def
 installer 0x1b8, advance_mission_summary_text 0x21d6) are offset-keyed stand-ins ("local" here,
 "addr" with the offset in the fixture). ModalDialog's item hits follow an "outseq" list; a case
 replaces the call logs to script another session. Each case records the original's entry stack
-pointer ("a7"): the routine stores its frame's tally buffer in A5 - 0x2226. test_id04_summary.gd
+pointer ("a7"): the routine stores its frame's tally buffer in A5 - 0x2226. test_replays.gd
 replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id04_summary_cases.py  (writes the fixture JSON)

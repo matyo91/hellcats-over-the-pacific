@@ -322,8 +322,8 @@ var memory
 var a7: int = 0
 ## Code addresses reached through pointers (jsr (an)) mapped to their ported Callables. Keys are
 ## RUNTIME addresses (file offset - 0x20): what the original pushes (pea x(pc) evaluates at
-## runtime) or stores in its tables. A call to an address with no entry is an error: the
-## original target is not ported yet.
+## runtime) or stores in its tables. A call to an address with no entry is an error (the table
+## lacks that routine).
 var code_table: Dictionary = {}
 
 func _init(param_memory = null) -> void:
@@ -1299,19 +1299,19 @@ func transform_through_node_chain(path_top: int, node_count: int, object: int, o
 ## Runtime addresses of a lone rts: a jsr there returns with D0 unchanged.
 const RTS_ONLY := [0x14326, 0x12f70] ## files 0x14346 (just before dispatch_collision) and 0x12f90 (stored at 0x1a9aa)
 
-## Direct bsr / jsr to a function that is not ported yet: looked up in code_table under its
+## A direct bsr / jsr to a function by its file address: looked up in code_table under its
 ## runtime address (file - 0x20), so a test or adapter must supply it explicitly; the
-## assertion keeps an unported callee from being skipped silently.
-func _bsr_unported(file_address: int, args: Array):
+## assertion keeps a missing callee from being skipped silently.
+func _bsr_file(file_address: int, args: Array):
 	var address: int = file_address - 0x20
-	assert(code_table.has(address), "bsr to unported function at file 0x%x" % file_address)
+	assert(code_table.has(address), "bsr to file 0x%x: no code_table entry" % file_address)
 	return code_table[address].callv(args)
 
 ## d0 is the caller's D0 at the jsr, returned as-is when the target is a lone rts.
 func _jsr(address: int, args: Array, d0: int = 0):
 	if RTS_ONLY.has(address):
 		return d0
-	assert(code_table.has(address), "jsr to unported code address 0x%x" % address)
+	assert(code_table.has(address), "jsr to code address 0x%x: no code_table entry" % address)
 	return code_table[address].callv(args)
 
 ## 0x5fa (FUN_000005fa; runtime 0x5da).
@@ -5999,7 +5999,8 @@ func release_ai_target(ctl: int) -> void:
 ## state 0x112c0 (byte +0x675 = 0) when it has bombs, else is not taken; an aircraft (type <= 4)
 ## needs ammo (word +0x682 > 1) and sets 0x110d4. A switch also runs
 ## invert_ai_bias_67b_if_positive (0x24 below); the target and its references are then moved.
-## The D0 the bytes leave is not modelled (callers of the notice handlers are not ported yet).
+## The D0 the bytes leave is not modelled: dispatch_overlap_collisions, which calls the notice
+## handlers, does not read it.
 func enemy_fighter_notice_object(self_obj: int, other_obj: int) -> void:
 	assert(memory != null, "enemy_fighter_notice_object requires original global memory")
 	var entry_a7: int = a7
@@ -6900,7 +6901,7 @@ func release_fractal_reference(obj: int) -> void:
 							a7 = entry_a7
 				if memory.read_u16(block2) != 0:
 					a7 = entry_a7 - 0x28
-					_bsr_unported(0x1254, [0x14a9a])
+					_bsr_file(0x1254, [0x14a9a])
 					a7 = entry_a7
 				heap_free_coalesce(block2)
 			heap_free_coalesce(memory.read_u32(obj + 0x2c))

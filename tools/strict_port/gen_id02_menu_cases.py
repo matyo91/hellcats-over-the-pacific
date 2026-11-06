@@ -5,7 +5,7 @@
 Layout as gen_id02_trapfree_cases.py. Every trap is a logging stand-in on both sides
 (segment_stubs.py); GetPen writes a fixed pen point through its VAR argument (the routine reads it
 back from its frame, so the port models A7); FrontWindow returns a window whose kind word is set
-per case. test_id02_menu.gd replays the cases (helpers/segment_cases.gd).
+per case. test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_menu_cases.py  (writes the fixture JSON)
 """

@@ -6,7 +6,7 @@ running the ORIGINAL bytes.
 ID05.bin is loaded at 0x30000 (its code is PC-relative) with A5 = 0x20000. The challenge table
 holds four 12-byte records (code pointer, length, three words) whose codes are the key-shifted
 letters of known responses; strlen (JT $522) is a logging stand-in returning the length set per
-case. test_id05_protection.gd replays the cases (helpers/segment_cases.gd).
+case. test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id05_protection_cases.py  (writes the fixture JSON)
 """

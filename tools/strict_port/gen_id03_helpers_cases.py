@@ -10,7 +10,7 @@ logging stand-in on both sides (segment_stubs.py; MoveTo, LineTo and Line keep d
 the downsampler plots pixel by pixel and the panel draws hundreds of lines); the sine / cosine routines (A5 - 0x2118 /
 -0x211c) are "addr" stand-ins answering scripted sequences; remap_cached_panel_colours runs for real
 (it returns at once without a scenery record). Each
-case records the original's entry stack pointer ("a7"). test_id03_helpers.gd replays the cases
+case records the original's entry stack pointer ("a7"). test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_helpers_cases.py  (writes the fixture JSON)

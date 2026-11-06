@@ -6,7 +6,7 @@ The init case checks both 0x800-entry run-writer tables. The filler cases start 
 original init's tables (only the first 300 entries are written: no run is longer) and redraw
 seeded random background rows on a patterned screen at even and odd starting addresses. Row
 records are a header long (the span count) then (end x << 16 | colour) spans over a 160-pixel
-row; equal stretches are skipped and the record pointers stored back. test_span_fill.gd replays
+row; equal stretches are skipped and the record pointers stored back. test_replays.gd replays
 the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_span_fill_cases.py  (writes the fixture JSON)

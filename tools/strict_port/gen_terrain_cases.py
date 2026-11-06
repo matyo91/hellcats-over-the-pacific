@@ -4,7 +4,7 @@ handle_terrain_contact, lift_object_onto_terrain and test_terrain_collision by r
 ORIGINAL bytes on a small fractal terrain built in the interpreter (gen_object_list_cases.Setup):
 two face centres around one cell, two sloped faces, and an optional part angle for the rotated
 variant. A record that should already exist is made by the original creator during setup; the
-collision handler of object a logs its calls on both sides. test_terrain.gd replays the cases.
+collision handler of object a logs its calls on both sides. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_terrain_cases.py  (writes the fixture JSON)
 """

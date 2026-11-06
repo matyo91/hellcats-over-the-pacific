@@ -3,7 +3,7 @@
 bytes. Lines in every octant (shallow and steep, both directions), horizontal, vertical,
 diagonal and single-point lines, from odd and even columns, are drawn on a patterned 8-bit
 screen with even and odd row bytes; the restore cases copy the same pixels back from a
-patterned backup bitmap with its own row bytes. test_line8.gd replays the cases
+patterned backup bitmap with its own row bytes. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_line8_cases.py  (writes the fixture JSON)

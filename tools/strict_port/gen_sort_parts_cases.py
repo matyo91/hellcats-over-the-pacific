@@ -7,7 +7,7 @@ the distance bands change, the part faces are recoloured and their palette slots
 direct palette mode when still owned, else dropped), without a group list, and with group lists
 whose entries sit before, between and after the parts (so every merge exit runs), with
 deferred_free_flag freeing word-0 entries on a real heap. The object list renderer test exercises
-the call from render_visible_objects. test_sort_parts.gd replays the cases
+the call from render_visible_objects. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_sort_parts_cases.py  (writes the fixture JSON)

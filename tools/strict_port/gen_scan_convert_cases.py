@@ -7,7 +7,7 @@ the edge pool, the per-row buckets and the row flags. The resulting memory becom
 writes, then the scan converter runs and its span rows (from session_cur_a), the edge records,
 the touched faces and the cleared buckets are compared. Scenes cover single and overlapping
 polygons, crossing edges (insertion sort in both paths), long coherent runs (the column-wise fast
-path), short runs and the half-rows mode. test_scan_convert.gd replays the cases
+path), short runs and the half-rows mode. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_scan_convert_cases.py  (writes the fixture JSON)

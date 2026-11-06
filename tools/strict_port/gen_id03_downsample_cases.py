@@ -5,7 +5,7 @@ bytes.
 The set-up is gen_id03_gauges_cases.py's (ID03.bin at 0x30000, A5 = 0x20000, ID01 and ID02 behind
 their slots; nearest_palette_index_rgb runs for real over the seeded palette) with a 1-bit source
 port seeded with patterns; MoveTo, Line and the colour slot $36a keep digest logs. Each case records
-the original's entry stack pointer ("a7"). test_id03_downsample.gd replays the cases
+the original's entry stack pointer ("a7"). test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_downsample_cases.py  (writes the fixture JSON)

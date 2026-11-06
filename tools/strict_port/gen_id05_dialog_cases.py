@@ -10,7 +10,7 @@ GetResource (a rect / pair record); GetIText writes the texts of an "outseq" lis
 strings, as JT $2fa is a stand-in) and ModalDialog's item hits another. The response that passes is
 the one for the record ansi_rand picks from the seed. The code-string builder (0x3ba, not exported)
 is an offset-keyed stand-in. Each case records the original's entry stack pointer ("a7").
-test_id05_dialog.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id05_dialog_cases.py  (writes the fixture JSON)
 """

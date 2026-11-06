@@ -6,7 +6,7 @@ face_is_back_facing, reset_background_rows, reset_overlay_display_state and acos
 Arguments are signed in the fixture (masked to longs for the interpreter); routines that return
 a value also compare D0 (the void ones and the tagged invokers, whose D0 is the composer's
 leftover, do not). Direction vectors keep x * x + z * z within a long: beyond it the original's
-isqrt gets a negative value and divides by zero. test_small_math.gd replays the cases (helpers/original_cases.gd).
+isqrt gets a negative value and divides by zero. test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_small_math_cases.py  (writes the fixture JSON)
 """

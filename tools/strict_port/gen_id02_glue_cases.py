@@ -7,7 +7,7 @@ leaving the segment is a logging stand-in on both sides (segment_stubs.py): the 
 are Pascal (callee pops; NewPtr returns a prepared port record through its result slot), the
 RGB-to-pattern slot $1ca is a C routine (D0), and the Toolbox traps (ClosePort, SetPort,
 OpenCPort, RectRgn with its rectangle logged by value, PenPat) pop their arguments.
-test_id02_glue.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_glue_cases.py  (writes the fixture JSON)
 """

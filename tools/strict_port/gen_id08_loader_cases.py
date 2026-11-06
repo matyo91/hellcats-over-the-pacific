@@ -6,7 +6,7 @@ on both sides (segment_stubs.py); alloc_and_read_resource_payload (0x348, alread
 real. The file is played back through FSRead's buffer argument: an "outseq" list writes, call by
 call, the 32-byte header, the code, the data, each 8-byte relocation entry and the payload. The
 image block (NewPtr) is deliberately unaligned. A case replaces the call logs to script another
-file. Each case records the original's entry stack pointer ("a7"). test_id08_loader.gd replays the
+file. Each case records the original's entry stack pointer ("a7"). test_replays.gd replays the
 cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id08_loader_cases.py  (writes the fixture JSON)

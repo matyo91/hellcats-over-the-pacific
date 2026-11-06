@@ -3,7 +3,7 @@
 
 Covers plume_pre_render (runtime 0x11a70) with shape_free_plume and shape_trailing_plume. Same
 method as gen_controller_misc_cases.py; the returned D0 of the shape routines (0) is compared.
-test_plume.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_plume_cases.py  (writes the fixture JSON)
 """

@@ -105,17 +105,11 @@ func _attach(entry: int) -> void:
 	for address in methods:
 		if not port.code_table.has(address):
 			port.code_table[address] = _positional(methods[address])
-	for address in UNPORTED:
-		if not port.code_table.has(address):
-			port.code_table[address] = _unported(address)
 	port.code_table[0x16208] = func(...args: Array) -> int: return _16208()
 	port.code_table[0x15134] = func(...args: Array) -> int:
 		machine.cover_key("runtime:overlay+0x15134")
 		args.resize(3)
 		return _15134(int(args[0] if args[0] != null else 0), int(args[1] if args[1] != null else 0), int(args[2] if args[2] != null else 0))
-
-## Overlay routines the overlay calls by address that are outside the 740 (not ported yet).
-const UNPORTED := {}
 
 ## Overlay routines outside the 740 written here from their bytes (runtime address -> method below).
 const WRITTEN := {0xd23a: "_d23a", 0x4b0: "_04b0"}
@@ -140,11 +134,6 @@ func _positional(method: String) -> Callable:
 		var r = port.callv(method, list)
 		return 0 if r == null else int(r)
 
-func _unported(address: int) -> Callable:
-	return func(...args: Array) -> int:
-		machine.note_missing("overlay:0x%x" % address, "%s, %d args" % [UNPORTED[address], args.size()])
-		return 0
-
 ## For tests: the image (code and data) at base 0 as the loader leaves it once linked (its
 ## relocated longs hold runtime addresses, which the file's already are), and its port attached.
 func attach_image(bytes: PackedByteArray) -> void:
@@ -165,7 +154,7 @@ func _hook(address: int) -> Callable:
 	var method = methods.get(address)
 	if method == null:
 		return func(args: Array) -> int:
-			machine.note_missing("overlay:0x%x" % address, "unported overlay hook, %d args" % args.size())
+			machine.note_missing("overlay:0x%x" % address, "overlay hook missing from overlay_methods.json, %d args" % args.size())
 			return 0
 	var arity: int = 0
 	for m in port.get_method_list():

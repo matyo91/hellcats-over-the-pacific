@@ -4,7 +4,7 @@
 The controller turns by its input words, steers its speed with the slew keys (every key and axis
 transition, key 5, the low-speed sign quirk), is kept above ground, fires gun bursts and steps its
 gear. spawn_ordnance_oriented is stubbed on both sides and records its arguments; the attitude
-matrix and the vector transform run for real. test_slew_mode.gd replays the cases
+matrix and the vector transform run for real. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_slew_mode_cases.py  (writes the fixture JSON)

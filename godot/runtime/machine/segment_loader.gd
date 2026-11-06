@@ -24,7 +24,7 @@ var machine
 var entries: Array = []
 ## segment number -> its port instance
 var instances: Dictionary = {}
-## A5 offset -> stand-in Callable(args: Array) -> int, for slots whose routine is not ported.
+## A5 offset -> stand-in Callable(args: Array) -> int, for slots whose routine the runtime writes (the ID09 glue, the unexported routines).
 var stand_ins: Dictionary = {}
 ## Per segment: its code routines by key -> Callable(args: Array) -> int. A segment's own routines
 ## the port calls by offset (`_local`) are keyed by that offset; code addresses reached through

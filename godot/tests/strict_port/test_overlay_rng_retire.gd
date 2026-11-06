@@ -7,8 +7,8 @@ const PacificConflictScript := preload("res://strict_port/code/pacific_conflict.
 const MEMORY_SIZE := 0x30000
 
 ## Expected values from instruction-level models of 0x114ca, 0x1150a and 0x11564 (unsigned
-## bhi wraps at 0x260e8, adda.w #$ff24, add.l, lsr.l #16), independent of the C, of this
-## port and of the prototype RNG.
+## bhi wraps at 0x260e8, adda.w #$ff24, add.l, lsr.l #16), independent of the C and of this
+## port.
 const SEEDS := [
 	[0, [42625, 59345, 6542, 14398, 22236, 30360], 0xeacfdd38],
 	[12345, [4793, 168, 62024, 3141, 49731, 38474], 0xd0909f88],

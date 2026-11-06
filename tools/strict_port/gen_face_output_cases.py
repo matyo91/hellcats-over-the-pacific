@@ -7,7 +7,7 @@ ported clip_polygon_* passes; colour faces are rasterised into the edge pool and
 buckets (with pre-existing bucket edges to sort against and merge with), 1-bit faces go to the
 host polygon routine (+0x7c, a logging stub that also records the first points). The ground face
 also tracks the horizon edge and the screen corners. Faces either have no palette slot or still
-own theirs; the assign_face_colour path is not exercised here. test_face_output.gd replays the
+own theirs; the assign_face_colour path is not exercised here. test_replays.gd replays the
 cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_face_output_cases.py  (writes the fixture JSON)

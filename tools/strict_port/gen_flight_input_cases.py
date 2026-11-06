@@ -10,7 +10,7 @@ keyboard-steered mouse point, fire the gun, run the replay / crash-end / instant
 transitions, classify stopped aircraft (ditched, after a touchdown, on and off the runway, fuel
 recording; the random status draws run on the seeded overlay RNG) and move the camera for views
 1, 2, 5, 6, 7 and 9. The host sound routines (+0x2aa / +0x2b6 / +0x2ba / +0x2be) are logging
-stubs on both sides; everything else runs as ported. test_flight_input.gd replays the cases
+stubs on both sides; everything else runs as ported. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_flight_input_cases.py  (writes the fixture JSON)

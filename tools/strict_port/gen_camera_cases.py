@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Generate comparison cases for copy_player_pose_to_camera, place_camera_behind_object and
-turn_camera_toward_point by running the ORIGINAL bytes. test_camera.gd replays the cases.
+turn_camera_toward_point by running the ORIGINAL bytes. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_camera_cases.py  (writes the fixture JSON)
 """

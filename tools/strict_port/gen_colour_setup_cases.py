@@ -5,7 +5,7 @@ init_depth8_colour_state and init_depth4_colour_state by running the ORIGINAL by
 The palette owner tables live on a real heap (gen_object_list_cases.Setup, with a larger free
 block): cases start with no tables and with three allocated tables to free, with and without the
 multi-screen flag (host word +0xb4). The depth-4 set-up builds its 125-entry tables from three
-seeded 8-word source tables (one missing in one case). test_colour_setup.gd replays the cases
+seeded 8-word source tables (one missing in one case). test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_colour_setup_cases.py  (writes the fixture JSON)

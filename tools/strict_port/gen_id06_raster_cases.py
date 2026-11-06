@@ -7,7 +7,7 @@ A5 - 0x1ed6. The Memory Manager slots (FreeMem, MaxMem, NewPtr, DisposPtr) are l
 on both sides (segment_stubs.py); NewPtr hands out scripted blocks (0x6000 apart from 0x40000)
 and 0 from its eleventh call, so a case presets the call count to make an allocation fail. Most
 cases start from a scene the ORIGINAL built: init_raster_target (512 x 96 at depth 1) run in the
-interpreter, optionally followed by polygons, captured as writes. test_id06_raster.gd replays the
+interpreter, optionally followed by polygons, captured as writes. test_replays.gd replays the
 cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id06_raster_cases.py  (writes the fixture JSON)

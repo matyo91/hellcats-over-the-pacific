@@ -8,7 +8,7 @@ test_scene_traversal.gd) whose faces include runways (type nibble 0x70) above an
 a leaf of kind 1; mode 1 picks the nearest runway, mode 0 the shallowest kind-1 node and its
 record's attitude. The presenter cases run on a real heap with the span filler and the host copy /
 1-bit routines logged, at depths 4 and 8 and for row counts that need one or several chunks. The
-fuel cases vary the capacity, fuel percentage and bombs. test_anchor_present.gd replays the cases
+fuel cases vary the capacity, fuel percentage and bombs. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_anchor_present_cases.py  (writes the fixture JSON)

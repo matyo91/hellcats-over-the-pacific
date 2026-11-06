@@ -8,7 +8,7 @@ logging stub that also records the first 16 bytes of the format. The mission-sta
 anchor fixture's mission scene (gen_anchor_present_cases.scene_case) for find_anchor_point (mode
 0), add a scene-root table whose records name the scene objects (kind 4, so activation and
 deactivation only refresh / skip), a player with its pose ring, clouds off and no sound table;
-every callee runs as ported. test_mission_start.gd replays the cases (helpers/original_cases.gd).
+every callee runs as ported. test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_mission_start_cases.py  (writes the fixture JSON)
 """

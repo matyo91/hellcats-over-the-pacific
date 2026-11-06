@@ -3,7 +3,7 @@
 
 Covers clear_pending_entity_slots, apply_controller_velocities, tick_flagged_object_controllers
 (the controller ticks it runs log their calls on both sides), dispatch_entity_tick and age_contact_records. Objects and the
-heap come from gen_object_list_cases.Setup. test_sim_step.gd replays the cases.
+heap come from gen_object_list_cases.Setup. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_sim_step_cases.py  (writes the fixture JSON)
 """

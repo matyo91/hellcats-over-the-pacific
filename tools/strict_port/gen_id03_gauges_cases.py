@@ -8,7 +8,7 @@ its slots, every trap and other slot a logging stand-in; the ring, the supersamp
 the text style and the finishing all run for real on both sides) with the text traps added
 (GetFontInfo writes a fixed ascent, StringWidth answers a fixed width) and the gear strokes and
 labels seeded. Each case records the original's entry stack pointer ("a7"): the gauges pass
-pointers into their own argument slots. test_id03_gauges.gd replays the cases
+pointers into their own argument slots. test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_gauges_cases.py  (writes the fixture JSON)

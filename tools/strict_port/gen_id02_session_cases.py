@@ -10,7 +10,7 @@ GetNextEvent answering an "outseq" of events, init_sound_system running for real
 logged; its VBL handlers record A5 in their code, so the port gets "code_base"), and three unexported
 helpers as offset-keyed stand-ins ("local" here, "addr" with the offset in the fixture). The device colour check
 runs for real in 1-bit mode. Each case records the original's entry stack pointer ("a7").
-test_id02_session.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_session_cases.py  (writes the fixture JSON)
 """

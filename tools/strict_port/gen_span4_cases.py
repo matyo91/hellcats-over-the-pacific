@@ -8,7 +8,7 @@ a header long with the span count, then (end x << 16 | colour) spans over a 160-
 patterned 4-bit screen; variant A takes record handles and alternates the colour byte between
 rows, B and C take the records directly and still store the end pointers through their first
 two arguments. Colours use different high and low bytes so the alternate rows show.
-test_span4.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_span4_cases.py  (writes the fixture JSON)
 """

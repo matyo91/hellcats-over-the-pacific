@@ -8,7 +8,7 @@ Resource Manager, region and handle calls as logging stand-ins; the panel-coordi
 fixed values so the panel stays a few pixels across; the bitmap release helper (0x59f4, not
 exported) is an offset-keyed stand-in; every stand-in keeps a digest log. Every instrument runs for
 real on the redraw path. Each case
-records the original's entry stack pointer ("a7"). test_id03_prepare.gd replays the cases
+records the original's entry stack pointer ("a7"). test_replays.gd replays the cases
 (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_prepare_cases.py  (writes the fixture JSON)

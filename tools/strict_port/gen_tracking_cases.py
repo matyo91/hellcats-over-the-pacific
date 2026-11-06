@@ -2,7 +2,7 @@
 """Generate comparison cases for update_tracking_camera by running the ORIGINAL bytes: the glide,
 a follow ending, tracking a designated aircraft (behind the player or behind the aircraft by the
 forward-point test), the hold countdown, a player shot, replay state 3 and every end-of-replay
-result. test_tracking_camera.gd replays the cases.
+result. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_tracking_cases.py  (writes the fixture JSON)
 """

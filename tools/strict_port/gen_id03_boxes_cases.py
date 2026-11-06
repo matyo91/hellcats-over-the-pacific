@@ -6,7 +6,7 @@ The set-up is gen_id03_panel_cases.py's (ID03.bin at 0x30000, A5 = 0x20000, ID02
 slots, scripted panel-coordinate slots, panel colour and polygon stand-ins) with the Resource
 Manager traps as logging stand-ins (GetResource and ResError answer scripted sequences; a case may
 replace the call logs). Each case records the original's entry stack pointer ("a7").
-test_id03_boxes.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_boxes_cases.py  (writes the fixture JSON)
 """

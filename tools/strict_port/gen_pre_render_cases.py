@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate comparison cases for the shadow, turret and bullet pre-render hooks by running the
 ORIGINAL bytes (definition record +0xe hooks 0x18a14 / 0x19374 / 0x15e42). Same method as
-gen_plume_cases.py; the returned D0 (0 or 4) is compared. test_pre_render.gd replays the cases.
+gen_plume_cases.py; the returned D0 (0 or 4) is compared. test_replays.gd replays the cases.
 
 Usage: python3 tools/strict_port/gen_pre_render_cases.py  (writes the fixture JSON)
 """

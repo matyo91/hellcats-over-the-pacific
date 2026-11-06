@@ -9,7 +9,7 @@ handler returns through it. The handlers keep their A5 in a long inside their ow
 0x3aca / 0x3be0): a case writes it there (or leaves it 0 to see the first call record it), and the
 port gets the code base as "code_base". shutdown_sound, clear_sound_buffer_to_silence and
 alloc_sound_buffer_node run for real. Each case records the original's entry stack pointer ("a7").
-test_id02_sound.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_sound_cases.py  (writes the fixture JSON)
 """

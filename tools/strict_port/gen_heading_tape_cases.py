@@ -8,7 +8,7 @@ logging stubs on both sides; the rectangles passed by address are logged by valu
 logs both its source and destination rect). Cases cover undrawn and drawn panels, depth 4 (host
 copy, with and without the period overflow split) and depth 8 (marking-byte runs, wrapping at the
 period), an unchanged position, a negative position raised by the period, and the cursor hook.
-test_heading_tape.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_heading_tape_cases.py  (writes the fixture JSON)
 """

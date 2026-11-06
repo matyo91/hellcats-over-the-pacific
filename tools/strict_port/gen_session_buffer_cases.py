@@ -8,7 +8,7 @@ The host Memory Manager hooks (+0x2c6 new handle, +0x2ce reallocate, +0x2d2 lock
 memory and new-handle results are set per case. Handles are missing, purged (master pointer 0)
 or present (master pointers into real buffers, with high garbage under 24-bit addressing); the
 host has one or three screens, depth 1 or not, 24-bit addressing or not.
-lock_session_buffers ends in update_view_clip_bounds, run as ported. test_session_buffers.gd
+lock_session_buffers ends in update_view_clip_bounds, run as ported. test_replays.gd
 replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_session_buffer_cases.py  (writes the fixture JSON)

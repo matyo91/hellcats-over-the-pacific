@@ -4,7 +4,7 @@
 The four frame lines go through the host line routine (a logging stub on both sides) when the
 host draws lines, else straight into a small screen at depth 4 (bytes) or 8 (words); other
 depths draw nothing. Cases vary the row bytes (odd and negative, halved toward zero at depth 8),
-the line extents (odd widths, empty lines) and the colour. test_panel_frame.gd replays the
+the line extents (odd widths, empty lines) and the colour. test_replays.gd replays the
 cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_panel_frame_cases.py  (writes the fixture JSON)

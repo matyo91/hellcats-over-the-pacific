@@ -9,7 +9,7 @@ palette and origin traps, GetMMUMode, the view-buffer slots ($1aa / $1b2 / $1d2)
 settings hooks (A5 - 0x10a2 / - 0x1092 / - 0x104e / - 0x1096) as logging stand-ins, and the unexported
 offscreen-port close (0xd24) as an offset-keyed stand-in. scan_display_devices, configure_palette_
 entries, select_palette_for_depth, show_caution_alert_with_number and fatal_memory_error_exit run
-for real. Each case records the original's entry stack pointer ("a7"). test_id02_display.gd replays
+for real. Each case records the original's entry stack pointer ("a7"). test_replays.gd replays
 the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id02_display_cases.py  (writes the fixture JSON)

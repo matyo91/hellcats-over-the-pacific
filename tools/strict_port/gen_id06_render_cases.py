@@ -8,7 +8,7 @@ keeps its data and registers in its own code (0x39e / 0x3ae), so the port is tol
 ("port_vars": code_base) and a continued render starts from a scene captured after the first band.
 rasterize_and_present reaches the renderer through the row table's pointer (A5 + 0x192, an "addr"
 stand-in here) and JT $322 (a logging stand-in). Each case records the original's entry stack
-pointer ("a7"). test_id06_render.gd replays the cases (helpers/segment_cases.gd).
+pointer ("a7"). test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id06_render_cases.py  (writes the fixture JSON)
 """

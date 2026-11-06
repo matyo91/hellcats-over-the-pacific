@@ -8,7 +8,7 @@ set per case: 0, bit 0, bit 1, bit 2) runs. Oriented objects (byte +5 bit 4) bui
 from the controller angles, compose it with the camera matrix and turn the eye (and, when lit,
 the light vector) into the object. The distance band runs with host word +0xaa; the object's kind
 byte is 3, so shade_object_faces returns at once. Both signs of the eye shift are covered.
-test_transform_object.gd replays the cases (helpers/original_cases.gd).
+test_replays.gd replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_transform_object_cases.py  (writes the fixture JSON)
 """

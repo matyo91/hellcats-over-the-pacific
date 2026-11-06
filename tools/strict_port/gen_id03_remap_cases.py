@@ -6,7 +6,7 @@ The set-up is gen_id03_gauges_cases.py's (ID03.bin at 0x30000, A5 = 0x20000, ID0
 their slots, the panel colour slot $45a answering a scripted sequence) with JT $482 a logging
 stand-in and a cached scenery record, a panel port and two small bitmaps (the panel's and the gyro
 card's) seeded. Each case records the original's entry stack pointer ("a7"): the inverse map lives
-in its frame. test_id03_remap.gd replays the cases (helpers/segment_cases.gd).
+in its frame. test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_remap_cases.py  (writes the fixture JSON)
 """

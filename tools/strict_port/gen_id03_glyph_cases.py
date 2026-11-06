@@ -8,7 +8,7 @@ jump-table slots) with more stand-ins: the panel-coordinate slots $3ca / $382 an
 sequences, the region traps and CopyBits are logged, and the colour slot $36a keeps a digest log
 (antialias_downsample_bw_3x runs for real, pixel by pixel). Six vector glyphs (A5 - 0x20b0) and ten vector digits
 (A5 - 0x1fde) are seeded. Each case records the original's entry stack pointer ("a7").
-test_id03_glyph.gd replays the cases (helpers/segment_cases.gd).
+test_replays.gd replays the cases (helpers/segment_cases.gd).
 
 Usage: python3 tools/strict_port/gen_id03_glyph_cases.py  (writes the fixture JSON)
 """

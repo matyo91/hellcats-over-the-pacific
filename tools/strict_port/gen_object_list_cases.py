@@ -5,7 +5,7 @@ collect_near_objects by running the ORIGINAL bytes.
 deactivate_object frees heap blocks, so each case first builds a real heap in the interpreter:
 a free large block, then the object's buffers allocated by the original heap_alloc (file
 0x1a68). The memory that setup leaves (relative to the image after overlay_rng_init(1)) becomes
-the case's writes, so the port starts from the identical heap. test_object_list.gd replays the
+the case's writes, so the port starts from the identical heap. test_replays.gd replays the
 cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_object_list_cases.py  (writes the fixture JSON)

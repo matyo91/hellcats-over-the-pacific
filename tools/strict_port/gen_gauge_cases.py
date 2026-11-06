@@ -5,7 +5,7 @@ tachometer, manifold, bomb lamp, throttle bar, flaps, gear, ammo, fuel). The lin
 rectangle routines they reach through code pointers (host +0x272 / +0x29e / +0x28e and
 depth_routine_da98 / _da9c) are logging stubs on both sides; the throttle rectangle is logged by
 value. Each updater runs with the readouts drawn and undrawn, with a cached value that matches
-and one that does not, and with the host line routine. test_gauges.gd replays the cases
+and one that does not, and with the host line routine. test_replays.gd replays the cases
 (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_gauge_cases.py  (writes the fixture JSON)

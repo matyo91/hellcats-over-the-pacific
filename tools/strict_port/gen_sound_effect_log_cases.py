@@ -4,7 +4,7 @@
 Covers replay_logged_effects, mark_effect_log_end, stop_all_sound_channels, play_game_sound and
 stop_game_sound. The host sound routines (+0x2aa play, +0x2b6 is playing, +0x2be stop channel,
 +0x2ba stop channel 1) log their calls on both sides and return the long just before their log;
-the effect pool spawn is stubbed (arguments recorded, returns 0). test_sound_effect_log.gd
+the effect pool spawn is stubbed (arguments recorded, returns 0). test_replays.gd
 replays the cases (helpers/original_cases.gd).
 
 Usage: python3 tools/strict_port/gen_sound_effect_log_cases.py  (writes the fixture JSON)
