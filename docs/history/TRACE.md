@@ -1,6 +1,6 @@
 # Trace format (deterministic replay / parity validation)
 
-**[INFERRED]** Trace format is defined for parity validation: same seed + same inputs ⇒ identical trace. **[RECONSTRUCTED]** Field names and offsets match STRUCTS.md and Pacific Conflict.c (mission_phase_a8, mission_flag_ac, entity offsets). **[UNKNOWN]** Trace captures SimCore state only; segment execution and loader runtime are out of scope (see [LOADER_CHAIN.md](LOADER_CHAIN.md) §9).
+**[INFERRED]** Trace format is defined for parity validation: same seed + same inputs ⇒ identical trace. **[RECONSTRUCTED]** Field names and offsets match STRUCTS.md and Pacific Conflict.c (mission_phase_a8, mission_flag_ac, entity offsets). **[UNKNOWN]** Trace captures SimCore state only; segment execution and loader runtime are out of scope (see [LOADER_CHAIN.md](../architecture/LOADER_CHAIN.md) §9).
 
 One JSON object per line (JSONL). Each line is the **state after** that frame’s tick. All numbers are integers; use decimal in JSON.
 

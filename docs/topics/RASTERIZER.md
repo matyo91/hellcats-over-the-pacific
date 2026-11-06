@@ -2,7 +2,7 @@
 
 CODE segment 6 (`ID06`) contains a self-contained scanline polygon
 rasterizer. The overlay drives it through the application service table
-(`docs/OVERLAY_SERVICE_TABLE.md`, slots `A5-0x1310..-0x1304`). Offsets are
+(`docs/reference/OVERLAY_SERVICE_TABLE.md`, slots `A5-0x1310..-0x1304`). Offsets are
 physical file offsets in `ID06.bin`.
 
 Confidence: data layouts and call relations come from complete Ghidra C or

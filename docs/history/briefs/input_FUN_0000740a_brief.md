@@ -154,5 +154,5 @@ fun_0740a(key_code param_1, action param_2) -> uint uVar6
 
 ## Cross-references
 
-- `docs/STRUCTS.md` — FUN_0000740a globals
-- `docs/contracts/input_godot_contract.md` — **[INFERRED]** Godot MVP implementation contract (gather outputs, gating, trace)
+- `docs/reference/STRUCTS.md` — FUN_0000740a globals
+- `docs/history/contracts/input_godot_contract.md` — **[INFERRED]** Godot MVP implementation contract (gather outputs, gating, trace)

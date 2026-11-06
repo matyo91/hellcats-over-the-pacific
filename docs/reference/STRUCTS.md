@@ -39,7 +39,7 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 ### Godot `SimCore` mapping
 
-**[RECONSTRUCTED]** `entity_array_1` … `entity_array_4`, **`pass_id`** 1–4, **`last_tick_order`** / **`get_last_tick_order`** — see `docs/contracts/tick_FUN_000044e8_contract.md`.
+**[RECONSTRUCTED]** `entity_array_1` … `entity_array_4`, **`pass_id`** 1–4, **`last_tick_order`** / **`get_last_tick_order`** — see `docs/history/contracts/tick_FUN_000044e8_contract.md`.
 
 ## FUN_0000740a — input handler globals
 
@@ -70,11 +70,11 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 **[MVP APPROXIMATION]** **Gating** is only `player_active` on `PlayerAircraft`, not the full `DAT_0001d858` / `DAT_0001b870` / mission `+0x98` tree.
 
-See `docs/contracts/input_godot_contract.md`.
+See `docs/history/contracts/input_godot_contract.md`.
 
 ## Godot `AircraftState` / `FlightModelMvp` (FUN_0000e792 convergence)
 
-**[RECONSTRUCTED]** `movement_66e`, `movement_672`, `movement_66a` mirror proven **byte offsets** `0x66e`, `0x672`, `0x66a` on the player entity; updated each tick with **`FlightMath.add_delta_smoothed_*`** toward **int** targets from normalized controls (see `docs/contracts/flight_FUN_0000e792_contract.md`).
+**[RECONSTRUCTED]** `movement_66e`, `movement_672`, `movement_66a` mirror proven **byte offsets** `0x66e`, `0x672`, `0x66a` on the player entity; updated each tick with **`FlightMath.add_delta_smoothed_*`** toward **int** targets from normalized controls (see `docs/history/contracts/flight_FUN_0000e792_contract.md`).
 
 **[MVP APPROXIMATION]** Targets are not **local_46** / **local_42** from **FUN_0000e42a** / template math; they are **[MVP TUNING]** scaled commands.
 
@@ -266,7 +266,7 @@ under the controller (ordnance). Kind-specific fields:
 | aircraft | +0x36 pose ring, +0x612 ring index, +0x616 buffer, +0x61a / +0x61c / +0x61e previous steering errors, +0x626 / +0x62a throttle / movement, +0x63f / +0x640 state bytes, +0x675 bombing stage, +0x679 gear position, +0x67a gear bits, +0x67b flaps, +0x67c bombs, +0x684 / +0x686 / +0x688 damage / previous / timer, +0x692 AI target object, +0x6ac release frame | update_aircraft_entity 0xe792 and its helpers (param comments) |
 | effect | +0x32 kind, +0x33 flags, +0x34 size, +0x36 lifetime, +0x38 smoke byte, +0x3a / +0x6e / +0xa2 velocities, +0x76 vertical velocity, +0x52 owner controller, +0x56 trail flag | spawn_effect 0x11c58, attach_burning_trail 0x16b9e, effect tick helpers |
 | ordnance | +0x32 pose ring, +0x60e ring index, +0x610 speed, +0x614 kind, +0x616 direct hit, +0x618 blast frame, +0x61c / +0x61e flags | spawn_weapon_entity, ordnance tick helpers |
-| ship (sinking / firing) | +0x32 hits left, +0x34.. angles, +0x3a.. rates, +0x40 drop, +0x44 interval, +0x46 steps, +0x48 next frame, +0x4c sinking started, +0x4e credit, +0x50 shots, +0x52 guns, +0x54 gun positions, +0xe4 aims | ship controller helpers (docs/SHIP_CONTROLLERS.md) |
+| ship (sinking / firing) | +0x32 hits left, +0x34.. angles, +0x3a.. rates, +0x40 drop, +0x44 interval, +0x46 steps, +0x48 next frame, +0x4c sinking started, +0x4e credit, +0x50 shots, +0x52 guns, +0x54 gun positions, +0xe4 aims | ship controller helpers (docs/topics/SHIP_CONTROLLERS.md) |
 | spinner (0x3a bytes) | +0x22 heading word | spin_object_heading 0x114b4 |
 
 ### Surface-contact records
@@ -296,5 +296,5 @@ Two record variants, as named in the C **[PROVEN, param comments of byte-checked
 
 ## Godot integration boundary / blocked
 
-- **[INFERRED]** Godot integration uses **offset-based** layout only: mission block and entity offsets above are reflected in SimCore and EntityState; loader targets are consumed from `tools/proven_loader_targets.json` via `loader_metadata.gd` (parsed JSON only, no segment-manager emulation). See [LOADER_CHAIN.md](LOADER_CHAIN.md) §9.
+- **[INFERRED]** Godot integration uses **offset-based** layout only: mission block and entity offsets above are reflected in SimCore and EntityState; loader targets are consumed from `tools/proven_loader_targets.json` via `loader_metadata.gd` (parsed JSON only, no segment-manager emulation). See [LOADER_CHAIN.md](../architecture/LOADER_CHAIN.md) §9.
 - **[UNKNOWN]** Runtime-memory to file-offset mapping for DAT_ symbols (e.g. DAT_0001b5a0, DAT_0001c1e0) is not established; relocation, jump-table patching, and segment load execution remain blocked by address mapping.

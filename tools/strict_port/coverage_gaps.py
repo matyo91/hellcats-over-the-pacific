@@ -8,7 +8,7 @@ themselves unreachable; one with no reference at all is the base case. Its missi
 expected. The rest are reachable gaps the session could close.
 
 Conservative: a reference counts as live when it lies in a function that ran, in a routine the
-runtime writes outside the 740 (docs/GAME_RUNTIME.md's table), in the overlay's data (definition
+runtime writes outside the 740 (docs/architecture/GAME_RUNTIME.md's table), in the overlay's data (definition
 records and other tables past its code), or anywhere no known function encloses. One exception:
 install_overlay_service_table (ID02 0x1b42) only stores slot addresses in the overlay's host table
 (its pairs as the runtime's id02_1b42 writes them), so its LEA of a slot is live only when the
@@ -27,7 +27,7 @@ play (a landing, a kill, a fire, an AI out of ammunition: the scripted sessions 
 and last minutes, and the original's random damage decides the rest). The
 document lists them apart.
 
-Writes docs/RUNTIME_COVERAGE.md with --write; --check fails when that document is stale.
+Writes docs/generated/RUNTIME_COVERAGE.md with --write; --check fails when that document is stale.
 
 Usage: python3 tools/strict_port/coverage_gaps.py [--list | --write | --check]
 """
@@ -45,9 +45,9 @@ sys.path.insert(0, str(ROOT / "tools" / "decomp"))
 import xrefs  # noqa: E402
 
 MANIFEST = ROOT / "godot" / "strict_port" / "mappings" / "functions.json"
-DOC = ROOT / "docs" / "RUNTIME_COVERAGE.md"
+DOC = ROOT / "docs" / "generated" / "RUNTIME_COVERAGE.md"
 INVENTORY = ROOT / "docs" / "DECOMPILATION_INVENTORY.json"
-RUNTIME_DOC = ROOT / "docs" / "GAME_RUNTIME.md"
+RUNTIME_DOC = ROOT / "docs" / "architecture" / "GAME_RUNTIME.md"
 OVERLAY = "Pacific Conflict"
 REF = re.compile(r"^(ID0\d|overlay): .* at (?:file )?(0x[0-9a-f]+)")
 SLOT = re.compile(r"\$([0-9a-f]+)\(A5\)")

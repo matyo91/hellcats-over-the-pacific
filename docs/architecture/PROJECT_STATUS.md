@@ -31,7 +31,7 @@ removed.
 ## Next milestones
 
 The project's next steps are in the README's
-[roadmap](../README.md#next-steps):
+[roadmap](../../README.md#next-steps):
 
 1. clean up the code and documentation grown during the port;
 2. remove the virtual machine (68k memory and arithmetic, runtime, Toolbox) so

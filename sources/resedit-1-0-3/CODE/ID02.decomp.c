@@ -1176,7 +1176,7 @@ void call_overlay_session_hooks /* Original: FUN_00000930 */ (undefined4 step_ar
  * 0xa26..0xa40 [PROVEN]: only when the gyro spans A5-0x11f6 and the gyro card A5-0x11dc are
  * both allocated: BSR lock_session_handles (0x95a); JSR (A5-0x1072), the overlay hook at
  * service-table +0x316 (overlay 0xd23a, file 0xd25a: the view readouts, gauges and overlays
- * redrawn; docs/OVERLAY_SERVICE_TABLE.md); BSR unlock_session_handles (0x9fa); RTS:
+ * redrawn; docs/reference/OVERLAY_SERVICE_TABLE.md); BSR unlock_session_handles (0x9fa); RTS:
  *
  *   void redraw_panel_readouts_locked(void)
  *   { if (A5[-0x11f6] && A5[-0x11dc]) { lock_session_handles(); (*A5[-0x1072])();
@@ -2491,7 +2491,7 @@ void hnopurge_a5safe /* Original: FUN_00001af0 */ (undefined4 h /* param_1: Hand
  * the large overlay work buffer:
  *   A5-0x1122..-0x10a6 (32 slots, step 4; -0x10e6/-0x10e2 not written) and
  *   A5-0x1310..-0x1304 (4 slots -> segment 6 routines);
- *   full slot list with targets in docs/OVERLAY_SERVICE_TABLE.md.
+ *   full slot list with targets in docs/reference/OVERLAY_SERVICE_TABLE.md.
  *   if (FreeMem > 0x100000) A5-0x1040 = NewPtrClear(0x4e390 = 320400)
  *   else                      A5-0x1040 = NewPtrClear(0x35cf0 = 220400)
  *   (JT $232 = ID09 0x20c NewPtrClear glue). No NULL check.
@@ -2820,7 +2820,7 @@ void lock_sound_slots /* Original: FUN_000020be */ (void)
  * the C. */
 /* Original: FUN_0000212a; source: ID02.c. Recovered name: reset_overlay_state [STRONG INFERENCE].
  * Name evidence (was HYPOTHESIS name): the entry it calls with (&A5-0x1388, TickCount) is the overlay's
- * main entry, which receives the host globals pointer A5-0x1388 (docs/OVERLAY_SERVICE_TABLE.md); 0x4d24 is
+ * main entry, which receives the host globals pointer A5-0x1388 (docs/reference/OVERLAY_SERVICE_TABLE.md); 0x4d24 is
  * apply_display_palettes (checked against its bytes by the runtime cases); its callers, through slot
  * $4c2, are run_scenario_selection_dialog (ID04 0xe3c, after a mission is chosen) and the ID08 overlay
  * loader (0x220) [PROVEN, tools/decomp/xrefs.py]: the overlay's state cleared and re-entered.
@@ -3379,7 +3379,7 @@ void apply_settings_to_live_options /* Original: FUN_00002a44 */ (void)
  * configure_display_from_main_device, 0x2e36 show_resource_file_error_box and 0x2eaa
  * quit_application (ID02.decomp.c's unexported block) [PROVEN, BSR targets]. The HEL1 127
  * fields written here are the defaults of the settings record whose fields
- * docs/DECOMPILATION_SYMBOLS.md lists (+0xe view size, +0x1e mission, +0x20 pilot, +0x22 fuel,
+ * docs/reference/DECOMPILATION_SYMBOLS.md lists (+0xe view size, +0x1e mission, +0x20 pilot, +0x22 fuel,
  * +0x24 bombs, +0x26 map scale) [STRONG INFERENCE there]; HEL1 128 is twenty 64-byte pilot
  * records. The seg4 check is check_system_requirements (above).
  */
@@ -5045,7 +5045,7 @@ void set_sound_playback_rate /* Original: FUN_0000412e */ (uint rate /* param_1:
  *   (+0) along +0x14 until n: continuation (+0x18) = next (+0x14).
  * Breaks any self-looping (sustain) node so playback proceeds through the
  * remaining nodes into the new silence node [STRONG INFERENCE]. Resolves the
- * sustain-release question in docs/SOUND_SYSTEM.md. Ghidra's unaff_A3 is the
+ * sustain-release question in docs/topics/SOUND_SYSTEM.md. Ghidra's unaff_A3 is the
  * pushed word 0 (artifact; now written as 0).
  */
 void release_channel_loop /* Original: FUN_000041a6 */ (int channel /* param_1 */)

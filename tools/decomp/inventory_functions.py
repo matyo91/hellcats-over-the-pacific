@@ -234,7 +234,7 @@ def build_registry(code_dir: Path, previous: dict[str, Any]) -> dict[str, Any]:
                 evidence.append(f"{rel(semantic_path)}:{semantic['line_start']}-{semantic['line_end']}")
             for reference in old.get("evidence_references", []):
                 if reference.startswith((
-                    "docs/DECOMPILATION_SYMBOLS.md:",
+                    "docs/reference/DECOMPILATION_SYMBOLS.md:",
                     f"{rel(original_path)}:",
                     f"{rel(semantic_path)}:",
                 )):

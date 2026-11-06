@@ -729,7 +729,7 @@ void restore_poisoned_overlay_bytes /* Original: FUN_0000085e */ (void)
  *   word A5-0xb6 = $c(A6); UNLK; RTS.
  * Caller [PROVEN]: ID08 file 0x25c via JT $542 with (A5-0x1cc4, 0x38,
  * TickCount) -> 56 twelve-byte challenge entries at A5-0x1cc4, RNG seeded
- * from TickCount. See docs/COPY_PROTECTION_FLOW.md.
+ * from TickCount. See docs/topics/COPY_PROTECTION_FLOW.md.
  */
 /* VERIFIED (ID05::FUN_000008b8): ID05.bin 0x8b8..0x8d4 checked against an independent capstone disassembly:
  * LINK #0; seed long at 0xe(A6) passed to BSR ansi_srand; table long at 8(A6) -> A5-0xba; count word at

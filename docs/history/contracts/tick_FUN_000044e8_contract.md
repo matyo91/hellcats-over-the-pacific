@@ -52,5 +52,5 @@ DAT_0001d718 = DAT_0001d724 = DAT_0001d714 = DAT_0001d720 = DAT_0001d710 = DAT_0
 
 ## Related
 
-- `docs/STRUCTS.md` — array symbols
+- `docs/reference/STRUCTS.md` — array symbols
 - `godot/hellcats/core/sim_core.gd` — implementation

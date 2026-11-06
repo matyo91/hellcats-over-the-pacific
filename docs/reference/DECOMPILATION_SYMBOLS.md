@@ -1193,7 +1193,7 @@ inventory yet.
 | Pacific Conflict | `slot_usage_prev` | `DAT_0001d860` | one of the per-frame palette-slot usage maps swapped by overlay_frame_step (row above) |
 | Pacific Conflict | `slot_usage_cur` | `DAT_0001d864` | the other usage map; which one is current is STRONG INFERENCE |
 | Pacific Conflict | `palette_changed` | `_DAT_0001daa2` | set to 1 when a face claims a palette slot (assign_face_colour) and by build_object_poly_buffers |
-| Pacific Conflict | `template_ptr_table_base` | `DAT_0001b524` | ID-keyed definition record pointer table: entry key at + 4 * key (docs/DECOMPILATION_SYMBOLS.md) |
+| Pacific Conflict | `template_ptr_table_base` | `DAT_0001b524` | ID-keyed definition record pointer table: entry key at + 4 * key (docs/reference/DECOMPILATION_SYMBOLS.md) |
 | Pacific Conflict | `template_rec_a_field_u16` | `DAT_0001a7d2` | name from its declaration comment: field +0xc of a 0x4A template record |
 | Pacific Conflict | `template_rec_b_field_u16` | `DAT_0001a81c` | name from its declaration comment: same field of the next 0x4A record |
 | Pacific Conflict | `template_keyed_1c_src` | `DAT_0001aa5e` | source of the five keyed 0x1C template records (keys 0x15..0x19) |
@@ -1258,7 +1258,7 @@ inventory yet.
 | Pacific Conflict | `init_flag_bd84` | `_DAT_0001bd84` | set to 1 by overlay_initialise, no reader in the exported C [role UNKNOWN] |
 | Pacific Conflict | `frame_counter` | `DAT_0001b838` | current frame number, incremented by advance_frame_and_tick_controllers; 0x4c at start |
 | Pacific Conflict | `heap_break` | `DAT_00020c50` | heap_sbrk break: byte offset into the arena at host +0x348 |
-| Pacific Conflict | `heap_roving_cursor` | `DAT_00020c60` | large-block free-list cursor (docs/DECOMPILATION_SYMBOLS.md) |
+| Pacific Conflict | `heap_roving_cursor` | `DAT_00020c60` | large-block free-list cursor (docs/reference/DECOMPILATION_SYMBOLS.md) |
 | Pacific Conflict | `heap_class_lists` | `DAT_00020c64` | size-class free-list heads, class c at + 4 * c (heap_free_coalesce small path) |
 | Pacific Conflict | `heap_ring_sentinel` | `DAT_00020c58` | size-0 sentinel of the large-block ring; heap_alloc links it to itself when heap_roving_cursor is still 0 |
 | Pacific Conflict | `heap_ring_sentinel_next` | `DAT_00020c5c` | the sentinel next link (+4) |
@@ -1430,7 +1430,7 @@ inventory yet.
 | Pacific Conflict | `anchor_angle3` | `DAT_0001d852` | low word of anchor record +0x14, third angle |
 | Pacific Conflict | `anchor_found` | `DAT_0001d854` | anchor record word +0x18, set when find_anchor_point found a point; nonzero skips the search here |
 | Pacific Conflict | `view_mode` | `DAT_0001d858` | camera view mode word (set to 1 on respawn; < 6 / == 2 tests in overlay_frame_step) [STRONG INFERENCE] |
-| Pacific Conflict | `player_landing_state` | `DAT_0001b868` | 0 airborne/reset, 1 touchdown, 2 stopped (docs/DECOMPILATION_SYMBOLS.md) |
+| Pacific Conflict | `player_landing_state` | `DAT_0001b868` | 0 airborne/reset, 1 touchdown, 2 stopped (docs/reference/DECOMPILATION_SYMBOLS.md) |
 | Pacific Conflict | `replay_request` | `DAT_0001b86c` | pending instant-replay request: 0 none, 1 airborne, 2 on the ground (request_instant_replay) |
 | Pacific Conflict | `state_flag_b872` | `_DAT_0001b872` | word cleared on respawn, set 0 / 1 in process_flight_input_and_outcome [role UNKNOWN] |
 | Pacific Conflict | `state_flag_b874` | `_DAT_0001b874` | word cleared on respawn; must be 0 for bail-out and view changes [role UNKNOWN] |
@@ -1443,11 +1443,11 @@ inventory yet.
 | Pacific Conflict | `view_flag_d856` | `_DAT_0001d856` | word set to 1 with view_mode by start_mission_scene; tested in overlay_frame_step [role UNKNOWN] |
 | Pacific Conflict | `band_limits_lo` | `DAT_0001b18c` | distance band thresholds T[-1] (= 0): band i starts at band_limits_lo[i] = band_limits[i - 1] |
 | Pacific Conflict | `band_limits` | `DAT_0001b190` | ascending distance band thresholds T[0..] (40041, 81395, ...): band i ends below band_limits[i] |
-| Pacific Conflict | `entity_array_1` | `DAT_0001d4a4` | first entity pointer array (docs/STRUCTS.md entity_array_1; ticked by run_simulation_tick) |
-| Pacific Conflict | `entity_array_1_count` | `DAT_0001c1e0` | entry count of entity_array_1 (docs/STRUCTS.md) |
-| Pacific Conflict | `entity_array_3` | `DAT_0001d0e4` | third entity pointer array (docs/STRUCTS.md entity_array_3), ticked with path 1 |
+| Pacific Conflict | `entity_array_1` | `DAT_0001d4a4` | first entity pointer array (docs/reference/STRUCTS.md entity_array_1; ticked by run_simulation_tick) |
+| Pacific Conflict | `entity_array_1_count` | `DAT_0001c1e0` | entry count of entity_array_1 (docs/reference/STRUCTS.md) |
+| Pacific Conflict | `entity_array_3` | `DAT_0001d0e4` | third entity pointer array (docs/reference/STRUCTS.md entity_array_3), ticked with path 1 |
 | Pacific Conflict | `entity_array_3_count` | `DAT_0001c1dc` | entry count of entity_array_3 |
-| Pacific Conflict | `entity_array_4` | `DAT_0001cbe4` | fourth entity pointer array (docs/STRUCTS.md entity_array_4), ticked with path 1 |
+| Pacific Conflict | `entity_array_4` | `DAT_0001cbe4` | fourth entity pointer array (docs/reference/STRUCTS.md entity_array_4), ticked with path 1 |
 | Pacific Conflict | `entity_array_4_count` | `DAT_0001c1d8` | entry count of entity_array_4 |
 | Pacific Conflict | `clip_x_min` | `DAT_00020aee` | polygon clip rectangle x-min, read by clip_polygon_x_min |
 | Pacific Conflict | `clip_x_max` | `DAT_00020aec` | polygon clip rectangle x-max, read by clip_polygon_x_max |
@@ -1463,8 +1463,8 @@ inventory yet.
 | Pacific Conflict | `view_point_count` | `DAT_0001c1d0` | entry count of view_points |
 | Pacific Conflict | `overlap_list` | `DAT_0001c1e4` | objects with flag-long bit 15, collected each frame; dispatch_overlap_collisions walks it |
 | Pacific Conflict | `overlap_count` | `DAT_0001c1c4` | entry count of overlap_list |
-| Pacific Conflict | `replay_state` | `DAT_0001b870` | instant-replay state: 0 live, 1 rewind, other non-zero replaying, 3 controller tick restricted (docs/DECOMPILATION_SYMBOLS.md) |
-| Pacific Conflict | `designated_entity_2` | `DAT_0001b888` | second designated entity pointer (docs/IMPORT_STATUS.md), cleared each frame by dispatch_overlap_collisions unless replay_state == 3 [role UNKNOWN] |
+| Pacific Conflict | `replay_state` | `DAT_0001b870` | instant-replay state: 0 live, 1 rewind, other non-zero replaying, 3 controller tick restricted (docs/reference/DECOMPILATION_SYMBOLS.md) |
+| Pacific Conflict | `designated_entity_2` | `DAT_0001b888` | second designated entity pointer (docs/history/IMPORT_STATUS.md), cleared each frame by dispatch_overlap_collisions unless replay_state == 3 [role UNKNOWN] |
 | Pacific Conflict | `visible_first_pass` | `DAT_0001c1c0` | visible-list count before world objects (word): first-pass count of build_visible_object_list |
 | Pacific Conflict | `alt_band` | `DAT_0001d70c` | altitude band: power of two at or below camera_y |
 | Pacific Conflict | `alt_band_log2` | `DAT_0001d704` | log2 of alt_band (word) |
@@ -1484,20 +1484,20 @@ inventory yet.
 | Pacific Conflict | `proj_scale_x` | `DAT_00020b28` | projection scale word for screen x |
 | Pacific Conflict | `proj_scale_y` | `DAT_00020b26` | projection scale word for screen y |
 | Pacific Conflict | `scatter_started` | `_DAT_00024cec` | set on the first scatter update, cleared when ground detail is off or too high |
-| Pacific Conflict | `neg_camera_pitch` | `DAT_0001d810` | negated camera pitch word (docs/DECOMPILATION_SYMBOLS.md: camera pitch DAT_00024d1a) |
+| Pacific Conflict | `neg_camera_pitch` | `DAT_0001d810` | negated camera pitch word (docs/reference/DECOMPILATION_SYMBOLS.md: camera pitch DAT_00024d1a) |
 | Pacific Conflict | `neg_camera_heading` | `DAT_0001d80e` | negated camera heading word (camera heading DAT_00024d18) |
 | Pacific Conflict | `camera_angle3` | `DAT_0001d80c` | third camera angle word passed to the camera matrix builders [role UNKNOWN] |
 | Pacific Conflict | `camera_angle4` | `DAT_0001d808` | fourth camera angle long passed to the camera matrix builders [role UNKNOWN] |
 | Pacific Conflict | `camera_angle5` | `DAT_0001d804` | fifth camera angle (view mode 2 only) [role UNKNOWN] |
 | Pacific Conflict | `camera_angle6` | `DAT_0001d800` | sixth camera angle (view mode 2 only) [role UNKNOWN] |
 | Pacific Conflict | `object_pool_next` | `DAT_0001b5a8` | object_pool + 1 entry: target of the insertion sort by camera metric |
-| Pacific Conflict | `carried_pair_count` | `DAT_0001b85c` | carried-pair count (docs/DECOMPILATION_SYMBOLS.md), cleared every frame |
+| Pacific Conflict | `carried_pair_count` | `DAT_0001b85c` | carried-pair count (docs/reference/DECOMPILATION_SYMBOLS.md), cleared every frame |
 | Pacific Conflict | `carried_pairs` | `DAT_0001b860` | carried-pair array of {carrier, rider} objects |
-| Pacific Conflict | `span_filler` | `DAT_00020ac0` | selected span-filler routine (docs/DECOMPILATION_SYMBOLS.md) |
+| Pacific Conflict | `span_filler` | `DAT_00020ac0` | selected span-filler routine (docs/reference/DECOMPILATION_SYMBOLS.md) |
 | Pacific Conflict | `panels_drawn` | `_DAT_00020ae4` | 0 until the cockpit panels are redrawn by overlay_frame_step (cleared by clear_flag_00020ae4) [STRONG INFERENCE] |
 | Pacific Conflict | `view_half_height` | `DAT_00020ae8` | half view height (view_rows / 2, - 20 with panels; update_view_clip_bounds), or proj_scale_y * 0x43 / 0x1e0 after a panel redraw; used instead of clip_y_max once panels_drawn is set |
 | Pacific Conflict | `view_rows` | `DAT_0001b828` | view height in rows (one span run per row in reset_span_row_lists); scan_last_row = clip_y_max + view_rows / 2 |
-| Pacific Conflict | `deferred_free_flag` | `_DAT_0001c1bc` | shared-block deferred-free flag (docs/DECOMPILATION_SYMBOLS.md), cleared each frame |
+| Pacific Conflict | `deferred_free_flag` | `_DAT_0001c1bc` | shared-block deferred-free flag (docs/reference/DECOMPILATION_SYMBOLS.md), cleared each frame |
 | Pacific Conflict | `flag_da8c` | `DAT_0001da8c` | word cleared by update_view_clip_bounds [role UNKNOWN] |
 | Pacific Conflict | `view_inset` | `DAT_00020ae2` | 4 when update_view_clip_bounds reserves 20 rows for the panels, else 0 [STRONG INFERENCE] |
 | Pacific Conflict | `flag_20ae0` | `_DAT_00020ae0` | word cleared with panels_drawn by update_view_clip_bounds [role UNKNOWN] |
@@ -1520,7 +1520,7 @@ inventory yet.
 | Pacific Conflict | `depth_routine_da98` | `DAT_0001da98` | depth-specific code address (host +0x276 at depth 1) [role UNKNOWN] |
 | Pacific Conflict | `depth_routine_da9c` | `DAT_0001da9c` | depth-specific code address (host +0x276 at depth 1) [role UNKNOWN] |
 | Pacific Conflict | `rank_aim_lag_table` | `DAT_0001b2b4` | word per pilot rank: AI aim lag in frames |
-| Pacific Conflict | `ai_aim_lag_key1` | `DAT_0001b876` | AI aim lag in frames for definition key 1 (docs/DECOMPILATION_SYMBOLS.md) |
+| Pacific Conflict | `ai_aim_lag_key1` | `DAT_0001b876` | AI aim lag in frames for definition key 1 (docs/reference/DECOMPILATION_SYMBOLS.md) |
 | Pacific Conflict | `ai_aim_lag` | `DAT_0001b878` | AI aim lag in frames for the other aircraft |
 | Pacific Conflict | `rudder_key` | `DAT_0001b858` | rudder key input word: +0x40 Z, -0x40 X, 0 |
 | Pacific Conflict | `bw_pattern_first` | `DAT_0001da88` | first word of the host pattern table (+0x88), read at depth 1 |
@@ -1529,22 +1529,22 @@ inventory yet.
 | Pacific Conflict | `host_words_valid` | `_DAT_00024d34` | nonzero: begin_flight_for_rank copies host words +0x33e / +0x340 [role UNKNOWN] |
 | Pacific Conflict | `host_word_33e` | `DAT_00024d32` | copy of host word +0x33e [role UNKNOWN] |
 | Pacific Conflict | `host_word_340` | `DAT_00024d30` | copy of host word +0x340 [role UNKNOWN] |
-| Pacific Conflict | `replay_frames_left` | `DAT_0001b86e` | instant-replay / end-sequence frame countdown (docs/DECOMPILATION_SYMBOLS.md comment-only name) |
-| Pacific Conflict | `snd_gun` | `_DAT_0001b852` | sound event slot Gun (docs/DECOMPILATION_SYMBOLS.md, slot names from DATA 0) |
+| Pacific Conflict | `replay_frames_left` | `DAT_0001b86e` | instant-replay / end-sequence frame countdown (docs/reference/DECOMPILATION_SYMBOLS.md comment-only name) |
+| Pacific Conflict | `snd_gun` | `_DAT_0001b852` | sound event slot Gun (docs/reference/DECOMPILATION_SYMBOLS.md, slot names from DATA 0) |
 | Pacific Conflict | `view_key_angle_a` | `DAT_00024cfc` | view angle stepped by 0x800 with arrow keys 0x1c / 0x1d |
 | Pacific Conflict | `view_key_angle_b` | `DAT_00024cf8` | view angle stepped by 0x540 with arrow keys 0x1e / 0x1f |
 | Pacific Conflict | `track_pitch` | `DAT_00024d00` | view mode 6 tracking-camera pitch (eased toward attitude_from_velocity's pitch); its low word feeds neg_camera_pitch |
 | Pacific Conflict | `track_heading` | `DAT_00024d04` | view mode 6 tracking-camera heading; its low word feeds neg_camera_heading |
 | Pacific Conflict | `ext_camera_point_y` | `DAT_0001d828` | ext_camera_point record +4: y |
 | Pacific Conflict | `ext_camera_point_z` | `DAT_0001d82c` | ext_camera_point record +8: z |
-| Pacific Conflict | `throttle_step` | `DAT_00024cf6` | throttle step input (+1 / -1 / 0) from the + / = and - / _ keys (docs/STRUCTS.md) |
+| Pacific Conflict | `throttle_step` | `DAT_00024cf6` | throttle step input (+1 / -1 / 0) from the + / = and - / _ keys (docs/reference/STRUCTS.md) |
 | Pacific Conflict | `snd_approach_ok` | `_DAT_0001b83c` | sound event slot 3 (no sample): landing approach accepted (try_begin_landing_approach != 0) |
 | Pacific Conflict | `snd_approach_refused` | `_DAT_0001b83e` | sound event slot 4 (no sample): landing approach refused |
 | Pacific Conflict | `friendly_landing_scored` | `_DAT_0001b86a` | set once per flight when the friendly-base landing outcome (0x201) is taken |
 | Pacific Conflict | `fire_button` | `_DAT_00024cf4` | space key held (1 on keyDown, 0 on keyUp), also restored from host +0x342; gates gun fire [STRONG INFERENCE] |
 | Pacific Conflict | `view_follow_target` | `DAT_0001b884` | object the view follows, taken from designated_entity_2 for 0x14 frames [STRONG INFERENCE] |
 | Pacific Conflict | `abandoned_intact_aircraft` | `_DAT_0001b87a` | set in update_aircraft_entity when the player bails out of an undamaged aircraft with fuel; a surviving pilot is then Discharged (resolve_bailout_outcome header) |
-| Pacific Conflict | `camera_pitch` | `DAT_00024d1a` | camera pitch word 0..0x3fff (docs/DECOMPILATION_SYMBOLS.md, PROVEN); neg_camera_pitch is its negative |
+| Pacific Conflict | `camera_pitch` | `DAT_00024d1a` | camera pitch word 0..0x3fff (docs/reference/DECOMPILATION_SYMBOLS.md, PROVEN); neg_camera_pitch is its negative |
 | Pacific Conflict | `camera_heading` | `DAT_00024d18` | camera heading word 0..0x3fff (PROVEN); neg_camera_heading is its negative |
 | Pacific Conflict | `camera_step_x` | `DAT_0001d81c` | camera x step per frame: (camera_goal_x - camera_x) / (replay_frames_left - 0x1e) |
 | Pacific Conflict | `camera_step_y` | `DAT_0001d818` | camera y step per frame |
@@ -1582,10 +1582,10 @@ inventory yet.
 | Pacific Conflict | `face_table` | `DAT_00025f30` | face records (0x20 bytes) of prepared_object, = object +0x48 (project_prepared_object) |
 | Pacific Conflict | `draw_order_next` | `DAT_0001c1be` | next draw-order number given to an emitted face (stored at face +2) |
 | Pacific Conflict | `face_queue_end` | `DAT_00025d2c` | append pointer of the emitted-face queue (faces are queued in draw order) |
-| Pacific Conflict | `near_mode` | `DAT_00025b16` | near mode: camera within the object range, 2 = first frame (docs/OVERLAY_RENDERER.md) |
-| Pacific Conflict | `back_face_queue_end` | `DAT_00025b28` | append cursor of the back faces kept for the penetration test (docs/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `near_mode` | `DAT_00025b16` | near mode: camera within the object range, 2 = first frame (docs/topics/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `back_face_queue_end` | `DAT_00025b28` | append cursor of the back faces kept for the penetration test (docs/topics/OVERLAY_RENDERER.md) |
 | Pacific Conflict | `root_face_count` | `DAT_00025b18` | prepared_object +0x38: number of root faces whose +0x12 chains are walked (project_prepared_object, emit_faces_in_order) |
-| Pacific Conflict | `horizon_corners` | `DAT_0001bd90` | screen corners the ground plane reaches: 1 / 2 top-left / top-right, 4 / 8 bottom (0xf all ground, 0 all sky; docs/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `horizon_corners` | `DAT_0001bd90` | screen corners the ground plane reaches: 1 / 2 top-left / top-right, 4 / 8 bottom (0xf all ground, 0 all sky; docs/topics/OVERLAY_RENDERER.md) |
 | Pacific Conflict | `horizon_x0` | `DAT_0001bda0` | horizon edge x0: last ground-plane edge not on a screen border [STRONG INFERENCE] |
 | Pacific Conflict | `horizon_y0` | `DAT_0001bd9c` | horizon edge y0 |
 | Pacific Conflict | `horizon_x1` | `DAT_0001bd98` | horizon edge x1 |
@@ -1595,7 +1595,7 @@ inventory yet.
 | Pacific Conflict | `projected_x` | `DAT_000256b2` | projected screen x per view vertex ((x, y) long pairs, 0x80000000 = behind the near plane; project_prepared_object) |
 | Pacific Conflict | `projected_y` | `DAT_000256b6` | projected screen y per view vertex (projected_x + 4) |
 | Pacific Conflict | `view_vertices` | `DAT_00025b20` | camera-space vertex buffer of prepared_object (+0x4c, project_prepared_object) |
-| Pacific Conflict | `back_face_queue` | `DAT_00025b2c` | start of the back faces kept for the penetration test (docs/OVERLAY_RENDERER.md) |
+| Pacific Conflict | `back_face_queue` | `DAT_00025b2c` | start of the back faces kept for the penetration test (docs/topics/OVERLAY_RENDERER.md) |
 | Pacific Conflict | `face_queue` | `DAT_00025d30` | start of the emitted-face queue (face_queue_end is its append pointer) |
 | Pacific Conflict | `face_was_clipped` | `_DAT_00025b12` | set to 1 when clip_face_near_plane clipped a face; when 0 submit_object_faces clears object flag 8 |
 | Pacific Conflict | `force_near_clip` | `_DAT_00025b14` | non-zero: every face goes through clip_face_near_plane (object +6 & 8, per the submit_object_faces note) |
@@ -1618,7 +1618,7 @@ inventory yet.
 | Pacific Conflict | `needle_end_y` | `DAT_00025f92` | needle end y cached per instrument type (long [type]), draw_gauge_needle |
 | Pacific Conflict | `alt_short_end_x` | `DAT_00025fda` | altimeter second (2/3 length) hand end x, update_altimeter_needles |
 | Pacific Conflict | `alt_short_end_y` | `DAT_00025fde` | altimeter second (2/3 length) hand end y |
-| Pacific Conflict | `climb_rate` | `DAT_0001bc80` | rate of climb, climb needle angle (/ 0x78) and readout 3 (docs/COCKPIT_HUD_DATA_LOCATIONS.md) |
+| Pacific Conflict | `climb_rate` | `DAT_0001bc80` | rate of climb, climb needle angle (/ 0x78) and readout 3 (docs/topics/DATA_LOCATIONS.md) |
 | Pacific Conflict | `bomb_count_shown` | `DAT_00025fe2` | player bomb count (+0x67c) last drawn by update_bomb_indicator |
 | Pacific Conflict | `high_flag_shown` | `DAT_00025fe4` | height-above-ground > 0x43 flag last drawn by update_bomb_indicator |
 | Pacific Conflict | `throttle_shown` | `DAT_00025fe6` | player throttle setting (+0x668, 0..9) last drawn by update_throttle_gauge |

@@ -6,7 +6,7 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 
 | Aspect | Conclusion | Citation |
 |--------|------------|----------|
-| **Overlay (Pacific Conflict)** | Mixed code+data; code from 0x20; no A5-relative globals; fixed base (Ghidra base 0). | [Pacific_Conflict_loader_analysis.md](../sources/resedit-1-0-3/CODE/Pacific_Conflict_loader_analysis.md) §1, §4, §5 (H3) |
+| **Overlay (Pacific Conflict)** | Mixed code+data; code from 0x20; no A5-relative globals; fixed base (Ghidra base 0). | [Pacific_Conflict_loader_analysis.md](../../sources/resedit-1-0-3/CODE/Pacific_Conflict_loader_analysis.md) §1, §4, §5 (H3) |
 | **Identity mapping** | For overlay: `runtime_address = file_offset` when load base = 0. | Ibid. §6. Safe parsing: `0x20 ≤ A < 0x3e700`. |
 | **Relocation** | No reloc table. Only FUN_00000020 patches two cells: DAT_0001a7d2, DAT_0001a81c (base/handle from loader). | Ibid. §3. ResEdit/CODE/Pacific Conflict.c FUN_00000020. |
 | **CODE segments (ID01–ID09)** | Segment-local offsets; segment loaded by LoadSeg; A5 world for globals (unaff_A5 in ID02/ID05.c). | ID02.c, ID05.c; Apple Segment Manager (Inside Mac: RTArch-118). |
@@ -15,7 +15,7 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 
 | Item | Conclusion | Citation |
 |------|------------|----------|
-| **Overlay init** | FUN_00000020(base) then FUN_00000054 set overlay globals; DAT_0001b5a0, DAT_0001b738 etc. used as mission/entity base. | [Pacific_Conflict_loader_analysis.md](../sources/resedit-1-0-3/CODE/Pacific_Conflict_loader_analysis.md) §7. ResEdit/CODE/Pacific Conflict.c 60, 73, 889, FUN_000044e8, FUN_0000740a. |
+| **Overlay init** | FUN_00000020(base) then FUN_00000054 set overlay globals; DAT_0001b5a0, DAT_0001b738 etc. used as mission/entity base. | [Pacific_Conflict_loader_analysis.md](../../sources/resedit-1-0-3/CODE/Pacific_Conflict_loader_analysis.md) §7. ResEdit/CODE/Pacific Conflict.c 60, 73, 889, FUN_000044e8, FUN_0000740a. |
 | **Who loads overlay** | ID08 FUN_00000006 (resource traps 0x2a2, 0x2b2, 0x2aa) is the best candidate for loading the 255360-byte blob. | Ibid. §7. ID08.c. |
 | **ID00 role** | CODE 0 (ID00.bin): jump-table / segment-loader table for CODE 1–9, not overlay data. | Byte evidence retained below. |
 
@@ -25,7 +25,7 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 
 | Offset (hex) | Use | Source |
 |--------------|-----|--------|
-| 0x00, 0x04, 0x08, 0x0c–0x20, 0x22, 0x2e, 0x32, 0x3a, 0x48, 0x50 | position, ptrs, state | [STRUCTS.md](STRUCTS.md) “Entity (FUN_0000e792)” |
+| 0x00, 0x04, 0x08, 0x0c–0x20, 0x22, 0x2e, 0x32, 0x3a, 0x48, 0x50 | position, ptrs, state | [STRUCTS.md](../reference/STRUCTS.md) “Entity (FUN_0000e792)” |
 | 0x61a, 0x61e, 0x626, 0x62a, 0x63e, 0x662, 0x666, 0x669, 0x66a, 0x66e, 0x672, 0x679 | movement, weapon | Ibid. |
 | 0x67c, 0x67d, 0x67e, 0x685, 0x19a, 0x1a0, 0x1a1, 0x1a3 | weapon_count, status | Ibid. |
 
@@ -141,12 +141,12 @@ Segment 7 has two ID00 entries: stored offset 0 targets the RTS at file 0x0004, 
 
 ## 8) Implementation handoff artifact
 
-- **[PROVEN]** The proven loader targets below are checked against the jump table the game runtime links ([`godot/hellcats/data/jump_table.json`](../godot/hellcats/data/jump_table.json), generated from `ID00.bin` by `tools/hellcats/build_runtime_data.py`) by `check_loader_targets` in [`tools/qa/test_regression.py`](../tools/qa/test_regression.py): each one's A5 offset is `jump_table_offset + id00_entry_offset - 16 + 2`, its segment and entry point as tabled here.
+- **[PROVEN]** The proven loader targets below are checked against the jump table the game runtime links ([`godot/hellcats/data/jump_table.json`](../../godot/hellcats/data/jump_table.json), generated from `ID00.bin` by `tools/hellcats/build_runtime_data.py`) by `check_loader_targets` in [`tools/qa/test_regression.py`](../../tools/qa/test_regression.py): each one's A5 offset is `jump_table_offset + id00_entry_offset - 16 + 2`, its segment and entry point as tabled here.
 - **[UNKNOWN]** Additional targets may be added to that check only when the maintainer re-runs the proof.
 
 ## 9) Godot integration boundary
 
-- **[RECONSTRUCTED]** The game runtime ([`docs/GAME_RUNTIME.md`](GAME_RUNTIME.md)) links every jump-table entry to its strict-port routine (`godot/hellcats/runtime/segment_loader.gd`) and loads the Pacific Conflict overlay with its relocations; the earlier clean-room loader metadata boundary of the MVP prototype is gone with it.
+- **[RECONSTRUCTED]** The game runtime ([`docs/architecture/GAME_RUNTIME.md`](GAME_RUNTIME.md)) links every jump-table entry to its strict-port routine (`godot/hellcats/runtime/segment_loader.gd`) and loads the Pacific Conflict overlay with its relocations; the earlier clean-room loader metadata boundary of the MVP prototype is gone with it.
 
 ## 10) Safe targets for Godot consumption now
 

@@ -17,9 +17,9 @@ var memory
 var a5: int = 0
 ## Calls leaving the segment, keyed by A5 jump-table offset and by A-line trap word. Each takes
 ## the arguments in stack order (lowest address first: a C call's first parameter, a Pascal
-## call's last; a buffer passed by address is given as the Array of its longs) and returns the
-## result (D0 for a C call, the result slot for a Pascal function). Unported targets have no
-## entry; tests install logging stand-ins (helpers/segment_cases.gd).
+## call's last; a buffer passed by address is passed as that address, in the frame or the heap)
+## and returns the result (D0 for a C call, the result slot for a Pascal function). Tests install
+## logging stand-ins (helpers/segment_cases.gd), the runtime the Toolbox and the other segments.
 var jt_routines: Dictionary = {}
 var traps: Dictionary = {}
 ## Code reached indirectly through an address held in memory (service pointers in A5 globals),

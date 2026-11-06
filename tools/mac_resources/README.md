@@ -1,7 +1,7 @@
 # Macintosh resource inventory tools
 
 For the curated `sources/resedit-1-0-3/` corpus, use `tools/resedit.py` and see
-`docs/RESOURCE_ANALYSIS.md`. It generates resource-local binary/JSON companions,
+`docs/reference/RESOURCE_ANALYSIS.md`. It generates resource-local binary/JSON companions,
 decodes supported formats, resolves references, and verifies metadata drift.
 The lower-level scripts in this directory remain useful for disk-image and
 standalone resource-fork work.

@@ -4,11 +4,11 @@ Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]** / **[DEFERRED]**.
 
 **Purpose:** One-page mental model of how the **original sim** hangs together and where it runs in **Godot**: every function below is strict-ported under `godot/strict_port/code/` and runs as the original game through the runtime ([`GAME_RUNTIME.md`](GAME_RUNTIME.md)). For symbol-level detail use `tools/re_query.py` and the per-topic contracts linked below.
 
-**Primary source file:** `Pacific Conflict.c` (Ghidra export). **Segment/runtime:** `ID01.c`–`ID09.c` (see `docs/LOADER_CHAIN.md`).
+**Primary source file:** `Pacific Conflict.c` (Ghidra export). **Segment/runtime:** `ID01.c`–`ID09.c` (see `docs/architecture/LOADER_CHAIN.md`).
 
 ## 1) High-level flow (main sim tick)
 
-**[RECONSTRUCTED]** The main loop is anchored on **FUN_000044e8** (`docs/contracts/tick_FUN_000044e8_contract.md`):
+**[RECONSTRUCTED]** The main loop is anchored on **FUN_000044e8** (`docs/history/contracts/tick_FUN_000044e8_contract.md`):
 
 ```mermaid
 flowchart TD
@@ -28,9 +28,9 @@ flowchart TD
   A4 --> FB
 ```
 
-**[RECONSTRUCTED]** **FUN_000044a4** calls **FUN_0000435a** then optional flag updates (`docs/contracts/tick_FUN_000044e8_contract.md`).
+**[RECONSTRUCTED]** **FUN_000044a4** calls **FUN_0000435a** then optional flag updates (`docs/history/contracts/tick_FUN_000044e8_contract.md`).
 
-**[RECONSTRUCTED]** Per-entity simulation includes **FUN_0000e792** (large; `docs/contracts/flight_FUN_0000e792_contract.md`).
+**[RECONSTRUCTED]** Per-entity simulation includes **FUN_0000e792** (large; `docs/history/contracts/flight_FUN_0000e792_contract.md`).
 
 **Godot:** `pacific_conflict.gd` **`run_simulation_tick`** (FUN_000044e8) and **`dispatch_entity_tick`** (FUN_000044a4), run every frame by the original flight loop (ID02 `run_flight_session`).
 
@@ -75,13 +75,13 @@ flowchart TD
   H740 --> ENT["Entity / throttle / UI effects"]
 ```
 
-**Godot:** `pacific_conflict.gd` **`process_flight_input_and_outcome`** (FUN_0000740a), fed Mac key and mouse events by `godot/hellcats/toolbox/event_manager.gd` from Godot input — **`docs/briefs/input_FUN_0000740a_brief.md`**.
+**Godot:** `pacific_conflict.gd` **`process_flight_input_and_outcome`** (FUN_0000740a), fed Mac key and mouse events by `godot/hellcats/toolbox/event_manager.gd` from Godot input — **`docs/history/briefs/input_FUN_0000740a_brief.md`**.
 
 ## 4) Mission state
 
 **[RECONSTRUCTED]** Mission block **`DAT_0001b5a0`** fields **`+0xa8`** (phase) and **`+0xac`** (flag) gate **FUN_000044e8**’s middle section.
 
-**Godot:** the mission block lives in the emulated memory at its original address and is read and written by the strict port itself — **`docs/contracts/mission_state_DAT_contract.md`**.
+**Godot:** the mission block lives in the emulated memory at its original address and is read and written by the strict port itself — **`docs/history/contracts/mission_state_DAT_contract.md`**.
 
 ## 5) RNG (two layers)
 
@@ -107,16 +107,16 @@ flowchart LR
   LS --> PC
 ```
 
-**[INFERRED]** Most **game-identifiable** `FUN_*` for parity work live in **Pacific Conflict.c**; **ID*** files are **runtime, RNG, loader, helpers** unless proven otherwise (`docs/LOADER_CHAIN.md`).
+**[INFERRED]** Most **game-identifiable** `FUN_*` for parity work live in **Pacific Conflict.c**; **ID*** files are **runtime, RNG, loader, helpers** unless proven otherwise (`docs/architecture/LOADER_CHAIN.md`).
 
 ## Related documents
 
 | Document | Role |
 |----------|------|
-| `docs/contracts/tick_FUN_000044e8_contract.md` | Tick order |
-| `docs/contracts/FUN_0000435a_contract.md` | **param_2** / **0x02** branch |
-| `docs/contracts/flight_FUN_0000e792_contract.md` | Entity update slice |
-| `docs/contracts/input_godot_contract.md` | Godot input mapping of the removed prototype (historical) |
-| `docs/contracts/mission_state_DAT_contract.md` | Mission bridge |
-| `docs/STRUCTS.md` | DAT_* / offset tables |
-| `docs/LOADER_CHAIN.md` | ID00–ID09 and loading |
+| `docs/history/contracts/tick_FUN_000044e8_contract.md` | Tick order |
+| `docs/history/contracts/FUN_0000435a_contract.md` | **param_2** / **0x02** branch |
+| `docs/history/contracts/flight_FUN_0000e792_contract.md` | Entity update slice |
+| `docs/history/contracts/input_godot_contract.md` | Godot input mapping of the removed prototype (historical) |
+| `docs/history/contracts/mission_state_DAT_contract.md` | Mission bridge |
+| `docs/reference/STRUCTS.md` | DAT_* / offset tables |
+| `docs/architecture/LOADER_CHAIN.md` | ID00–ID09 and loading |

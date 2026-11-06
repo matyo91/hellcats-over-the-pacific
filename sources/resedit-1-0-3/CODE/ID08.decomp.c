@@ -27,7 +27,7 @@ typedef unsigned char    byte;
  *
  * CODE resource 8 entry (ID08.bin @0x0006 after 6-byte stub @0x0–0x5).
  * Best-documented candidate for loading the Pacific Conflict overlay blob
- * (LOADER_CHAIN.md §2). Heavy A5 jump-table use (not overlay-local calls):
+ * (docs/architecture/LOADER_CHAIN.md §2). Heavy A5 jump-table use (not overlay-local calls):
  *   $2a2 — resource open/get (twice on failure-retry path)
  *   $4d2 / $fa — error string path → return 0
  *   $23a — dispose prior buffer at A5-0x1006
@@ -44,7 +44,7 @@ typedef unsigned char    byte;
  * Callee: alloc_and_read_resource_payload (FUN_00000348). Globals: A5-0x13ac
  * type/name block; A5-0x1006 loaded-image pointer.
  *
- * Evidence: Capstone ID08.bin; docs/LOADER_CHAIN.md §2; ID08.c Ghidra.
+ * Evidence: Capstone ID08.bin; docs/architecture/LOADER_CHAIN.md §2; ID08.c Ghidra.
  * Unknown: exact Toolbox trap names for each A5 slot; which resource ID is
  * the 255360-byte overlay.
  */

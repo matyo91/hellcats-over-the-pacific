@@ -46,7 +46,7 @@ def main() -> int:
     resedit = (PYTHON, "tools/resedit.py")
     measured = {
         "A_decompilation_iteration": workload(
-            ["AGENTS.md", "docs/DECOMPILATION_PROGRESS.md"],
+            ["AGENTS.md", "docs/port/DECOMPILATION_PROGRESS.md"],
             [
                 (*re_query, "correspondence", "--segment", "Pacific Conflict", "FUN_0000e792"),
                 (*re_query, "excerpt", "--segment", "Pacific Conflict", "FUN_0000e792", "--address", "0xf47c", "--limit", "40"),
@@ -54,7 +54,7 @@ def main() -> int:
             ],
         ),
         "B_strict_port_translation": workload(
-            ["AGENTS.md", "docs/STRICT_PORT_FOUNDATION.md"],
+            ["AGENTS.md", "docs/port/STRICT_PORT_FOUNDATION.md"],
             [
                 (*re_query, "function", "--segment", "Pacific Conflict", "FUN_0000e42a"),
                 (*re_query, "callers", "--segment", "Pacific Conflict", "FUN_0000e42a"),
@@ -72,7 +72,7 @@ def main() -> int:
             ],
         ),
         "D_architecture_startup": workload(
-            ["AGENTS.md", "README.md", "docs/PROJECT_STATUS.md"], []
+            ["AGENTS.md", "README.md", "docs/architecture/PROJECT_STATUS.md"], []
         ),
         "E_regression_investigation": workload(
             ["AGENTS.md"],

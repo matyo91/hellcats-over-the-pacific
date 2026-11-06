@@ -22,7 +22,7 @@ overlay_frame_step
 
 `output_face_colour` clips to the screen and calls the overlay span
 renderer `FUN_00009b8c`; `output_face_bw` clips and calls the host service
-overlay +0x7c = host A5-0x130c = ID06 `add_polygon_edges` (docs/RASTERIZER.md)
+overlay +0x7c = host A5-0x130c = ID06 `add_polygon_edges` (docs/topics/RASTERIZER.md)
 **[PROVEN by the A5 arithmetic]**.
 
 Colour path: `add_face_edges_to_rows` (0x9b8c) turns each

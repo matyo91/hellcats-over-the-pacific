@@ -1,6 +1,6 @@
 # Godot input layer — implementation contract (FUN_0000740a convergence)
 
-Tags: **[RECONSTRUCTED]** from `Pacific Conflict.c` / `docs/briefs/input_FUN_0000740a_brief.md`; **[INFERRED]**; **[MVP APPROXIMATION]** for what is not ported yet.
+Tags: **[RECONSTRUCTED]** from `Pacific Conflict.c` / `docs/history/briefs/input_FUN_0000740a_brief.md`; **[INFERRED]**; **[MVP APPROXIMATION]** for what is not ported yet.
 
 ## Purpose
 
@@ -56,4 +56,4 @@ Each physics tick, **`PlayerInputMap.read_input_packet(player_active)`** returns
 
 ## Related docs
 
-- `docs/briefs/input_FUN_0000740a_brief.md` — RE extraction
+- `docs/history/briefs/input_FUN_0000740a_brief.md` — RE extraction

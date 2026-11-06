@@ -13,7 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 INVENTORY = ROOT / "docs" / "DECOMPILATION_INVENTORY.json"
-SYMBOLS = ROOT / "docs" / "DECOMPILATION_SYMBOLS.md"
+SYMBOLS = ROOT / "docs" / "reference" / "DECOMPILATION_SYMBOLS.md"
 STRICT_MAP = ROOT / "godot" / "strict_port" / "mappings" / "functions.json"
 CONTROL_WORDS = {"if", "for", "while", "switch", "return", "sizeof"}
 ADDRESS_RE = re.compile(r"^(?:0x|\$)?([0-9A-Fa-f]+)$")
@@ -433,9 +433,9 @@ def cmd_tests(args: argparse.Namespace) -> int:
 PROTECTED = ROOT / "docs" / "DECOMPILATION_PROTECTED_CHECKSUMS.sha256"
 CODE_DIR = ROOT / "sources" / "resedit-1-0-3" / "CODE"
 OVERLAY_BINARY = ROOT / "sources" / "mac-os-9" / "Pacific Conflict"
-# docs/MISSION_DATA_LOCATIONS.md, "External file layout" (not in PROTECTED).
+# docs/topics/DATA_LOCATIONS.md, "External file layout" (not in PROTECTED).
 OVERLAY_SHA256 = "ee6040c7c38586551f95bf62a96453eef41b8b27409bc89d7a6689dc2c8b5030"
-# docs/DECOMPILATION_SYMBOLS.md, "False entries and runtime-address callees":
+# docs/reference/DECOMPILATION_SYMBOLS.md, "False entries and runtime-address callees":
 # overlay lea/jsr/pea abs.l code operands are runtime addresses = file offset - 0x20.
 OVERLAY_RUNTIME_SHIFT = 0x20
 # Longest 68020 instruction is 22 bytes; decode real bytes past a bound so
@@ -489,7 +489,7 @@ def protected_checksums() -> dict[str, str]:
 def segment_binary(segment: str) -> dict[str, Any]:
     if segment == "Pacific Conflict":
         path, expected, shift = OVERLAY_BINARY, OVERLAY_SHA256, OVERLAY_RUNTIME_SHIFT
-        checksum_source = "docs/MISSION_DATA_LOCATIONS.md"
+        checksum_source = "docs/topics/DATA_LOCATIONS.md"
         mapping = "address = file offset; abs code operands are runtime = file - 0x20"
     else:
         path, shift = CODE_DIR / f"{segment}.bin", None
@@ -1125,7 +1125,7 @@ def cmd_evidence(args: argparse.Namespace) -> int:
                      "lines": checks or ["no resolved calls"], "data": checks,
                      "hint": f"re_query.py evidence {qualified} --json"})
     sections.append({"key": "recorded_corrections", "required": False,
-                     "title": "recorded corrections (docs/DECOMPILATION_SYMBOLS.md)",
+                     "title": "recorded corrections (docs/reference/DECOMPILATION_SYMBOLS.md)",
                      "lines": corrections or ["none recorded"], "data": corrections,
                      "hint": f"re_query.py symbol {row['original_function']}"})
     window_globals = binary_globals(window_insns)

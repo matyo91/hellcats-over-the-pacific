@@ -12,7 +12,7 @@ typedef unsigned short    ushort;
 
 
 /* Readable global names (readability pass; the Ghidra name stays the real symbol). Applied
- * function by function in address order; see the table in docs/DECOMPILATION_SYMBOLS.md. */
+ * function by function in address order; see the table in docs/reference/DECOMPILATION_SYMBOLS.md. */
 #define host_world DAT_0001b5a0 /* pointer to the host A5 world at A5-0x1388 (mission fuel/bombs/kills at +0xb6..+0xd2) */
 #define object_pool DAT_0001b5a4 /* world object pointer array scanned by probe_nearest_facility_kind (entity array 2) */
 #define object_count DAT_0001b734 /* low word = number of entries in object_pool */
@@ -44,7 +44,7 @@ typedef unsigned short    ushort;
 #define slot_usage_prev DAT_0001d860 /* per-frame palette-slot usage map (pair swapped by overlay_frame_step) */
 #define slot_usage_cur DAT_0001d864 /* per-frame palette-slot usage map, the other half of the pair [which is current: STRONG INFERENCE] */
 #define palette_changed _DAT_0001daa2 /* set to 1 when a face claims a new palette slot (also set by build_object_poly_buffers) */
-#define template_ptr_table_base DAT_0001b524 /* ID-keyed definition record pointer table: entry key at + 4 * key (docs/DECOMPILATION_SYMBOLS.md) */
+#define template_ptr_table_base DAT_0001b524 /* ID-keyed definition record pointer table: entry key at + 4 * key (docs/reference/DECOMPILATION_SYMBOLS.md) */
 #define template_rec_a_field_u16 DAT_0001a7d2 /* name from its declaration comment: field +0xc of a 0x4A template record */
 #define template_rec_b_field_u16 DAT_0001a81c /* name from its declaration comment: same field of the next 0x4A record */
 #define template_keyed_1c_src DAT_0001aa5e /* source of the five keyed 0x1C template records (keys 0x15..0x19) */
@@ -109,7 +109,7 @@ typedef unsigned short    ushort;
 #define init_flag_bd84 _DAT_0001bd84 /* set to 1 by overlay_initialise, no reader in the exported C [role UNKNOWN] */
 #define frame_counter DAT_0001b838 /* current frame number, incremented by advance_frame_and_tick_controllers; 0x4c at start */
 #define heap_break DAT_00020c50 /* heap_sbrk break: byte offset into the arena at host +0x348 */
-#define heap_roving_cursor DAT_00020c60 /* large-block free-list cursor (docs/DECOMPILATION_SYMBOLS.md) */
+#define heap_roving_cursor DAT_00020c60 /* large-block free-list cursor (docs/reference/DECOMPILATION_SYMBOLS.md) */
 #define heap_class_lists DAT_00020c64 /* size-class free-list heads, class c at + 4 * c (heap_free_coalesce) */
 #define heap_ring_sentinel DAT_00020c58 /* size-0 sentinel block of the large-block ring, linked to itself on first heap_alloc */
 #define heap_ring_sentinel_next DAT_00020c5c /* the sentinel's next link (+4) */
@@ -281,7 +281,7 @@ typedef unsigned short    ushort;
 #define anchor_angle3 DAT_0001d852 /* low word of anchor record +0x14, third angle */
 #define anchor_found DAT_0001d854 /* anchor record word +0x18, set when find_anchor_point found a point; nonzero skips the search here */
 #define view_mode DAT_0001d858 /* camera view mode word (set to 1 on respawn; < 6 / == 2 tests in overlay_frame_step) [STRONG INFERENCE] */
-#define player_landing_state DAT_0001b868 /* 0 airborne/reset, 1 touchdown, 2 stopped (docs/DECOMPILATION_SYMBOLS.md) */
+#define player_landing_state DAT_0001b868 /* 0 airborne/reset, 1 touchdown, 2 stopped (docs/reference/DECOMPILATION_SYMBOLS.md) */
 #define replay_request DAT_0001b86c /* pending instant-replay request: 0 none, 1 airborne, 2 on the ground (request_instant_replay) */
 #define state_flag_b872 _DAT_0001b872 /* word cleared on respawn, set 0 / 1 in process_flight_input_and_outcome [role UNKNOWN] */
 #define state_flag_b874 _DAT_0001b874 /* word cleared on respawn; must be 0 for bail-out and view changes [role UNKNOWN] */
@@ -294,11 +294,11 @@ typedef unsigned short    ushort;
 #define view_flag_d856 _DAT_0001d856 /* word set to 1 with view_mode by start_mission_scene; tested in overlay_frame_step [role UNKNOWN] */
 #define band_limits_lo DAT_0001b18c /* distance band thresholds T[-1] (= 0): band i starts at band_limits_lo[i] = band_limits[i - 1] */
 #define band_limits DAT_0001b190 /* ascending distance band thresholds T[0..] (40041, 81395, ...): band i ends below band_limits[i] */
-#define entity_array_1 DAT_0001d4a4 /* first entity pointer array (docs/STRUCTS.md entity_array_1; ticked by run_simulation_tick) */
-#define entity_array_1_count DAT_0001c1e0 /* entry count of entity_array_1 (docs/STRUCTS.md) */
-#define entity_array_3 DAT_0001d0e4 /* third entity pointer array (docs/STRUCTS.md entity_array_3), ticked with path 1 */
+#define entity_array_1 DAT_0001d4a4 /* first entity pointer array (docs/reference/STRUCTS.md entity_array_1; ticked by run_simulation_tick) */
+#define entity_array_1_count DAT_0001c1e0 /* entry count of entity_array_1 (docs/reference/STRUCTS.md) */
+#define entity_array_3 DAT_0001d0e4 /* third entity pointer array (docs/reference/STRUCTS.md entity_array_3), ticked with path 1 */
 #define entity_array_3_count DAT_0001c1dc /* entry count of entity_array_3 */
-#define entity_array_4 DAT_0001cbe4 /* fourth entity pointer array (docs/STRUCTS.md entity_array_4), ticked with path 1 */
+#define entity_array_4 DAT_0001cbe4 /* fourth entity pointer array (docs/reference/STRUCTS.md entity_array_4), ticked with path 1 */
 #define entity_array_4_count DAT_0001c1d8 /* entry count of entity_array_4 */
 #define clip_x_min DAT_00020aee /* polygon clip rectangle x-min, read by clip_polygon_x_min */
 #define clip_x_max DAT_00020aec /* polygon clip rectangle x-max, read by clip_polygon_x_max */
@@ -314,8 +314,8 @@ typedef unsigned short    ushort;
 #define view_point_count DAT_0001c1d0 /* entry count of view_points */
 #define overlap_list DAT_0001c1e4 /* objects with flag-long bit 15, collected each frame; dispatch_overlap_collisions walks it */
 #define overlap_count DAT_0001c1c4 /* entry count of overlap_list */
-#define replay_state DAT_0001b870 /* instant-replay state: 0 live, 1 rewind, other non-zero replaying, 3 controller tick restricted (docs/DECOMPILATION_SYMBOLS.md) */
-#define designated_entity_2 DAT_0001b888 /* second designated entity pointer (docs/IMPORT_STATUS.md), cleared each frame by dispatch_overlap_collisions unless replay_state == 3 [role UNKNOWN] */
+#define replay_state DAT_0001b870 /* instant-replay state: 0 live, 1 rewind, other non-zero replaying, 3 controller tick restricted (docs/reference/DECOMPILATION_SYMBOLS.md) */
+#define designated_entity_2 DAT_0001b888 /* second designated entity pointer (docs/history/IMPORT_STATUS.md), cleared each frame by dispatch_overlap_collisions unless replay_state == 3 [role UNKNOWN] */
 #define visible_first_pass DAT_0001c1c0 /* visible-list count before world objects (word): first-pass count of build_visible_object_list */
 #define alt_band DAT_0001d70c /* altitude band: power of two at or below camera_y */
 #define alt_band_log2 DAT_0001d704 /* log2 of alt_band (word) */
@@ -335,20 +335,20 @@ typedef unsigned short    ushort;
 #define proj_scale_x DAT_00020b28 /* projection scale word for screen x */
 #define proj_scale_y DAT_00020b26 /* projection scale word for screen y */
 #define scatter_started _DAT_00024cec /* set on the first scatter update, cleared when ground detail is off or too high */
-#define neg_camera_pitch DAT_0001d810 /* negated camera pitch word (docs/DECOMPILATION_SYMBOLS.md: camera pitch DAT_00024d1a) */
+#define neg_camera_pitch DAT_0001d810 /* negated camera pitch word (docs/reference/DECOMPILATION_SYMBOLS.md: camera pitch DAT_00024d1a) */
 #define neg_camera_heading DAT_0001d80e /* negated camera heading word (camera heading DAT_00024d18) */
 #define camera_angle3 DAT_0001d80c /* third camera angle word passed to the camera matrix builders [role UNKNOWN] */
 #define camera_angle4 DAT_0001d808 /* fourth camera angle long passed to the camera matrix builders [role UNKNOWN] */
 #define camera_angle5 DAT_0001d804 /* fifth camera angle (view mode 2 only) [role UNKNOWN] */
 #define camera_angle6 DAT_0001d800 /* sixth camera angle (view mode 2 only) [role UNKNOWN] */
 #define object_pool_next DAT_0001b5a8 /* object_pool + 1 entry: target of the insertion sort by camera metric */
-#define carried_pair_count DAT_0001b85c /* carried-pair count (docs/DECOMPILATION_SYMBOLS.md), cleared every frame */
+#define carried_pair_count DAT_0001b85c /* carried-pair count (docs/reference/DECOMPILATION_SYMBOLS.md), cleared every frame */
 #define carried_pairs DAT_0001b860 /* carried-pair array of {carrier, rider} objects */
-#define span_filler DAT_00020ac0 /* selected span-filler routine (docs/DECOMPILATION_SYMBOLS.md) */
+#define span_filler DAT_00020ac0 /* selected span-filler routine (docs/reference/DECOMPILATION_SYMBOLS.md) */
 #define panels_drawn _DAT_00020ae4 /* 0 until the cockpit panels are redrawn by overlay_frame_step (cleared by clear_flag_00020ae4) [STRONG INFERENCE] */
 #define view_half_height DAT_00020ae8 /* half view height (view_rows / 2, - 20 with panels; update_view_clip_bounds), or proj_scale_y * 0x43 / 0x1e0 after a panel redraw; used instead of clip_y_max once panels_drawn is set */
 #define view_rows DAT_0001b828 /* view height in rows (one span run per row in reset_span_row_lists); scan_last_row = clip_y_max + view_rows / 2 */
-#define deferred_free_flag _DAT_0001c1bc /* shared-block deferred-free flag (docs/DECOMPILATION_SYMBOLS.md), cleared each frame */
+#define deferred_free_flag _DAT_0001c1bc /* shared-block deferred-free flag (docs/reference/DECOMPILATION_SYMBOLS.md), cleared each frame */
 #define flag_da8c DAT_0001da8c /* word cleared by update_view_clip_bounds [role UNKNOWN] */
 #define view_inset DAT_00020ae2 /* 4 when update_view_clip_bounds reserves 20 rows for the panels, else 0 [STRONG INFERENCE] */
 #define flag_20ae0 _DAT_00020ae0 /* word cleared with panels_drawn by update_view_clip_bounds [role UNKNOWN] */
@@ -371,7 +371,7 @@ typedef unsigned short    ushort;
 #define depth_routine_da98 DAT_0001da98 /* depth-specific code address (host +0x276 at depth 1) [role UNKNOWN] */
 #define depth_routine_da9c DAT_0001da9c /* depth-specific code address (host +0x276 at depth 1) [role UNKNOWN] */
 #define rank_aim_lag_table DAT_0001b2b4 /* word per pilot rank: AI aim lag in frames */
-#define ai_aim_lag_key1 DAT_0001b876 /* AI aim lag in frames for definition key 1 (docs/DECOMPILATION_SYMBOLS.md) */
+#define ai_aim_lag_key1 DAT_0001b876 /* AI aim lag in frames for definition key 1 (docs/reference/DECOMPILATION_SYMBOLS.md) */
 #define ai_aim_lag DAT_0001b878 /* AI aim lag in frames for the other aircraft */
 #define rudder_key DAT_0001b858 /* rudder key input word: +0x40 Z, -0x40 X, 0 */
 #define bw_pattern_first DAT_0001da88 /* first word of the host pattern table (+0x88), read at depth 1 */
@@ -380,22 +380,22 @@ typedef unsigned short    ushort;
 #define host_words_valid _DAT_00024d34 /* nonzero: begin_flight_for_rank copies host words +0x33e / +0x340 [role UNKNOWN] */
 #define host_word_33e DAT_00024d32 /* copy of host word +0x33e [role UNKNOWN] */
 #define host_word_340 DAT_00024d30 /* copy of host word +0x340 [role UNKNOWN] */
-#define replay_frames_left DAT_0001b86e /* instant-replay / end-sequence frame countdown (docs/DECOMPILATION_SYMBOLS.md comment-only name) */
-#define snd_gun _DAT_0001b852 /* sound event slot Gun (docs/DECOMPILATION_SYMBOLS.md, slot names from DATA 0) */
+#define replay_frames_left DAT_0001b86e /* instant-replay / end-sequence frame countdown (docs/reference/DECOMPILATION_SYMBOLS.md comment-only name) */
+#define snd_gun _DAT_0001b852 /* sound event slot Gun (docs/reference/DECOMPILATION_SYMBOLS.md, slot names from DATA 0) */
 #define view_key_angle_a DAT_00024cfc /* view angle stepped by 0x800 with arrow keys 0x1c / 0x1d */
 #define view_key_angle_b DAT_00024cf8 /* view angle stepped by 0x540 with arrow keys 0x1e / 0x1f */
 #define track_pitch DAT_00024d00 /* view mode 6 tracking-camera pitch (eased toward attitude_from_velocity's pitch); its low word feeds neg_camera_pitch */
 #define track_heading DAT_00024d04 /* view mode 6 tracking-camera heading; its low word feeds neg_camera_heading */
 #define ext_camera_point_y DAT_0001d828 /* ext_camera_point record +4: y */
 #define ext_camera_point_z DAT_0001d82c /* ext_camera_point record +8: z */
-#define throttle_step DAT_00024cf6 /* throttle step input (+1 / -1 / 0) from the + / = and - / _ keys (docs/STRUCTS.md) */
+#define throttle_step DAT_00024cf6 /* throttle step input (+1 / -1 / 0) from the + / = and - / _ keys (docs/reference/STRUCTS.md) */
 #define snd_approach_ok _DAT_0001b83c /* sound event slot 3 (no sample): landing approach accepted (try_begin_landing_approach != 0) */
 #define snd_approach_refused _DAT_0001b83e /* sound event slot 4 (no sample): landing approach refused */
 #define friendly_landing_scored _DAT_0001b86a /* set once per flight when the friendly-base landing outcome (0x201) is taken */
 #define fire_button _DAT_00024cf4 /* space key held (1 on keyDown, 0 on keyUp), also restored from host +0x342; gates gun fire [STRONG INFERENCE] */
 #define view_follow_target DAT_0001b884 /* object the view follows, taken from designated_entity_2 for 0x14 frames [STRONG INFERENCE] */
 #define abandoned_intact_aircraft _DAT_0001b87a /* set in update_aircraft_entity when the player bails out of an undamaged aircraft with fuel; a surviving pilot is then Discharged (resolve_bailout_outcome header) */
-#define camera_pitch DAT_00024d1a /* camera pitch word 0..0x3fff (docs/DECOMPILATION_SYMBOLS.md, PROVEN); neg_camera_pitch is its negative */
+#define camera_pitch DAT_00024d1a /* camera pitch word 0..0x3fff (docs/reference/DECOMPILATION_SYMBOLS.md, PROVEN); neg_camera_pitch is its negative */
 #define camera_heading DAT_00024d18 /* camera heading word 0..0x3fff (PROVEN); neg_camera_heading is its negative */
 #define camera_step_x DAT_0001d81c /* camera x step per frame: (camera_goal_x - camera_x) / (replay_frames_left - 0x1e) */
 #define dot_object_count DAT_000265d0 /* queued dot/streak objects, capped at 0x1e by bullet_pre_render */
@@ -451,10 +451,10 @@ typedef unsigned short    ushort;
 #define debris_template DAT_0002665c /* debris fragment scene template; stored by register_debris_template, spawned by spawn_debris_fragment */
 #define trail_animate_table DAT_0001b514 /* trail animate handlers by kind: 0 -> 0x16c6a, 1 -> 0x16e06 [PROVEN bytes] */
 #define ground_fire_template DAT_00026658 /* ground fire scene template; stored by register_ground_fire_template, spawned by spawn_ground_fire_object */
-#define near_mode DAT_00025b16 /* near mode: camera within the object range, 2 = first frame (docs/OVERLAY_RENDERER.md) */
-#define back_face_queue_end DAT_00025b28 /* append cursor of the back faces kept for the penetration test (docs/OVERLAY_RENDERER.md) */
+#define near_mode DAT_00025b16 /* near mode: camera within the object range, 2 = first frame (docs/topics/OVERLAY_RENDERER.md) */
+#define back_face_queue_end DAT_00025b28 /* append cursor of the back faces kept for the penetration test (docs/topics/OVERLAY_RENDERER.md) */
 #define root_face_count DAT_00025b18 /* prepared_object +0x38: number of root faces whose +0x12 chains are walked (project_prepared_object, emit_faces_in_order) */
-#define horizon_corners DAT_0001bd90 /* screen corners the ground plane reaches: 1 / 2 top-left / top-right, 4 / 8 bottom (0xf all ground, 0 all sky; docs/OVERLAY_RENDERER.md) */
+#define horizon_corners DAT_0001bd90 /* screen corners the ground plane reaches: 1 / 2 top-left / top-right, 4 / 8 bottom (0xf all ground, 0 all sky; docs/topics/OVERLAY_RENDERER.md) */
 #define horizon_x0 DAT_0001bda0 /* horizon edge x0: last ground-plane edge not on a screen border [STRONG INFERENCE] */
 #define horizon_y0 DAT_0001bd9c /* horizon edge y0 */
 #define horizon_x1 DAT_0001bd98 /* horizon edge x1 */
@@ -474,7 +474,7 @@ typedef unsigned short    ushort;
 #define projected_x DAT_000256b2 /* projected screen x per view vertex ((x, y) long pairs, 0x80000000 = behind the near plane; project_prepared_object) */
 #define projected_y DAT_000256b6 /* projected screen y per view vertex (projected_x + 4) */
 #define view_vertices DAT_00025b20 /* camera-space vertex buffer of prepared_object (+0x4c, project_prepared_object) */
-#define back_face_queue DAT_00025b2c /* start of the back faces kept for the penetration test (docs/OVERLAY_RENDERER.md) */
+#define back_face_queue DAT_00025b2c /* start of the back faces kept for the penetration test (docs/topics/OVERLAY_RENDERER.md) */
 #define face_queue DAT_00025d30 /* start of the emitted-face queue (face_queue_end is its append pointer) */
 #define face_was_clipped _DAT_00025b12 /* set to 1 when clip_face_near_plane clipped a face; when 0 submit_object_faces clears object flag 8 */
 #define force_near_clip _DAT_00025b14 /* non-zero: every face goes through clip_face_near_plane (object +6 & 8, per the submit_object_faces note) */
@@ -502,7 +502,7 @@ typedef unsigned short    ushort;
 #define needle_end_y DAT_00025f92 /* needle end y cached per instrument type (long [type]), draw_gauge_needle */
 #define alt_short_end_x DAT_00025fda /* altimeter second (2/3 length) hand end x, update_altimeter_needles */
 #define alt_short_end_y DAT_00025fde /* altimeter second (2/3 length) hand end y */
-#define climb_rate DAT_0001bc80 /* rate of climb, climb needle angle (/ 0x78) and readout 3 (docs/COCKPIT_HUD_DATA_LOCATIONS.md) */
+#define climb_rate DAT_0001bc80 /* rate of climb, climb needle angle (/ 0x78) and readout 3 (docs/topics/DATA_LOCATIONS.md) */
 #define bomb_count_shown DAT_00025fe2 /* player bomb count (+0x67c) last drawn by update_bomb_indicator */
 #define high_flag_shown DAT_00025fe4 /* height-above-ground > 0x43 flag last drawn by update_bomb_indicator */
 #define throttle_shown DAT_00025fe6 /* player throttle setting (+0x668, 0..9) last drawn by update_throttle_gauge */
@@ -514,7 +514,7 @@ typedef unsigned short    ushort;
 #define readout_index DAT_00025ff2 /* next numeric readout to update, cycling 0..3 (altitude, speed, heading, climb) */
 #define readout_cache DAT_00025ff4 /* last drawn |value| of each of the four readouts (word [4], 0x7fff = invalid) */
 #define enemy_fighter_template DAT_00026000 /* first type-4 object, kept by create_enemy_fighter as the template spawn_enemy_fighter copies */
-#define aircraft_type_rec DAT_00026004 /* aircraft type record = controller +4, set each tick by update_aircraft_entity (field table in DECOMPILATION_SYMBOLS.md) */
+#define aircraft_type_rec DAT_00026004 /* aircraft type record = controller +4, set each tick by update_aircraft_entity (field table in docs/reference/DECOMPILATION_SYMBOLS.md) */
 #define climb_ring DAT_0001bc8c /* 120-word ring of player speed * sin(+0x20) samples; climb_rate is their moving sum (update_aircraft_entity blk 6c) */
 #define climb_ring_index DAT_0001bc84 /* next slot of climb_ring, wraps at 0x78 */
 #define route_1b2e0 DAT_0001b2e0 /* AI waypoint route table given to the route block by ensure_ai_script_1b2e0_tick (target speed 0x9d8) */
@@ -2387,7 +2387,7 @@ void find_anchor_point /* Original: FUN_00000d6a */ (undefined4 *result /* param
 
 /* Original: FUN_00000db0; source: Pacific Conflict.c. Recovered name: ensure_handle_allocated [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xdb0).
- * Args: Handle *slot, long size. If *slot is NULL: *slot = new_handle_clear_or_die(size) (service +0x2c6). If the handle is empty (purged, *h == NULL): realloc_and_clear_handle(h, size) (service +0x2ce). Then hnopurge(h) (service +0x2de). Returns true when the block had to be allocated or reallocated (contents must be rebuilt). DAT_0001b5a0 is the host A5 world at A5-0x1388, so DAT_0001b5a0 + 0x2c6 / 0x2ce / 0x2d2 / 0x2d6 / 0x2da / 0x2de / 0x2e2 are the host overlay-service slots A5-0x10c2 new_handle_clear_or_die / A5-0x10ba realloc_and_clear_handle / A5-0x10b6 hlock / A5-0x10b2 hunlock / A5-0x10ae hpurge / A5-0x10aa hnopurge / A5-0x10a6 freemem (docs/OVERLAY_SERVICE_TABLE.md) [STRONG INFERENCE].
+ * Args: Handle *slot, long size. If *slot is NULL: *slot = new_handle_clear_or_die(size) (service +0x2c6). If the handle is empty (purged, *h == NULL): realloc_and_clear_handle(h, size) (service +0x2ce). Then hnopurge(h) (service +0x2de). Returns true when the block had to be allocated or reallocated (contents must be rebuilt). DAT_0001b5a0 is the host A5 world at A5-0x1388, so DAT_0001b5a0 + 0x2c6 / 0x2ce / 0x2d2 / 0x2d6 / 0x2da / 0x2de / 0x2e2 are the host overlay-service slots A5-0x10c2 new_handle_clear_or_die / A5-0x10ba realloc_and_clear_handle / A5-0x10b6 hlock / A5-0x10b2 hunlock / A5-0x10ae hpurge / A5-0x10aa hnopurge / A5-0x10a6 freemem (docs/reference/OVERLAY_SERVICE_TABLE.md) [STRONG INFERENCE].
  */
 /* VERIFIED (FUN_00000db0): 0xdb0..0xe08 checked against an independent capstone disassembly and
  * found identical to the C: no handle (*p == 0) -> host hook +0x2c6(size) stored in *p, flag = 1;
@@ -2417,7 +2417,7 @@ bool ensure_handle_allocated /* Original: FUN_00000db0 */ (int *slot /* param_1:
 
 /* Original: FUN_00000e0a; source: Pacific Conflict.c. Recovered name: lock_handle_nopurge [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xe0a).
- * hlock(h) (service +0x2d2) then hnopurge(h) (service +0x2de). DAT_0001b5a0 is the host A5 world at A5-0x1388, so DAT_0001b5a0 + 0x2c6 / 0x2ce / 0x2d2 / 0x2d6 / 0x2da / 0x2de / 0x2e2 are the host overlay-service slots A5-0x10c2 new_handle_clear_or_die / A5-0x10ba realloc_and_clear_handle / A5-0x10b6 hlock / A5-0x10b2 hunlock / A5-0x10ae hpurge / A5-0x10aa hnopurge / A5-0x10a6 freemem (docs/OVERLAY_SERVICE_TABLE.md) [STRONG INFERENCE].
+ * hlock(h) (service +0x2d2) then hnopurge(h) (service +0x2de). DAT_0001b5a0 is the host A5 world at A5-0x1388, so DAT_0001b5a0 + 0x2c6 / 0x2ce / 0x2d2 / 0x2d6 / 0x2da / 0x2de / 0x2e2 are the host overlay-service slots A5-0x10c2 new_handle_clear_or_die / A5-0x10ba realloc_and_clear_handle / A5-0x10b6 hlock / A5-0x10b2 hunlock / A5-0x10ae hpurge / A5-0x10aa hnopurge / A5-0x10a6 freemem (docs/reference/OVERLAY_SERVICE_TABLE.md) [STRONG INFERENCE].
  */
 /* VERIFIED (FUN_00000e0a): 0xe0a..0xe30 checked against an independent capstone disassembly and
  * found identical to the C: host hooks +0x2d2 then +0x2de, each with the handle (d2). */
@@ -2433,7 +2433,7 @@ void lock_handle_nopurge /* Original: FUN_00000e0a */ (undefined4 handle /* para
 
 /* Original: FUN_00000e32; source: Pacific Conflict.c. Recovered name: unlock_handle_purgeable [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xe32).
- * hunlock(h) (service +0x2d6) then hpurge(h) (service +0x2da) - the inverse of lock_handle_nopurge. DAT_0001b5a0 is the host A5 world at A5-0x1388, so DAT_0001b5a0 + 0x2c6 / 0x2ce / 0x2d2 / 0x2d6 / 0x2da / 0x2de / 0x2e2 are the host overlay-service slots A5-0x10c2 new_handle_clear_or_die / A5-0x10ba realloc_and_clear_handle / A5-0x10b6 hlock / A5-0x10b2 hunlock / A5-0x10ae hpurge / A5-0x10aa hnopurge / A5-0x10a6 freemem (docs/OVERLAY_SERVICE_TABLE.md) [STRONG INFERENCE].
+ * hunlock(h) (service +0x2d6) then hpurge(h) (service +0x2da) - the inverse of lock_handle_nopurge. DAT_0001b5a0 is the host A5 world at A5-0x1388, so DAT_0001b5a0 + 0x2c6 / 0x2ce / 0x2d2 / 0x2d6 / 0x2da / 0x2de / 0x2e2 are the host overlay-service slots A5-0x10c2 new_handle_clear_or_die / A5-0x10ba realloc_and_clear_handle / A5-0x10b6 hlock / A5-0x10b2 hunlock / A5-0x10ae hpurge / A5-0x10aa hnopurge / A5-0x10a6 freemem (docs/reference/OVERLAY_SERVICE_TABLE.md) [STRONG INFERENCE].
  */
 /* VERIFIED (FUN_00000e32): 0xe32..0xe58 checked against an independent capstone disassembly and
  * found identical to the C: host hooks +0x2d6 then +0x2da, each with the handle (d2). */
@@ -7905,7 +7905,7 @@ void dispatch_entity_tick(char *entity, int path) /* Original: FUN_000044a4 */
  * Proposed name: run_simulation_tick
  * Confidence: [PROVEN] control flow / pass order; [STRONG INFERENCE] role name
  *
- * Main simulation tick dispatcher. See docs/contracts/tick_FUN_000044e8_contract.md.
+ * Main simulation tick dispatcher. See docs/history/contracts/tick_FUN_000044e8_contract.md.
  *
  * Inputs: none (reads DAT_0001b5a0 mission block + four entity-pointer arrays).
  * Side effects: optional clear_pending_entity_slots; per-entity FUN_000044a4; reset_distance_base_globals.
@@ -8999,7 +8999,7 @@ void dispatch_entity_cleanup(char *obj /* param_1: entity */) /* Original: FUN_0
  * child path or.l #2, subq.b #1 of byte +3, *(+8) cleared through the pointer.
  * VERIFIED: checked against an independent capstone disassembly of the bytes; widths,
  * signed compares, call order, targets and arguments identical to the C, with the
- * call-argument correction above (also in DECOMPILATION_SYMBOLS.md). The name keeps
+ * call-argument correction above (also in docs/reference/DECOMPILATION_SYMBOLS.md). The name keeps
  * [STRONG INFERENCE]; release_fractal_reference (FUN_00014af2) is still only RENAMED.
  */
 void deactivate_object /* Original: FUN_000052dc */ (char *obj /* param_1: object (kind 2 shape or 3 group) */)
@@ -12030,7 +12030,7 @@ void request_instant_replay /* Original: FUN_00008784 */ (int airborne /* param_
 
 /* Original: FUN_0000879e; source: Pacific Conflict.c. Recovered name: resolve_bailout_outcome [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x879e).
- * Ends a bail-out: host +0xd6 = 1 (bailed out); a parachute still falling low after more than 0x5a0 frames means Dead; otherwise by the nearest facility under the pilot: enemy (0x100) -> POW with probability 1/2, else Dead 1 time in 4; friendly (0x200) -> Dead 1 time in 8; at sea -> POW 1 time in 4, else Dead 1 time in 4 (the rest stay Active); removes the parachute; and when the player abandoned an undamaged aircraft that still had fuel (_DAT_0001b87a, set in update_aircraft_entity) a surviving pilot is Discharged (4). Pilot status values (docs/PILOT_ROSTER.md, host +0xd4 = A5-0x12b4): 0 Active, 1 Dead, 3 POW, 4 Discharged. Ghidra C (branch structure follows the gotos).
+ * Ends a bail-out: host +0xd6 = 1 (bailed out); a parachute still falling low after more than 0x5a0 frames means Dead; otherwise by the nearest facility under the pilot: enemy (0x100) -> POW with probability 1/2, else Dead 1 time in 4; friendly (0x200) -> Dead 1 time in 8; at sea -> POW 1 time in 4, else Dead 1 time in 4 (the rest stay Active); removes the parachute; and when the player abandoned an undamaged aircraft that still had fuel (_DAT_0001b87a, set in update_aircraft_entity) a surviving pilot is Discharged (4). Pilot status values (docs/topics/PILOT_ROSTER.md, host +0xd4 = A5-0x12b4): 0 Active, 1 Dead, 3 POW, 4 Discharged. Ghidra C (branch structure follows the gotos).
  *
  * VERIFIED: checked against an independent capstone disassembly of
  * 0x879e..0x889e; identical to the C. Facts [PROVEN]:
@@ -12601,7 +12601,7 @@ void apply_player_mouse_controls /* Original: FUN_0000923e */ (void)
  * updated and apply_controller_velocities 0x947c runs - identical to the C. */
 /* Original: FUN_000092e4; source: Pacific Conflict.c. Recovered name: advance_frame_and_tick_controllers [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x92e4).
- * Called by process_flight_input_and_outcome when DAT_0001b870 != 3 (else tick_flagged_object_controllers). Advances the frame counter DAT_0001b838 (when DAT_0001b870 == 1 it is moved back 0x4a frames and FUN_00011c2c = mark_effect_log_end runs: start of an instant replay,  [STRONG INFERENCE]). When DAT_0001b870 != 0, updates the time-window flags of near objects (DAT_0001d4a4, type 2) and world objects (DAT_0001b5a4): before the appear frame +0x40 or after a non-zero expiry frame +0x3c the object gets flag 0x40 (0x42 once expired); flag 0x40 is cleared on the appear frame, and 0x42 when +7 & 2. Then walks the controller list DAT_0001c25c (count DAT_0001c1cc), dropping controllers whose object is gone and calling each definition tick handler (definition +2, see docs/SHIP_CONTROLLERS.md), compacts the list, and ends with apply_controller_velocities. Ghidra merged the loops oddly (pointer variables used before set in the DAT_0001b870 != 0 branch) [Ghidra artifact]. Ghidra C.
+ * Called by process_flight_input_and_outcome when DAT_0001b870 != 3 (else tick_flagged_object_controllers). Advances the frame counter DAT_0001b838 (when DAT_0001b870 == 1 it is moved back 0x4a frames and FUN_00011c2c = mark_effect_log_end runs: start of an instant replay,  [STRONG INFERENCE]). When DAT_0001b870 != 0, updates the time-window flags of near objects (DAT_0001d4a4, type 2) and world objects (DAT_0001b5a4): before the appear frame +0x40 or after a non-zero expiry frame +0x3c the object gets flag 0x40 (0x42 once expired); flag 0x40 is cleared on the appear frame, and 0x42 when +7 & 2. Then walks the controller list DAT_0001c25c (count DAT_0001c1cc), dropping controllers whose object is gone and calling each definition tick handler (definition +2, see docs/topics/SHIP_CONTROLLERS.md), compacts the list, and ends with apply_controller_velocities. Ghidra merged the loops oddly (pointer variables used before set in the DAT_0001b870 != 0 branch) [Ghidra artifact]. Ghidra C.
  */
 void advance_frame_and_tick_controllers /* Original: FUN_000092e4 */ (void)
 
@@ -12842,7 +12842,7 @@ void stop_all_sound_channels /* Original: FUN_00009550 */ (void)
  * DAT_00024d10 = id - identical to the C. */
 /* Original: FUN_000095ac; source: Pacific Conflict.c. Recovered name: play_game_sound [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x95ac).
- * Arg: sound number. DAT_00024d10 holds the sound playing on channel 1: a new sound is refused while one with a number <= it is playing (lower number = higher priority). Numbers < 100 need a loaded slot (*(+0x25e))[n]. Sounds 1..4, 6, 12 (and 5, by the switch) play once: play_sample_on_channel(1, sample + 0x16, 0, size - 0x172, 0, 0); the others (7, 8..11) play with the sustain loop given by sample +0xc / +0x10; 100 plays slot 7 (+0x1c) with the value 0x48c0, and only marks itself current when that slot is missing. Records the number in DAT_00024d10. Sound slot names [PROVEN, ]: load_game_sounds (ID02) reads Pascal names from A5 initial data (DATA 0, offset = size - (x - 0xba0) for A5-x): slot 0 Engine (or Short Engine), 1 Ugh, 2 Hit, 5 Gun, 6 Wheel, 7 Gear, 8 Explosion (or Distant Explosion), 9 Distant Explosion, 10 Wind, 11 Ditch, 12 Grass; 3 and 4 have no slot. Exact switch grouping follows the Ghidra gotos. Host sound services through the overlay globals (offset k = host A5-0x1388 + k, docs/OVERLAY_SERVICE_TABLE.md, docs/SOUND_SYSTEM.md): +0x25e = A5-0x112a sound slot table (load_game_sounds), +0x2aa = play_sample_on_channel, +0x2b2 = set_sound_playback_rate, +0x2b6 = is_channel_playing, +0x2ba = release_channel_loop, +0x2be = silence_sound_channel [PROVEN by the A5 arithmetic]. Ghidra C.
+ * Arg: sound number. DAT_00024d10 holds the sound playing on channel 1: a new sound is refused while one with a number <= it is playing (lower number = higher priority). Numbers < 100 need a loaded slot (*(+0x25e))[n]. Sounds 1..4, 6, 12 (and 5, by the switch) play once: play_sample_on_channel(1, sample + 0x16, 0, size - 0x172, 0, 0); the others (7, 8..11) play with the sustain loop given by sample +0xc / +0x10; 100 plays slot 7 (+0x1c) with the value 0x48c0, and only marks itself current when that slot is missing. Records the number in DAT_00024d10. Sound slot names [PROVEN, ]: load_game_sounds (ID02) reads Pascal names from A5 initial data (DATA 0, offset = size - (x - 0xba0) for A5-x): slot 0 Engine (or Short Engine), 1 Ugh, 2 Hit, 5 Gun, 6 Wheel, 7 Gear, 8 Explosion (or Distant Explosion), 9 Distant Explosion, 10 Wind, 11 Ditch, 12 Grass; 3 and 4 have no slot. Exact switch grouping follows the Ghidra gotos. Host sound services through the overlay globals (offset k = host A5-0x1388 + k, docs/reference/OVERLAY_SERVICE_TABLE.md, docs/topics/SOUND_SYSTEM.md): +0x25e = A5-0x112a sound slot table (load_game_sounds), +0x2aa = play_sample_on_channel, +0x2b2 = set_sound_playback_rate, +0x2b6 = is_channel_playing, +0x2ba = release_channel_loop, +0x2be = silence_sound_channel [PROVEN by the A5 arithmetic]. Ghidra C.
  */
 void play_game_sound /* Original: FUN_000095ac */ (int sound_id /* param_1: sound number (lower = higher priority) */)
 
@@ -12922,7 +12922,7 @@ LAB_0000969c:
 
 /* Original: FUN_000096ae; source: Pacific Conflict.c. Recovered name: stop_game_sound [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x96ae).
- * When sound n is the current channel-1 sound (DAT_00024d10), clears it and calls release_channel_loop(1) (+0x2ba), letting a looping sound end. Host sound services through the overlay globals (offset k = host A5-0x1388 + k, docs/OVERLAY_SERVICE_TABLE.md, docs/SOUND_SYSTEM.md): +0x25e = A5-0x112a sound slot table (load_game_sounds), +0x2aa = play_sample_on_channel, +0x2b2 = set_sound_playback_rate, +0x2b6 = is_channel_playing, +0x2ba = release_channel_loop, +0x2be = silence_sound_channel [PROVEN by the A5 arithmetic]. Complete Ghidra C.
+ * When sound n is the current channel-1 sound (DAT_00024d10), clears it and calls release_channel_loop(1) (+0x2ba), letting a looping sound end. Host sound services through the overlay globals (offset k = host A5-0x1388 + k, docs/reference/OVERLAY_SERVICE_TABLE.md, docs/topics/SOUND_SYSTEM.md): +0x25e = A5-0x112a sound slot table (load_game_sounds), +0x2aa = play_sample_on_channel, +0x2b2 = set_sound_playback_rate, +0x2b6 = is_channel_playing, +0x2ba = release_channel_loop, +0x2be = silence_sound_channel [PROVEN by the A5 arithmetic]. Complete Ghidra C.
  */
 /* VERIFIED (FUN_000096ae): 0x96ae..0x96d2 checked against an independent capstone disassembly and
  * found identical to the C: when long DAT_00024d10 == the argument (cmp.l): clear it and call host
@@ -12956,7 +12956,7 @@ void stop_game_sound /* Original: FUN_000096ae */ (int sound_id /* param_1: soun
  * identical to the C. */
 /* Original: FUN_000096f4; source: Pacific Conflict.c. Recovered name: update_game_sounds [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x96f4).
- * Called every frame after the controller tick in process_flight_input_and_outcome, when the host sound option +0x9a is set. In mission states 3, 4, 6 and 9 (DAT_0001d858) only FUN_00009550. Otherwise turns one-frame event flags into sounds with play_game_sound / stop_game_sound (slot names from load_game_sounds, ): _DAT_0001b852 -> 5 Gun, _DAT_0001b856 -> 6 Wheel, player bytes +0x679 / +0x67b between their end values (0 / 0x2d and 0 / 0xf) -> 7 [STRONG INFERENCE: gear / flaps in motion - sound 7 is Gear], _DAT_0001b850 -> 11 Ditch, _DAT_0001b854 -> 12 Grass, countdown flags DAT_0001b84a / DAT_0001b848 -> 8 Explosion / 9 Distant Explosion, _DAT_0001b846 -> 100 (Gear slot, offset 0x48c0), _DAT_0001b844 -> 1 Ugh, _DAT_0001b842 -> 2 Hit (player hit, see bullet_hits_aircraft), _DAT_0001b83c -> 3, _DAT_0001b83e -> 4 (no sample loaded). Engine on channel 0 when the option +0x9c is set and no high-priority sound (1, 3, 4) plays: from the player (or DAT_0001b888 in mission state 7) value +0x66a: slot 0 Engine at the rate value + 0x10000 when +0x669 is set [STRONG INFERENCE: engine running], else silence below 0x2711 and slot 10 Wind at 4/3 * value + 0x4000 above; +0x66a is engine RPM - it drives the tachometer needle (update_tachometer_needle, ) - so Wind is the windmilling-propeller case, restarting the sample when the choice (DAT_00024d14) changes, via set_sound_playback_rate / silence_sound_channel. Clears all event flags at the end. Host sound services through the overlay globals (offset k = host A5-0x1388 + k, docs/OVERLAY_SERVICE_TABLE.md, docs/SOUND_SYSTEM.md): +0x25e = A5-0x112a sound slot table (load_game_sounds), +0x2aa = play_sample_on_channel, +0x2b2 = set_sound_playback_rate, +0x2b6 = is_channel_playing, +0x2ba = release_channel_loop, +0x2be = silence_sound_channel [PROVEN by the A5 arithmetic]. Ghidra C.
+ * Called every frame after the controller tick in process_flight_input_and_outcome, when the host sound option +0x9a is set. In mission states 3, 4, 6 and 9 (DAT_0001d858) only FUN_00009550. Otherwise turns one-frame event flags into sounds with play_game_sound / stop_game_sound (slot names from load_game_sounds, ): _DAT_0001b852 -> 5 Gun, _DAT_0001b856 -> 6 Wheel, player bytes +0x679 / +0x67b between their end values (0 / 0x2d and 0 / 0xf) -> 7 [STRONG INFERENCE: gear / flaps in motion - sound 7 is Gear], _DAT_0001b850 -> 11 Ditch, _DAT_0001b854 -> 12 Grass, countdown flags DAT_0001b84a / DAT_0001b848 -> 8 Explosion / 9 Distant Explosion, _DAT_0001b846 -> 100 (Gear slot, offset 0x48c0), _DAT_0001b844 -> 1 Ugh, _DAT_0001b842 -> 2 Hit (player hit, see bullet_hits_aircraft), _DAT_0001b83c -> 3, _DAT_0001b83e -> 4 (no sample loaded). Engine on channel 0 when the option +0x9c is set and no high-priority sound (1, 3, 4) plays: from the player (or DAT_0001b888 in mission state 7) value +0x66a: slot 0 Engine at the rate value + 0x10000 when +0x669 is set [STRONG INFERENCE: engine running], else silence below 0x2711 and slot 10 Wind at 4/3 * value + 0x4000 above; +0x66a is engine RPM - it drives the tachometer needle (update_tachometer_needle, ) - so Wind is the windmilling-propeller case, restarting the sample when the choice (DAT_00024d14) changes, via set_sound_playback_rate / silence_sound_channel. Clears all event flags at the end. Host sound services through the overlay globals (offset k = host A5-0x1388 + k, docs/reference/OVERLAY_SERVICE_TABLE.md, docs/topics/SOUND_SYSTEM.md): +0x25e = A5-0x112a sound slot table (load_game_sounds), +0x2aa = play_sample_on_channel, +0x2b2 = set_sound_playback_rate, +0x2b6 = is_channel_playing, +0x2ba = release_channel_loop, +0x2be = silence_sound_channel [PROVEN by the A5 arithmetic]. Ghidra C.
  */
 void update_game_sounds /* Original: FUN_000096f4 */ (void)
 
@@ -13644,7 +13644,7 @@ undefined4 output_face_colour /* Original: FUN_0000a16e */ (undefined2 *face /* 
 
 /* Original: FUN_0000a220; source: Pacific Conflict.c. Recovered name: output_face_bw [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xa220).
- * 1-bit polygon output (DAT_00020ab4 at depth 1): same screen clipping as output_face_colour, then calls the host service at overlay +0x7c (host A5-0x130c = ID06 add_polygon_edges, docs/RASTERIZER.md) with (count, face +4 colour / pattern, face +2 draw order, points); returns 1 when drawn. Polygon output functions [PROVEN selection]: configure_renderer_for_display stores 0xa14e (Ghidra 0xa16e, output_face_colour) in DAT_00020ab4 at depths 8 and 4, and 0xa200 (Ghidra 0xa220, output_face_bw) at depth 1; submit_object_faces calls *DAT_00020ab4(face). Complete Ghidra C.
+ * 1-bit polygon output (DAT_00020ab4 at depth 1): same screen clipping as output_face_colour, then calls the host service at overlay +0x7c (host A5-0x130c = ID06 add_polygon_edges, docs/topics/RASTERIZER.md) with (count, face +4 colour / pattern, face +2 draw order, points); returns 1 when drawn. Polygon output functions [PROVEN selection]: configure_renderer_for_display stores 0xa14e (Ghidra 0xa16e, output_face_colour) in DAT_00020ab4 at depths 8 and 4, and 0xa200 (Ghidra 0xa220, output_face_bw) at depth 1; submit_object_faces calls *DAT_00020ab4(face). Complete Ghidra C.
  */
 /* VERIFIED (FUN_0000a220): 0xa220..0xa2f0 checked against an independent capstone disassembly and
  * found identical to the C: the same clip chain as output_face_colour (x_min / x_max / y_min,
@@ -15062,7 +15062,7 @@ uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_
 /* Original: FUN_0000ba2a; source: Pacific Conflict.c. Recovered name: draw_panel_frame_lines [STRONG INFERENCE].
  * Name evidence (was HYPOTHESIS): with host option +0x9e it draws the same two vertical and two
  * horizontal lines through host +0x272 = A5-0x1116 draw_thick_line_pixel_index_a5safe (globals pointer
- * A5-0x1388; docs/OVERLAY_SERVICE_TABLE.md) in the panel colour word +0x25c [PROVEN chain]; its only
+ * A5-0x1388; docs/reference/OVERLAY_SERVICE_TABLE.md) in the panel colour word +0x25c [PROVEN chain]; its only
  * caller is update_view_readouts_and_overlays (BSR.W at 0xd21e) [PROVEN, tools/decomp/xrefs.py]. Which
  * panel element the lines frame stays open.
  * Ghidra C reviewed (function at overlay offset 0xba2a).
@@ -15661,7 +15661,7 @@ uint copy_rect_depth8 /* Original: FUN_0000bfb0 */ (uint *dst /* param_1: destin
 /* Original: FUN_0000c11e; source: Pacific Conflict.c. Recovered name: begin_offscreen_drawing [STRONG INFERENCE].
  * Name evidence (was HYPOTHESIS): the host services it calls through the globals pointer (A5-0x1388) are +0x282 = A5-0x1106
  * open_offscreen_cport_a5safe, +0x286 = A5-0x1102 swap_port_a5safe and +0x28a = A5-0x10fe close_port_a5safe
- * (docs/OVERLAY_SERVICE_TABLE.md) [PROVEN chain]: it opens a colour port over the
+ * (docs/reference/OVERLAY_SERVICE_TABLE.md) [PROVEN chain]: it opens a colour port over the
  * caller's buffer and switches to it, returning the previous port (swap_port_a5safe's result).
  * SIGNATURE CORRECTION [PROVEN, bytes; meaning STRONG_INFERENCE]: returns the D0 result of the last host call (+0x286) unchanged (move.l / unlk / RTS); update_heading_tape keeps it (movea.l d0,a3 at 0xc242). +0x286 is also called by end_offscreen_drawing with its second argument, so the value is most likely the previous port, restored there [STRONG_INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc11e).
@@ -15694,7 +15694,7 @@ undefined4 begin_offscreen_drawing /* Original: FUN_0000c11e */ (undefined4 *por
 /* Original: FUN_0000c17e; source: Pacific Conflict.c. Recovered name: end_offscreen_drawing [STRONG INFERENCE].
  * Name evidence (was HYPOTHESIS): the host services it calls through the globals pointer (A5-0x1388) are +0x282 = A5-0x1106
  * open_offscreen_cport_a5safe, +0x286 = A5-0x1102 swap_port_a5safe and +0x28a = A5-0x10fe close_port_a5safe
- * (docs/OVERLAY_SERVICE_TABLE.md) [PROVEN chain]: it closes that port and switches back.
+ * (docs/reference/OVERLAY_SERVICE_TABLE.md) [PROVEN chain]: it closes that port and switches back.
  * Ghidra C reviewed (function at overlay offset 0xc17e).
  * Releases the record with the host service +0x28a and restores the previous port with +0x286. Complete Ghidra C.
  */
@@ -15956,7 +15956,7 @@ LAB_0000c414:
  * DAT_0001da98(x0, y0, old tip, long +6, sext word +0x10, long +0xdc - DAT_0001bd7c, sext word
  * +0xe0); then DAT_0001da9c(x0, y0, x1, y1, sext word +0xe4, long +6, sext word +0x10); both
  * paths store the new tip and return 1. */
-undefined4 draw_gauge_needle /* Original: FUN_0000c572 */ (int type /* param_1: instrument type (docs/INSTRUMENT_PANEL.md) */,undefined4 cx /* param_2: needle centre x */,undefined4 cy /* param_3: needle centre y */,int end_x /* param_4: needle end x */,int end_y /* param_5: needle end y */)
+undefined4 draw_gauge_needle /* Original: FUN_0000c572 */ (int type /* param_1: instrument type (docs/topics/INSTRUMENT_PANEL.md) */,undefined4 cx /* param_2: needle centre x */,undefined4 cy /* param_3: needle centre y */,int end_x /* param_4: needle end x */,int end_y /* param_5: needle end y */)
 
 {
   if (*(short *)(host_world + 0x9e) == 0) {
@@ -15989,7 +15989,7 @@ undefined4 draw_gauge_needle /* Original: FUN_0000c572 */ (int type /* param_1: 
 
 /* Original: FUN_0000c664; source: Pacific Conflict.c. Recovered name: update_altimeter_needles [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc664).
- * Type 0. Draws the long hand with draw_gauge_needle and, when it moved, a second hand of 2/3 length (directly with *DAT_0001da98 / *DAT_0001da9c or host +0x272; end cached in DAT_00025fda / DAT_00025fde); angles from FUN_00001db8 / FUN_00001d56 = cos_fixed14 / sin_fixed14 (false entries whose lea.l $1db8 / $1d56 references are the runtime addresses of cos_fixed14 0x1dd8 / sin_fixed14 0x1d76 [PROVEN]; register arguments not recovered by Ghidra) [STRONG INFERENCE: thousands / hundreds hands]. Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Ghidra C.
+ * Type 0. Draws the long hand with draw_gauge_needle and, when it moved, a second hand of 2/3 length (directly with *DAT_0001da98 / *DAT_0001da9c or host +0x272; end cached in DAT_00025fda / DAT_00025fde); angles from FUN_00001db8 / FUN_00001d56 = cos_fixed14 / sin_fixed14 (false entries whose lea.l $1db8 / $1d56 references are the runtime addresses of cos_fixed14 0x1dd8 / sin_fixed14 0x1d76 [PROVEN]; register arguments not recovered by Ghidra) [STRONG INFERENCE: thousands / hundreds hands]. Needle of panel instrument type n (docs/topics/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Ghidra C.
  * VERIFIED: 0xc664..0xc80c checked against an independent capstone disassembly and found
  * identical to the C with the trig calls and angles reconstructed: long hand through
  * draw_gauge_needle(0, cx, cy, cx + cos r, cy + sin r) (centre DAT_0001b5a0 +0xf0 / +0xf2 - 1,
@@ -16053,7 +16053,7 @@ void update_altimeter_needles /* Original: FUN_0000c664 */ (void)
 
 /* Original: FUN_0000c80c; source: Pacific Conflict.c. Recovered name: update_airspeed_needle [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc80c).
- * Type 1. Angle from the player speed +0x62a (wrapped above 0x3843) on a three-segment non-linear scale: < 0xb41, < 0x10e1, above. Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
+ * Type 1. Angle from the player speed +0x62a (wrapped above 0x3843) on a three-segment non-linear scale: < 0xb41, < 0x10e1, above. Needle of panel instrument type n (docs/topics/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
  */
 /* VERIFIED (FUN_0000c80c): 0xc80c..0xc8d4 checked against an independent capstone disassembly and
  * found identical to the C: v = long player +0x62a, minus 0x3843 when above it; v <= 0xb40 ->
@@ -16098,7 +16098,7 @@ void update_airspeed_needle /* Original: FUN_0000c80c */ (void)
 
 /* Original: FUN_0000c8d6; source: Pacific Conflict.c. Recovered name: update_direction_needle [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc8d6).
- * Type 6. Angle = camera heading DAT_0001d80e - 0x1000 (& 0x3fff). Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
+ * Type 6. Angle = camera heading DAT_0001d80e - 0x1000 (& 0x3fff). Needle of panel instrument type n (docs/topics/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
  */
 /* VERIFIED (FUN_0000c8d6): 0xc8d6..0xc946 checked against an independent capstone disassembly and
  * found identical to the C: angle = (word DAT_0001d80e - 0x1000) & 0x3fff (addi.w #$f000, andi.l);
@@ -16130,7 +16130,7 @@ void update_direction_needle /* Original: FUN_0000c8d6 */ (void)
 
 /* Original: FUN_0000c948; source: Pacific Conflict.c. Recovered name: update_climb_needle [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc948).
- * Type 3. Angle = DAT_0001bc80 / 0x78 - 0x2000 (& 0x3fff): DAT_0001bc80 is the rate of climb [STRONG INFERENCE; it is also readout 3 of update_view_readouts_and_overlays]. Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
+ * Type 3. Angle = DAT_0001bc80 / 0x78 - 0x2000 (& 0x3fff): DAT_0001bc80 is the rate of climb [STRONG INFERENCE; it is also readout 3 of update_view_readouts_and_overlays]. Needle of panel instrument type n (docs/topics/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
  */
 /* VERIFIED (FUN_0000c948): 0xc948..0xc9c0 checked against an independent capstone disassembly and
  * found identical to the C: angle = (long DAT_0001bc80 / 0x78 (divs.l) - 0x2000) & 0x3fff; centre = (sext word DAT_0001b5a0 +0x120 - 1,
@@ -16161,7 +16161,7 @@ void update_climb_needle /* Original: FUN_0000c948 */ (void)
 
 /* Original: FUN_0000c9c2; source: Pacific Conflict.c. Recovered name: update_tachometer_needle [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xc9c2).
- * Type 5. Angle = (player +0x66a << 6) / 0x23a + 0x1540: +0x66a is engine RPM (also the pitch of the engine / wind sound in update_game_sounds). Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
+ * Type 5. Angle = (player +0x66a << 6) / 0x23a + 0x1540: +0x66a is engine RPM (also the pitch of the engine / wind sound in update_game_sounds). Needle of panel instrument type n (docs/topics/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
  */
 /* VERIFIED (FUN_0000c9c2): 0xc9c2..0xca42 checked against an independent capstone disassembly and
  * found identical to the C: angle = ((long player +0x66a << 6) / 0x23a + 0x1540) & 0x3fff; centre = (sext word DAT_0001b5a0 +0x140 - 1,
@@ -16192,7 +16192,7 @@ void update_tachometer_needle /* Original: FUN_0000c9c2 */ (void)
 
 /* Original: FUN_0000ca44; source: Pacific Conflict.c. Recovered name: update_manifold_needle [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0xca44).
- * Type 4. Angle = (player word +0x672 << 6) / 0x5f - 0x2500: +0x672 is the manifold-pressure / throttle value [STRONG INFERENCE]. Needle of panel instrument type n (docs/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
+ * Type 4. Angle = (player word +0x672 << 6) / 0x5f - 0x2500: +0x672 is the manifold-pressure / throttle value [STRONG INFERENCE]. Needle of panel instrument type n (docs/topics/INSTRUMENT_PANEL.md: 0 altimeter, 1 airspeed, 3 climb, 4 manifold pressure, 5 tachometer, 6 direction). The centre x / y and length are words +0xa / +0xc / +0xe of the 16-byte record n of the host table A5-0x12a2 (overlay +0xe6 + 0x10 n, filled by draw_instrument) [PROVEN by the offsets]; the end point is centre + (cos, sin)(angle) * length >> 12, drawn by draw_gauge_needle. Complete Ghidra C.
  */
 /* VERIFIED (FUN_0000ca44): 0xca44..0xcac4 checked against an independent capstone disassembly and
  * found identical to the C: angle = ((sext word player +0x672 << 6) / 0x5f - 0x2500) & 0x3fff; centre = (sext word DAT_0001b5a0 +0x130 - 1,
@@ -18898,10 +18898,10 @@ void aircraft_tick /* Original: FUN_0000e5aa */ (int *ctl /* param_1: aircraft c
  *
  * Large per-entity flight/combat update. NOT called from run_simulation_tick /
  * dispatch_entity_tick — callers include tick_ai_climb_then_waypoint,
- * tick_ai_1b370_mission, FUN_000110f4, FUN_0001820a (see docs/PROJECT_STATUS.md).
+ * tick_ai_1b370_mission, FUN_000110f4, FUN_0001820a (see docs/architecture/PROJECT_STATUS.md).
  *
- * Contract: docs/contracts/flight_FUN_0000e792_contract.md
- * Layout: docs/STRUCTS.md (Entity offsets from this function)
+ * Contract: docs/history/contracts/flight_FUN_0000e792_contract.md
+ * Layout: docs/reference/STRUCTS.md (Entity offsets from this function)
  *
  * Reconstruction status:
  *   Block 0 — prologue + template field_40 + contact early-out [ANNOTATED ]
@@ -18980,7 +18980,7 @@ short * update_aircraft_entity(int *ctl /* param_1: aircraft controller */) /* O
    */
   obj = *ctl;
   rough = false;
-  aircraft_type_rec = ctl[1]; /* aircraft type record = controller +4 (definition DAT_0001b524[key]); field table in DECOMPILATION_SYMBOLS.md */
+  aircraft_type_rec = ctl[1]; /* aircraft type record = controller +4 (definition DAT_0001b524[key]); field table in docs/reference/DECOMPILATION_SYMBOLS.md */
   pitch = *(ushort *)(ctl + 8);           /* attitude-related */
   att_22 = *(ushort *)((int)ctl + 0x22);
   tmpl_term = *(short *)(ctl + 9);
@@ -22008,7 +22008,7 @@ LAB_000110e6:
  * byte +7, the retired flag set by retire_entity) and target long +0x44 != 0; otherwise
  * target byte +3 -= 1 and +0x692 = 0. Kept: +0x696 = approx_dist3_xyz(own object
  * (*param_1) +0x18 / +0x1c / +0x20, target +0x18 / +0x1c / +0x20) - arguments dropped by
- * Ghidra, recorded in DECOMPILATION_SYMBOLS.md - then ai_pursue_target(param_1) (which
+ * Ghidra, recorded in docs/reference/DECOMPILATION_SYMBOLS.md - then ai_pursue_target(param_1) (which
  * runs update_aircraft_entity itself); 0x1c bytes popped. Otherwise the long at
  * DAT_0001b3f4 + 4 * sext word +0x614 is called with param_1 when non-zero, else
  * update_aircraft_entity(param_1). Table values (runtime, file + 0x20) [PROVEN data]:
@@ -22103,7 +22103,7 @@ void ai_fly_bomber /* Original: FUN_000111ae */ (int *ctl /* param_1: aircraft c
  * = long +4 bit 1 clear (btst #1 of byte +7) and long +0x44 != 0. +0x696 =
  * approx_dist3_xyz(own x, 0, own z, target x, 0, target z) - Ghidra dropped the
  * arguments, and the bytes pass 0 for both heights (clr.l at 0x11208 / 0x11212): a
- * HORIZONTAL distance (recorded in DECOMPILATION_SYMBOLS.md). Aim height = target +0x1c
+ * HORIZONTAL distance (recorded in docs/reference/DECOMPILATION_SYMBOLS.md). Aim height = target +0x1c
  * when +0x696 <= 0xafc8 (signed), else 40000; adjust_ai_throttle_vs_speed(param_1,
  * 0xd5c); +0x2e saved, set to 0xffff63c0 (-40000) for steer_entity_toward_point(param_1,
  * target x, aim height, target z), set to 0 for update_aircraft_entity(param_1), then
@@ -22289,7 +22289,7 @@ uint * create_spinner_controller /* Original: FUN_00011486 */ (uint obj /* param
   *ctl = obj;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   *(undefined4 *)((int)ctl + 0x36) = 0;
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -22476,7 +22476,7 @@ uint * create_plume_controller /* Original: FUN_000115b0 */ (uint obj /* param_1
   *ctl = obj;
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x112000;
   ctl[1] = (uint)def_key07;
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -22498,7 +22498,7 @@ undefined4 register_smoke_template /* Original: FUN_000115da */ (undefined4 temp
 
 
 /* Original: FUN_000115fc; source: Pacific Conflict.c. Recovered name: spawn_smoke_plume [STRONG INFERENCE].
- * Name evidence (was HYPOTHESIS): it instantiates DAT_000260e8, the template register_smoke_template stores for definition key 0x7 (tick_smoke_plume, create_plume_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
+ * Name evidence (was HYPOTHESIS): it instantiates DAT_000260e8, the template register_smoke_template stores for definition key 0x7 (tick_smoke_plume, create_plume_controller; docs/reference/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x115fc).
  * Args: size a, size b, duration, word, unused, x, y, z. Spawns the template DAT_000260e8 (registered by register_smoke_template) at (x, y, z) and sets controller +0x36 = a and +0x34 = b (both << object shift), +0x32 = word, +0x38 = end frame DAT_0001b838 + duration. Used by the kind-2 / kind-3 effect animators after explosions (duration 0x2a3) and by attach_trailing_plume (a = 0x48) on damaged aircraft - a long-lived plume [HYPOTHESIS: smoke]. Returns the controller. Complete Ghidra C.
  *
@@ -22848,7 +22848,7 @@ uint * create_camera_facing_controller /* Original: FUN_00011aae */ (uint obj /*
   *ctl = obj;
   *(byte *)(obj + 5) = *(byte *)(obj + 5) | 0x10;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -24281,7 +24281,7 @@ void ordnance_collision /* Original: FUN_00012f52 */ (int self_obj /* param_1: o
 
 /* Original: FUN_00012f92; source: Pacific Conflict.c. Recovered name: create_singleton_type10_controller [PROVEN mechanics].
  * Name evidence (was HYPOTHESIS): a mechanical name the bytes prove: it is definition key 0x10's +6 create
- * handler (docs/OVERLAY_DEFINITION_TABLE.md) and stores its controller in the one global 0x20b40.
+ * handler (docs/reference/OVERLAY_DEFINITION_TABLE.md) and stores its controller in the one global 0x20b40.
  * Role [STRONG INFERENCE]: the landing approach's aim-point marker; tick_landing_approach_glide moves
  * that controller's object to the smoothed glide aim point (x, y, z) every tick.
  * SIGNATURE CORRECTION [PROVEN, bytes]: the Ghidra C declares this function void, but the 68000 code leaves the heap_alloc_cleared result (the new controller) in D0 up to RTS without overwriting it, and the caller instantiate_object_from_desc (definition +6 call) stores that D0 value at object +8. The real signature is uint *create_singleton_type10_controller(object, definition key,...). The C body is kept as exported (no token change); a port must return the controller.
@@ -24304,7 +24304,7 @@ uint * create_singleton_type10_controller /* Original: FUN_00012f92 */ (uint obj
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x112100;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   type10_controller = ctl;
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -26498,7 +26498,7 @@ uint * create_firing_ship_controller /* Original: FUN_0001530e */ (uint obj /* p
   ctl[0x12] = 1000000000;
   *(undefined2 *)(ctl + 0x11) = 7;
   *(undefined2 *)((int)ctl + 0x32) = *(undefined2 *)(ctl[1] + 0x1a);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -26654,7 +26654,7 @@ uint * create_sinking_controller /* Original: FUN_00015580 */ (uint obj /* param
   ctl[0x12] = 1000000000;
   *(undefined2 *)(ctl + 0x11) = 3;
   *(undefined2 *)((int)ctl + 0x32) = *(undefined2 *)(ctl[1] + 0x1a);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -26696,7 +26696,7 @@ uint * create_basic_ship_controller /* Original: FUN_000155ec */ (uint obj /* pa
   ctl[0x12] = 1000000000;
   *(undefined2 *)(ctl + 0x11) = 7;
   *(undefined2 *)((int)ctl + 0x32) = *(undefined2 *)(ctl[1] + 0x1a);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -27028,7 +27028,7 @@ uint * create_bullet_controller /* Original: FUN_00015b92 */ (uint obj,int def_k
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x122000;
   *(undefined4 *)(obj + 0x14) = 0x9c4;
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -27705,7 +27705,7 @@ LAB_00016358:
 
 /* Original: FUN_0001665a; source: Pacific Conflict.c. Recovered name: bullet_hits_shape [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x1665a).
- * Called by test_object_collision when a bullet (template type 0xe) meets a shape b flagged +6 & 4. Within the b range (FUN_00003cca): if b is not flagged +6 & 4, a bullet b is ignored, a type 0x1b b gets controller word +0x46 = 1 with probability 1/16, and the bullet is retired; if b is flagged +6 & 4, with probability 1/8 the bullet controller +0x3c = b [UNKNOWN use]. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [PROVEN: sound event slot 2 'Hit' - slot names from DATA 0, see DECOMPILATION_SYMBOLS.md]. Complete Ghidra C.
+ * Called by test_object_collision when a bullet (template type 0xe) meets a shape b flagged +6 & 4. Within the b range (FUN_00003cca): if b is not flagged +6 & 4, a bullet b is ignored, a type 0x1b b gets controller word +0x46 = 1 with probability 1/16, and the bullet is retired; if b is flagged +6 & 4, with probability 1/8 the bullet controller +0x3c = b [UNKNOWN use]. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [PROVEN: sound event slot 2 'Hit' - slot names from DATA 0, see docs/reference/DECOMPILATION_SYMBOLS.md]. Complete Ghidra C.
  *
  *  [PROVEN, bytes 0x1665a..0x16722; logic identical to the C]: the same
  * 9-long call as in bullet_hits_aircraft, which Ghidra dropped (bullet pos - vel / 2,
@@ -27831,7 +27831,7 @@ LAB_00016758:
 
 /* Original: FUN_000167f4; source: Pacific Conflict.c. Recovered name: bullet_hits_aircraft [STRONG INFERENCE].
  * Ghidra C reviewed (function at overlay offset 0x167f4).
- * Pair handler of dispatch_collision for template type 0xe against types 1..4 (table DAT_0001b43c). Args: bullet a, aircraft b. When the bullet is within the b range (FUN_00003cca distance <= b +0x14): with probability 1/8 applies apply_random_aircraft_damage(b controller, bullet controller word +0x36) and retires the bullet (retire_entity); otherwise, when b is the player (DAT_0001b738), with probability 1/2 sets _DAT_0001b842. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [PROVEN: sound event slot 2 'Hit' - slot names from DATA 0, see DECOMPILATION_SYMBOLS.md]. Complete Ghidra C.
+ * Pair handler of dispatch_collision for template type 0xe against types 1..4 (table DAT_0001b43c). Args: bullet a, aircraft b. When the bullet is within the b range (FUN_00003cca distance <= b +0x14): with probability 1/8 applies apply_random_aircraft_damage(b controller, bullet controller word +0x36) and retires the bullet (retire_entity); otherwise, when b is the player (DAT_0001b738), with probability 1/2 sets _DAT_0001b842. Template type 0xe is a bullet / gun round [STRONG INFERENCE: it is retired on impact and causes damage rolls]; _DAT_0001b842 is a one-frame event flag consumed by FUN_000096f4 (FUN_000095ac(2), cleared afterwards) [PROVEN: sound event slot 2 'Hit' - slot names from DATA 0, see docs/reference/DECOMPILATION_SYMBOLS.md]. Complete Ghidra C.
  *
  * CALL-ARGUMENT CORRECTION [PROVEN, bytes 0x167f4..0x168ac]: Ghidra's
  * segment_point_min_distance has no arguments, but the bytes push nine longs
@@ -28011,7 +28011,7 @@ uint * create_trail_controller /* Original: FUN_00016a3a */ (uint obj,int def_ke
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x12000;
   *(undefined2 *)(obj + 0x34) = 0;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -28132,7 +28132,7 @@ int * attach_smoke_trail /* Original: FUN_00016b4c */ (uint x,uint y,uint z,int 
 
 
 /* Original: FUN_00016b9e; source: Pacific Conflict.c. Recovered name: attach_burning_trail [STRONG INFERENCE].
- * Name evidence (was HYPOTHESIS): it spawns trail kind 1 through spawn_trail, whose templates DAT_00026650 register_trail_templates stores for definition key 0xa (tick_trail, create_trail_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
+ * Name evidence (was HYPOTHESIS): it spawns trail kind 1 through spawn_trail, whose templates DAT_00026650 register_trail_templates stores for definition key 0xa (tick_trail, create_trail_controller; docs/reference/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x16b9e).
  * Trail of kind 1 linked to an object (ordnance_detonation when bit 0x40 changes); also starts the explosion sound countdowns by camera distance (< 5000: DAT_0001b84a = 0x1e Explosion, < 20000: DAT_0001b848 = 0xf Distant Explosion). Both trail spawners use FUN_00016ae8(kind, x, y, z) and FUN_0001702a, link the trail to the owner object (+0x52, owner reference count +3) and mark it active (+0x56 = 1). [HYPOTHESIS: fire / burning debris trail] Complete Ghidra C.
  */
@@ -28551,7 +28551,7 @@ uint * create_ground_fire_controller /* Original: FUN_0001706a */ (uint obj)
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x12040;
   *(undefined2 *)(obj + 0x34) = 0;
   ctl[1] = def_key11;
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -28573,7 +28573,7 @@ undefined4 register_ground_fire_template /* Original: FUN_00017098 */ (undefined
 
 
 /* Original: FUN_000170ba; source: Pacific Conflict.c. Recovered name: spawn_ground_fire_object [STRONG INFERENCE].
- * Name evidence (was HYPOTHESIS): it instantiates DAT_00026658, the template register_ground_fire_template stores for definition key 0xb (tick_ground_fire, create_ground_fire_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
+ * Name evidence (was HYPOTHESIS): it instantiates DAT_00026658, the template register_ground_fire_template stores for definition key 0xb (tick_ground_fire, create_ground_fire_controller; docs/reference/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * VERIFIED: checked against an independent capstone disassembly of the overlay bytes at 0x170ba: spawn_mission_pool_object(DAT_00026658, x, y, z, 0, 0, 0, 0); 0 on failure, else controller +0x34 = 1, +0x32 = 0x2d, returned - identical.
  * Ghidra C reviewed (function at overlay offset 0x170ba).
  * Spawns the template DAT_00026658 at (x, y, z) with controller words +0x34 = 1 and +0x32 = 0x2d (45); used by attach_ground_fire. Complete Ghidra C.
@@ -28598,7 +28598,7 @@ int spawn_ground_fire_object /* Original: FUN_000170ba */ (uint x,uint y,uint z)
 
 
 /* Original: FUN_00017102; source: Pacific Conflict.c. Recovered name: attach_ground_fire [STRONG INFERENCE].
- * Name evidence (was HYPOTHESIS): it calls spawn_ground_fire_object, definition key 0xb's spawner (docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
+ * Name evidence (was HYPOTHESIS): it calls spawn_ground_fire_object, definition key 0xb's spawner (docs/reference/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x17102).
  * Called by update_aircraft_damage_state when damage bit 4 appears, at the ground height under the aircraft: spawns an object with FUN_000170ba and links it to the owner (+0x50, owner count +3). [HYPOTHESIS: a fire on the ground below] Complete Ghidra C.
  */
@@ -28654,7 +28654,7 @@ void destroy_ground_fire_controller /* Original: FUN_0001713c */ (int ctl /* gro
 /* Original: FUN_00017150; source: Pacific Conflict.c. Recovered name: animate_ground_fire [STRONG INFERENCE].
  * Name evidence (was HYPOTHESIS): its only caller, the BSR.W at 0x17388, is tick_ground_fire (file 0x17380),
  * definition key 0xb's tick, whose template register_ground_fire_template stores
- * (docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, tools/decomp/xrefs.py].
+ * (docs/reference/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, tools/decomp/xrefs.py].
  * Ghidra C reviewed (function at overlay offset 0x17150).
  * State machine in +0x34 (1 start, 2 burning, 3 dying with countdown +0x32) following the owner (+0x50); goes to state 3 when the owner is gone or on replay rewind; returns 1 when finished. [HYPOTHESIS: the ground fire under a damaged aircraft] Ghidra C (read in full).
  * VERIFIED: checked against an independent capstone disassembly of 0x17150..0x1737e:
@@ -28834,7 +28834,7 @@ uint * create_debris_controller /* Original: FUN_000173a2 */ (uint obj,int def_k
   *ctl = obj;
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x152000;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -28952,7 +28952,7 @@ uint * create_ground_mark_controller /* Original: FUN_00017566 */ (uint obj,int 
   *ctl = obj;
   *(byte *)(obj + 5) = *(byte *)(obj + 5) | 2;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -28990,7 +28990,7 @@ void tick_ground_mark /* Original: FUN_000175c0 */ (int *ctl /* ground mark cont
 
 
 /* Original: FUN_000175de; source: Pacific Conflict.c. Recovered name: spawn_ground_mark [STRONG INFERENCE].
- * Name evidence (was HYPOTHESIS): it instantiates DAT_00026660, the template register_ground_mark_template stores for definition key 0x11 (tick_ground_mark, create_ground_mark_controller; docs/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
+ * Name evidence (was HYPOTHESIS): it instantiates DAT_00026660, the template register_ground_mark_template stores for definition key 0x11 (tick_ground_mark, create_ground_mark_controller; docs/reference/OVERLAY_DEFINITION_TABLE.md) [PROVEN link, the template global in the bytes].
  * Ghidra C reviewed (function at overlay offset 0x175de).
  * Args: size percent, x, y, z. Spawns the template DAT_00026660 at (x, y, z), scales its six vertices about that point by size * 256 / 100, scales the range, and sets the expiry frame +0x3c = DAT_0001b838 + 0xa8c (2700 frames; advance_frame_and_tick_controllers then retires it). Called by animate_effect_kind3_debris when debris lands with the object at ground level [HYPOTHESIS: crater / scorch mark]. Returns the controller. Complete Ghidra C.
  */
@@ -29852,7 +29852,7 @@ void tick_wave_spawner /* Original: FUN_000180c8 */ (int ctl /* wave spawner con
  * loop: +0x6a8 = d, steer_entity_toward_point(waypoint), then update_aircraft_entity.
  * VERIFIED: checked against an independent capstone disassembly of the overlay bytes at
  * 0x1820a..0x188b2 (sections above); widths, signed compares, asr rounding and call targets
- * identical to the C, with the call-argument corrections recorded in DECOMPILATION_SYMBOLS.md. */
+ * identical to the C, with the call-argument corrections recorded in docs/reference/DECOMPILATION_SYMBOLS.md. */
 void ai_pursue_target /* Original: FUN_0001820a */ (int *ctl /* attacking aircraft controller */)
 
 {
@@ -30128,7 +30128,7 @@ uint * create_shadow_controller /* Original: FUN_000188ba */ (uint obj,int def_k
   *ctl = obj;
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x112000;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -30339,7 +30339,7 @@ uint * create_flak_controller /* Original: FUN_00018b52 */ (uint obj,int def_key
   *(undefined2 *)((int)ctl + 0x46) = 0x3c;
   *(undefined **)((int)ctl + 0x42) = &range_0x26ac0;
   *(byte *)(obj + 5) = *(byte *)(obj + 5) | 2;
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -31268,7 +31268,7 @@ uint * create_cloud_controller /* Original: FUN_00019a1a */ (uint obj,int def_ke
   *ctl = obj;
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x132000;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 
@@ -31380,7 +31380,7 @@ uint * create_view_attached_controller /* Original: FUN_00019b82 */ (uint obj,in
   *ctl = obj;
   *(uint *)(obj + 4) = *(uint *)(obj + 4) | 0x132000;
   ctl[1] = *(uint *)(&template_ptr_table_base + def_key * 4);
-  /* Return applied from the DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
+  /* Return applied from the docs/reference/DECOMPILATION_SYMBOLS.md signature table (Ghidra: void). */
   return ctl;
 }
 

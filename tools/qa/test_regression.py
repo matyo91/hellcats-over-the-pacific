@@ -321,11 +321,11 @@ def check_01a48_kind2_jsr_bytes() -> None:
 
 
 def check_global_alias_docs() -> None:
-    """Every `#define alias DAT_xxxx` in a *.decomp.c has one matching DECOMPILATION_SYMBOLS.md row, and back."""
+    """Every `#define alias DAT_xxxx` in a *.decomp.c has one matching docs/reference/DECOMPILATION_SYMBOLS.md row, and back."""
     define_re = re.compile(r"^#define\s+(\w+)\s+(_?DAT_[0-9A-Fa-f]+|PTR_\w+)\b", re.M)
     row_re = re.compile(r"\|\s*([^|]+?)\s*\|\s*`(\w+)`\s*\|\s*`(_?DAT_[0-9A-Fa-f]+|PTR_\w+)`\s*\|")
     rows: dict[str, dict[str, str]] = {}
-    for line in (REPO_ROOT / "docs" / "DECOMPILATION_SYMBOLS.md").read_text(encoding="utf-8").splitlines():
+    for line in (REPO_ROOT / "docs" / "reference" / "DECOMPILATION_SYMBOLS.md").read_text(encoding="utf-8").splitlines():
         match = row_re.match(line)
         if match:
             rows.setdefault(match.group(1), {})[match.group(2)] = match.group(3)
@@ -343,7 +343,7 @@ def check_global_alias_docs() -> None:
                  f"no define {extra[:5]}, symbol mismatch {wrong[:5]}")
     unknown = sorted(set(rows) - seen)
     if unknown:
-        fail(f"DECOMPILATION_SYMBOLS.md alias rows for unknown segments: {unknown}")
+        fail(f"docs/reference/DECOMPILATION_SYMBOLS.md alias rows for unknown segments: {unknown}")
 
 
 def check_optional_capstone() -> str:
@@ -504,7 +504,7 @@ def check_xrefs() -> None:
 
 def check_entry_points() -> None:
     """Every entry point the bytes publish is accounted for. Each CODE 0 jump-table entry names a
-    registry function start, a routine of GAME_RUNTIME.md's index, a segment's unload handle (offset
+    registry function start, a routine of docs/architecture/GAME_RUNTIME.md's index, a segment's unload handle (offset
     4, used only as PEA slot(A5) before _UnloadSeg), or an offset its segment's decomp documents; every
     relocated overlay pointer into the code lands on a registry function start or a known entry."""
     import struct
@@ -513,7 +513,7 @@ def check_entry_points() -> None:
     rows = json.loads((REPO_ROOT / "docs" / "DECOMPILATION_INVENTORY.json").read_text(encoding="utf-8"))
     rows = rows if isinstance(rows, list) else rows["functions"]
     starts = {(r["segment"], int(r["original_address"], 16)) for r in rows}
-    runtime_doc = (REPO_ROOT / "docs" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
+    runtime_doc = (REPO_ROOT / "docs" / "architecture" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
     index = runtime_doc[runtime_doc.index("## Routines outside the 740"):]
     indexed = {(m.group(1), int(m.group(2), 16)) for m in re.finditer(r"\| (ID0\d) \| (0x[0-9a-f]+) \|", index)}
     code_dir = REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE"
@@ -533,7 +533,7 @@ def check_entry_points() -> None:
     image = (REPO_ROOT / "godot" / "hellcats" / "data" / "scenery" / "Pacific Conflict").read_bytes()
     code = struct.unpack(">I", image[4:8])[0]
     overlay_starts = {a - 0x20 for s, a in starts if s == "Pacific Conflict"}
-    known = {0x4B0, 0xD23A, 0x15134, 0x16208,        # runtime-written routines (GAME_RUNTIME.md)
+    known = {0x4B0, 0xD23A, 0x15134, 0x16208,        # runtime-written routines (docs/architecture/GAME_RUNTIME.md)
              0x12740, 0x12744,                       # clr.l d0; rts tails in face_object_to_camera
              0x12F70, 0x14326,                       # the RTS-only stubs
              0x177F0}                                # draw_radar_blip_depth8, a second entry
@@ -643,9 +643,9 @@ def check_port_headers() -> None:
 
 
 def check_runtime_headers() -> None:
-    """Every routine of GAME_RUNTIME.md's index of routines outside the 740 is defined in the runtime and
+    """Every routine of docs/architecture/GAME_RUNTIME.md's index of routines outside the 740 is defined in the runtime and
     its doc comment cites the address the index gives."""
-    doc = (REPO_ROOT / "docs" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
+    doc = (REPO_ROOT / "docs" / "architecture" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
     index = doc[doc.index("## Routines outside the 740"):]
     rest = index.find("\n## ", 5)
     index = index if rest < 0 else index[:rest]
@@ -679,7 +679,7 @@ def check_runtime_headers() -> None:
 
 
 def check_unused_traps() -> str:
-    """docs/GAME_RUNTIME.md's "Traps the game never issues": its counts and its word list are the
+    """docs/architecture/GAME_RUNTIME.md's "Traps the game never issues": its counts and its word list are the
     runtime's installed trap words against the words the original bytes issue at instruction
     boundaries (ID01..ID08 and the overlay's code; auto-pop variants folded)."""
     try:
@@ -706,22 +706,22 @@ def check_unused_traps() -> str:
     s = (GODOT_ROOT / "hellcats" / "data" / "scenery" / "Pacific Conflict").read_bytes()
     scan(s, 0x20, 0x20 + int.from_bytes(s[4:8], "big"))
     others = {w for w in installed if fold(w) not in issued}
-    text = (REPO_ROOT / "docs" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
+    text = (REPO_ROOT / "docs" / "architecture" / "GAME_RUNTIME.md").read_text(encoding="utf-8")
     section = text.split("### Traps the game never issues", 1)[1].split("\n## ", 1)[0]
     listed = {int(w, 16) for w in re.findall(r"\$(A[0-9A-F]{3})", section)}
     pattern = r"installs (\d+) trap words|finds (\d+) issued|other (\d+), three|remaining (\d+) have"
     numbers = [int("".join(m)) for m in re.findall(pattern, " ".join(section.split()))]
     expected = [len(installed), len(installed) - len(others), len(others), len(others) - 3]
     if numbers != expected:
-        fail(f"GAME_RUNTIME.md unused traps: counts {numbers}, the bytes give {expected}")
+        fail(f"docs/architecture/GAME_RUNTIME.md unused traps: counts {numbers}, the bytes give {expected}")
     if listed != others:
-        fail("GAME_RUNTIME.md unused traps: listed but issued or not installed "
+        fail("docs/architecture/GAME_RUNTIME.md unused traps: listed but issued or not installed "
              f"{sorted(hex(w) for w in listed - others)}, missing {sorted(hex(w) for w in others - listed)}")
     return f"{len(others) - 3} unused of {len(installed)} installed"
 
 
 def check_runtime_coverage_doc() -> str:
-    """docs/RUNTIME_COVERAGE.md is what tools/strict_port/coverage_gaps.py generates now."""
+    """docs/generated/RUNTIME_COVERAGE.md is what tools/strict_port/coverage_gaps.py generates now."""
     try:
         import capstone  # type: ignore  # noqa: F401
     except Exception:
@@ -732,6 +732,16 @@ def check_runtime_coverage_doc() -> str:
     if r.returncode != 0:
         fail(r.stdout.strip() or r.stderr.strip())
     return "up to date"
+
+
+def check_doc_links() -> str:
+    """Markdown links and plain docs/ path mentions all resolve."""
+    import subprocess
+    for script in ("check_markdown_links.py", "check_doc_paths.py"):
+        r = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "qa" / script)], capture_output=True, text=True)
+        if r.returncode != 0:
+            fail(r.stdout.strip() or r.stderr.strip())
+    return "markdown links and docs/ paths resolve"
 
 
 def check_callees() -> str:
@@ -774,6 +784,7 @@ def main() -> int:
         ("optional-capstone", check_optional_capstone),
         ("optional-ghidra", check_optional_ghidra),
         ("optional-unused-traps", check_unused_traps),
+        ("doc-links", check_doc_links),
         ("strict-port-callees", check_callees),
         ("coverage-copies", check_coverage_copies),
         ("optional-runtime-coverage-doc", check_runtime_coverage_doc),

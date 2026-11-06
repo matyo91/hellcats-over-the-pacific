@@ -14,12 +14,12 @@ Read only the material needed for the task:
 
 | Need | Canonical entry point |
 |---|---|
-| Current state and next milestone | [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) |
-| Reconstruction checkpoint | [`docs/DECOMPILATION_PROGRESS.md`](docs/DECOMPILATION_PROGRESS.md) |
-| Semantic names, globals, fields | [`docs/DECOMPILATION_SYMBOLS.md`](docs/DECOMPILATION_SYMBOLS.md) via `tools/re_query.py symbol` |
-| Strict translation rules and coverage | [`docs/STRICT_PORT_FOUNDATION.md`](docs/STRICT_PORT_FOUNDATION.md) |
-| Resource corpus | [`docs/RESOURCE_ANALYSIS.md`](docs/RESOURCE_ANALYSIS.md) via `tools/resedit.py` |
-| System navigation | [`docs/SUBSYSTEM_MAP.md`](docs/SUBSYSTEM_MAP.md) |
+| Current state and next milestone | [`docs/architecture/PROJECT_STATUS.md`](docs/architecture/PROJECT_STATUS.md) |
+| Reconstruction checkpoint | [`docs/port/DECOMPILATION_PROGRESS.md`](docs/port/DECOMPILATION_PROGRESS.md) |
+| Semantic names, globals, fields | [`docs/reference/DECOMPILATION_SYMBOLS.md`](docs/reference/DECOMPILATION_SYMBOLS.md) via `tools/re_query.py symbol` |
+| Strict translation rules and coverage | [`docs/port/STRICT_PORT_FOUNDATION.md`](docs/port/STRICT_PORT_FOUNDATION.md) |
+| Resource corpus | [`docs/reference/RESOURCE_ANALYSIS.md`](docs/reference/RESOURCE_ANALYSIS.md) via `tools/resedit.py` |
+| System navigation | [`docs/architecture/SUBSYSTEM_MAP.md`](docs/architecture/SUBSYSTEM_MAP.md) |
 | Documentation index | [`docs/README.md`](docs/README.md) |
 
 Do not begin a focused task by loading all documentation or a whole CODE file.
@@ -76,7 +76,7 @@ remain valuable review evidence.
 
 Open `godot/project.godot` in Godot 4.7 and run `res://scenes/main/Main.tscn`:
 it runs the original program from the strict port on an emulated Macintosh
-(Toolbox, screen, sound, input), as [`docs/GAME_RUNTIME.md`](docs/GAME_RUNTIME.md)
+(Toolbox, screen, sound, input), as [`docs/architecture/GAME_RUNTIME.md`](docs/architecture/GAME_RUNTIME.md)
 describes. The mouse is the joystick; the keys are the original's (V cockpit,
 C chase, T tower, F flaps, G gear, J eject, P pause, `=` / `-` throttle, ⌘Q quit).
 Pilots and settings the game saves go to Godot's `user://resources`.
@@ -116,7 +116,7 @@ Ghidra's output is correct but unreadable (`FUN_0000e792`, `DAT_0001b738`,
 
 Function boundaries, data widths, fixed-point arithmetic and addresses are
 preserved, and anything not yet understood stays annotated as such. The
-registry (`tools/decomp/inventory_functions.py`, `docs/DECOMPILATION_SYMBOLS.md`)
+registry (`tools/decomp/inventory_functions.py`, `docs/reference/DECOMPILATION_SYMBOLS.md`)
 holds all 740 functions with their status and evidence.
 
 ### 3. The strict port
@@ -163,7 +163,7 @@ Ghidra never defined 35 small routines (a few dialog procedures, the mission
 summary's text and map, the carrier deck's collision, C library and Toolbox
 glue). Those are written from their disassembly, mostly in
 `runtime/unexported.gd`, each citing its address; the
-[index in GAME_RUNTIME.md](docs/GAME_RUNTIME.md#routines-outside-the-740)
+[index in docs/architecture/GAME_RUNTIME.md](docs/architecture/GAME_RUNTIME.md#routines-outside-the-740)
 lists them with where the port reaches them.
 
 The result is the original game, flight model, renderer, missions, dialogs and
@@ -206,7 +206,7 @@ git diff --check
 An end-to-end headless session of the game (about seven minutes; it never touches
 the player's saved pilots) is run separately; its header lists its options and the
 runs whose coverage is the evidence for `runtime_verified`, and
-[`docs/RUNTIME_COVERAGE.md`](docs/RUNTIME_COVERAGE.md) says why each function it
+[`docs/generated/RUNTIME_COVERAGE.md`](docs/generated/RUNTIME_COVERAGE.md) says why each function it
 has not run has not:
 
 ```sh

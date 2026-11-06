@@ -4,7 +4,7 @@ records overlay_init_template_pointer_tables (file 0x54) copies into DAT_0001b52
 word and six handler longs (runtime addresses), named from the strict port's overlay method map
 (godot/hellcats/data/overlay_methods.json), the registry, or the runtime's written routines.
 
-Writes docs/OVERLAY_DEFINITION_TABLE.md; --check fails when the document is stale.
+Writes docs/reference/OVERLAY_DEFINITION_TABLE.md; --check fails when the document is stale.
 
 Usage: python3 tools/decomp/definition_table.py [--check]
 """
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OVERLAY = ROOT / "godot" / "hellcats" / "data" / "scenery" / "Pacific Conflict"
 METHODS = ROOT / "godot" / "hellcats" / "data" / "overlay_methods.json"
 INVENTORY = ROOT / "docs" / "DECOMPILATION_INVENTORY.json"
-DOC = ROOT / "docs" / "OVERLAY_DEFINITION_TABLE.md"
+DOC = ROOT / "docs" / "reference" / "OVERLAY_DEFINITION_TABLE.md"
 DELTA = 0x20                      # runtime address = file offset - 0x20
 
 # The records, as overlay_init_template_pointer_tables copies them (runtime source, size, the slot
@@ -97,7 +97,7 @@ def document() -> str:
         "the built-in definition records onto the heap and stores them in `DAT_0001b524[key]`. Each record is",
         "a key word and six handler longs (runtime addresses, file offset - 0x20); an object's definition",
         "(controller +4) is its record. The aircraft records (0x4a bytes) continue with the flight data that",
-        "docs/DECOMPILATION_SYMBOLS.md's aircraft type record lists. Every record's first word equals its",
+        "docs/reference/DECOMPILATION_SYMBOLS.md's aircraft type record lists. Every record's first word equals its",
         "key, including the fixed-slot ones, which are stored at their slot offset, and every non-zero handler",
         "long is one the loader relocates (a real pointer). Each slot's role is",
         "its dispatcher's (in the strict port, godot/strict_port/code/pacific_conflict.gd):",

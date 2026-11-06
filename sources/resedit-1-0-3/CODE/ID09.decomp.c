@@ -49,8 +49,8 @@ undefined DAT_00000059;
  * subsequent byte tests use +8/+9, not literal addresses DAT_216e0016/17.
  * Those labels match the longword at physical file 0x2ae plus 8/9, suggesting
  * erroneous constant propagation across file/runtime memory (STRONG INFERENCE).
- * Original expressions remain unchanged. See docs/ID09_SELECTOR_ANALYSIS.md
- * and docs/ID09_TERMINAL_ANALYSIS.md; whole-function semantics are unverified.
+ * Original expressions remain unchanged. See docs/topics/ID09_GLUE.md
+ * and docs/topics/ID09_GLUE.md; whole-function semantics are unverified.
  *
  *  proposed name: sysenvirons_glue_fallback [STRONG INFERENCE].
  * Not applied to the identifier yet (no call sites in the exports to update).
