@@ -13,18 +13,18 @@ typedef unsigned short    ushort;
 
 /* Readable global names (readability pass; the Ghidra name stays the real symbol). Applied
  * function by function in address order; see the table in docs/reference/DECOMPILATION_SYMBOLS.md. */
-#define host_world DAT_0001b5a0 /* pointer to the host A5 world at A5-0x1388 (mission fuel/bombs/kills at +0xb6..+0xd2) */
+#define host_world DAT_0001b5a0 /* pointer to the host A5 world at A5-0x1388 (mission fuel/bombs/kills at +0xb6..+0xd2); pointer to the host A5 world at A5-0x1388 (see the DAT_0001b5a0 rows above); mission fuel % +0xb6, bombs +0xb8/+0xb9, kill counters +0xba.., friendly kills +0xd2 */
 #define object_pool DAT_0001b5a4 /* world object pointer array scanned by probe_nearest_facility_kind (entity array 2) */
-#define object_count DAT_0001b734 /* low word = number of entries in object_pool */
+#define object_count DAT_0001b734 /* low word = number of entries in object_pool; low word = entry count of object_pool (16-bit dbra in probe_nearest_facility_kind) */
 #define player_object DAT_0001b738 /* the player's aircraft object (controller fields +0x634..+0x684) */
-#define loadout_synced _DAT_0001b73c /* 1 once fuel/bombs are loaded or written back on landing, 0 after takeoff [STRONG INFERENCE] */
+#define loadout_synced _DAT_0001b73c /* 1 once fuel/bombs are loaded or written back on landing, 0 after takeoff [STRONG INFERENCE]; set to 1 by load_player_fuel_and_bombs and when landing writes fuel/bombs back to host_world, cleared on takeoff; gates the write-back [STRONG INFERENCE] */
 #define clip_y_max DAT_0001b73e /* polygon clip rectangle y-max (with DAT_00020aee / aec / aea), read by clip_polygon_y_max */
 #define clip_y_max_alt DAT_0001b740 /* replacement y-max swapped into clip_y_max by collect_map_features for its last clip */
 #define session_entry_handle DAT_0001b744 /* handle sized entries * 0x1c by allocate_session_buffers when host byte +0 is set [role UNKNOWN] */
 #define session_handles_a DAT_0001b74c /* handle slots 1..3 sized rows * (host +0xc) * 4 by allocate_session_buffers [role UNKNOWN] */
 #define session_handles_b DAT_0001b75c /* second handle group, same size, indexed + 2 * slot in the C [role UNKNOWN] */
 #define session_buffers_rebuilt _DAT_00020c4c /* 1 when allocate_session_buffers had to (re)allocate a block, so contents must be rebuilt */
-#define session_entry_ptr DAT_0001b76c /* locked data pointer of session_entry_handle (24-bit masked when host word +0x76) */
+#define session_entry_ptr DAT_0001b76c /* locked data pointer of session_entry_handle (24-bit masked when host word +0x76); data pointer of session_entry_handle stored by lock_session_buffers (& 0xffffff when host word +0x76), cleared by unlock_session_buffers */
 #define session_ptrs_a DAT_0001b774 /* locked data pointers of session_handles_a, slots 1..3 at + 4i */
 #define session_ptr_a_slot1 DAT_0001b778 /* session_ptrs_a slot 1 */
 #define session_ptrs_b DAT_0001b784 /* locked data pointers of session_handles_b, slots 1..3 at + 4i */
@@ -32,12 +32,12 @@ typedef unsigned short    ushort;
 #define session_cur_b DAT_0001b794 /* copy of session_ptr_b_slot1 made by lock_session_buffers, 0 when unlocked */
 #define session_cur_a DAT_0001b798 /* copy of session_ptr_a_slot1 made by lock_session_buffers, 0 when unlocked */
 #define widened_format_buf DAT_00020b4c /* static buffer filled and returned by widen_printf_format (%d -> %ld, %x -> %lx) */
-#define palette_owner_slots DAT_0001da6c /* base for slot indexing: palette_owner_slots + 4 * slot (1..3) = palette_owner_tables[slot - 1] */
+#define palette_owner_slots DAT_0001da6c /* base for slot indexing: palette_owner_slots + 4 * slot (1..3) = palette_owner_tables[slot - 1]; slot-indexed base: + 4 * slot (1..3) addresses palette_owner_tables[slot - 1] (init_depth4_colour_state) */
 #define palette_owner_tables DAT_0001da70 /* three 256-long palette-slot owner tables (0x1da70 / 74 / 78), slot 1 always, 2 / 3 with host +0xb4 */
 #define palette_owner_current DAT_0001da7c /* owner table in use, reset to palette_owner_tables[0] */
 #define colour_tally_index DAT_0001da8a /* cleared by the depth set-ups; indexes the byte counters at DAT_0001d864 [HYPOTHESIS role] */
 #define fill_colour DAT_0001daa0 /* host colour table word +0x1a0 (depth 8) / +0x10 (depth 4); a row colour in reset_background_rows [STRONG INFERENCE] */
-#define palette_direct_mode _DAT_0001d85a /* nonzero: faces get v = r + g + b / 3 directly and no palette entry is queued [role name STRONG INFERENCE] */
+#define palette_direct_mode _DAT_0001d85a /* nonzero: faces get v = r + g + b / 3 directly and no palette entry is queued [role name STRONG INFERENCE]; nonzero: queue_face_palette_entry sets face +4 from r + g + b / 3 and queues no ColorSpec [role name STRONG INFERENCE] */
 #define slot_to_index_map DAT_0001d85c /* word map palette slot -> pixel index (copy of the host table at +0x34) */
 #define view_depth DAT_0001b826 /* current pixel depth used by assign_face_colour: 1 (dither patterns), 4 (5x5x5 cube) or 8 (palette slots) */
 #define palette_search_cursor DAT_0001bd80 /* round-robin palette slot cursor 0..199 in assign_face_colour */
@@ -111,7 +111,7 @@ typedef unsigned short    ushort;
 #define heap_break DAT_00020c50 /* heap_sbrk break: byte offset into the arena at host +0x348 */
 #define heap_roving_cursor DAT_00020c60 /* large-block free-list cursor (docs/reference/DECOMPILATION_SYMBOLS.md) */
 #define heap_class_lists DAT_00020c64 /* size-class free-list heads, class c at + 4 * c (heap_free_coalesce) */
-#define heap_ring_sentinel DAT_00020c58 /* size-0 sentinel block of the large-block ring, linked to itself on first heap_alloc */
+#define heap_ring_sentinel DAT_00020c58 /* size-0 sentinel block of the large-block ring, linked to itself on first heap_alloc; size-0 sentinel of the large-block ring; heap_alloc links it to itself when heap_roving_cursor is still 0 */
 #define heap_ring_sentinel_next DAT_00020c5c /* the sentinel's next link (+4) */
 #define sin_table DAT_0001ab6c /* 256 words, round(4096 * sin(i * pi / 128)) (sin_fixed14) */
 #define cos_table DAT_0001ad6c /* 256 words, round(4096 * cos(i * pi / 128)) (cos_fixed14) */
@@ -182,7 +182,7 @@ typedef unsigned short    ushort;
 #define basis6_m20 DAT_0001d768 /* basis6 element [2][0] */
 #define basis6_m21 DAT_0001d76a /* basis6 element [2][1] */
 #define basis6_m22 DAT_0001d76c /* basis6 element [2][2] */
-#define attitude_compose_tag DAT_00020ce4 /* last composer tag ($2408 / $2468 / $26e0) jumped through by invoke_tagged_attitude_compose_neg_sins4 / 6 */
+#define attitude_compose_tag DAT_00020ce4 /* last composer tag ($2408 / $2468 / $26e0) jumped through by invoke_tagged_attitude_compose_neg_sins4 / 6; composer tag ($2408 / $2468 / $26e0) set by finalize_attitude_matrix_3ang / compose_attitude_matrix_x / 6ang and jumped through by invoke_tagged_attitude_compose_neg_sins4 / 6 */
 #define camera_m00 DAT_0001d744 /* 3x3 s16 camera attitude matrix at 0x1d744, element [0][0]: overlay_frame_step builds the inverse (view) form from the negated camera angles, then the forward form [STRONG INFERENCE role] */
 #define camera_m01 DAT_0001d746 /* camera matrix element [0][1] */
 #define camera_m02 DAT_0001d748 /* camera matrix element [0][2] */
@@ -398,9 +398,9 @@ typedef unsigned short    ushort;
 #define camera_pitch DAT_00024d1a /* camera pitch word 0..0x3fff (docs/reference/DECOMPILATION_SYMBOLS.md, PROVEN); neg_camera_pitch is its negative */
 #define camera_heading DAT_00024d18 /* camera heading word 0..0x3fff (PROVEN); neg_camera_heading is its negative */
 #define camera_step_x DAT_0001d81c /* camera x step per frame: (camera_goal_x - camera_x) / (replay_frames_left - 0x1e) */
-#define dot_object_count DAT_000265d0 /* queued dot/streak objects, capped at 0x1e by bullet_pre_render */
-#define dot_object_list DAT_000265d2 /* object list drawn as dots by draw_distant_object_dots */
-#define bullet_template DAT_0002664a /* bullet scene template; stored by register_bullet_template, spawned by spawn_ordnance_scattered */
+#define dot_object_count DAT_000265d0 /* queued dot/streak objects, capped at 0x1e by bullet_pre_render; Count of queued dot/streak objects; bullet_pre_render (0x15e62) appends while < 0x1e. */
+#define dot_object_list DAT_000265d2 /* object list drawn as dots by draw_distant_object_dots; Object list drawn as dots by draw_distant_object_dots; filled by bullet_pre_render (0x15e62). */
+#define bullet_template DAT_0002664a /* bullet scene template; stored by register_bullet_template, spawned by spawn_ordnance_scattered; Bullet scene template: stored by register_bullet_template (0x15bd4), passed to spawn_mission_pool_object by spawn_ordnance_scattered (0x15bf6). */
 #define camera_step_y DAT_0001d818 /* camera y step per frame */
 #define camera_step_z DAT_0001d814 /* camera z step per frame */
 #define camera_goal_x DAT_00024d28 /* camera destination x the replay camera glides to */
@@ -420,7 +420,7 @@ typedef unsigned short    ushort;
 #define snd_ugh _DAT_0001b844 /* one-frame flag: sound 1 Ugh, cleared each frame */
 #define dot_corner_dx DAT_0001b48c /* long[4 corners][4 sizes]: x offsets of the depth-1 dot square (plot_dot_bw) */
 #define dot_corner_dy DAT_0001b4cc /* long[4 corners][4 sizes]: y offsets of the depth-1 dot square (plot_dot_bw) */
-#define dot_rec_phase DAT_0002628c /* dot record word +4: depth-4 pixel phase (0 = high nibble first) */
+#define dot_rec_phase DAT_0002628c /* dot record word +4: depth-4 pixel phase (0 = high nibble first); Dot record word +4: depth-4 pixel phase (erase_dots_depth4 0x15fb8 picks the nibble order). */
 #define dot_records DAT_00026288 /* 14-byte dot records: pixel pointer at +0 (erase_dots_depth8) */
 #define dot_rec_size DAT_0002628e /* record word +6: dot size 1..4 pixels */
 #define dot_rec_colour DAT_00026290 /* record byte +8: plotted colour */
@@ -438,7 +438,7 @@ typedef unsigned short    ushort;
 #define vertex0_z DAT_00024d56 /* model vertex 0 long z */
 #define vertex_shift DAT_00024d5a /* object +0x32: asr count applied to model vertex longs */
 #define eye_obj_x DAT_00024d60 /* camera x in object units, paired with vertex x in face_is_back_facing */
-#define trail_templates DAT_00026650 /* trail scene templates [2], by kind (register_trail_templates / spawn_trail) */
+#define trail_templates DAT_00026650 /* trail scene templates [2], by kind (register_trail_templates / spawn_trail); Trail scene templates by kind [2]; filled by register_trail_templates (0x16a78), spawned by spawn_trail (0x16ae8). */
 #define trail_init_table DAT_0001b50c /* trail init handlers by kind: 0 -> 0x16ac4, 1 -> 0x16ad6 [PROVEN bytes] */
 #define eye_obj_y DAT_00024d5e /* camera y in object units */
 #define eye_obj_z DAT_00024d5c /* camera z in object units */
@@ -462,8 +462,8 @@ typedef unsigned short    ushort;
 #define radar_track_count DAT_00026676 /* number of radar_tracks in use (add_radar_track, reset_radar_tracks) */
 #define radar_limit DAT_00026666 /* 2 * radar_range: distance limit of add_radar_track */
 #define radar_range DAT_0002666a /* range set by set_view_distance (0xc15c0 / 0x26ac0 / 0xce40) */
-#define radar_changed _DAT_0002666e /* set to 1 when the radar range or lists change */
-#define range_0x26ac0 DAT_00026ac0 /* the immediate 0x26ac0 (cycle_view_distance push #$26ac0), shown by Ghidra as an address */
+#define radar_changed _DAT_0002666e /* set to 1 when the radar range or lists change; Changed flag set by set_view_distance and reset_radar_tracks. */
+#define range_0x26ac0 DAT_00026ac0 /* the immediate 0x26ac0 (cycle_view_distance push #$26ac0), shown by Ghidra as an address; Not a variable: the immediate 0x26ac0 pushed by cycle_view_distance (0x17736), rendered by Ghidra as an address. */
 #define ground_mark_template DAT_00026660 /* ground mark scene template; stored by register_ground_mark_template */
 #define horizon_y1 DAT_0001bd94 /* horizon edge y1 */
 #define screen_poly_m1 DAT_00024dea /* screen_poly_x - 8: indexed by n * 8 it addresses the last of n points */
@@ -498,7 +498,7 @@ typedef unsigned short    ushort;
 #define bg_frame_parity DAT_00025f48 /* frame counter; depth 1 redraws the background only on even frames */
 #define panel_back_offset DAT_0001bd7c /* host +0xe2 * +0xe0: subtracted from host +0xdc to address the saved panel image that erasers restore from */
 #define needle_end_x DAT_00025f4a /* needle end x cached per instrument type (long [type]), draw_gauge_needle */
-#define cloud_templates DAT_00026784 /* five cloud / camera-relative templates by class (register_cloud_templates, spawn_camera_relative_object) */
+#define cloud_templates DAT_00026784 /* five cloud / camera-relative templates by class (register_cloud_templates, spawn_camera_relative_object); Five cloud / camera-relative templates by class; filled by register_cloud_templates (0x19a54), spawned by spawn_camera_relative_object (0x19aa2). */
 #define needle_end_y DAT_00025f92 /* needle end y cached per instrument type (long [type]), draw_gauge_needle */
 #define alt_short_end_x DAT_00025fda /* altimeter second (2/3 length) hand end x, update_altimeter_needles */
 #define alt_short_end_y DAT_00025fde /* altimeter second (2/3 length) hand end y */
@@ -519,15 +519,15 @@ typedef unsigned short    ushort;
 #define climb_ring_index DAT_0001bc84 /* next slot of climb_ring, wraps at 0x78 */
 #define route_1b2e0 DAT_0001b2e0 /* AI waypoint route table given to the route block by ensure_ai_script_1b2e0_tick (target speed 0x9d8) */
 #define glide_saved_state DAT_00026798 /* AI state +0x32 saved by try_begin_landing_approach before installing tick_landing_approach_glide */
-#define glide_start_z DAT_0002679c /* own z when the landing approach starts; then the smoothed steer target z */
-#define glide_start_x DAT_000267a0 /* own x when the landing approach starts; then the smoothed steer target x */
+#define glide_start_z DAT_0002679c /* own z when the landing approach starts; then the smoothed steer target z; Own z at approach start (try_begin_landing_approach), then the smoothed steer target z (tick_landing_approach_glide). */
+#define glide_start_x DAT_000267a0 /* own x when the landing approach starts; then the smoothed steer target x; Own x at approach start (try_begin_landing_approach), then the smoothed steer target x (tick_landing_approach_glide). */
 #define glide_long_267a4 DAT_000267a4 /* landing glide height controller remainder (v mod 16) in tick_landing_approach_glide; cleared at approach start */
 #define glide_long_267a8 DAT_000267a8 /* landing glide height correction (accumulated, clamped +-0x4b0) in tick_landing_approach_glide; cleared at approach start */
 #define glide_blend DAT_000267ac /* 2-frame blend factor toward the predicted position (tick_landing_approach_glide); 0 at start */
-#define glide_height_floor DAT_000267ae /* height above aim y used as the glide floor: 0x11b or 0x181 */
-#define glide_dir_x DAT_000267b2 /* glide direction x (unit << 12) */
-#define glide_dir_y DAT_000267b6 /* glide direction y: fixed descent 0xfdc0 */
-#define glide_dir_z DAT_000267ba /* glide direction z (unit << 12) */
+#define glide_height_floor DAT_000267ae /* height above aim y used as the glide floor: 0x11b or 0x181; Height above aim y used as the glide floor: 0x11b or 0x181; set by try_begin_landing_approach (0x19fba). */
+#define glide_dir_x DAT_000267b2 /* glide direction x (unit << 12); Glide direction x (unit << 12); set by try_begin_landing_approach (0x19fba). */
+#define glide_dir_y DAT_000267b6 /* glide direction y: fixed descent 0xfdc0; Glide direction y: fixed descent 0xfdc0; set by try_begin_landing_approach (0x19fba). */
+#define glide_dir_z DAT_000267ba /* glide direction z (unit << 12); Glide direction z (unit << 12); set by try_begin_landing_approach (0x19fba). */
 #define glide_aim_x DAT_000267bc /* landing aim point x */
 #define glide_aim_y DAT_000267c0 /* landing aim point y */
 #define glide_aim_z DAT_000267c4 /* landing aim point z */

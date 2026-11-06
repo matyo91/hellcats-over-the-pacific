@@ -97,7 +97,7 @@ def document() -> str:
         "the built-in definition records onto the heap and stores them in `DAT_0001b524[key]`. Each record is",
         "a key word and six handler longs (runtime addresses, file offset - 0x20); an object's definition",
         "(controller +4) is its record. The aircraft records (0x4a bytes) continue with the flight data that",
-        "docs/reference/DECOMPILATION_SYMBOLS.md's aircraft type record lists. Every record's first word equals its",
+        "docs/reference/STRUCTS.md's aircraft type record lists. Every record's first word equals its",
         "key, including the fixed-slot ones, which are stored at their slot offset, and every non-zero handler",
         "long is one the loader relocates (a real pointer). Each slot's role is",
         "its dispatcher's (in the strict port, godot/strict_port/code/pacific_conflict.gd):",

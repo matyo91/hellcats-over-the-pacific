@@ -37,10 +37,6 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 **[UNKNOWN]** Runtime-memory to file-offset mapping for these symbols. Symbol suffixes must not be treated as file offsets.
 
-### Godot `SimCore` mapping
-
-**[RECONSTRUCTED]** `entity_array_1` … `entity_array_4`, **`pass_id`** 1–4, **`last_tick_order`** / **`get_last_tick_order`** — see `docs/history/contracts/tick_FUN_000044e8_contract.md`.
-
 ## FUN_0000740a — input handler globals
 
 **[RECONSTRUCTED]** Variables read/written in FUN_0000740a (Pacific Conflict.c:7366+).
@@ -59,26 +55,6 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 | DAT_0001b5a0 | Mission base (see above) | Pacific Conflict.c:7446 |
 
 **[UNKNOWN]** Exact semantics of each value (e.g. meaning of DAT_0001d858 values 1–9).
-
-## Godot `PlayerInputMap` (FUN_0000740a convergence)
-
-**[RECONSTRUCTED]** Throttle **step** actions correspond to **`+` / `=`** and **`-`** / keypad plus/minus (Pacific Conflict.c cases `0x2b`/`0x3d` and `0x2d`/`0x5f` for `DAT_00024cf6` when `DAT_0001d858 < 6`). Implemented as `throttle_step_up` / `throttle_step_down` → `throttle_impulse` in `godot/hellcats/flight/player_input_map.gd`.
-
-**[RECONSTRUCTED]** Per-tick **trace** lists `pressed` / `held` / `released` action names and `normalized` floats passed to `FlightModelMvp`.
-
-**[MVP APPROXIMATION]** `THROTTLE_STEP_IMPULSE` (float in `0..1`) replaces the original signed char + shift/`FUN_00002e08` accumulator chain.
-
-**[MVP APPROXIMATION]** **Gating** is only `player_active` on `PlayerAircraft`, not the full `DAT_0001d858` / `DAT_0001b870` / mission `+0x98` tree.
-
-See `docs/history/contracts/input_godot_contract.md`.
-
-## Godot `AircraftState` / `FlightModelMvp` (FUN_0000e792 convergence)
-
-**[RECONSTRUCTED]** `movement_66e`, `movement_672`, `movement_66a` mirror proven **byte offsets** `0x66e`, `0x672`, `0x66a` on the player entity; updated each tick with **`FlightMath.add_delta_smoothed_*`** toward **int** targets from normalized controls (see `docs/history/contracts/flight_FUN_0000e792_contract.md`).
-
-**[MVP APPROXIMATION]** Targets are not **local_46** / **local_42** from **FUN_0000e42a** / template math; they are **[MVP TUNING]** scaled commands.
-
-**[INFERRED]** `snapshot` includes these fields for HUD/objectives/traces.
 
 ## Entity (FUN_0000e792) — key offsets
 
@@ -278,23 +254,128 @@ Two record variants, as named in the C **[PROVEN, param comments of byte-checked
 - fractal-terrain record (fractal_height_at 0x13980, reached through object +0x2c): +0x04 object,
   +0x0e..+0x14 rotation, +0x16 cell size, +0x18..+0x1e cell bounds, +0x22 / +0x30 planes.
 
-## Cross-reference to Godot
+## Aircraft status / damage word +0x684
 
-**[INFERRED]** The following names are used in the Godot sim and tests; offsets are from the sections above.
+Big-endian word. Byte +0x684 holds bits 8–15 and byte +0x685 bits 0–7, so a byte
+test `btst #n,$684` means word bit n + 8. Word +0x686 is last frame's copy
+(0x109ae). Evidence: an instruction scan of the overlay for $684..$687 operands.
 
-| Our name | Offset (hex) | STRUCTS section |
-|----------|--------------|------------------|
-| mission_phase_a8 | 0xa8 @ DAT_0001b5a0 | Mission / sim globals |
-| mission_flag_ac | 0xac @ DAT_0001b5a0 | Mission / sim globals |
-| entity_array_1 | DAT_0001d4a4 / DAT_0001c1e0 | FUN_000044e8 |
-| entity_array_2 | DAT_0001b5a4 / DAT_0001b734 | FUN_000044e8 |
-| entity_array_3 | DAT_0001d0e4 / DAT_0001c1dc | FUN_000044e8 |
-| entity_array_4 | DAT_0001cbe4 / DAT_0001c1d8 | FUN_000044e8 |
-| EntityState.OFFSETS | See entity table above | Entity (FUN_0000e792) |
+| Bit | Mask | Writers | Readers | Meaning | Certainty |
+|---|---|---|---|---|---|
+| 0 | 0x0001 | apply_random_aircraft_damage (roll < 6); spawn path 0xf71c | 0x9246, 0xf6e6, 0x10570, 0x1094a | pilot hit / pilot gone (Ugh sound; blocks a second parachute) | PROVEN flow / STRONG_INFERENCE |
+| 1 | 0x0002 | damage roll < 0x2b (37 / 256, the most likely hit) | update_aircraft_entity 0xf794 | FUEL LEAK: 1/64 per frame, -1 unit from a random non-empty tank | PROVEN flow / STRONG_INFERENCE |
+| 2 | 0x0004 | damage roll < 0x38 | 0xe8a0 | ELEVATOR damage: +0x662 += rng & 0x7f - 0x40, clamp ±0x200 | PROVEN flow / STRONG_INFERENCE |
+| 3 | 0x0008 | damage roll < 0x45 | 0xe8e6 | AILERON damage: +0x666 jitter, clamp ±0x140 | PROVEN flow / STRONG_INFERENCE |
+| 4 | 0x0010 | damage roll < 0x51 | 0x7fbc, 0xf652, 0x191c2 | guns damaged (Gun sound gate) | STRONG_INFERENCE |
+| 5 | 0x0020 | damage roll < 0x5e; tick_wave_spawner 0x1818a | 0x97e4 (gear sound), 0xf576 / 0xfb08 (gear step) | LANDING GEAR JAMMED: gear +0x679 cannot step 1..0x2c towards 0x2d (down) and its sound is suppressed; retraction (negative values) still runs | PROVEN flow / STRONG_INFERENCE |
+| 6–9 | 0x03c0 | first heavy roll -> 0x40; 0x200 promoted to 0x100; cleared with mask 0xfc3f (0xe64e, 0x107fe) | tick_smoke_plume (0x100), AI bail-out (0x100), engine model (0x80 halves the manifold target; 0x100 / 0x200 zero it) | damage ladder (per frame): 0x40 heavy hit (smoke trail; 1/2 -> 0x80 or 0x200) -> 0x80 engine damaged (1/4 -> 0x200) -> 0x200 engine out (until the next heavy hit) -> 0x100 on fire (trailing plume, AI bail-out, elevator 0 / aileron -0x80; 1/2 -> 0x400 destroyed); word +0x688 = ladder freeze timer | PROVEN ladder and engine effect / STRONG_INFERENCE names |
+| 1–9 | 0x03fe | — | landing / ditch / bail-out outcomes | "aircraft damaged" | PROVEN use |
+| 10 | 0x0400 | hard landing 0xf136 / 0xf3a2, aircraft_collision, apply_blast_damage | 0x8fa0, 0xe722, 0x1077a | crashed / destroyed | STRONG_INFERENCE |
+| 11 | 0x0800 | crash at the end of update_aircraft_entity (0xf7ea / 0xf7f0: status = (s & 0x8000) \| 0x900, state handler +0x32 = 0xe772 = update_aircraft_entity) | update_aircraft_entity early exit (0xe80e: rests at ground - 0x16, jitter, engine off); surface 0x20 bad-contact skip (0xf372); update_aircraft_damage_state (0x1070c / 0x10740 / 0x10796; request_instant_replay(!bit 11)) | WRECKED ON THE GROUND (0x900 = wreck + burning) | PROVEN flow / STRONG_INFERENCE |
+| 12 | 0x1000 | water contact 0xe832 / 0xf384; cleared on leaving the ground 0xf0d8 | 0x8066 (ditch outcome), 0xef90, 0x108da | in water | STRONG_INFERENCE |
+| 13 | 0x2000 | set while the gear retracts (+0x679 < 0, 0xf5a0), cleared while it extends (0xf588) | aircraft_tick replay 0xe628 / 0xe6d4 (gear = 0x2d when clear, 0 when set; on a change, re-derives the gear direction from the sign) | GEAR LEVER UP | PROVEN flow / STRONG_INFERENCE |
+| 14 | 0x4000 | aircraft_create 0xe11a, respawn (= 0x4000), key 'M' 0x7af6; cleared by keys '0'..'9' (0x79a6) and the throttle step (0x7df0) | 0x7de4, 0x82b6 (refuel snapshot), 0xeb5c, update_aircraft_entity (with +0x66e == 0 clears engine-running +0x669) | ENGINE SWITCHED OFF | PROVEN flow / STRONG_INFERENCE name |
+| 15 | 0x8000 | apply_random_aircraft_damage when the bullet's +0x36 != 0; bullet +0x36 = 1 only for rounds fired by the player (update_aircraft_entity gun path, `psVar11[0x1b] = 1`) | kept by andi #$8000 at 0xf7ea (the only bit to survive a crash); no explicit test found | HIT BY THE PLAYER (kill attribution); its consumer is not yet identified | PROVEN writer chain / STRONG_INFERENCE |
 
-**[INFERRED]** Player in trace = first entity in array 2 (DAT_0001b5a4 / DAT_0001b738 is player ptr in FUN_0000740a).
+## Object flag long (+4)
 
-## Godot integration boundary / blocked
+The low word is copied (zero-extended) from descriptor +0x16 by
+`alloc_object_from_desc`; big-endian byte +7 = bits 0–7, +6 = bits 8–15,
++5 = bits 16–23.
 
-- **[INFERRED]** Godot integration uses **offset-based** layout only: mission block and entity offsets above are reflected in SimCore and EntityState; loader targets are consumed from `tools/proven_loader_targets.json` via `loader_metadata.gd` (parsed JSON only, no segment-manager emulation). See [LOADER_CHAIN.md](../architecture/LOADER_CHAIN.md) §9.
-- **[UNKNOWN]** Runtime-memory to file-offset mapping for DAT_ symbols (e.g. DAT_0001b5a0, DAT_0001c1e0) is not established; relocation, jump-table patching, and segment load execution remain blocked by address mapping.
+| Bit | Mask | Byte test | Meaning | Certainty | Evidence |
+|---|---|---|---|---|---|
+| 13 | 0x2000 | +6 & 0x20 | moving object (the collision handler of a is chosen first) | STRONG_INFERENCE | dispatch_collision, apply_controller_velocities |
+| 14 | 0x4000 | +6 & 0x40 | player-contact handler | STRONG_INFERENCE | handle_player_contact |
+| 19 | 0x80000 | +5 & 0x08 | needed by release_fractal_reference, tested by lift_object_onto_terrain | UNKNOWN | 0x14afe, 0x148b6 |
+| 1 | 0x2 | +7 & 0x02 | excluded from view and collision (sent to the out-of-range path) | PROVEN (flow) | collect_far_objects 0x55c4 / 0x56f8 |
+| 2 | 0x4 | +7 & 0x04 | no camera-relative candidate entry | PROVEN (flow) | 0x5600 |
+| 6 | 0x40 | +7 & 0x40 | not put on the visible list; uses the player tests (handle_player_contact / test_player_vs_type0e_proximity); set on the player (DAT_0001b738) | PROVEN (flow) / STRONG_INFERENCE (meaning) | 0x55cc, 0x56f0, 0x579c |
+| 10 | 0x400 | +6 & 0x04 | destructible by gunfire: bullet_hits_shape marks it for destruction 1 hit in 8 (otherwise solid, the bullet stops) | PROVEN (flow) / STRONG_INFERENCE | 0x166c8 |
+| 11 | 0x800 | +6 & 0x08 | one-frame mover flag, cleared by the sweep | PROVEN (flow) | 0x56d2 |
+| 15 | 0x8000 | +6 & 0x80 | added to DAT_0001c1e4 each frame; that list gets the +0x16 notice handlers (dispatch_overlap_collisions) | PROVEN (flow) | 0x56ac, 0x5832 |
+| 20 | 0x100000 | +5 & 0x10 | distance-based (proximity) collision instead of shape collision; set from bit 13 at creation | PROVEN (bit flow) / STRONG_INFERENCE (meaning) | 0x13e62, 0x570c, 0x5796, 0x116ca, alloc 0x45ba |
+| aircraft controller +0x668 / +0x669 (Pacific Conflict) | throttle setting 0..9 (byte; keys 0–9, step input clamped 0..9) / engine running (byte) | PROVEN (writers) / STRONG_INFERENCE | Ghidra `DAT_0001b738 + 0x19a` on int * = byte +0x668. |
+| aircraft controller +0x66e / +0x672 / +0x66a / +0x680 (Pacific Conflict) | engine power (long) / manifold gauge (word) / RPM tachometer (long) / fuel-burn accumulator (word) | PROVEN (arithmetic) / STRONG_INFERENCE (names) | power = density(altitude) × throttle; RPM -> mean of power and airspeed term; replaces the "pitch / roll / yaw axes" hypothesis. |
+| `DAT_0001b2c0` (Pacific Conflict, file 0x1b2e0) | altitude curve: 9 longs 421, 511, 627, 780, 977, 1241, 1646, 2623, 0 (bands of 0x10000) | PROVEN (values, lerp) / STRONG_INFERENCE (inverse air density; sea level -> 1.0 in both consumers) | read by table_lerp_1b2c0; sawtooth above 0x70000 because entry 8 = 0. |
+
+## Aircraft type record (DAT_00026004 = controller +4)
+
+The record is the definition record `DAT_0001b524[key]`: handler slots +2..+0x16,
+then flight data as signed words except +0x38 (long). `update_aircraft_entity`
+sets `DAT_00026004 = param_1[1]` each tick. "AoA" means `movement_626`, which is
+compared against these fields as an angle. Users are in `Pacific Conflict.decomp.c`.
+
+| Field | Users | Role | Certainty |
+|---|---|---|---|
+| +0x1c | load_player_fuel_and_bombs | fuel capacity (units, both tanks) | STRONG_INFERENCE |
+| +0x1e | update_aircraft_entity block 1b | fuel-burn threshold (throttle accumulator +0x680 per fuel unit) | PROVEN flow / STRONG_INFERENCE |
+| +0x20 | block 4c | drag coefficient; gear adds +0x679 / 0xb × it, flaps +0x67b / 0xf × it | PROVEN flow / STRONG_INFERENCE |
+| +0x22 / +0x24 | block 4b | drag terms in v and lift² (induced drag) | HYPOTHESIS |
+| +0x26 / +0x28 | compute_template_force_from_626 | lift coefficient base / slope, clean | STRONG_INFERENCE |
+| +0x2a / +0x2c | same | lift base / slope at full flaps (blend by flaps / 0xf) | STRONG_INFERENCE |
+| +0x2e / +0x30 | block 4c (grounded, gear down) | rolling friction: low speed or grass ('@') / normal | STRONG_INFERENCE |
+| +0x32 | block 4c | brake friction (brake +0x641 or surface 'P'); × 3 / 2 when sliding gear-up | STRONG_INFERENCE |
+| +0x34 | compute_template_force_from_626, block 4 | stall angle: above it marker 0xc, lift fades over 0x20 more | PROVEN flow / STRONG_INFERENCE |
+| +0x36 | block 3a | corner speed: up to it, stick +0x662 commands AoA = stick × stall / 512; from it to speed 0xca8 the factor falls linearly to stick × 1 | PROVEN flow (bytes 0xeb6e..) / STRONG_INFERENCE |
+| +0x38 (long) | scale_template_field_38 | rated engine power (× altitude factor) | STRONG_INFERENCE |
+| +0x3c / +0x3e | block 2a | static thrust / speed where thrust becomes power / speed | STRONG_INFERENCE |
+| +0x40 | block 1 | halved unless gear byte +0x679 == 0x2d (gear down) | UNKNOWN role |
+| +0x42 | block 3b | on the ground with gear down: AoA cap (three-point attitude; player 469 = 10.3 deg, friendly bomber 277 = 6.1 deg) | PROVEN flow / STRONG_INFERENCE |
+| +0x44 | block 3a | AoA trim offset: AoA approaches commanded + +0x44 (128 = 2.8 deg) at gain (speed × 0x2a, × 0x143a, 4.12 steps) >> 8 | PROVEN flow / STRONG_INFERENCE |
+| +0x46 / +0x48 | block 3b, block 4c | ground speeds: at or below +0x46 the AoA is held at +0x42, between them it is blended back up (tail lifting), and below +0x46 the low-speed rolling friction +0x2e applies | PROVEN flow / STRONG_INFERENCE |
+
+### Aircraft type records in the data file [PROVEN values]
+
+Records of 0x4a bytes at file 0x1a7b0 (key 1), 0x1a88e (key 2), 0x1a844 (key 3) and
+0x1a7fa (key 4). All four have +2 aircraft_tick, +0xa destroy 0xe0a4, +0xe 0xfb2a and
++0x12 aircraft_collision. Create handlers: key 1 aircraft_create (the player), key 2
+create_friendly_bomber, key 3 create_enemy_bomber, key 4 create_enemy_fighter.
+Notice +0x16: key 1 aircraft_notice_object, key 4 enemy_fighter_notice_object
+(0x100d4), keys 2 / 3 none. Words unless marked L.
+
+| Field | k1 player | k2 friendly bomber | k3 enemy bomber | k4 enemy fighter | Consistent with the role? |
+|---|---|---|---|---|---|
+| +0x1a | 310 | 310 | 310 | 310 | UNKNOWN |
+| +0x1c fuel capacity | 46 | 93 | 93 | 93 | yes |
+| +0x1e fuel-burn threshold | 24652 | 9145 | 9145 | 9145 | yes (the player burns slower per unit) |
+| +0x20 drag | 2171 | 2171 | 2171 | 2171 | — |
+| +0x22 / +0x24 | 337 / 300 | same | same | same | — |
+| +0x26 / +0x28 lift base / slope, clean | 0 / 599 | same | same | same | yes (no lift at zero AoA) |
+| +0x2a / +0x2c lift base / slope, flaps | 2457 / 599 | same | same | same | yes (flaps add a constant) |
+| +0x2e rolling friction, slow / grass | 102 | 205 | 205 | 205 | yes (> +0x30) |
+| +0x30 rolling friction | 41 | 41 | 41 | 41 | yes |
+| +0x32 brakes | 3276 (0.8 in 4.12) | 1638 | 3276 | 3276 | yes (much larger than rolling) |
+| +0x34 stall angle | 832 = 18.3 deg (0x4000 per turn) | 832 | 832 | 832 | yes (a realistic stall AoA) |
+| +0x36 | 1980 | 1980 | 1980 | 1980 | — |
+| +0x38 L power | 8343704 | 6257778 | 7509334 | 7509334 | yes (differs per type) |
+| +0x3c static thrust | 3527 | 3527 | 3527 | 3527 | — |
+| +0x3e thrust crossover speed | 2365 | 2365 | 2365 | 2365 | — |
+| +0x40 | 67 | 67 | 67 | 67 | UNKNOWN |
+| +0x42 | 469 | 277 | 469 | 469 | — |
+| +0x44 | 128 | 128 | 128 | 128 | — |
+| +0x46 / +0x48 | 640 / 1067 | same | same | same | — |
+
+## Aircraft control inputs
+
+| Symbol | Meaning | Confidence | Evidence |
+|---|---|---|---|
+| aircraft controller +0x662 / +0x664 / +0x666 (Pacific Conflict) | elevator (±0x200) / rudder (±0x40) / aileron (±0x140) inputs, 4-frame averages | PROVEN (flow, clamps) / STRONG_INFERENCE (names) | enqueue_control_inputs_avg4; mouse y -> elevator, mouse x -> aileron, Z / X keys (DAT_0001b858 = ±0x40) -> rudder; rings +0x644 / +0x64c / +0x654, sums +0x65c / +0x65e / +0x660, index +0x642. |
+| `DAT_0001b858` (Pacific Conflict) | rudder key input (word: +0x40 Z, -0x40 X, 0) | PROVEN | key handler cases 0x5a / 0x3e and 0x58 / 0x3f. |
+| bullet controller +0x36 (Pacific Conflict) | fired by the player (word: 1 / 0) | PROVEN | set only when the shooter is DAT_0001b738; tick_bullet calls tally_destroyed_entity only when it is non-zero; apply_random_aircraft_damage copies it to +0x684 bit 15. |
+
+## Aircraft smoke-trail count
+
+| Symbol | Meaning | Confidence | Evidence |
+|---|---|---|---|
+| aircraft controller +0x68c | active smoke trails (word): ++ in attach_smoke_trail, -- in destroy_trail_controller for a kind-0 trail still linked (+0x56); with damage bit 6 the engine runs only while it is non-zero | PROVEN | addq.w 0x16b84, subq.w 0x16df4, tst.w 0xe952 (the only three references) |
+
+## Gun turret (definition key 0x1b)
+
+| Symbol | Meaning | Confidence | Evidence |
+|---|---|---|---|
+| definition key 0x1b (file 0x1ab24) | gun turret carried by bombers and ships (+2 tick_turret, +0xe turret_pre_render) | PROVEN (record) | — |
+| turret controller +0x3e / +0x40 | side (0x200 friendly targets types 3–4, 0x100 enemy targets types < 3, 0 never targets) / initialised flag (also the flak "shells" gate) | PROVEN | key 0x1b shares flak_notice_object (+0x16 = 0x18b9a) and destroy_flak_controller (+0xa = 0x18b78) with the flak gun. |
+| turret controller +0x48 / +0x4a | shot timer (fires when it reaches 0, reset to 2) / burst frames (7..14, a burst starts 1 frame in 16) | PROVEN | Bytes 0x192da..0x1936a. |
+| turret controller +0x4c / +0x4e, +0x50 / +0x52 | aim angles (from attitude_from_velocity) / aim errors (±0x80 at burst start, × 7/8 per shot) | PROVEN | — |
+| turret controller +0x46 | knocked out by gunfire (word, 0 / 1; set 1 hit in 16 by bullet_hits_shape, never cleared by turret code) | PROVEN (accesses) / STRONG_INFERENCE (permanent) | tst.w at 0x19220 / 0x1939e; move.w #1 at 0x1670e. Replaces "reloading". |

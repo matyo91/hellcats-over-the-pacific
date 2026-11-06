@@ -25,21 +25,21 @@ int DAT_00000904;
 
 /* Readable global names (readability pass; the Ghidra name stays the real symbol).
  * render_scanline_spans PC-relative state block 0x39e..0x3d6 (see its VERIFIED note). */
-#define CurrentA5 DAT_00000904 /* low-memory global $0904: the application's A5 world */
-#define spans_active_base DAT_0000039e /* 0x39e: active edge array base (row table +4 of the edge pool) */
-#define spans_band_stride DAT_000003a2 /* 0x3a2: dest stride added after each row (param 3) */
-#define spans_list_head DAT_000003a6 /* 0x3a6: priority list head sentinel (edge pool +0x898) */
-#define spans_list_tail DAT_000003aa /* 0x3aa: tail sentinel (edge pool +0x89c), stored after the last active edge */
-#define spans_saved_d3_prev_x DAT_000003ae /* 0x3ae saved D3: previous edge x (fixed point) for the re-sort test */
-#define spans_saved_d4_mask_x DAT_000003b2 /* 0x3b2 saved D4: x >> 6, masked with 0x3e0 to index the left-mask table */
-#define spans_saved_d5_edge_x DAT_000003b6 /* 0x3b6 saved D5: edge x advanced by its slope */
-#define spans_saved_d6_out_long DAT_000003ba /* 0x3ba saved D6: pending output long (mask-merged span) */
-#define spans_saved_d7_active_end DAT_000003be /* 0x3be saved D7: end of the active edge array */
-#define spans_saved_a2_row_entry DAT_000003c2 /* 0x3c2 saved A2: current 12-byte row entry (+0 bucket, +4 drop flag, +8 pattern table) */
-#define spans_saved_a3_scan DAT_000003c6 /* 0x3c6 saved A3: insertion / compaction scan pointer, nonzero = list dirty */
-#define spans_saved_a4_edge DAT_000003ca /* 0x3ca saved A4: current edge node */
-#define spans_saved_a5_next_slot DAT_000003ce /* 0x3ce saved A5: next active edge slot */
-#define spans_saved_a6_temp DAT_000003d2 /* 0x3d2 saved A6: frame pointer on entry, then a scratch pointer */
+#define CurrentA5 DAT_00000904 /* low-memory global $0904: the application's A5 world; same low-memory global as in ID02; read by set_active_row_count (CurrentA5 routine) */
+#define spans_active_base DAT_0000039e /* 0x39e: active edge array base (row table +4 of the edge pool); render_scanline_spans PC-relative cell 0x39e: active edge array base (row table +4 of the edge pool) */
+#define spans_band_stride DAT_000003a2 /* 0x3a2: dest stride added after each row (param 3); render_scanline_spans PC-relative cell 0x3a2: dest stride added after each row (param 3) */
+#define spans_list_head DAT_000003a6 /* 0x3a6: priority list head sentinel (edge pool +0x898); render_scanline_spans PC-relative cell 0x3a6: priority list head sentinel (edge pool +0x898) */
+#define spans_list_tail DAT_000003aa /* 0x3aa: tail sentinel (edge pool +0x89c), stored after the last active edge; render_scanline_spans PC-relative cell 0x3aa: tail sentinel (edge pool +0x89c), stored after the last active edge */
+#define spans_saved_d3_prev_x DAT_000003ae /* 0x3ae saved D3: previous edge x (fixed point) for the re-sort test; render_scanline_spans PC-relative cell 0x3ae saved D3: previous edge x (fixed point) for the re-sort test */
+#define spans_saved_d4_mask_x DAT_000003b2 /* 0x3b2 saved D4: x >> 6, masked with 0x3e0 to index the left-mask table; render_scanline_spans PC-relative cell 0x3b2 saved D4: x >> 6, masked with 0x3e0 to index the left-mask table */
+#define spans_saved_d5_edge_x DAT_000003b6 /* 0x3b6 saved D5: edge x advanced by its slope; render_scanline_spans PC-relative cell 0x3b6 saved D5: edge x advanced by its slope */
+#define spans_saved_d6_out_long DAT_000003ba /* 0x3ba saved D6: pending output long (mask-merged span); render_scanline_spans PC-relative cell 0x3ba saved D6: pending output long (mask-merged span) */
+#define spans_saved_d7_active_end DAT_000003be /* 0x3be saved D7: end of the active edge array; render_scanline_spans PC-relative cell 0x3be saved D7: end of the active edge array */
+#define spans_saved_a2_row_entry DAT_000003c2 /* 0x3c2 saved A2: current 12-byte row entry (+0 bucket, +4 drop flag, +8 pattern table); render_scanline_spans PC-relative cell 0x3c2 saved A2: current 12-byte row entry (+0 bucket, +4 drop flag, +8 pattern table) */
+#define spans_saved_a3_scan DAT_000003c6 /* 0x3c6 saved A3: insertion / compaction scan pointer, nonzero = list dirty; render_scanline_spans PC-relative cell 0x3c6 saved A3: insertion / compaction scan pointer, nonzero = list dirty */
+#define spans_saved_a4_edge DAT_000003ca /* 0x3ca saved A4: current edge node; render_scanline_spans PC-relative cell 0x3ca saved A4: current edge node */
+#define spans_saved_a5_next_slot DAT_000003ce /* 0x3ce saved A5: next active edge slot; render_scanline_spans PC-relative cell 0x3ce saved A5: next active edge slot */
+#define spans_saved_a6_temp DAT_000003d2 /* 0x3d2 saved A6: frame pointer on entry, then a scratch pointer; render_scanline_spans PC-relative cell 0x3d2 saved A6: frame pointer on entry, then a scratch pointer */
 
 /* VERIFIED (ID06::FUN_00000004): ID06.bin 0x4..0xaa checked against an independent capstone disassembly:
  * 32 fill masks x 8 longs into *(A5-0x1eda) (m = m >> 1 | 0x80000000, from 0), then 64 B/W patterns x 8

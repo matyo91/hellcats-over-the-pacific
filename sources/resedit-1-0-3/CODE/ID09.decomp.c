@@ -20,7 +20,7 @@ char DAT_216e0016;
 undefined DAT_00000059;
 
 /* Readable global names (readability pass; the Ghidra name stays the real symbol) */
-#define kbd_type_table_end DAT_00000059 /* LEA $59(PC): one past the in-segment KbdType table 0x54..0x58 (03 13 0b 02 01), scanned backwards */
+#define kbd_type_table_end DAT_00000059 /* LEA $59(PC): one past the in-segment KbdType table 0x54..0x58 (03 13 0b 02 01), scanned backwards; LEA $59(PC) in sysenvirons_glue_fallback: one past the in-segment KbdType byte table 0x54..0x58, scanned backwards with DBEQ */
 
 // WARNING: Control flow encountered bad instruction data
 // WARNING: Removing unreachable block (ram,0x000000cc)

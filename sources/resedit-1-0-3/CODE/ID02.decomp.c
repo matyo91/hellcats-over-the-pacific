@@ -12,10 +12,10 @@ typedef unsigned short    ushort;
 int DAT_00000904;
 
 /* Readable global names (readability pass; the Ghidra name stays the real symbol) */
-#define CurrentA5 DAT_00000904 /* low-memory global $0904: the application's A5 world */
-#define vbl_ch0_a5_cache DAT_000039c4 /* long inside the code of vbl_sound_handler_ch0_unrolled: A5 cached on the first call */
-#define vbl_ch0_variant_a5_cache DAT_00003aca /* long inside the code of vbl_sound_handler_ch0_variant: A5 cached on the first call */
-#define vbl_two_channel_a5_cache DAT_00003be0 /* long inside the code of vbl_sound_handler_two_channel: A5 cached on the first call */
+#define CurrentA5 DAT_00000904 /* low-memory global $0904: the application's A5 world; low-memory global $0904, read by every A5-safe routine to load the application A5 */
+#define vbl_ch0_a5_cache DAT_000039c4 /* long inside the code of vbl_sound_handler_ch0_unrolled: A5 cached on the first call; PC-relative long at entry + 0x1c of the VBL handler 0x39a8; 0 until the priming call stores CurrentA5 there */
+#define vbl_ch0_variant_a5_cache DAT_00003aca /* long inside the code of vbl_sound_handler_ch0_variant: A5 cached on the first call; PC-relative long at entry + 0x1c of the VBL handler 0x3aae; 0 until the priming call stores CurrentA5 there */
+#define vbl_two_channel_a5_cache DAT_00003be0 /* long inside the code of vbl_sound_handler_two_channel: A5 cached on the first call; PC-relative long at entry + 0x1c of the VBL handler 0x3bc4; 0 until the priming call stores CurrentA5 there */
 undefined4 DAT_00000904;
 short DAT_00000baa;
 int DAT_000039c4;

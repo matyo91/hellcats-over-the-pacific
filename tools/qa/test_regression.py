@@ -321,29 +321,52 @@ def check_01a48_kind2_jsr_bytes() -> None:
 
 
 def check_global_alias_docs() -> None:
-    """Every `#define alias DAT_xxxx` in a *.decomp.c has one matching docs/reference/DECOMPILATION_SYMBOLS.md row, and back."""
-    define_re = re.compile(r"^#define\s+(\w+)\s+(_?DAT_[0-9A-Fa-f]+|PTR_\w+)\b", re.M)
-    row_re = re.compile(r"\|\s*([^|]+?)\s*\|\s*`(\w+)`\s*\|\s*`(_?DAT_[0-9A-Fa-f]+|PTR_\w+)`\s*\|")
-    rows: dict[str, dict[str, str]] = {}
-    for line in (REPO_ROOT / "docs" / "reference" / "DECOMPILATION_SYMBOLS.md").read_text(encoding="utf-8").splitlines():
-        match = row_re.match(line)
-        if match:
-            rows.setdefault(match.group(1), {})[match.group(2)] = match.group(3)
-    seen = set()
+    """A global's name has one home, its `#define alias DAT_xxxx /* evidence */` in the segment's
+    *.decomp.c: every alias carries its evidence comment and is defined once, and every strict-port
+    constant of an aliased global names that alias first in its comment."""
+    define_re = re.compile(r"^#define\s+(\w+)\s+_?(DAT_[0-9A-Fa-f]+|PTR_\w+)\b[ \t]*(/\*)?", re.M)
+    aliases: dict[tuple[str, str], str] = {}
     for path in sorted((REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE").glob("*.decomp.c")):
         segment = path.name[: -len(".decomp.c")]
-        defines = dict(define_re.findall(path.read_text(encoding="utf-8")))
-        documented = rows.get(segment, {})
-        seen.add(segment)
-        missing = sorted(set(defines) - set(documented))
-        extra = sorted(set(documented) - set(defines))
-        wrong = sorted(a for a in defines if a in documented and documented[a] != defines[a])
-        if missing or extra or wrong:
-            fail(f"{segment} global aliases out of sync: undocumented {missing[:5]}, "
-                 f"no define {extra[:5]}, symbol mismatch {wrong[:5]}")
-    unknown = sorted(set(rows) - seen)
-    if unknown:
-        fail(f"docs/reference/DECOMPILATION_SYMBOLS.md alias rows for unknown segments: {unknown}")
+        found = define_re.findall(path.read_text(encoding="utf-8", errors="replace"))
+        bare = [a for a, _, comment in found if not comment]
+        twice = sorted({a for a, _, _ in found if [x for x, _, _ in found].count(a) > 1})
+        if bare or twice:
+            fail(f"{segment} aliases: without an evidence comment {bare[:5]}, defined twice {twice[:5]}")
+        for alias, symbol, _ in found:
+            aliases[(segment, symbol)] = alias
+    const_re = re.compile(r"^const _?(DAT_[0-9a-f]{8}): int = 0x[0-9a-f]+ ## (\w+)", re.M)
+    wrong = []
+    for path in sorted((REPO_ROOT / "godot" / "strict_port" / "code").glob("*.gd")):
+        segment = "Pacific Conflict" if path.stem == "pacific_conflict" else path.stem
+        for symbol, name in const_re.findall(path.read_text(encoding="utf-8")):
+            alias = aliases.get((segment, symbol))
+            if alias is not None and alias != name:
+                wrong.append(f"{path.name} {symbol}: {name} (alias {alias})")
+    if wrong:
+        fail(f"strict-port constants not named by their alias: {wrong[:5]}")
+
+
+def check_symbol_function_names() -> None:
+    """DECOMPILATION_SYMBOLS.md's function table keeps each name's evidence; the name itself has
+    one home, the inventory: every row's recovered name is the inventory's for that function."""
+    inventory = json.loads((REPO_ROOT / "docs" / "DECOMPILATION_INVENTORY.json").read_text(encoding="utf-8"))
+    inventory = inventory if isinstance(inventory, list) else inventory["functions"]
+    names = {(r["segment"], int(r["original_address"], 16)): r["semantic_name"] for r in inventory}
+    text = (REPO_ROOT / "docs" / "reference" / "DECOMPILATION_SYMBOLS.md").read_text(encoding="utf-8")
+    table = text.split("## Functions", 1)[1].split("\n## ", 1)[0]
+    wrong, unknown, rows = [], [], 0
+    for address, segment, name in re.findall(r"^\| `FUN_([0-9a-f]{8})` \(([^)]+)\) \| `(\w+)`", table, re.M):
+        if "not decompiled" in segment:
+            continue                                    # documented, but not a registry function
+        rows += 1
+        key = (segment, int(address, 16))
+        if key not in names:
+            unknown.append(f"{segment} FUN_{address}")
+        elif names[key] != name:
+            wrong.append(f"{segment} FUN_{address}: {name} (inventory {names[key]})")
+    if not rows or wrong or unknown:
+        fail(f"symbol table function names: {rows} rows, not the inventory's {wrong[:5]}, not in it {unknown[:5]}")
 
 
 def check_optional_capstone() -> str:
@@ -771,6 +794,7 @@ def main() -> int:
         ("game-scenes", check_game_scenes),
         ("01a48-kind2-jsr-bytes", check_01a48_kind2_jsr_bytes),
         ("global-alias-docs", check_global_alias_docs),
+        ("symbol-function-names", check_symbol_function_names),
         ("resedit-mirror", check_resedit_mirror),
         ("runtime-coverage", check_runtime_coverage),
         ("source-extraction", check_source_extraction),
