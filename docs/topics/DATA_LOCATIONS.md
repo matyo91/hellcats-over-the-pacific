@@ -15,7 +15,7 @@ UI, saved scenery filename, result text, loader, and host runtime.
 
 Certainty terms in this report are strict: **PROVEN** means directly supported
 by original bytes or instructions; **VERIFIED** means confirmed by deterministic
-parsing or multiple independent code paths; **INFERRED** means the role is
+parsing or multiple independent code paths; **STRONG INFERENCE** means the role is
 strongly suggested but not closed; **UNKNOWN** means the evidence is
 insufficient.
 
@@ -127,7 +127,7 @@ inaccurate to promote the offsets above into a fully decoded mission format.
 | Mission scene roots | `Pacific Conflict` data fork | payload `0x22994..0x3e57f`; table above | VERIFIED | child field semantics |
 | Mission objectives | external descriptors plus overlay code | mission branches listed above | VERIFIED in listed branches | Flight School rules; full trigger graph |
 | Starting state/loadout | mission descriptor subtrees | first descriptor at `0x23242` | UNKNOWN | packed record decoder and initialization trace |
-| Enemy/friendly spawning | descriptor objects plus controller factories | `start_mission_scene`, controller tables | INFERRED | definition-to-entity schema |
+| Enemy/friendly spawning | descriptor objects plus controller factories | `start_mission_scene`, controller tables | STRONG INFERENCE | definition-to-entity schema |
 | Completion/reporting | overlay objective word and host UI | host `+0xce`; `conclude_mission`; `STR#:129` | VERIFIED | exact scoring formula still partial |
 
 ## World and scenery data locations
@@ -142,7 +142,7 @@ to build and render 3D objects. `DLOG`/`DITL:137` supplies only the dialog shell
 and its 253 × 253 custom-drawn rectangle.
 
 Certainty labels mean: **PROVEN** direct original-byte/instruction evidence;
-**VERIFIED** deterministic parse or corroborated code flow; **INFERRED**
+**VERIFIED** deterministic parse or corroborated code flow; **STRONG INFERENCE**
 plausible but not closed; **UNKNOWN** insufficient evidence.
 
 ### Source and loader
@@ -292,7 +292,7 @@ role, so its suggestive type name is not promoted to model/world evidence.
 | Bases/carriers | active scene graph | facility kinds `0x12`/`0x13` | VERIFIED map classification | complete object identities and meshes |
 | Mission map | shared scene graph plus dialog chrome | `DITL:137`, overlay `0x06ec/0x0954`, host `ID04:0x33d6` | PROVEN | none for data sharing |
 | World rasterization | overlay and `CODE:6` | `render_visible_objects:0xac72`; scanline functions | VERIFIED | remaining color-depth routine details |
-| World scale | signed coordinates; angle modulus known | map scale formula, transforms | INFERRED | authoritative physical-unit conversion |
+| World scale | signed coordinates; angle modulus known | map scale formula, transforms | STRONG INFERENCE | authoritative physical-unit conversion |
 | `MDPL` | main resource fork | no proven consumer | UNKNOWN | format and references |
 
 ## Cockpit and HUD data locations
@@ -308,7 +308,7 @@ heading tape, radar, and readouts from flight state, including direct 4/8-bit
 framebuffer line routines.
 
 Certainty labels mean: **PROVEN** direct original-byte/instruction evidence;
-**VERIFIED** deterministic/corroborated behavior; **INFERRED** plausible but
+**VERIFIED** deterministic/corroborated behavior; **STRONG INFERENCE** plausible but
 incomplete; **UNKNOWN** insufficient evidence.
 
 ### Static panel construction
@@ -363,7 +363,7 @@ new line. Its callers provide these source values:
 
 | Visible item | Flight-state source | Update function | Certainty |
 | --- | --- | --- | --- |
-| altimeter, two hands | player altitude/derived angle | `0xc664` | VERIFIED path; hand interpretation INFERRED |
+| altimeter, two hands | player altitude/derived angle | `0xc664` | VERIFIED path; hand interpretation STRONG INFERENCE |
 | airspeed | player `+0x62a` | `0xc80c` | VERIFIED |
 | direction | camera heading | `0xc8d6` | VERIFIED |
 | vertical speed | overlay climb-rate value `DAT_0001bc80` | `0xc948` | VERIFIED |
@@ -382,7 +382,7 @@ static panel; at depth 1 the overlay calls the host line service.
 
 The exact crosshair/gunsight routine and any cockpit-attached 3D framing object
 are not yet conclusively separated from the view renderer.
-`tick_view_attached_object` (`0x19bbc`) is a promising but still **INFERRED**
+`tick_view_attached_object` (`0x19bbc`) is a promising but still **STRONG INFERENCE**
 camera-attached-object path. No resource has been relabeled as a gunsight
 without that proof.
 

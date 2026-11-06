@@ -552,8 +552,8 @@ typedef unsigned short    ushort;
 #define type10_controller DAT_00020b40 /* the single type-10 controller published by create_singleton_type10_controller [PROVEN]; its object is
    moved to the landing glide's aim point by tick_landing_approach_glide (an aim-point marker, STRONG INFERENCE) */
 #define contact_table DAT_0001bdbc /* 256-slot open-addressing table of contact records keyed by contact_pair_hash(a, b), linear probing */
-#define cell_face_a DAT_00020b44 /* fractal_height_at: face of the current cell whose centre z is at or below the cell centre (-1 = none) [INFERENCE] */
-#define cell_face_b DAT_00020b46 /* fractal_height_at: face of the current cell whose centre z is above the cell centre (-1 = none) [INFERENCE] */
+#define cell_face_a DAT_00020b44 /* fractal_height_at: face of the current cell whose centre z is at or below the cell centre (-1 = none) [STRONG INFERENCE] */
+#define cell_face_b DAT_00020b46 /* fractal_height_at: face of the current cell whose centre z is above the cell centre (-1 = none) [STRONG INFERENCE] */
 #define cell_plane DAT_00020b48 /* fractal_height_at: plane entry in use (record +0x22 or +0x30) */
 #define collision_pair_table DAT_0001b43c /* 10 entries of 8 bytes (type word, type word, handler long) scanned by dispatch_collision */
 #define collision_pair_cursor DAT_00026284 /* dispatch_collision cursor into collision_pair_table (left on the matching entry) */
@@ -3861,7 +3861,7 @@ short * matmul3x3_s16(int a /* param_1: left 3x3 s16 matrix (4.12) */,short *b /
 /*
  * Original: FUN_00001d56
  * Bytes: epilogue of FUN_00001d02 (matrix mul) — NOT sin
- * Call-site alias: sin_fixed14 [INFERRED] (LEA $1D56; real sin @ $1D76 = +0x20)
+ * Call-site alias: sin_fixed14 [STRONG INFERENCE] (LEA $1D56; real sin @ $1D76 = +0x20)
  * Status: false entry, its fragment C is VERIFIED below (same pattern as FUN_00002de8 / $1A48)
  */
 /* VERIFIED (FUN_00001d56): 0x1d56..0x1d74 inside matmul3x3_s16 (0x1d02) checked against an independent capstone disassembly and
@@ -3928,7 +3928,7 @@ short * FUN_00001d56(void) /* Original: FUN_00001d56 — false entry; see header
  * scale frac, add. Returns sign-extended s16 in D0.
  *
  * load_attitude_angle_sincos JSRs here via PC-relative $1D76. Some sites
- * LEA $1D56 (false) instead — treat those as this function [INFERRED].
+ * LEA $1D56 (false) instead — treat those as this function [STRONG INFERENCE].
  */
 /* VERIFIED: bytes 0x1d76..0x1dd6 match (no calls). DAT_0001ab6c[i] = round(4096*sin(i*pi/128)), 256 words,
  * exact over a full turn. i = angle >> 6 (C truncation); only i + 1 is masked & 0xff, so the
@@ -3966,7 +3966,7 @@ int sin_fixed14(uint angle /* param_1: angle 0..0x3fff (0x4000 = full turn) */) 
 /*
  * Original: FUN_00001db8
  * Bytes: mid-body / tail of sin_fixed14 — NOT cos
- * Call-site alias: cos_fixed14 [INFERRED] (LEA $1DB8; real cos @ $1DD8 = +0x20)
+ * Call-site alias: cos_fixed14 [STRONG INFERENCE] (LEA $1DB8; real cos @ $1DD8 = +0x20)
  * Status: RESOLVED [PROVEN] - false entry (tail of sin_fixed14); whole-binary scan: every reference is an absolute lea.l, none a bsr/jsr to the file offset: its 3
  * references are lea.l $1db8.l = the runtime address of cos_fixed14 (file 0x1dd8)
  */
@@ -3998,7 +3998,7 @@ int FUN_00001db8(void) /* Original: FUN_00001db8 — false entry; see header */
  *
  * Cosine twin of sin_fixed14 using table DAT_0001ad6c (usable base +0x20 at
  * file 0x1ad8c). Same >>6 index / 0x3F-frac lerp. Paired with sin in
- * load_attitude_angle_sincos. False LEA target $1DB8 → treat as this [INFERRED].
+ * load_attitude_angle_sincos. False LEA target $1DB8 → treat as this [STRONG INFERENCE].
  */
 /* VERIFIED: bytes 0x1dd8..0x1e38 match (no calls). DAT_0001ad6c[i] = round(4096*cos(i*pi/128)), 256 words,
  * exact over a full turn. i = angle >> 6 (C truncation); only i + 1 is masked & 0xff, so the
@@ -4150,14 +4150,14 @@ ushort atan_fixed14(int ratio /* param_1: tangent value in 4.12 */) /* Original:
  *
  * From velocity components (p1,p2,p3), speed p4, speed² p5: write attitude
  * angles to *param_7 and *param_6 (14-bit). Calls FUN_00002de8 via LEA+JSR
- * after pushing components — call-site ≡ abs_int [INFERRED]; bytes @0x2DE8
+ * after pushing components — call-site ≡ abs_int [STRONG INFERENCE]; bytes @0x2DE8
  * are a false epilogue entry (BLOCKED). Also atan_fixed14 / acos_fixed14;
  * may call isqrt_floor. In e792 airborne: local_28/local_2a → pos_20/attitude_22.
  *
  * VERIFIED (, user policy): independent capstone disassembly of 0x1f22..0x2028
  * is identical to the C. CALL-ARGUMENT CORRECTION: the two FUN_00002de8 calls are
  * abs_int(x) and abs_int(z) (lea.l $2de8.l = runtime -> file 0x2e08 = abs_int, PROVEN in
- *, so the [INFERRED] / BLOCKED note above is superseded). Outputs [PROVEN]:
+ *, so the [STRONG INFERENCE] / BLOCKED note above is superseded). Outputs [PROVEN]:
  *   *param_7 = HEADING, from the horizontal components x / z: atan_fixed14 of the smaller
  *     over the larger (<< 12, divs.l), folded by quadrant (0x1000 - a, negated when x > 0;
  *     or 0x2000 - a when z < 0), & 0x3fff; left unwritten when x == z == 0;
@@ -4536,7 +4536,7 @@ void build_attitude_matrix_from_dir_roll(int x /* param_1: direction x */,int y 
   short pitch_m21; /* local_8: pitch matrix [2][1] */
   undefined2 pitch_m22; /* local_6: pitch matrix [2][2] */
   
-  /* Ghidra LAB_0000e350_2: LEA $E352 = isqrt_floor @0xE372 − 0x20 [INFERRED] */
+  /* Ghidra LAB_0000e350_2: LEA $E352 = isqrt_floor @0xE372 − 0x20 [STRONG INFERENCE] */
   len = (*(code *)&LAB_0000e350_2)(x * x + z * z);
   work = (int)len;
   len = (*(code *)&LAB_0000e350_2)(y * y + x * x + z * z);
@@ -5701,7 +5701,7 @@ void apply_template_chain_xform_always(int obj /* param_1: object (+2 slot index
 /*
  * Original: FUN_00002de8
  * Bytes identity: epilogue tail of FUN_00002d10 (NOT a real entry)
- * Call-site alias: abs_int [INFERRED] — see below
+ * Call-site alias: abs_int [STRONG INFERENCE] — see below
  * Confidence: bytes [PROVEN]; call-site semantics [STRONG INFERENCE]
  * Status: RESOLVED [PROVEN] - false entry (epilogue tail of FUN_00002d10); whole-binary scan: every reference is an absolute lea.l, none a bsr/jsr to the file offset:
  * its 19 references are lea.l $2de8.l = the runtime address of abs_int (file 0x2e08)
@@ -5766,7 +5766,7 @@ void FUN_00002de8(void) /* Original: FUN_00002de8 — false entry; see header */
  *
  * Unknown / caveats:
  * - Negating INT_MIN is undefined in ISO C; preserves Ghidra/68k NEG.L behavior.
- * - FUN_00002de8 call sites also behave as abs [INFERRED] but bytes @0x2DE8 are
+ * - FUN_00002de8 call sites also behave as abs [STRONG INFERENCE] but bytes @0x2DE8 are
  *   FUN_00002d10's epilogue (BLOCKED dual identity) — not this routine. * Resolved [PROVEN]: every reference to 0x2de8 in the overlay is lea.l $2de8.l (19
  * sites, e.g. 0x1f42, 0x1831e, 0x18526) - an absolute RUNTIME address = file 0x2e08 =
  * this function (abs code operands are file - 0x20). Ghidra's FUN_00002de8 call sites
@@ -12852,8 +12852,8 @@ void play_game_sound /* Original: FUN_000095ac */ (int sound_id /* param_1: soun
   int rec; /* in_A1: sound slot record (*(host +0x25e))[id] (A1) */
   undefined4 start_off; /* uVar3; sample offset argument (0 or 0x48c0) */
   int length; /* iVar4; record +4 size - 0x172 */
-  undefined4 loop_a; /* uVar5; record +0xc or 0 [INFERENCE: sustain loop start] */
-  undefined4 loop_b; /* uVar6; record +0x10 or 0 [INFERENCE: sustain loop end] */
+  undefined4 loop_a; /* uVar5; record +0xc or 0 [STRONG INFERENCE: sustain loop start] */
+  undefined4 loop_b; /* uVar6; record +0x10 or 0 [STRONG INFERENCE: sustain loop end] */
   
   if ((channel1_sound != 0) && (channel1_sound <= sound_id)) {
     return;
@@ -14833,7 +14833,7 @@ void reset_overlay_display_state /* Original: FUN_0000b49e */ (void)
  * (8 / view_depth) via divs.w), buffers swapped; horizon_y1 / y0 / corners cleared - identical
  * to the C. Local offsets in the declarations below are -(N - 4)(A6) (corrected).
  */
-uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_1: non-zero -> call host +0x2c2 around the depth-1 draw [INFERENCE: cursor hide / show] */)
+uint draw_sky_and_ground /* Original: FUN_0000b4b6 */ (int hide_cursor /* param_1: non-zero -> call host +0x2c2 around the depth-1 draw [STRONG INFERENCE: cursor hide / show] */)
 
 {
   short row_x1; /* sVar1; right x of the row */
@@ -15672,11 +15672,11 @@ uint copy_rect_depth8 /* Original: FUN_0000bfb0 */ (uint *dst /* param_1: destin
  * right; word adds); hook +0x282(param_1, param_2, param_3, &rect); returns hook
  * +0x286(param_1). Pushed arguments are dropped by unlk.
  */
-undefined4 begin_offscreen_drawing /* Original: FUN_0000c11e */ (undefined4 *port /* param_1: 0x6c-byte port / pixmap record, cleared then set up */,undefined4 base_addr /* param_2: pixel base address passed to host +0x282 */,undefined4 row_bytes /* param_3: row bytes passed to host +0x282 */,short top /* param_4: first row of the bounds [INFERENCE] */)
+undefined4 begin_offscreen_drawing /* Original: FUN_0000c11e */ (undefined4 *port /* param_1: 0x6c-byte port / pixmap record, cleared then set up */,undefined4 base_addr /* param_2: pixel base address passed to host +0x282 */,undefined4 row_bytes /* param_3: row bytes passed to host +0x282 */,short top /* param_4: first row of the bounds [STRONG INFERENCE] */)
 
 {
-  short bounds [3]; /* local_c, -0x8(A6): bounds words (top, 0, host +0x18 + top) [INFERENCE: rect top / left / bottom] */
-  undefined2 bounds_right; /* local_6, -2(A6): host +0x16, fourth bounds word [INFERENCE: right] */
+  short bounds [3]; /* local_c, -0x8(A6): bounds words (top, 0, host +0x18 + top) [STRONG INFERENCE: rect top / left / bottom] */
+  undefined2 bounds_right; /* local_6, -2(A6): host +0x16, fourth bounds word [STRONG INFERENCE: right] */
   
   memzero(port,0x6c);
   bounds[1] = 0;
@@ -15743,7 +15743,7 @@ void end_offscreen_drawing /* Original: FUN_0000c17e */ (undefined4 port /* para
  * must not restore it. Otherwise identical to the C. The local offsets in the declaration
  * comments below follow Ghidra's local_N = -(N - 4)(A6) (corrected).
  */
-uint update_heading_tape /* Original: FUN_0000c1aa */ (int hide_cursor /* param_1: non-zero -> host +0x2c2 around the drawing [INFERENCE: cursor hide / show] */)
+uint update_heading_tape /* Original: FUN_0000c1aa */ (int hide_cursor /* param_1: non-zero -> host +0x2c2 around the drawing [STRONG INFERENCE: cursor hide / show] */)
 
 {
   int strip; /* iVar1; host +0x1b0 tape strip pixels */
@@ -16500,7 +16500,7 @@ void update_fuel_needles /* Original: FUN_0000cec4 */ (void)
  * Ghidra C reviewed (function at overlay offset 0xd00c).
  * Called three times from overlay_frame_step. When _DAT_00020ae4 == 0 (cleared by clear_flag_00020ae4): updates DAT_00020ae2 of four numeric readouts per call, cycling DAT_00025ff2 = 0..3 - 0: altitude (object y +0x1c / 10), 1: speed (+0x62a / 72), 2: heading in degrees (360 - angle +0x22 * 360 / 0x4000) with a 0xa1 suffix (degree sign in Mac Roman), 3: rate of climb DAT_0001bc80 / 120 * 600 / 64 / 118 (not in mission state 7) [STRONG INFERENCE: same value as update_climb_needle]; for the player, or DAT_0001b888 in mission state 7. A readout is redrawn only when its value changed (cache DAT_00025ff4[4]): it is formatted as decimal text (with a minus sign) and passed with its index to the host service +0x27a (a reset call with 0 first when DAT_00020ae2 == 4). Otherwise: draw_sky_and_ground + FUN_0000c1aa unless host option +0x9e, then the overlay drawers FUN_0000ba2a, FUN_0000c664, FUN_0000c80c, FUN_0000c8d6, FUN_0000c948, FUN_0000c9c2, FUN_0000ca44, FUN_00017b68, FUN_0000cc12, FUN_0000ce1c, FUN_0000cec4, FUN_0000ccca [UNKNOWN roles: HUD elements]. Ghidra C.
  */
-void update_view_readouts_and_overlays /* Original: FUN_0000d00c */ (int hide_cursor /* param_1: passed on to draw_sky_and_ground / update_heading_tape [INFERENCE: cursor hide / show] */)
+void update_view_readouts_and_overlays /* Original: FUN_0000d00c */ (int hide_cursor /* param_1: passed on to draw_sky_and_ground / update_heading_tape [STRONG INFERENCE: cursor hide / show] */)
 
 {
   uint quot; /* uVar1; value / 10 while formatting */
@@ -18457,7 +18457,7 @@ uint * create_enemy_bomber /* Original: FUN_0000e340 */ (uint obj /* param_1: ai
  *   Capstone @0xE352 is mid-previous BSR.W displacement / garbage (FRESTORE),
  *   not a real entry. Ghidra LAB_0000e350_2; jump-table poke @0x11C4 stores
  *   #$E352 at obj+0x32E. Call sites that LEA $E352 (e.g. @0x22CC) are treated
- *   as isqrt_floor [INFERRED].
+ *   as isqrt_floor [STRONG INFERENCE].
  *
  * Range correction [PROVEN]: the result is min(floor(sqrt(x)), 0x7ffe) for x >= 0 and
  * 0 for x < 0 (signed input). The search keeps lo with lo*lo <= x and stops when
@@ -18520,8 +18520,8 @@ int isqrt_floor(int n /* param_1: value whose integer square root is wanted */) 
  * found identical to the C: d = (p4 * p8) >> 16 (muls.l, asr.l); 0 -> 0; else
  * acos_fixed14(((p1 * p5 + p2 * p6 + p3 * p7) >> 4) / d) (muls.l, divs.l), result
  * sign-extended from a word (ext.l). */
-int acos_scaled_dot3(int ax /* param_1: vector a x */,int ay /* param_2: vector a y */,int az /* param_3: vector a z */,int a_len /* param_4: length of a [INFERENCE: divisor term] */,int bx /* param_5: vector b x */,int by /* param_6: vector b y */,int bz /* param_7: vector b z */
-                ,int b_len /* param_8: length of b [INFERENCE: divisor term] */) /* Original: FUN_0000e3b2 */
+int acos_scaled_dot3(int ax /* param_1: vector a x */,int ay /* param_2: vector a y */,int az /* param_3: vector a z */,int a_len /* param_4: length of a [STRONG INFERENCE: divisor term] */,int bx /* param_5: vector b x */,int by /* param_6: vector b y */,int bz /* param_7: vector b z */
+                ,int b_len /* param_8: length of b [STRONG INFERENCE: divisor term] */) /* Original: FUN_0000e3b2 */
 
 {
   int res; /* iVar1; (b_len * a_len) >> 16 divisor, then the acos_fixed14 result */
@@ -18904,15 +18904,15 @@ void aircraft_tick /* Original: FUN_0000e5aa */ (int *ctl /* param_1: aircraft c
  * Layout: docs/reference/STRUCTS.md (Entity offsets from this function)
  *
  * Reconstruction status:
- *   Block 0 — prologue + template field_40 + contact early-out [ANNOTATED ]
+ *   Block 0 — prologue + template field_40 + contact early-out [ANNOTATED]
  *   Block 1 — flags_685 RNG on control_662/666; ≡ enqueue avg channels [+94]
- *   Block 1b — movement_669 gate + status_1a0 accumulator [ANNOTATED ]
- *   Block 2 — e42a/e468/e570 prep + local_34 + ownership 66e/672/66a [ANNOTATED ]
- *   Block 3 — movement_626 step + reverse-flight clamps/local_48 [ANNOTATED ]
- *   Block 4 — e4a4→63a, e468 drag, thrust_636, stall iVar25 [ANNOTATED ]
- *   Block 5 — attitude matrix + 028dc commit + field_63e touchdown [ANNOTATED ]
- *   Block 6 — airborne/grounded post-commit + LAB_0000f47c [ANNOTATED ]
- *   Block 7 — char epilogue + weapons + flags_685&2 + bVar6 [ANNOTATED ]
+ *   Block 1b — movement_669 gate + status_1a0 accumulator [ANNOTATED]
+ *   Block 2 — e42a/e468/e570 prep + local_34 + ownership 66e/672/66a [ANNOTATED]
+ *   Block 3 — movement_626 step + reverse-flight clamps/local_48 [ANNOTATED]
+ *   Block 4 — e4a4→63a, e468 drag, thrust_636, stall iVar25 [ANNOTATED]
+ *   Block 5 — attitude matrix + 028dc commit + field_63e touchdown [ANNOTATED]
+ *   Block 6 — airborne/grounded post-commit + LAB_0000f47c [ANNOTATED]
+ *   Block 7 — char epilogue + weapons + flags_685&2 + bVar6 [ANNOTATED]
  *   Remainder — function complete for primary flight path; deeper callees pending
  *
  * Note: Ghidra often indexes status as param_1+0x1a1 (uint*); binary uses
@@ -18958,11 +18958,11 @@ short * update_aircraft_entity(int *ctl /* param_1: aircraft controller */) /* O
   int delta; /* iVar24; engine power / manifold step, later |gear +0x679| */
   int speed; /* iVar25; speed accumulator a5 (+0x62a), also reused for temporaries (fold / isqrt results) */
   short lin_drag_w; /* sStack_4e, -0x4a(A6): low word of the linear drag */
-  undefined4 gear_drag; /* local_4c, -0x48(A6): |gear +0x679| * template +0x20 / 11 [INFERENCE: gear drag] */
+  undefined4 gear_drag; /* local_4c, -0x48(A6): |gear +0x679| * template +0x20 / 11 [STRONG INFERENCE: gear drag] */
   ushort ctrl_664; /* local_48, -0x44(A6): scaled control word +0x664 (first build_attitude_matrix angle) */
   int power_target; /* local_46, -0x42(A6): engine power target (0x5e50 / ((density + 0xa25) >> 5)) * throttle */
   int windmill_term; /* local_42, -0x3e(A6): (airspeed << 17) / 0x1c20, windmilling term */
-  int thrust; /* local_34, -0x30(A6): term added to speed as (thrust << 2) / sVar12 [INFERENCE: thrust] */
+  int thrust; /* local_34, -0x30(A6): term added to speed as (thrust << 2) / sVar12 [STRONG INFERENCE: thrust] */
   ushort att_22; /* local_2a, -0x26(A6): attitude word +0x22 */
   ushort pitch; /* local_28, -0x24(A6): attitude word +0x20 [STRONG INFERENCE: pitch, speed * sin(+0x20) feeds the climb rate] */
   int field38_scaled; /* local_26, -0x22(A6): scale_template_field_38 output */
@@ -21125,7 +21125,7 @@ int * update_aircraft_damage_state /* Original: FUN_00010650 */ (int *ctl /* par
 
 {
   char *obj; /* pcVar1; aircraft object */
-  short *kill_count; /* psVar2; host counter word +0xb8 + 2 * object +0x50 [INFERENCE: kill tally] */
+  short *kill_count; /* psVar2; host counter word +0xb8 + 2 * object +0x50 [STRONG INFERENCE: kill tally] */
   ushort changed; /* uVar3; damage stage (bits 6..9), then the bits that changed */
   short saved_replay; /* sVar4; replay_state kept around spawn_destruction_effect */
   int *result; /* in_D0: D0, returned */
@@ -22382,7 +22382,7 @@ void overlay_rng_init(undefined4 seed /* param_1: seed stored as the first state
  * 10000× next. Binary callers that Ghidra labels FUN_00011544 actually
  * LEA/JSR $11544 but consume D0 as a single RNG u16 — executing this body
  * per tick is impossible. Call sites in this.decomp.c are rewritten to
- * overlay_rng_next with [INFERRED] note. See NOTES “FUN_00011544 call-site alias”.
+ * overlay_rng_next with [STRONG INFERENCE] note. See NOTES “FUN_00011544 call-site alias”.
  *  [PROVEN]: all 17 references to this address are `lea.l $11544.l`
  * (0x648a.. 0x19354). That operand is a RUNTIME address = file 0x11564 = overlay_rng_next,
  * so the 49 rewritten call sites are exact, not inferred. The name stays: this fragment
@@ -23545,10 +23545,10 @@ undefined4 animate_effect_kind0_ring_tail /* Original: FUN_00012466 */ (void)
   short i; /* unaff_D2w: vertex index (D2.w) */
   int i_int; /* iVar2; i as an int */
   int i_prev; /* in_A0: index of the velocity being stored (A0) */
-  int *vz; /* in_A1: vertex third long (A1) [INFERENCE: matches animate_effect_kind0_ring] */
-  int *vx; /* unaff_A2: vertex x long (A2) [INFERENCE: matches animate_effect_kind0_ring] */
-  int vel_z_base; /* unaff_A3: controller + 0x6e velocity array (A3) [INFERENCE] */
-  int vel_x_base; /* unaff_A4: controller + 0x3a velocity array (A4) [INFERENCE] */
+  int *vz; /* in_A1: vertex third long (A1) [STRONG INFERENCE: matches animate_effect_kind0_ring] */
+  int *vx; /* unaff_A2: vertex x long (A2) [STRONG INFERENCE: matches animate_effect_kind0_ring] */
+  int vel_z_base; /* unaff_A3: controller + 0x6e velocity array (A3) [STRONG INFERENCE] */
+  int vel_x_base; /* unaff_A4: controller + 0x3a velocity array (A4) [STRONG INFERENCE] */
   
   do {
     vel_z3 = vel_z3 + 3;
@@ -24073,7 +24073,7 @@ void ordnance_tick /* Original: FUN_00012a2a */ (int *ctl /* param_1: ordnance c
  * 0x488 tally_destroyed_entity when param_5, 0x528a dispatch_entity_cleanup.
  */
 void apply_blast_damage /* Original: FUN_00012b66 */ (int x /* param_1: blast x */,int y /* param_2: blast y */,int z /* param_3: blast z */,int radius /* param_4: blast radius (objects with a larger range take the ship path) */,int credit /* param_5: player-credit flag (tally_destroyed_entity, damage credit) */,
-                        int sure_hit /* param_6: non-zero skips the random miss chance for aircraft */,int hit_ships /* param_7: non-zero lets large ships (types 0x15..0x19) be hit within their range [INFERENCE] */)
+                        int sure_hit /* param_6: non-zero skips the random miss chance for aircraft */,int hit_ships /* param_7: non-zero lets large ships (types 0x15..0x19) be hit within their range [STRONG INFERENCE] */)
 
 {
   char *obj; /* pcVar1; world object being tested */
@@ -28238,7 +28238,7 @@ undefined2 animate_smoke_trail /* Original: FUN_00016c6a */ (int *ctl /* trail c
   uint rnd;
   short v; /* ribbon vertex 0..3 */
   short dy; /* +-0x22 vertex y offset */
-  ushort detached; /* ctl +0x50 mask: bit set = vertex no longer follows the owner [INFERENCE] */
+  ushort detached; /* ctl +0x50 mask: bit set = vertex no longer follows the owner [STRONG INFERENCE] */
   undefined2 finished;
 
   release = false;
@@ -28371,7 +28371,7 @@ undefined2 animate_burning_trail /* Original: FUN_00016e06 */ (int *ctl /* trail
   short v; /* ribbon vertex 0..3; first the state word */
   short dy; /* +-100 vertex y offset */
   int trail_obj; /* ctl +0; reused as the x sum */
-  ushort detached; /* ctl +0x50 mask: bit set = vertex no longer follows the owner [INFERENCE] */
+  ushort detached; /* ctl +0x50 mask: bit set = vertex no longer follows the owner [STRONG INFERENCE] */
   int owner; /* ctl +0x52; reused as the y sum */
   int voff; /* vertex index * 12; reused as the z sum */
   undefined2 finished;
@@ -28684,7 +28684,7 @@ undefined2 animate_ground_fire /* Original: FUN_00017150 */ (int *ctl /* ground 
   short off_z; /* z offset across the velocity */
   uint rnd;
   short v; /* vertex 0..3; first the state word */
-  ushort detached; /* ctl +0x4e mask: bit set = vertex drifting [INFERENCE] */
+  ushort detached; /* ctl +0x4e mask: bit set = vertex drifting [STRONG INFERENCE] */
   int vi;
   int sum_z;
 
@@ -30931,7 +30931,7 @@ undefined4 register_parachute_template /* Original: FUN_0001940e */ (undefined4 
  *   +0x20/22/24; field_618=7; field_61c=0x62.
  * Then 0xD-vertex loop on *(world+0x44): in-place xyz>>=3; store
  * entity+0x622/656/68a scaled by 0x1C6/0x1C6/0x255.
- * [INFERRED] world+0x44 is both 05116 success gate and vertex table.
+ * [STRONG INFERENCE] world+0x44 is both 05116 success gate and vertex table.
  * Player latch DAT_0001b87c is in the e792 caller. Evidence: NOTES.
  *: the spawned type 0x1c is the bailed-out pilot / parachute
  * (register_parachute_template, parachute_tick, parachute_descend) - the

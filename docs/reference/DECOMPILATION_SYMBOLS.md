@@ -773,7 +773,7 @@ revalidated here.
 | `FUN_00011564` | `overlay_rng_next` | PROVEN | `@0x11564`: additive table RNG: cursor `DAT_00026008`, ring of 55 longs `0x2600C…0x260E7`, x[n] = x[n-1] + x[n-32]; returns bits 31..16 zero-extended. VERIFIED vs bytes. |
 | `FUN_000114ca` | `overlay_rng_mul_mix` | PROVEN | `@0x114CA`: 32-bit product (a*b mod 2^32) built from 16-bit halves; table fill factor `0x1DF5E0D`. VERIFIED vs bytes. |
 | `FUN_0001150a` | `overlay_rng_init` | PROVEN | `@0x1150A`: seed + LCG fill x[i] = x[i-1]*0x1DF5E0D + 1 (0x36 entries) + cursor `0x260E4` + 10000× next. VERIFIED vs bytes (incl. tail 0x11544). |
-| `FUN_00011544` | `overlay_rng_warmup_epilogue` (bytes) | PROVEN bytes | `@0x11544`: Ghidra-split init tail. **Call sites** treated as `overlay_rng_next` **[INFERRED]**. |
+| `FUN_00011544` | `overlay_rng_warmup_epilogue` (bytes) | PROVEN bytes | `@0x11544`: Ghidra-split init tail. **Call sites** treated as `overlay_rng_next` **[STRONG INFERENCE]**. |
 | `FUN_0000e4a4` | `compute_template_force_from_626` | PROVEN algo | `@0xE4A4`: template coeffs `+0x26..+0x34` × `movement_626` / `0x67b`; may set `field_19e=0xC`. |
 | `FUN_000025a8` | `build_attitude_matrix` | PROVEN chain | `@0x25A8`: `0202a`→`020e6`→`021a0`→`02562` into out matrix. |
 | `FUN_00002802` | `transform_int3_vecs_asr_by_1d744` | PROVEN | `@0x2802`: count× (ASR.L shift, ×`DAT_0001d744` 3×3, +0x800>>12) int3→int3. |
@@ -798,7 +798,7 @@ type record, control inputs, the smoke-trail count, the gun turret) are in
 | `DAT_0001a81c` | `template_rec_b_field_u16` | STRONG INFERENCE | `DAT_0001a7d2 + 0x4A`; same store instruction `MOVE.W D0,$4A(A0)`. Initial image value `0x0151`. |
 | `DAT_0001b524` | `template_ptr_table_base` | STRONG INFERENCE | `LEA $1B524,A5` in `FUN_00000054`; indexed by sign-extended u16 record keys (`MOVEA.W (A2),A0` then `(A5,A0.L*4)`). Sparse ID-keyed pointer table. |
 | `FUN_000019d0` | `heap_free_coalesce` | STRONG INFERENCE | Binary `@0x19D0`–`0x1A66`: free payload to size-class list (class byte at ptr-4, heads `DAT_00020c64`+class*4) or coalesce into the address-ordered large-block ring (header ptr-8 = size in 8-byte units, next; unsigned compares); cursor `DAT_00020c60` = predecessor block. Body VERIFIED vs bytes. |
-| `FUN_00001a48` | `heap_free_epilogue_cursor` | PROVEN | Mid-label `@0x1A48` of `FUN_000019d0`: `MOVE.L A1,$20C60`; `BRA $1A64`; pop A2; `RTS`. **Not** an allocator. Kind2 `@0x4ED8` + `@0xB572` still `LEA $1A48`+`JSR` then take D0 — **[INFERRED]** LEA off-by `+0x20` vs `heap_alloc`. |
+| `FUN_00001a48` | `heap_free_epilogue_cursor` | PROVEN | Mid-label `@0x1A48` of `FUN_000019d0`: `MOVE.L A1,$20C60`; `BRA $1A64`; pop A2; `RTS`. **Not** an allocator. Kind2 `@0x4ED8` + `@0xB572` still `LEA $1A48`+`JSR` then take D0 — **[STRONG INFERENCE]** LEA off-by `+0x20` vs `heap_alloc`. |
 | `FUN_00001a68` | `heap_alloc` | PROVEN prologue | `@0x1A68`: `MOVEM D2-D3/A2`; size `$10(a7)`; bins/`01974`/`0199a`; D0=payload. Godot stand-in for kind2/B572 call sites. Body VERIFIED vs bytes: classes 2..5 = 4/8/16/32-byte blocks (4-byte header), larger requests first-fit from the ring in 8-byte units, carved from the tail of the free block; NULL on failure. |
 | `DAT_00020c60` | `heap_roving_cursor` | STRONG INFERENCE | Large-block freelist cursor; written at `@0x1A48` / read throughout alloc/free. |
 | `DAT_00020c64` | `heap_size_class_bins` | STRONG INFERENCE | Array of freelist heads indexed by size class (×4). |

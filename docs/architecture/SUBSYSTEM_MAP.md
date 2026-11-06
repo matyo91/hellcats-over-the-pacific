@@ -1,14 +1,33 @@
-# Subsystem map (Hellcats decompilation ↔ Godot)
+# Subsystem map
 
-Tags: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]** / **[DEFERRED]**.
+How the original program hangs together, one page. Every function named here is strict-ported
+(`godot/strict_port/code/`, the module named after its segment) and runs as the original through
+the runtime ([`GAME_RUNTIME.md`](GAME_RUNTIME.md)). Symbol-level detail: `tools/re_query.py`.
+Confidence tags follow the vocabulary in [`../port/DECOMPILATION_PROGRESS.md`](../port/DECOMPILATION_PROGRESS.md).
 
-**Purpose:** One-page mental model of how the **original sim** hangs together and where it runs in **Godot**: every function below is strict-ported under `godot/strict_port/code/` and runs as the original game through the runtime ([`GAME_RUNTIME.md`](GAME_RUNTIME.md)). For symbol-level detail use `tools/re_query.py` and the per-topic contracts linked below.
+## Segments
 
-**Primary source file:** `Pacific Conflict.c` (Ghidra export). **Segment/runtime:** `ID01.c`–`ID09.c` (see `docs/architecture/LOADER_CHAIN.md`).
+| Segment | Functions | Role |
+|---|---|---|
+| ID01 | 6 | the C runtime's start-up and 32-bit division |
+| ID02 | 127 | the application: C library, menus and events, sound, palettes, the display, the flight session loop |
+| ID03 | 45 | the cockpit instrument panel |
+| ID04 | 59 | the dialogs: roster, mission selection, summary, high scores, map, About |
+| ID05 | 26 | copy protection |
+| ID06 | 24 | the polygon rasteriser |
+| ID07 | 2 | the STR# 129 string table |
+| ID08 | 4 | the scenery (overlay) loader |
+| ID09 | 4 | Toolbox glue |
+| Pacific Conflict | 443 | the overlay: the simulation, AI, rendering, instruments and input of a flight |
 
-## 1) High-level flow (main sim tick)
+The segments are loaded through the jump table ([`LOADER_CHAIN.md`](LOADER_CHAIN.md)); ID08 loads
+the Pacific Conflict overlay from the scenery file, and the overlay calls back into the host through
+its service table ([`../reference/OVERLAY_SERVICE_TABLE.md`](../reference/OVERLAY_SERVICE_TABLE.md)).
 
-**[RECONSTRUCTED]** The main loop is anchored on **FUN_000044e8** (`docs/history/contracts/tick_FUN_000044e8_contract.md`):
+## The simulation tick
+
+**[RECONSTRUCTED]** ID02's `run_flight_session` calls the overlay's frame step every frame; the
+simulation proper is `run_simulation_tick` (`FUN_000044e8`):
 
 ```mermaid
 flowchart TD
@@ -16,107 +35,42 @@ flowchart TD
     AC["DAT_0001b5a0 + 0xac"]
     A8["DAT_0001b5a0 + 0xa8"]
   end
-  AC -->|"== 0"| DF["FUN_00005df8"]
-  A8 -->|"0 &lt; phase &lt; 6"| EP["Four entity passes"]
-  EP --> A1["Array 1: FUN_000044a4(entity, 0)"]
-  EP --> A2["Array 2: FUN_000044a4(entity, 0)"]
-  EP --> A3["Array 3: FUN_000044a4(entity, 1)"]
-  EP --> A4["Array 4: FUN_000044a4(entity, 1)"]
-  A1 --> FB["FUN_00006fb8"]
+  AC -->|"== 0"| DF["clear_pending_entity_slots"]
+  A8 -->|"0 &lt; phase &lt; 6"| EP["four entity passes"]
+  EP --> A1["array 1: dispatch_entity_tick(entity, 0)"]
+  EP --> A2["array 2: dispatch_entity_tick(entity, 0)"]
+  EP --> A3["array 3: dispatch_entity_tick(entity, 1)"]
+  EP --> A4["array 4: dispatch_entity_tick(entity, 1)"]
+  A1 --> FB["reset_distance_base_globals"]
   A2 --> FB
   A3 --> FB
   A4 --> FB
 ```
 
-**[RECONSTRUCTED]** **FUN_000044a4** calls **FUN_0000435a** then optional flag updates (`docs/history/contracts/tick_FUN_000044e8_contract.md`).
+**[RECONSTRUCTED]** `dispatch_entity_tick` (`FUN_000044a4`) applies the entity's mission rates
+(`apply_entity_mission_rates`, `FUN_0000435a`) and runs its controller; an aircraft's flight is
+`update_aircraft_entity` (`FUN_0000e792`), with its table and damping helpers
+(`table_lerp_1b2c0`, `damp_short_if_below_0x200`, `scale_template_field_38`).
 
-**[RECONSTRUCTED]** Per-entity simulation includes **FUN_0000e792** (large; `docs/history/contracts/flight_FUN_0000e792_contract.md`).
+**[STRONG INFERENCE]** `overlay_rng_next` (`FUN_00011564`) serves the entities, the AI and the
+effects alike; its call order matters for replays.
 
-**Godot:** `pacific_conflict.gd` **`run_simulation_tick`** (FUN_000044e8) and **`dispatch_entity_tick`** (FUN_000044a4), run every frame by the original flight loop (ID02 `run_flight_session`).
+## Input and mission state
 
-## 2) Per-entity update (conceptual)
+**[RECONSTRUCTED]** `process_flight_input_and_outcome` (`FUN_0000740a`) reads the key and mouse
+events (fed by the runtime's Event Manager), the view mode `DAT_0001d858`, the player's aircraft
+`DAT_0001b738` and the mission block `DAT_0001b5a0`, whose `+0xa8` (phase) and `+0xac` (flag)
+gate the tick above. The mission block lives at its original address in the runtime's memory.
 
-```mermaid
-flowchart LR
-  subgraph dispatch [Dispatch]
-    P44["FUN_000044a4"]
-    P43["FUN_0000435a"]
-    E792["FUN_0000e792"]
-  end
-  P44 --> P43
-  P43 --> E792
-  subgraph helpers [Math helpers near 0e792]
-    E42["FUN_0000e42a"]
-    E46["FUN_0000e468"]
-    E57["FUN_0000e570"]
-  end
-  E792 --> helpers
-  RNG["FUN_00011564"]
-  E792 -.-> RNG
-```
+## Random numbers
 
-**[INFERRED]** **FUN_00011564** is used in many places (entity, AI, effects); full consumption graph is **[UNKNOWN]** without a dedicated pass.
+| Generator | Where | Notes |
+|---|---|---|
+| The C library's LCG (`* 0x41c64e6d + 0x3039`) | ID05 `ansi_rand` | the protection code |
+| The overlay's generator | `overlay_rng_next` | order-sensitive for replays |
 
-**Godot:** `pacific_conflict.gd` **`update_aircraft_entity`** (FUN_0000e792) and its helpers; **`overlay_rng_next`** (FUN_00011564).
+## Camera
 
-## 3) Input path (conceptual)
-
-```mermaid
-flowchart TD
-  IN["Key / device events"]
-  H740["FUN_0000740a"]
-  GS["DAT_0001d858 game state"]
-  PL["DAT_0001b738 player entity"]
-  MB["DAT_0001b5a0 mission block"]
-  IN --> H740
-  GS --> H740
-  PL --> H740
-  MB --> H740
-  H740 --> ENT["Entity / throttle / UI effects"]
-```
-
-**Godot:** `pacific_conflict.gd` **`process_flight_input_and_outcome`** (FUN_0000740a), fed Mac key and mouse events by `godot/runtime/toolbox/event_manager.gd` from Godot input — **`docs/history/briefs/input_FUN_0000740a_brief.md`**.
-
-## 4) Mission state
-
-**[RECONSTRUCTED]** Mission block **`DAT_0001b5a0`** fields **`+0xa8`** (phase) and **`+0xac`** (flag) gate **FUN_000044e8**’s middle section.
-
-**Godot:** the mission block lives in the emulated memory at its original address and is read and written by the strict port itself — **`docs/history/contracts/mission_state_DAT_contract.md`**.
-
-## 5) RNG (two layers)
-
-| Layer | **[RECONSTRUCTED]** location | Notes |
-|-------|------------------------------|--------|
-| Segment LCG | **ID05.c** `FUN_00000728` style (`* 0x41c64e6d + 0x3039`) | `ID05.gd` **`ansi_rand`**. |
-| In-overlay RNG | **FUN_00011564** (`Pacific Conflict.c`) | Many callers; order-sensitive for replay. |
-
-See **`STRICT_PORT_FOUNDATION.md`**.
-
-## 6) Camera
-
-**FUN_0000739a** sits on the tick/render boundary **[RECONSTRUCTED]** (multiple call sites). **Godot** uses an authored chase camera on **`PlayerAircraft`** **[INFERRED]** — not a direct port.
-
-## 7) ID segments vs Pacific Conflict
-
-```mermaid
-flowchart LR
-  ID["ID01–ID09 CODE segments"]
-  LS["LoadSeg / ID08 traps"]
-  PC["Pacific Conflict overlay"]
-  ID --> LS
-  LS --> PC
-```
-
-**[INFERRED]** Most **game-identifiable** `FUN_*` for parity work live in **Pacific Conflict.c**; **ID*** files are **runtime, RNG, loader, helpers** unless proven otherwise (`docs/architecture/LOADER_CHAIN.md`).
-
-## Related documents
-
-| Document | Role |
-|----------|------|
-| `docs/history/contracts/tick_FUN_000044e8_contract.md` | Tick order |
-| `docs/history/contracts/FUN_0000435a_contract.md` | **param_2** / **0x02** branch |
-| `docs/history/contracts/flight_FUN_0000e792_contract.md` | Entity update slice |
-| `docs/history/contracts/input_godot_contract.md` | Godot input mapping of the removed prototype (historical) |
-| `docs/history/contracts/mission_state_DAT_contract.md` | Mission bridge |
-| `docs/reference/STRUCTS.md` | DAT_* / offset tables |
-| `docs/architecture/LOADER_CHAIN.md` | ID00–ID09 and loading |
+**[RECONSTRUCTED]** `copy_player_pose_to_camera` (`FUN_0000739a`) sits on the boundary between the
+tick and the renderer; the other views (tower, chase, tracking, replay, bail-out) have their own
+routines in the overlay.

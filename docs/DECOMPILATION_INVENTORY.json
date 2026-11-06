@@ -18287,7 +18287,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 4510,
         "line_end": 4588,
-        "function_sha256": "10b7e1931b27563ffd7b215ece3005e514ef701d68bbcdae66bddc86e16f024c"
+        "function_sha256": "60aae016c3a33f488df718c51bd4bf3b5e75311826723b3bcb56d102e5f4154a"
       },
       "renaming_confidence": "PROVEN math; STRONG INFERENCE “look/dir+roll” role",
       "reconstruction_status": "VERIFIED",
@@ -18305,13 +18305,13 @@
         "dependencies": "dir+roll→sincos slots→2×matmul; hosts $2408",
         "validation": "Capstone; 0 BSR"
       },
-      "source_revision": "10b7e1931b27563ffd7b215ece3005e514ef701d68bbcdae66bddc86e16f024c",
+      "source_revision": "60aae016c3a33f488df718c51bd4bf3b5e75311826723b3bcb56d102e5f4154a",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "build_attitude_matrix_from_dir_roll",
         "original_function": "FUN_0000229e",
         "source_address": "0x229e",
-        "source_sha256": "10b7e1931b27563ffd7b215ece3005e514ef701d68bbcdae66bddc86e16f024c",
+        "source_sha256": "60aae016c3a33f488df718c51bd4bf3b5e75311826723b3bcb56d102e5f4154a",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "build_attitude_matrix_from_dir_roll",
         "translation_status": "VERIFIED",
@@ -23331,7 +23331,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 12847,
         "line_end": 12919,
-        "function_sha256": "a9e6edf044a3c44ccb082812bb1f41b597a0b01cc28a6b9aaeec0fe9a0b7b8f9"
+        "function_sha256": "d772ad6b998c01b9bf68b88180d39684ce2943b2c15199a471d39e6449017d1b"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -23349,13 +23349,13 @@
         "dependencies": "priority play on channel 1 via host play_sample_on_channel",
         "validation": "Ghidra C + host A5 mapping; token diff vs HEAD = renames"
       },
-      "source_revision": "a9e6edf044a3c44ccb082812bb1f41b597a0b01cc28a6b9aaeec0fe9a0b7b8f9",
+      "source_revision": "d772ad6b998c01b9bf68b88180d39684ce2943b2c15199a471d39e6449017d1b",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "play_game_sound",
         "original_function": "FUN_000095ac",
         "source_address": "0x95ac",
-        "source_sha256": "a9e6edf044a3c44ccb082812bb1f41b597a0b01cc28a6b9aaeec0fe9a0b7b8f9",
+        "source_sha256": "d772ad6b998c01b9bf68b88180d39684ce2943b2c15199a471d39e6449017d1b",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "play_game_sound",
         "translation_status": "VERIFIED",
@@ -24545,7 +24545,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 14836,
         "line_end": 15050,
-        "function_sha256": "7157564445b02cf7024cc50e51c158416b0fcc5f9319f4e28c8af01c37bf8079"
+        "function_sha256": "876e6b67b3b70b4e5af905290b3e5575f91d6e2fd5c7c03bc7e473313cf42786"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -24563,13 +24563,13 @@
         "dependencies": "horizon edge → sky / ground background fill",
         "validation": "Ghidra C (partial read for 0xb4b6); token diff vs HEAD = renames"
       },
-      "source_revision": "7157564445b02cf7024cc50e51c158416b0fcc5f9319f4e28c8af01c37bf8079",
+      "source_revision": "876e6b67b3b70b4e5af905290b3e5575f91d6e2fd5c7c03bc7e473313cf42786",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "draw_sky_and_ground",
         "original_function": "FUN_0000b4b6",
         "source_address": "0xb4b6",
-        "source_sha256": "7157564445b02cf7024cc50e51c158416b0fcc5f9319f4e28c8af01c37bf8079",
+        "source_sha256": "876e6b67b3b70b4e5af905290b3e5575f91d6e2fd5c7c03bc7e473313cf42786",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "draw_sky_and_ground",
         "translation_status": "VERIFIED",
@@ -24749,7 +24749,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 15675,
         "line_end": 15690,
-        "function_sha256": "759838983f7a8a70610d986e8662c47d7c2f75bcbfa70248ac8b708ac4e6cbc9"
+        "function_sha256": "3d21fa0d2bfae59822f481c98a3d99c2db51c350c57188b22ce2e1d8a3a0c3b7"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -24765,13 +24765,13 @@
         "dependencies": "panel helper",
         "validation": "Ghidra C; token diff vs HEAD = renames"
       },
-      "source_revision": "759838983f7a8a70610d986e8662c47d7c2f75bcbfa70248ac8b708ac4e6cbc9",
+      "source_revision": "3d21fa0d2bfae59822f481c98a3d99c2db51c350c57188b22ce2e1d8a3a0c3b7",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "begin_offscreen_drawing",
         "original_function": "FUN_0000c11e",
         "source_address": "0xc11e",
-        "source_sha256": "759838983f7a8a70610d986e8662c47d7c2f75bcbfa70248ac8b708ac4e6cbc9",
+        "source_sha256": "3d21fa0d2bfae59822f481c98a3d99c2db51c350c57188b22ce2e1d8a3a0c3b7",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "begin_offscreen_drawing",
         "translation_status": "VERIFIED",
@@ -24849,7 +24849,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 15746,
         "line_end": 15942,
-        "function_sha256": "0d63557e338e307d5f78cbf4b3d8c918a93ab74ee7d7e0a0a21124828cfa2620"
+        "function_sha256": "2c5d5cfa6c786851252111d55903422d3f92f995fc37cc32bfdcfe185f39b92f"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -24867,13 +24867,13 @@
         "dependencies": "strip scrolled by heading",
         "validation": "Ghidra C; token diff vs HEAD = renames"
       },
-      "source_revision": "0d63557e338e307d5f78cbf4b3d8c918a93ab74ee7d7e0a0a21124828cfa2620",
+      "source_revision": "2c5d5cfa6c786851252111d55903422d3f92f995fc37cc32bfdcfe185f39b92f",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "update_heading_tape",
         "original_function": "FUN_0000c1aa",
         "source_address": "0xc1aa",
-        "source_sha256": "0d63557e338e307d5f78cbf4b3d8c918a93ab74ee7d7e0a0a21124828cfa2620",
+        "source_sha256": "2c5d5cfa6c786851252111d55903422d3f92f995fc37cc32bfdcfe185f39b92f",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "update_heading_tape",
         "translation_status": "VERIFIED",
@@ -25555,7 +25555,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 16503,
         "line_end": 16635,
-        "function_sha256": "2e1b76d827b3b688722fb1a184feac0f61e3eff3d1455810956383b681ddcccd"
+        "function_sha256": "e52de13f7a129093cb2e63a59512975e9dbfc75a6b5adadda550dc8e43fe5113"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -25573,13 +25573,13 @@
         "dependencies": "4 numeric readouts via host +0x27a, or sky + HUD drawers",
         "validation": "Ghidra C; token diff vs HEAD = renames"
       },
-      "source_revision": "2e1b76d827b3b688722fb1a184feac0f61e3eff3d1455810956383b681ddcccd",
+      "source_revision": "e52de13f7a129093cb2e63a59512975e9dbfc75a6b5adadda550dc8e43fe5113",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "update_view_readouts_and_overlays",
         "original_function": "FUN_0000d00c",
         "source_address": "0xd00c",
-        "source_sha256": "2e1b76d827b3b688722fb1a184feac0f61e3eff3d1455810956383b681ddcccd",
+        "source_sha256": "e52de13f7a129093cb2e63a59512975e9dbfc75a6b5adadda550dc8e43fe5113",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "update_view_readouts_and_overlays",
         "translation_status": "VERIFIED",
@@ -26509,7 +26509,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 18523,
         "line_end": 18538,
-        "function_sha256": "e732aa9e587ba8326c313266c27eefdc6c1a4969808f3722df0d7b3b2e6fbbcb"
+        "function_sha256": "342fb0a025a5d99911951ad46b60bbc7eb6563131f01764ece93d212d21fc67b"
       },
       "renaming_confidence": "PROVEN formula; STRONG INFERENCE acos via FUN_00001e3a",
       "reconstruction_status": "VERIFIED",
@@ -26527,13 +26527,13 @@
         "dependencies": "(dot3>>4)/((a*b)>>16) → acos_fixed14",
         "validation": "Capstone; 0 BSR"
       },
-      "source_revision": "e732aa9e587ba8326c313266c27eefdc6c1a4969808f3722df0d7b3b2e6fbbcb",
+      "source_revision": "342fb0a025a5d99911951ad46b60bbc7eb6563131f01764ece93d212d21fc67b",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "acos_scaled_dot3",
         "original_function": "FUN_0000e3b2",
         "source_address": "0xe3b2",
-        "source_sha256": "e732aa9e587ba8326c313266c27eefdc6c1a4969808f3722df0d7b3b2e6fbbcb",
+        "source_sha256": "342fb0a025a5d99911951ad46b60bbc7eb6563131f01764ece93d212d21fc67b",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "acos_scaled_dot3",
         "translation_status": "VERIFIED",
@@ -26914,7 +26914,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 18933,
         "line_end": 20115,
-        "function_sha256": "3d38576775b177743dfe5907683c141e65ccbcc1fb1b0a16e9ff86421f760b50"
+        "function_sha256": "db713f2ec3beef7916824933ef25e9a55aaabb2c2eb69f4ded7ccf83c5b62d5b"
       },
       "renaming_confidence": "STRONG INFERENCE overall role; blocks annotated incrementally",
       "reconstruction_status": "VERIFIED",
@@ -26930,13 +26930,13 @@
         "dependencies": "weapons; control avg4→662/666",
         "validation": "Block1 cross-link avg4"
       },
-      "source_revision": "3d38576775b177743dfe5907683c141e65ccbcc1fb1b0a16e9ff86421f760b50",
+      "source_revision": "db713f2ec3beef7916824933ef25e9a55aaabb2c2eb69f4ded7ccf83c5b62d5b",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "update_aircraft_entity",
         "original_function": "FUN_0000e792",
         "source_address": "0xe792",
-        "source_sha256": "3d38576775b177743dfe5907683c141e65ccbcc1fb1b0a16e9ff86421f760b50",
+        "source_sha256": "db713f2ec3beef7916824933ef25e9a55aaabb2c2eb69f4ded7ccf83c5b62d5b",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "update_aircraft_entity",
         "translation_status": "VERIFIED",
@@ -27426,7 +27426,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 21124,
         "line_end": 21295,
-        "function_sha256": "8b3b40cad0233346e0633812efbe351447985704cb8d137ef016a4fb8b6f2fb8"
+        "function_sha256": "6a4072ccc5b836784fde3458395b33b8ee807d5eb00c86a88063ecf06bf9bdc8"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -27444,13 +27444,13 @@
         "dependencies": "damage stages → smoke / fire effects; player bit 0 → pilot Dead + Ugh",
         "validation": "Ghidra C; token diff vs HEAD = renames"
       },
-      "source_revision": "8b3b40cad0233346e0633812efbe351447985704cb8d137ef016a4fb8b6f2fb8",
+      "source_revision": "6a4072ccc5b836784fde3458395b33b8ee807d5eb00c86a88063ecf06bf9bdc8",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "update_aircraft_damage_state",
         "original_function": "FUN_00010650",
         "source_address": "0x10650",
-        "source_sha256": "8b3b40cad0233346e0633812efbe351447985704cb8d137ef016a4fb8b6f2fb8",
+        "source_sha256": "6a4072ccc5b836784fde3458395b33b8ee807d5eb00c86a88063ecf06bf9bdc8",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "update_aircraft_damage_state",
         "translation_status": "VERIFIED",
@@ -29863,7 +29863,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 23540,
         "line_end": 23575,
-        "function_sha256": "6fac16decff85e01a2f523680cfcdcf60d5c206e2a522b6b99563fa35f2c38ae"
+        "function_sha256": "387949a07941b00b79f7a8d6f268a861fd50142eb046df4279bf0d8961d045ff"
       },
       "renaming_confidence": "PROVEN false split",
       "reconstruction_status": "VERIFIED",
@@ -29879,13 +29879,13 @@
         "dependencies": "tail of 0x123ce",
         "validation": "Ghidra C + table bytes; token diff vs HEAD = renames"
       },
-      "source_revision": "6fac16decff85e01a2f523680cfcdcf60d5c206e2a522b6b99563fa35f2c38ae",
+      "source_revision": "387949a07941b00b79f7a8d6f268a861fd50142eb046df4279bf0d8961d045ff",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "animate_effect_kind0_ring_tail",
         "original_function": "FUN_00012466",
         "source_address": "0x12466",
-        "source_sha256": "6fac16decff85e01a2f523680cfcdcf60d5c206e2a522b6b99563fa35f2c38ae",
+        "source_sha256": "387949a07941b00b79f7a8d6f268a861fd50142eb046df4279bf0d8961d045ff",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "animate_effect_kind0_ring",
         "translation_status": "VERIFIED",
@@ -30419,7 +30419,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 24075,
         "line_end": 24166,
-        "function_sha256": "f22ef999b8fba789c846608c6d859fc9d4154f18fd5f8c73648697953fb82418"
+        "function_sha256": "02db8fb94136294445517bead7c2378fe357068275d12336f47bc6d5297c374d"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -30437,13 +30437,13 @@
         "dependencies": "radius damage to world objects; tally with credit",
         "validation": "Ghidra C; token diff vs HEAD = renames"
       },
-      "source_revision": "f22ef999b8fba789c846608c6d859fc9d4154f18fd5f8c73648697953fb82418",
+      "source_revision": "02db8fb94136294445517bead7c2378fe357068275d12336f47bc6d5297c374d",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "apply_blast_damage",
         "original_function": "FUN_00012b66",
         "source_address": "0x12b66",
-        "source_sha256": "f22ef999b8fba789c846608c6d859fc9d4154f18fd5f8c73648697953fb82418",
+        "source_sha256": "02db8fb94136294445517bead7c2378fe357068275d12336f47bc6d5297c374d",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "apply_blast_damage",
         "translation_status": "VERIFIED",
@@ -33979,7 +33979,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 28230,
         "line_end": 28333,
-        "function_sha256": "3137f6dc6a1cb3158e78abd0f0b6f6e95ba09439b92cad4250992ddc09069a36"
+        "function_sha256": "b9932f289d89681f3c17033394c80306a90ee44b579fb8c947234948483de451"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -33995,13 +33995,13 @@
         "dependencies": "ribbon ±0x22 while damaged",
         "validation": "Ghidra C + table bytes; token diff vs HEAD = renames"
       },
-      "source_revision": "3137f6dc6a1cb3158e78abd0f0b6f6e95ba09439b92cad4250992ddc09069a36",
+      "source_revision": "b9932f289d89681f3c17033394c80306a90ee44b579fb8c947234948483de451",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "animate_smoke_trail",
         "original_function": "FUN_00016c6a",
         "source_address": "0x16c6a",
-        "source_sha256": "3137f6dc6a1cb3158e78abd0f0b6f6e95ba09439b92cad4250992ddc09069a36",
+        "source_sha256": "b9932f289d89681f3c17033394c80306a90ee44b579fb8c947234948483de451",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "animate_smoke_trail",
         "translation_status": "VERIFIED",
@@ -34029,7 +34029,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 28362,
         "line_end": 28506,
-        "function_sha256": "d941f9cfdc0ccc66e5118e243a3776904dd2b032f919845b6c3bccca8eec4fa4"
+        "function_sha256": "d647a6ceab2b984f94fafa6612e91458b59d8319eef798007eaf01716be087ad"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -34045,13 +34045,13 @@
         "dependencies": "ribbon ±100",
         "validation": "Ghidra C + table bytes; token diff vs HEAD = renames"
       },
-      "source_revision": "d941f9cfdc0ccc66e5118e243a3776904dd2b032f919845b6c3bccca8eec4fa4",
+      "source_revision": "d647a6ceab2b984f94fafa6612e91458b59d8319eef798007eaf01716be087ad",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "animate_burning_trail",
         "original_function": "FUN_00016e06",
         "source_address": "0x16e06",
-        "source_sha256": "d941f9cfdc0ccc66e5118e243a3776904dd2b032f919845b6c3bccca8eec4fa4",
+        "source_sha256": "d647a6ceab2b984f94fafa6612e91458b59d8319eef798007eaf01716be087ad",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "animate_burning_trail",
         "translation_status": "VERIFIED",
@@ -34381,7 +34381,7 @@
         "path": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "line_start": 28673,
         "line_end": 28796,
-        "function_sha256": "c2ae4d9b4cc45f7c90a119628b711af91da4286218a2afc89c7e4648a402a3eb"
+        "function_sha256": "4ccd8a8338f39ead2cac1f3c0ca64e3bf7feb0e1863148ce4dba244da4880f83"
       },
       "renaming_confidence": "STRONG INFERENCE",
       "reconstruction_status": "VERIFIED",
@@ -34397,13 +34397,13 @@
         "dependencies": "effect-family template / controller handler",
         "validation": "Ghidra C + create pointers; token diff vs HEAD = renames"
       },
-      "source_revision": "c2ae4d9b4cc45f7c90a119628b711af91da4286218a2afc89c7e4648a402a3eb",
+      "source_revision": "4ccd8a8338f39ead2cac1f3c0ca64e3bf7feb0e1863148ce4dba244da4880f83",
       "strict_port": {
         "source_file": "sources/resedit-1-0-3/CODE/Pacific Conflict.decomp.c",
         "source_function": "animate_ground_fire",
         "original_function": "FUN_00017150",
         "source_address": "0x17150",
-        "source_sha256": "c2ae4d9b4cc45f7c90a119628b711af91da4286218a2afc89c7e4648a402a3eb",
+        "source_sha256": "4ccd8a8338f39ead2cac1f3c0ca64e3bf7feb0e1863148ce4dba244da4880f83",
         "target_file": "godot/strict_port/code/pacific_conflict.gd",
         "target_function": "animate_ground_fire",
         "translation_status": "VERIFIED",

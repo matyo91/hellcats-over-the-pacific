@@ -1,6 +1,6 @@
 # ID00 → LoadSeg → segment-local target chain (proven)
 
-Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (binary + cross-segment check), **[INFERRED]** (reasoning).
+Evidence-first. Tags follow the vocabulary of [`../port/DECOMPILATION_PROGRESS.md`](../port/DECOMPILATION_PROGRESS.md).
 
 ## 1) Runtime address model
 
@@ -19,7 +19,7 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 | **Who loads overlay** | ID08 FUN_00000006 (resource traps 0x2a2, 0x2b2, 0x2aa) is the best candidate for loading the 255360-byte blob. | Ibid. §7. ID08.c. |
 | **ID00 role** | CODE 0 (ID00.bin): jump-table / segment-loader table for CODE 1–9, not overlay data. | Byte evidence retained below. |
 
-## 3) Minimal EntityState offsets (confirmed)
+## 3) Entity offsets read by update_aircraft_entity
 
 **[RECONSTRUCTED]** Entity layout from FUN_0000e792 (Pacific Conflict.c:14016+). Only offsets explicitly read/written in that function or its callees are considered proven.
 
@@ -29,7 +29,7 @@ Evidence-first. Tags: **[RECONSTRUCTED]** (binary/decompiler), **[PROVEN]** (bin
 | 0x61a, 0x61e, 0x626, 0x62a, 0x63e, 0x662, 0x666, 0x669, 0x66a, 0x66e, 0x672, 0x679 | movement, weapon | Ibid. |
 | 0x67c, 0x67d, 0x67e, 0x685, 0x19a, 0x1a0, 0x1a1, 0x1a3 | weapon_count, status | Ibid. |
 
-**[INFERRED]** Godot `entity_state.gd` OFFSETS match these; last proven offset in table is 0x1a3. Full entity size/padding **[UNKNOWN]**.
+Full entity size and padding: **[UNKNOWN]**.
 
 ## 4) ID00.bin layout and stored routine offset (proven)
 
@@ -148,7 +148,7 @@ Segment 7 has two ID00 entries: stored offset 0 targets the RTS at file 0x0004, 
 
 - **[RECONSTRUCTED]** The game runtime ([`docs/architecture/GAME_RUNTIME.md`](GAME_RUNTIME.md)) links every jump-table entry to its strict-port routine (`godot/runtime/machine/segment_loader.gd`) and loads the Pacific Conflict overlay with its relocations; the earlier clean-room loader metadata boundary of the MVP prototype is gone with it.
 
-## 10) Safe targets for Godot consumption now
+## 10) Loader targets the QA check holds
 
 The complete set of 175 loader targets is structurally decoded in `ID00.decomp.c`. These six byte-inspected examples are the ones the QA check holds:
 

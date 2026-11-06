@@ -1,6 +1,6 @@
 # Offset tables (evidence-first)
 
-Every row must cite **source file:line** or **binary offset**. All statements tagged: **[RECONSTRUCTED]** / **[INFERRED]** / **[UNKNOWN]**.
+Every row must cite **source file:line** or **binary offset**. All statements tagged in the vocabulary of [`../port/DECOMPILATION_PROGRESS.md`](../port/DECOMPILATION_PROGRESS.md) / **[UNKNOWN]**.
 
 ## Mission / sim globals (DAT_0001b5a0 block)
 
@@ -16,7 +16,7 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 | +0x2b6 | ptr | Callback (0) | Pacific Conflict.c:7424 |
 | +0x2be | ptr | Callback (0) | Pacific Conflict.c:7425 |
 
-**[INFERRED]** Our SimCore `mission_phase_a8` = +0xa8, `mission_flag_ac` = +0xac. **[UNKNOWN]** Full layout of DAT_0001b5a0.
+**[UNKNOWN]** Full layout of DAT_0001b5a0.
 
 ## FUN_000044e8 — array and count symbols
 
@@ -62,7 +62,7 @@ Every row must cite **source file:line** or **binary offset**. All statements ta
 
 | Offset (hex) | Access | Source (Pacific Conflict.c) |
 |--------------|--------|-----------------------------|
-| 0x00 | *(int*) world/surface object ptr | [RECONSTRUCTED] `iVar1 = *param_1`; `*(iVar1+0x1c)` surface height (e792 14061/14084; also `*DAT_0001b738+0x1c` at 7354). Type byte at +0 for FUN_0000528a is **[INFERRED]** overlay/BE — Godot keeps `field_00` separate until byte buffer. |
+| 0x00 | *(int*) world/surface object ptr | [RECONSTRUCTED] `iVar1 = *param_1`; `*(iVar1+0x1c)` surface height (e792 14061/14084; also `*DAT_0001b738+0x1c` at 7354). Type byte at +0 for FUN_0000528a is **[STRONG INFERENCE]** overlay/BE — Godot keeps `field_00` separate until byte buffer. |
 | 0x04 | *(uint) | FUN_000045ba and others (not in 0e792 excerpt) |
 | 0x08 | *(uint) ptr | param_1[2] → *param_1; entity_data_ptr |
 | 0x0c | position/velocity | *param_1+0xc in 1351-1353 |
@@ -124,7 +124,7 @@ Related: **+0x684 bit0** (status) forces `+0x662=0`, `+0x666=0xFF80` after jitte
 
 **[RECONSTRUCTED]** Offsets **0x66e**, **0x672**, and **0x66a** are **written** only inside the ownership branch in the next section (Pacific Conflict.c:14179–14244). They are **read** elsewhere (e.g. 11730, 11753, 7936, 14427).
 
-**[INFERRED]** Names in our EntityState (field_00, pos_2e, weapon_count_67d, etc.) match these offsets. **[UNKNOWN]** Full entity size and any padding; 0x1a3 is last offset we use in the trace.
+**[UNKNOWN]** Full entity size and any padding.
 
 ## FUN_0000e792 — ownership branch (0x66e, 0x672, 0x66a writes)
 
@@ -144,7 +144,7 @@ Related: **+0x684 bit0** (status) forces `+0x662=0`, `+0x666=0xFF80` after jitte
 - **[RECONSTRUCTED]** **DAT_0001b738** = player entity pointer; assigned when the first qualifying entity is created (e.g. FUN_0000dff0 at 13616–13617); read/written as the single “player” plane. [Pacific Conflict.c:13616–13617, 7392, 7446, 14179]
 - **[RECONSTRUCTED]** **DAT_0001b888** = second entity pointer; cleared at 6101; set from `*(param_2+8)` in FUN_0000ff44 when DAT_0001d858 is 1, 8, or 7 and other conditions. [Pacific Conflict.c:6101, 7450, 7485–7486, 15117–15122]
 - **[RECONSTRUCTED]** The 0x66e / 0x672 / 0x66a (and 0x669 clear) writes happen **only** when `param_1 == DAT_0001b738` or `param_1 == DAT_0001b888`. No other entity receives these updates. [Pacific Conflict.c:14179]
-- **[INFERRED]** For the live port, Godot must maintain two designated entity references (player + second) and run the movement-smoothing block only for those two. **[UNKNOWN]** Semantic role of DAT_0001b888 (e.g. “target” vs “second player”); do not ascribe beyond “second designated entity.”
+- **[UNKNOWN]** Semantic role of DAT_0001b888 (e.g. “target” vs “second player”); do not ascribe beyond “second designated entity.”
 
 ## External pointed-to record (param_1[1]) — proven offsets
 
@@ -161,8 +161,6 @@ Related: **+0x684 bit0** (status) forces `+0x662=0`, `+0x666=0xFF80` after jitte
 | 0x46 | short | 14305 |
 | 0x48 | short | 14304, 14306 |
 
-**[INFERRED]** Godot models this as `EntityTemplate`, a separate auxiliary record attached to `EntityState`, specifically to avoid guessing packed entity layout or folding external pointed-to data into the entity byte offsets.
-**[RECONSTRUCTED]** `compute_template_field_40_adjustment` in `SimCore` mirrors the proven `FUN_0000e792` rule at lines 14067-14074: `field_40` is used directly when `direction_char_679 == '-'`, otherwise it is halved toward zero.
 **[RECONSTRUCTED]** `field_38` is also now modeled in Godot helper math because `FUN_0000e570` reads `*(int *)(DAT_00026004 + 0x38)` directly. [Pacific Conflict.c:13910-13915]
 
 ## Record layouts: world object, face, controller (2026-10-22)
