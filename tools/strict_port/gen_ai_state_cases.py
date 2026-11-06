@@ -23,8 +23,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_flight_model_cases import (  # noqa: E402
-    CTL, MEMORY_SIZE, OBJ, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, WORLD, base_writes)
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact  # noqa: E402
+from gen_flight_model_cases import CTL, OBJ, WORLD, base_writes  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/ai_state_cases.json")
 AI_ATTACK_OR_FLY = 0x110D4
@@ -265,35 +265,6 @@ def run_case(c: dict) -> list[list[int]]:
     emu.call(c["routine"], [CTL], STACK_TOP)
     return [[a, emu.mem[a]] for a in range(MEMORY_SIZE)
             if not (STACK_GUARD[0] <= a < STACK_GUARD[1]) and emu.mem[a] != before[a]]
-
-
-def compact(writes: list[list[int]]) -> tuple[list[list[int]], list[list[int]]]:
-    """Runs of zero longs become [start, end) ranges, cleared before the remaining writes; the
-    result must leave memory exactly as the writes in order do."""
-    zero: list[list[int]] = []
-    rest: list[list[int]] = []
-    written: set[int] = set()
-    for addr, size, value in writes:
-        clearable = size == 4 and value == 0 and not written.intersection(range(addr, addr + 4))
-        if clearable and zero and zero[-1][1] == addr:
-            zero[-1][1] = addr + 4
-        elif clearable:
-            zero.append([addr, addr + 4])
-        else:
-            rest.append([addr, size, value])
-            written.update(range(addr, addr + size))
-
-    def apply(state: dict[int, int], items: list[list[int]]) -> None:
-        for addr, size, value in items:
-            for k in range(size):
-                state[addr + k] = (value >> (8 * (size - 1 - k))) & 0xFF
-
-    ordered: dict[int, int] = {}
-    apply(ordered, writes)
-    replay: dict[int, int] = {a: 0 for start, end in zero for a in range(start, end)}
-    apply(replay, rest)
-    assert replay == ordered, "compacted writes differ"
-    return zero, rest
 
 
 def main() -> None:

@@ -19,9 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP  # noqa: E402
-from gen_radar_cases import log_call  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
 from gen_transform_object_cases import CALL_LOGS as HOOK_LOGS, CTL, FACES, OBJ, setup  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/render_objects_cases.json")

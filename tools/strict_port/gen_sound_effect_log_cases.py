@@ -17,10 +17,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import (  # noqa: E402
-    ARGS_POOL, MEMORY_SIZE, OVERLAY_RNG_INIT, SPAWN_MISSION_POOL_OBJECT, STACK_GUARD, STACK_TOP, record_args)
-from gen_radar_cases import log_call  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
+from gen_ordnance_cases import ARGS_POOL, SPAWN_MISSION_POOL_OBJECT, record_args  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/sound_effect_log_cases.json")
 PLAY, IS_PLAYING, STOP, STOP1 = 0x3F400, 0x3F404, 0x3F408, 0x3F40C

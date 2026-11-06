@@ -14,9 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP  # noqa: E402
-from gen_radar_cases import log_call  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/frame_loop_cases.json")
 ADVANCE, SIM_TICK, RESET_REFS = 0x92C4, 0x44C8, 0x6F98          # runtime addresses (file - 0x20)

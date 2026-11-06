@@ -18,9 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import (  # noqa: E402
-    ARGS_POOL, MEMORY_SIZE, OVERLAY_RNG_INIT, SPAWN_MISSION_POOL_OBJECT, STACK_GUARD, STACK_TOP, record_args)
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact  # noqa: E402
+from gen_ordnance_cases import ARGS_POOL, SPAWN_MISSION_POOL_OBJECT, record_args  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/parachute_cases.json")
 PARACHUTE_TICK = 0x19918         # runtime addresses (file - 0x20)

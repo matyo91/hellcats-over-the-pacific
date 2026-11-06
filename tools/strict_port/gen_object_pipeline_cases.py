@@ -20,9 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP  # noqa: E402
-from gen_radar_cases import log_call  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/object_pipeline_cases.json")
 ROUTINES = {0xA656: "project_prepared_object", 0xA4F2: "transform_face_vertices", 0xB008: "clip_face_near_plane",

@@ -18,13 +18,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/ordnance_cases.json")
-MEMORY_SIZE = 0x40000
-STACK_TOP = 0x3F000
-STACK_GUARD = (STACK_TOP - 0x800, STACK_TOP + 0x40)
-OVERLAY_RNG_INIT = 0x114EA
 ORDNANCE_TICK = 0x12A0A          # runtime addresses (file - 0x20)
 ORDNANCE_COLLISION = 0x12F32
 SPAWN_MISSION_POOL_OBJECT = 0x50F6

@@ -18,9 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_object_list_cases import COUNT, FRAME, LIST, MEMORY_SIZE, OBJECTS, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, Setup  # noqa: E402
-from gen_radar_cases import log_call  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
+from gen_object_list_cases import COUNT, FRAME, LIST, OBJECTS, Setup  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/visibility_cases.json")
 COLLECT_FAR, BUILD_VISIBLE, TRANSFORM = 0x553A, 0x58CC, 0x27E2   # runtime addresses (file - 0x20)

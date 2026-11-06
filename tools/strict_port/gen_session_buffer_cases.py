@@ -21,9 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP  # noqa: E402
-from gen_radar_cases import log_call  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/session_buffer_cases.json")
 ROUTINES = {0xD90: "ensure_handle_allocated", 0xDEA: "lock_handle_nopurge", 0xE12: "unlock_handle_purgeable",

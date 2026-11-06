@@ -20,9 +20,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_TOP, compact  # noqa: E402
 from gen_anchor_present_cases import WORLD, scene_case  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_TOP  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/overlay_entry_cases.json")
 ROUTINES = {0x10F2: "overlay_main_entry", 0x18B6: "overlay_initialise", 0x2DF2: "noop_stub_2e12",

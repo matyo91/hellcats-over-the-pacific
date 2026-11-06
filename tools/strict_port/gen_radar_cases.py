@@ -17,8 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/radar_cases.json")
 SET_VIEW_DISTANCE = 0x176FA      # runtime addresses (file - 0x20)
@@ -94,22 +93,6 @@ CASES = [
     case("scope: heading 0x2a00, larger scale", RADAR_SCOPE, [],
          [(0x1D80E, 2, 0x2A00), (0x26664, 2, 0x200), (0x26676, 4, 4)] + tracks(TRACKS_A, CURRENT)),
 ]
-
-
-def log_call(emu: Emulator, base: int, nargs: int, deref_index: int = -1, deref_n: int = 0,
-             deref2_index: int = -1, deref2_n: int = 0) -> int:
-    """A logging stub: append the call's long arguments (plus deref_n longs read at argument
-    deref_index, and deref2_n at deref2_index, for buffers passed by address) to the log at base
-    (long count first) and return the long at base - 4 (0 unless a case sets it)."""
-    args = [emu.read(emu.a[7] + 4 * i, 4) for i in range(nargs)]
-    values = list(args)
-    values += [emu.read((args[deref_index] + 4 * k) & 0xFFFFFFFF, 4) for k in range(deref_n)]
-    values += [emu.read((args[deref2_index] + 4 * k) & 0xFFFFFFFF, 4) for k in range(deref2_n)]
-    count = emu.read(base, 4)
-    for i, value in enumerate(values):
-        emu.write(base + 4 + (count * len(values) + i) * 4, 4, value)
-    emu.write(base, 4, count + 1)
-    return emu.read(base - 4, 4)
 
 
 def run_case(c: dict) -> tuple[list[list[int]], int]:

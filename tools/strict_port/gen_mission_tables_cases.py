@@ -19,9 +19,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_TOP, compact  # noqa: E402
 from gen_object_list_cases import HEAP_BLOCK, Setup  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_TOP  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/mission_tables_cases.json")
 ROUTINES = {0x34: "overlay_init_template_pointer_tables", 0x16C2: "init_mission_object_tables"}

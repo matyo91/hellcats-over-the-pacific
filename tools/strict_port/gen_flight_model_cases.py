@@ -17,13 +17,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/flight_model_cases.json")
-MEMORY_SIZE = 0x40000
-STACK_TOP = 0x3f000
-STACK_GUARD = (STACK_TOP - 0x800, STACK_TOP + 0x40)
 UPDATE_AIRCRAFT_ENTITY = 0xE772  # runtime address of file 0xe792
-OVERLAY_RNG_INIT = 0x114EA       # runtime address of file 0x1150a
 WORLD = 0x23000
 CTL = 0x24000
 OBJ = 0x24800

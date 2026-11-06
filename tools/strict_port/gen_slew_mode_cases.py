@@ -17,8 +17,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import ARGS_ORDNANCE, SPAWN_ORDNANCE_ORIENTED, compact, record_args  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_TOP  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_TOP, compact  # noqa: E402
+from gen_ai_state_cases import ARGS_ORDNANCE, SPAWN_ORDNANCE_ORIENTED, record_args  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/slew_mode_cases.json")
 ROUTINE = 0xF7F0                                    # runtime address (file 0xf810)

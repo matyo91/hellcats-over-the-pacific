@@ -16,9 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_ordnance_cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP  # noqa: E402
-from gen_radar_cases import log_call  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/dot_cases.json")
 ERASE8, PLOT8, ERASE4, PLOT4, PLOT_BW = 0x15E9E, 0x15F1E, 0x15F98, 0x16108, 0x16210

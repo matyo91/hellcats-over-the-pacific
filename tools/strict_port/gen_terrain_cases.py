@@ -16,9 +16,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from gen_ai_state_cases import compact  # noqa: E402
-from gen_radar_cases import log_call  # noqa: E402
-from gen_object_list_cases import CTLS, MEMORY_SIZE, OBJECTS, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, Setup  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, log_call  # noqa: E402
+from gen_object_list_cases import CTLS, OBJECTS, Setup  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/terrain_cases.json")
 CREATE_FRACTAL, HEIGHT_AT, TERRAIN_CONTACT = 0x1381C, 0x13960, 0x14178     # runtime addresses

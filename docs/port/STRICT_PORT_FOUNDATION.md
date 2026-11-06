@@ -91,7 +91,8 @@ Each check is independent; QA (`python3 tools/qa/test_regression.py`) runs them 
   by Ghidra name are resolved by address. A callee reached through a computed address is listed in
   `ALLOWED`, a call Ghidra left as a label in `EXTRA_ALLOWED`, each with its evidence.
 - **Behaviour** (`godot/tests/strict_port/`): the generators in `tools/strict_port/gen_*_cases.py`
-  run the original 68000 code in `m68k_emu.py` and record, per case, every memory change and every
+  (sharing the overlay's layout and helpers through `cases.py`; a segment family's layout stays in
+  its first generator) run the original 68000 code in `m68k_emu.py` and record, per case, every memory change and every
   call it makes; `helpers/segment_cases.gd` (a segment) and `helpers/original_cases.gd` (the
   overlay) replay the case against the port and compare them exactly. `test_replays.gd` replays
   every fixture that needs nothing more; a fixture listed there is its functions'
