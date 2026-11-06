@@ -92,8 +92,10 @@ Each check is independent; QA (`python3 tools/qa/test_regression.py`) runs them 
   `ALLOWED`, a call Ghidra left as a label in `EXTRA_ALLOWED`, each with its evidence.
 - **Behaviour** (`godot/tests/strict_port/`): the generators in `tools/strict_port/gen_*_cases.py`
   run the original 68000 code in `m68k_emu.py` and record, per case, every memory change and every
-  call it makes; `helpers/segment_cases.gd` replays the case against the port and compares them
-  exactly. The stack region is left out of the comparison. A call's arguments are logged by
+  call it makes; `helpers/segment_cases.gd` (a segment) and `helpers/original_cases.gd` (the
+  overlay) replay the case against the port and compare them exactly. `test_replays.gd` replays
+  every fixture that needs nothing more; a fixture listed there is its functions'
+  `deterministic_test`, and a test file only where a test checks more than a replay. The stack region is left out of the comparison. A call's arguments are logged by
   value, or through the pointer (a long count, or `pstr` for a Pascal string) where the fixture's
   call log says so.
 - **Runtime** ([`../generated/RUNTIME_COVERAGE.md`](../generated/RUNTIME_COVERAGE.md)): which

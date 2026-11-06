@@ -3705,7 +3705,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00011182",
       "blocked_by": []
     },
@@ -3722,7 +3722,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_000111ae",
       "blocked_by": []
     },
@@ -3739,7 +3739,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_000111da",
       "blocked_by": []
     },
@@ -3756,7 +3756,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_000112e0",
       "blocked_by": []
     },
@@ -3773,7 +3773,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_0001820a",
       "blocked_by": []
     },
@@ -3790,7 +3790,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_000110f4",
       "blocked_by": []
     },
@@ -3807,7 +3807,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010b84",
       "blocked_by": []
     },
@@ -3824,7 +3824,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010ce8",
       "blocked_by": []
     },
@@ -3841,7 +3841,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010d68",
       "blocked_by": []
     },
@@ -3858,7 +3858,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010da8",
       "blocked_by": []
     },
@@ -3875,7 +3875,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010de8",
       "blocked_by": []
     },
@@ -3892,7 +3892,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010e28",
       "blocked_by": []
     },
@@ -3909,7 +3909,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010ecc",
       "blocked_by": []
     },
@@ -3926,7 +3926,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00010f68",
       "blocked_by": []
     },
@@ -3943,7 +3943,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_000168d2",
       "blocked_by": []
     },
@@ -3960,7 +3960,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_0001691c",
       "blocked_by": []
     },
@@ -3977,7 +3977,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00016966",
       "blocked_by": []
     },
@@ -3994,7 +3994,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00019c26",
       "blocked_by": []
     },
@@ -4011,7 +4011,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00019c5e",
       "blocked_by": []
     },
@@ -4028,7 +4028,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_00019fba",
       "blocked_by": []
     },
@@ -4045,7 +4045,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_ai_states.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ai_state_cases.json",
       "renamed_from": "FUN_0001a1a6",
       "blocked_by": []
     },
@@ -4062,7 +4062,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ordnance_cases.json",
       "renamed_from": "FUN_000128b6",
       "blocked_by": []
     },
@@ -4079,7 +4079,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ordnance_cases.json",
       "renamed_from": "FUN_00012a2a",
       "blocked_by": []
     },
@@ -4096,7 +4096,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ordnance_cases.json",
       "renamed_from": "FUN_00012d34",
       "blocked_by": []
     },
@@ -4113,7 +4113,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ordnance.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ordnance_cases.json",
       "renamed_from": "FUN_00012f52",
       "blocked_by": []
     },
@@ -4130,7 +4130,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_parachute.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/parachute_cases.json",
       "renamed_from": "FUN_0001951a",
       "blocked_by": []
     },
@@ -4147,7 +4147,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_parachute.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/parachute_cases.json",
       "renamed_from": "FUN_0001952e",
       "blocked_by": []
     },
@@ -4164,7 +4164,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_parachute.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/parachute_cases.json",
       "renamed_from": "FUN_00019938",
       "blocked_by": []
     },
@@ -4181,7 +4181,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_000116e8",
       "blocked_by": []
     },
@@ -4198,7 +4198,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_0001713c",
       "blocked_by": []
     },
@@ -4215,7 +4215,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_00018942",
       "blocked_by": []
     },
@@ -4232,7 +4232,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_00012738",
       "blocked_by": []
     },
@@ -4249,7 +4249,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_000127aa",
       "blocked_by": []
     },
@@ -4266,7 +4266,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_00019b30",
       "blocked_by": []
     },
@@ -4283,7 +4283,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_00012f92",
       "blocked_by": []
     },
@@ -4300,7 +4300,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_000168ae",
       "blocked_by": []
     },
@@ -4317,7 +4317,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_0000df98",
       "blocked_by": []
     },
@@ -4334,7 +4334,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_controller_misc.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/controller_misc_cases.json",
       "renamed_from": "FUN_0000dfd2",
       "blocked_by": []
     },
@@ -4351,7 +4351,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_000115da",
       "blocked_by": []
     },
@@ -4368,7 +4368,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_00011b48",
       "blocked_by": []
     },
@@ -4385,7 +4385,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_0001281e",
       "blocked_by": []
     },
@@ -4402,7 +4402,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_00015bd4",
       "blocked_by": []
     },
@@ -4419,7 +4419,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_00016a78",
       "blocked_by": []
     },
@@ -4436,7 +4436,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_00017098",
       "blocked_by": []
     },
@@ -4453,7 +4453,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_000173dc",
       "blocked_by": []
     },
@@ -4470,7 +4470,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_0001759e",
       "blocked_by": []
     },
@@ -4487,7 +4487,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_000188f4",
       "blocked_by": []
     },
@@ -4504,7 +4504,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_0001910e",
       "blocked_by": []
     },
@@ -4521,7 +4521,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_0001940e",
       "blocked_by": []
     },
@@ -4538,7 +4538,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_template_registration.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/template_registration_cases.json",
       "renamed_from": "FUN_00019a54",
       "blocked_by": []
     },
@@ -4555,7 +4555,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_cases.json",
       "renamed_from": "FUN_0001771a",
       "blocked_by": []
     },
@@ -4572,7 +4572,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_cases.json",
       "renamed_from": "FUN_00017736",
       "blocked_by": []
     },
@@ -4589,7 +4589,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_cases.json",
       "renamed_from": "FUN_00017a8c",
       "blocked_by": []
     },
@@ -4606,7 +4606,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_cases.json",
       "renamed_from": "FUN_00017b68",
       "blocked_by": []
     },
@@ -4623,7 +4623,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sound_effect_log_cases.json",
       "renamed_from": "FUN_00011b96",
       "blocked_by": []
     },
@@ -4640,7 +4640,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sound_effect_log_cases.json",
       "renamed_from": "FUN_00011c2c",
       "blocked_by": []
     },
@@ -4657,7 +4657,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sound_effect_log_cases.json",
       "renamed_from": "FUN_00009550",
       "blocked_by": []
     },
@@ -4674,7 +4674,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sound_effect_log_cases.json",
       "renamed_from": "FUN_000095ac",
       "blocked_by": []
     },
@@ -4691,7 +4691,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sound_effect_log.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sound_effect_log_cases.json",
       "renamed_from": "FUN_000096ae",
       "blocked_by": []
     },
@@ -4708,7 +4708,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_plume.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/plume_cases.json",
       "renamed_from": "FUN_00011796",
       "blocked_by": []
     },
@@ -4725,7 +4725,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_plume.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/plume_cases.json",
       "renamed_from": "FUN_00011940",
       "blocked_by": []
     },
@@ -4742,7 +4742,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_plume.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/plume_cases.json",
       "renamed_from": "FUN_00011a90",
       "blocked_by": []
     },
@@ -4759,7 +4759,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_pre_render.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/pre_render_cases.json",
       "renamed_from": "FUN_00018a34",
       "blocked_by": []
     },
@@ -4776,7 +4776,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_pre_render.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/pre_render_cases.json",
       "renamed_from": "FUN_00019394",
       "blocked_by": []
     },
@@ -4793,7 +4793,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_pre_render.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/pre_render_cases.json",
       "renamed_from": "FUN_00015e62",
       "blocked_by": []
     },
@@ -4810,7 +4810,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_polygon.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/polygon_cases.json",
       "renamed_from": "FUN_00012fd2",
       "blocked_by": []
     },
@@ -4827,7 +4827,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_polygon.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/polygon_cases.json",
       "renamed_from": "FUN_00013268",
       "blocked_by": []
     },
@@ -4844,7 +4844,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_polygon.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/polygon_cases.json",
       "renamed_from": "FUN_000132c8",
       "blocked_by": []
     },
@@ -4861,7 +4861,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_dots.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/dot_cases.json",
       "renamed_from": "FUN_00015ebe",
       "blocked_by": []
     },
@@ -4878,7 +4878,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_dots.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/dot_cases.json",
       "renamed_from": "FUN_00015f3e",
       "blocked_by": []
     },
@@ -4895,7 +4895,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_dots.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/dot_cases.json",
       "renamed_from": "FUN_00015fb8",
       "blocked_by": []
     },
@@ -4912,7 +4912,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_dots.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/dot_cases.json",
       "renamed_from": "FUN_00016128",
       "blocked_by": []
     },
@@ -4929,7 +4929,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_dots.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/dot_cases.json",
       "renamed_from": "FUN_00016230",
       "blocked_by": []
     },
@@ -4946,7 +4946,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_object_list.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/object_list_cases.json",
       "renamed_from": "FUN_00001c04",
       "blocked_by": []
     },
@@ -4963,7 +4963,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_object_list.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/object_list_cases.json",
       "renamed_from": "FUN_000052dc",
       "blocked_by": []
     },
@@ -4980,7 +4980,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_object_list.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/object_list_cases.json",
       "renamed_from": "FUN_000053f8",
       "blocked_by": []
     },
@@ -4997,7 +4997,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_visibility.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/visibility_cases.json",
       "renamed_from": "FUN_00002802",
       "blocked_by": []
     },
@@ -5014,7 +5014,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_visibility.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/visibility_cases.json",
       "renamed_from": "FUN_000058ec",
       "blocked_by": []
     },
@@ -5031,7 +5031,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_visibility.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/visibility_cases.json",
       "renamed_from": "FUN_0000555a",
       "blocked_by": []
     },
@@ -5048,7 +5048,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_collision.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/collision_cases.json",
       "renamed_from": "FUN_00013e4e",
       "blocked_by": []
     },
@@ -5065,7 +5065,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_collision.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/collision_cases.json",
       "renamed_from": "FUN_00013eae",
       "blocked_by": []
     },
@@ -5082,7 +5082,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_collision.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/collision_cases.json",
       "renamed_from": "FUN_000135e8",
       "blocked_by": []
     },
@@ -5099,7 +5099,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_collision.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/collision_cases.json",
       "renamed_from": "FUN_0001429c",
       "blocked_by": []
     },
@@ -5116,7 +5116,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_collision.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/collision_cases.json",
       "renamed_from": "FUN_0001346c",
       "blocked_by": []
     },
@@ -5133,7 +5133,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_collision.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/collision_cases.json",
       "renamed_from": "FUN_00013ee0",
       "blocked_by": []
     },
@@ -5150,7 +5150,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/terrain_cases.json",
       "renamed_from": "FUN_0001383c",
       "blocked_by": []
     },
@@ -5167,7 +5167,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/terrain_cases.json",
       "renamed_from": "FUN_00013980",
       "blocked_by": []
     },
@@ -5184,7 +5184,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/terrain_cases.json",
       "renamed_from": "FUN_00014198",
       "blocked_by": []
     },
@@ -5201,7 +5201,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/terrain_cases.json",
       "renamed_from": "FUN_00014830",
       "blocked_by": []
     },
@@ -5218,7 +5218,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_terrain.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/terrain_cases.json",
       "renamed_from": "FUN_00013cdc",
       "blocked_by": []
     },
@@ -5235,7 +5235,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sim_step_cases.json",
       "renamed_from": "FUN_00005df8",
       "blocked_by": []
     },
@@ -5252,7 +5252,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sim_step_cases.json",
       "renamed_from": "FUN_0000947c",
       "blocked_by": []
     },
@@ -5269,7 +5269,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sim_step_cases.json",
       "renamed_from": "FUN_000094d2",
       "blocked_by": []
     },
@@ -5286,7 +5286,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sim_step_cases.json",
       "renamed_from": "FUN_000044a4",
       "blocked_by": []
     },
@@ -5303,7 +5303,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sim_step.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sim_step_cases.json",
       "renamed_from": "FUN_0001377a",
       "blocked_by": []
     },
@@ -5320,7 +5320,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_camera.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/camera_cases.json",
       "renamed_from": "FUN_0000739a",
       "blocked_by": []
     },
@@ -5337,7 +5337,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_camera.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/camera_cases.json",
       "renamed_from": "FUN_000088a0",
       "blocked_by": []
     },
@@ -5354,7 +5354,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_camera.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/camera_cases.json",
       "renamed_from": "FUN_00008abe",
       "blocked_by": []
     },
@@ -5371,7 +5371,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_blip_cases.json",
       "renamed_from": "FUN_00017780",
       "blocked_by": []
     },
@@ -5388,7 +5388,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_blip_cases.json",
       "renamed_from": "FUN_00017868",
       "blocked_by": []
     },
@@ -5405,7 +5405,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_blip_cases.json",
       "renamed_from": "FUN_00017948",
       "blocked_by": []
     },
@@ -5422,7 +5422,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_blip_cases.json",
       "renamed_from": "FUN_00017a34",
       "blocked_by": []
     },
@@ -5439,7 +5439,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_radar_blips.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/radar_blip_cases.json",
       "renamed_from": "FUN_00017a60",
       "blocked_by": []
     },
@@ -5456,7 +5456,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_views.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/view_cases.json",
       "renamed_from": "FUN_0000879e",
       "blocked_by": []
     },
@@ -5473,7 +5473,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_views.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/view_cases.json",
       "renamed_from": "FUN_00008972",
       "blocked_by": []
     },
@@ -5490,7 +5490,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_views.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/view_cases.json",
       "renamed_from": "FUN_00008ff4",
       "blocked_by": []
     },
@@ -5507,7 +5507,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_tracking_camera.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/tracking_cases.json",
       "renamed_from": "FUN_00008c30",
       "blocked_by": []
     },
@@ -5524,7 +5524,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_frame_loop.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/frame_loop_cases.json",
       "renamed_from": "FUN_00006fb8",
       "blocked_by": []
     },
@@ -5541,7 +5541,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_frame_loop.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/frame_loop_cases.json",
       "renamed_from": "FUN_000044e8",
       "blocked_by": []
     },
@@ -5558,7 +5558,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_frame_loop.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/frame_loop_cases.json",
       "renamed_from": "FUN_000092e4",
       "blocked_by": []
     },
@@ -5575,7 +5575,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_clouds.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/cloud_cases.json",
       "renamed_from": "FUN_00019aa2",
       "blocked_by": []
     },
@@ -5592,7 +5592,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_clouds.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/cloud_cases.json",
       "renamed_from": "FUN_0000640c",
       "blocked_by": []
     },
@@ -5609,7 +5609,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_altitude_bands.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/altitude_band_cases.json",
       "renamed_from": "FUN_00005a14",
       "blocked_by": []
     },
@@ -5626,7 +5626,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_ground_scatter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/ground_scatter_cases.json",
       "renamed_from": "FUN_00005e28",
       "blocked_by": []
     },
@@ -5643,7 +5643,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_00000032",
       "blocked_by": []
     },
@@ -5660,7 +5660,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_00000334",
       "blocked_by": []
     },
@@ -5677,7 +5677,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_0000229e",
       "blocked_by": []
     },
@@ -5694,7 +5694,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_000027a2",
       "blocked_by": []
     },
@@ -5711,7 +5711,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_000027cc",
       "blocked_by": []
     },
@@ -5728,7 +5728,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_000028a6",
       "blocked_by": []
     },
@@ -5745,7 +5745,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_000041ec",
       "blocked_by": []
     },
@@ -5762,7 +5762,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_00006ece",
       "blocked_by": []
     },
@@ -5779,7 +5779,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_00009ae0",
       "blocked_by": []
     },
@@ -5796,7 +5796,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_0000b460",
       "blocked_by": []
     },
@@ -5813,7 +5813,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_0000b49e",
       "blocked_by": []
     },
@@ -5830,7 +5830,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_small_math.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/small_math_cases.json",
       "renamed_from": "FUN_0000e3b2",
       "blocked_by": []
     },
@@ -5847,7 +5847,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000c572",
       "blocked_by": []
     },
@@ -5864,7 +5864,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000c664",
       "blocked_by": []
     },
@@ -5881,7 +5881,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000c80c",
       "blocked_by": []
     },
@@ -5898,7 +5898,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000c8d6",
       "blocked_by": []
     },
@@ -5915,7 +5915,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000c948",
       "blocked_by": []
     },
@@ -5932,7 +5932,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000c9c2",
       "blocked_by": []
     },
@@ -5949,7 +5949,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000ca44",
       "blocked_by": []
     },
@@ -5966,7 +5966,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000cac6",
       "blocked_by": []
     },
@@ -5983,7 +5983,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000cb62",
       "blocked_by": []
     },
@@ -6000,7 +6000,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000cc12",
       "blocked_by": []
     },
@@ -6017,7 +6017,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000ccca",
       "blocked_by": []
     },
@@ -6034,7 +6034,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000ce1c",
       "blocked_by": []
     },
@@ -6051,7 +6051,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/gauge_cases.json",
       "renamed_from": "FUN_0000cec4",
       "blocked_by": []
     },
@@ -6068,7 +6068,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_readouts.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/readout_cases.json",
       "renamed_from": "FUN_0000d00c",
       "blocked_by": []
     },
@@ -6085,7 +6085,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_readouts.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/readout_cases.json",
       "renamed_from": "FUN_0000d27c",
       "blocked_by": []
     },
@@ -6102,7 +6102,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_readouts.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/readout_cases.json",
       "renamed_from": "FUN_0001a75e",
       "blocked_by": []
     },
@@ -6119,7 +6119,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_panel_frame.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/panel_frame_cases.json",
       "renamed_from": "FUN_0000ba2a",
       "blocked_by": []
     },
@@ -6136,7 +6136,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_heading_tape.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/heading_tape_cases.json",
       "renamed_from": "FUN_0000c11e",
       "blocked_by": []
     },
@@ -6153,7 +6153,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_heading_tape.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/heading_tape_cases.json",
       "renamed_from": "FUN_0000c17e",
       "blocked_by": []
     },
@@ -6170,7 +6170,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_heading_tape.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/heading_tape_cases.json",
       "renamed_from": "FUN_0000c1aa",
       "blocked_by": []
     },
@@ -6187,7 +6187,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sky_ground.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sky_ground_cases.json",
       "renamed_from": "FUN_0000b4b6",
       "blocked_by": []
     },
@@ -6204,7 +6204,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_copy_rect.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/copy_rect_cases.json",
       "renamed_from": "FUN_0000bca8",
       "blocked_by": []
     },
@@ -6221,7 +6221,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_copy_rect.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/copy_rect_cases.json",
       "renamed_from": "FUN_0000bfb0",
       "blocked_by": []
     },
@@ -6238,7 +6238,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_line8.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/line8_cases.json",
       "renamed_from": "FUN_0000d3bc",
       "blocked_by": []
     },
@@ -6255,7 +6255,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_line8.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/line8_cases.json",
       "renamed_from": "FUN_0000d91a",
       "blocked_by": []
     },
@@ -6272,7 +6272,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_line4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/line4_cases.json",
       "renamed_from": "FUN_0000d5b0",
       "blocked_by": []
     },
@@ -6289,7 +6289,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_line4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/line4_cases.json",
       "renamed_from": "FUN_0000db60",
       "blocked_by": []
     },
@@ -6306,7 +6306,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_emit_cases.json",
       "renamed_from": "FUN_00009d34",
       "blocked_by": []
     },
@@ -6323,7 +6323,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_emit_cases.json",
       "renamed_from": "FUN_00009da6",
       "blocked_by": []
     },
@@ -6340,7 +6340,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_emit_cases.json",
       "renamed_from": "FUN_00009ef8",
       "blocked_by": []
     },
@@ -6357,7 +6357,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_emit.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_emit_cases.json",
       "renamed_from": "FUN_00009fc4",
       "blocked_by": []
     },
@@ -6374,7 +6374,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_output_cases.json",
       "renamed_from": "FUN_00009b8c",
       "blocked_by": []
     },
@@ -6391,7 +6391,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_output_cases.json",
       "renamed_from": "FUN_0000a07e",
       "blocked_by": []
     },
@@ -6408,7 +6408,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_output_cases.json",
       "renamed_from": "FUN_0000a16e",
       "blocked_by": []
     },
@@ -6425,7 +6425,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_face_output.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/face_output_cases.json",
       "renamed_from": "FUN_0000a220",
       "blocked_by": []
     },
@@ -6442,7 +6442,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/object_pipeline_cases.json",
       "renamed_from": "FUN_0000a2f2",
       "blocked_by": []
     },
@@ -6459,7 +6459,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/object_pipeline_cases.json",
       "renamed_from": "FUN_0000a512",
       "blocked_by": []
     },
@@ -6476,7 +6476,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/object_pipeline_cases.json",
       "renamed_from": "FUN_0000a676",
       "blocked_by": []
     },
@@ -6493,7 +6493,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_object_pipeline.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/object_pipeline_cases.json",
       "renamed_from": "FUN_0000b028",
       "blocked_by": []
     },
@@ -6510,7 +6510,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_transform_object.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/transform_object_cases.json",
       "renamed_from": "FUN_0000a75e",
       "blocked_by": []
     },
@@ -6527,7 +6527,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_render_objects.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/render_objects_cases.json",
       "renamed_from": "FUN_0000ac72",
       "blocked_by": []
     },
@@ -6544,7 +6544,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_sort_parts.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/sort_parts_cases.json",
       "renamed_from": "FUN_0001443a",
       "blocked_by": []
     },
@@ -6561,7 +6561,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_span_fill.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span_fill_cases.json",
       "renamed_from": "FUN_00003734",
       "blocked_by": []
     },
@@ -6578,7 +6578,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_span_fill.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span_fill_cases.json",
       "renamed_from": "FUN_000037b4",
       "blocked_by": []
     },
@@ -6595,7 +6595,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_span4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span4_cases.json",
       "renamed_from": "FUN_00003266",
       "blocked_by": []
     },
@@ -6612,7 +6612,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_span4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span4_cases.json",
       "renamed_from": "FUN_000032ba",
       "blocked_by": []
     },
@@ -6629,7 +6629,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_span4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span4_cases.json",
       "renamed_from": "FUN_00003412",
       "blocked_by": []
     },
@@ -6646,7 +6646,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_span4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span4_cases.json",
       "renamed_from": "FUN_00003466",
       "blocked_by": []
     },
@@ -6663,7 +6663,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_span4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span4_cases.json",
       "renamed_from": "FUN_000035b4",
       "blocked_by": []
     },
@@ -6680,7 +6680,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_span4.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/span4_cases.json",
       "renamed_from": "FUN_00003608",
       "blocked_by": []
     },
@@ -6697,7 +6697,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_scan_convert.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/scan_convert_cases.json",
       "renamed_from": "FUN_00002e14",
       "blocked_by": []
     },
@@ -6935,7 +6935,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/colour_setup_cases.json",
       "renamed_from": "FUN_00000020",
       "blocked_by": []
     },
@@ -6952,7 +6952,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/colour_setup_cases.json",
       "renamed_from": "FUN_00001294",
       "blocked_by": []
     },
@@ -6969,7 +6969,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/colour_setup_cases.json",
       "renamed_from": "FUN_00001300",
       "blocked_by": []
     },
@@ -6986,7 +6986,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_colour_setup.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/colour_setup_cases.json",
       "renamed_from": "FUN_0000131c",
       "blocked_by": []
     },
@@ -7003,7 +7003,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/session_buffer_cases.json",
       "renamed_from": "FUN_00000db0",
       "blocked_by": []
     },
@@ -7020,7 +7020,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/session_buffer_cases.json",
       "renamed_from": "FUN_00000e0a",
       "blocked_by": []
     },
@@ -7037,7 +7037,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/session_buffer_cases.json",
       "renamed_from": "FUN_00000e32",
       "blocked_by": []
     },
@@ -7054,7 +7054,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/session_buffer_cases.json",
       "renamed_from": "FUN_00000e5a",
       "blocked_by": []
     },
@@ -7071,7 +7071,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/session_buffer_cases.json",
       "renamed_from": "FUN_00000ea0",
       "blocked_by": []
     },
@@ -7088,7 +7088,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/session_buffer_cases.json",
       "renamed_from": "FUN_00000f92",
       "blocked_by": []
     },
@@ -7105,7 +7105,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_session_buffers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/session_buffer_cases.json",
       "renamed_from": "FUN_00001094",
       "blocked_by": []
     },
@@ -7122,7 +7122,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/anchor_present_cases.json",
       "renamed_from": "FUN_000003fa",
       "blocked_by": []
     },
@@ -7139,7 +7139,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/anchor_present_cases.json",
       "renamed_from": "FUN_00000c4c",
       "blocked_by": []
     },
@@ -7156,7 +7156,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/anchor_present_cases.json",
       "renamed_from": "FUN_00000d6a",
       "blocked_by": []
     },
@@ -7173,7 +7173,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/anchor_present_cases.json",
       "renamed_from": "FUN_0000d298",
       "blocked_by": []
     },
@@ -7190,7 +7190,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_anchor_present.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/anchor_present_cases.json",
       "renamed_from": "FUN_0000d34c",
       "blocked_by": []
     },
@@ -7207,7 +7207,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_flight_start.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/flight_start_cases.json",
       "renamed_from": "FUN_00004210",
       "blocked_by": []
     },
@@ -7224,7 +7224,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_flight_start.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/flight_start_cases.json",
       "renamed_from": "FUN_00007310",
       "blocked_by": []
     },
@@ -7241,7 +7241,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_flight_start.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/flight_start_cases.json",
       "renamed_from": "FUN_0000923e",
       "blocked_by": []
     },
@@ -7258,7 +7258,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_mission_start.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/mission_start_cases.json",
       "renamed_from": "FUN_000011e6",
       "blocked_by": []
     },
@@ -7275,7 +7275,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_mission_start.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/mission_start_cases.json",
       "renamed_from": "FUN_00001254",
       "blocked_by": []
     },
@@ -7292,7 +7292,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_mission_start.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/mission_start_cases.json",
       "renamed_from": "FUN_00003ac4",
       "blocked_by": []
     },
@@ -7309,7 +7309,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/overlay_entry_cases.json",
       "renamed_from": "FUN_00001112",
       "blocked_by": []
     },
@@ -7326,7 +7326,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/overlay_entry_cases.json",
       "renamed_from": "FUN_000018d6",
       "blocked_by": []
     },
@@ -7343,7 +7343,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/overlay_entry_cases.json",
       "renamed_from": "FUN_00002e12",
       "blocked_by": []
     },
@@ -7360,7 +7360,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/overlay_entry_cases.json",
       "renamed_from": "FUN_00003732",
       "blocked_by": []
     },
@@ -7377,7 +7377,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_overlay_entry.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/overlay_entry_cases.json",
       "renamed_from": "FUN_000038f4",
       "blocked_by": []
     },
@@ -7394,7 +7394,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_mission_tables.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/mission_tables_cases.json",
       "renamed_from": "FUN_00000054",
       "blocked_by": []
     },
@@ -7411,7 +7411,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_mission_tables.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/mission_tables_cases.json",
       "renamed_from": "FUN_000016e2",
       "blocked_by": []
     },
@@ -7428,7 +7428,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_distant_dots.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/distant_dots_cases.json",
       "renamed_from": "FUN_000162ba",
       "blocked_by": []
     },
@@ -7445,7 +7445,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_renderer_config.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/renderer_config_cases.json",
       "renamed_from": "FUN_00006ff6",
       "blocked_by": []
     },
@@ -7462,7 +7462,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_slew_mode.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/slew_mode_cases.json",
       "renamed_from": "FUN_0000f810",
       "blocked_by": []
     },
@@ -7479,7 +7479,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_game_sounds.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/game_sound_cases.json",
       "renamed_from": "FUN_000096f4",
       "blocked_by": []
     },
@@ -7496,7 +7496,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_frame_step.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/frame_step_cases.json",
       "renamed_from": "FUN_00006598",
       "blocked_by": []
     },
@@ -7513,7 +7513,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_flight_input.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/flight_input_cases.json",
       "renamed_from": "FUN_0000740a",
       "blocked_by": []
     },
@@ -7530,7 +7530,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_flight_input.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/flight_input_cases.json",
       "renamed_from": "FUN_0000823e",
       "blocked_by": []
     },
@@ -7649,7 +7649,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000001e",
       "blocked_by": []
     },
@@ -7666,7 +7666,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000038",
       "blocked_by": []
     },
@@ -7683,7 +7683,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000066",
       "blocked_by": []
     },
@@ -7700,7 +7700,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000009a",
       "blocked_by": []
     },
@@ -7717,7 +7717,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000000b6",
       "blocked_by": []
     },
@@ -7734,7 +7734,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000000d2",
       "blocked_by": []
     },
@@ -7751,7 +7751,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000000ee",
       "blocked_by": []
     },
@@ -7768,7 +7768,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000010a",
       "blocked_by": []
     },
@@ -7785,7 +7785,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000126",
       "blocked_by": []
     },
@@ -7802,7 +7802,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000142",
       "blocked_by": []
     },
@@ -7819,7 +7819,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000015e",
       "blocked_by": []
     },
@@ -7836,7 +7836,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000017a",
       "blocked_by": []
     },
@@ -7853,7 +7853,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000196",
       "blocked_by": []
     },
@@ -7870,7 +7870,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000001b2",
       "blocked_by": []
     },
@@ -7887,7 +7887,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000001ce",
       "blocked_by": []
     },
@@ -7904,7 +7904,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000200",
       "blocked_by": []
     },
@@ -7921,7 +7921,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000232",
       "blocked_by": []
     },
@@ -7938,7 +7938,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000024a",
       "blocked_by": []
     },
@@ -7955,7 +7955,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000002b0",
       "blocked_by": []
     },
@@ -7972,7 +7972,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000002c8",
       "blocked_by": []
     },
@@ -7989,7 +7989,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000002d8",
       "blocked_by": []
     },
@@ -8006,7 +8006,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000002ee",
       "blocked_by": []
     },
@@ -8023,7 +8023,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000030c",
       "blocked_by": []
     },
@@ -8040,7 +8040,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000324",
       "blocked_by": []
     },
@@ -8057,7 +8057,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000033e",
       "blocked_by": []
     },
@@ -8074,7 +8074,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000035a",
       "blocked_by": []
     },
@@ -8091,7 +8091,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000370",
       "blocked_by": []
     },
@@ -8108,7 +8108,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_0000038c",
       "blocked_by": []
     },
@@ -8125,7 +8125,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000003aa",
       "blocked_by": []
     },
@@ -8142,7 +8142,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_000003f6",
       "blocked_by": []
     },
@@ -8159,7 +8159,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_crt.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_crt_cases.json",
       "renamed_from": "FUN_00000412",
       "blocked_by": []
     },
@@ -8176,7 +8176,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00001632",
       "blocked_by": []
     },
@@ -8193,7 +8193,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00001656",
       "blocked_by": []
     },
@@ -8210,7 +8210,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00001680",
       "blocked_by": []
     },
@@ -8227,7 +8227,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00001c8a",
       "blocked_by": []
     },
@@ -8244,7 +8244,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00002ee4",
       "blocked_by": []
     },
@@ -8261,7 +8261,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00003d36",
       "blocked_by": []
     },
@@ -8278,7 +8278,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00003d50",
       "blocked_by": []
     },
@@ -8295,7 +8295,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00003db8",
       "blocked_by": []
     },
@@ -8312,7 +8312,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00003f54",
       "blocked_by": []
     },
@@ -8329,7 +8329,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00004050",
       "blocked_by": []
     },
@@ -8346,7 +8346,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_0000412e",
       "blocked_by": []
     },
@@ -8363,7 +8363,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_000041a6",
       "blocked_by": []
     },
@@ -8380,7 +8380,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00004242",
       "blocked_by": []
     },
@@ -8397,7 +8397,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_000042b0",
       "blocked_by": []
     },
@@ -8414,7 +8414,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_0000488a",
       "blocked_by": []
     },
@@ -8431,7 +8431,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_000049fe",
       "blocked_by": []
     },
@@ -8448,7 +8448,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_trapfree.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_trapfree_cases.json",
       "renamed_from": "FUN_00004b62",
       "blocked_by": []
     },
@@ -8465,7 +8465,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00000d24",
       "blocked_by": []
     },
@@ -8482,7 +8482,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00000f52",
       "blocked_by": []
     },
@@ -8499,7 +8499,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00000f74",
       "blocked_by": []
     },
@@ -8516,7 +8516,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_000014e6",
       "blocked_by": []
     },
@@ -8533,7 +8533,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00001a04",
       "blocked_by": []
     },
@@ -8550,7 +8550,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00001a84",
       "blocked_by": []
     },
@@ -8567,7 +8567,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00001aa8",
       "blocked_by": []
     },
@@ -8584,7 +8584,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00001acc",
       "blocked_by": []
     },
@@ -8601,7 +8601,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00001af0",
       "blocked_by": []
     },
@@ -8618,7 +8618,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_0000150a",
       "blocked_by": []
     },
@@ -8635,7 +8635,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_000015cc",
       "blocked_by": []
     },
@@ -8652,7 +8652,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_glue.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_glue_cases.json",
       "renamed_from": "FUN_00000ca6",
       "blocked_by": []
     },
@@ -8669,7 +8669,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00000a42",
       "blocked_by": []
     },
@@ -8686,7 +8686,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00000a86",
       "blocked_by": []
     },
@@ -8703,7 +8703,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00000c68",
       "blocked_by": []
     },
@@ -8720,7 +8720,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00000e3e",
       "blocked_by": []
     },
@@ -8737,7 +8737,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00000e9e",
       "blocked_by": []
     },
@@ -8754,7 +8754,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00000fa0",
       "blocked_by": []
     },
@@ -8771,7 +8771,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_0000197c",
       "blocked_by": []
     },
@@ -8788,7 +8788,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00001e68",
       "blocked_by": []
     },
@@ -8805,7 +8805,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_000020be",
       "blocked_by": []
     },
@@ -8822,7 +8822,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00002fa0",
       "blocked_by": []
     },
@@ -8839,7 +8839,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00003590",
       "blocked_by": []
     },
@@ -8856,7 +8856,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00004318",
       "blocked_by": []
     },
@@ -8873,7 +8873,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_0000435e",
       "blocked_by": []
     },
@@ -8890,7 +8890,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_0000442e",
       "blocked_by": []
     },
@@ -8907,7 +8907,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00004582",
       "blocked_by": []
     },
@@ -8924,7 +8924,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_00004610",
       "blocked_by": []
     },
@@ -8941,7 +8941,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_toolbox.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_toolbox_cases.json",
       "renamed_from": "FUN_0000462c",
       "blocked_by": []
     },
@@ -8958,7 +8958,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_00000d3a",
       "blocked_by": []
     },
@@ -8975,7 +8975,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_000010ce",
       "blocked_by": []
     },
@@ -8992,7 +8992,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_000016aa",
       "blocked_by": []
     },
@@ -9009,7 +9009,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_00001b14",
       "blocked_by": []
     },
@@ -9026,7 +9026,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_00001d48",
       "blocked_by": []
     },
@@ -9043,7 +9043,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_00001dd4",
       "blocked_by": []
     },
@@ -9060,7 +9060,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_00001e32",
       "blocked_by": []
     },
@@ -9077,7 +9077,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_dialog_cases.json",
       "renamed_from": "FUN_000030fa",
       "blocked_by": []
     },
@@ -9094,7 +9094,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_palette_cases.json",
       "renamed_from": "FUN_00001edc",
       "blocked_by": []
     },
@@ -9111,7 +9111,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_palette_cases.json",
       "renamed_from": "FUN_000046b4",
       "blocked_by": []
     },
@@ -9128,7 +9128,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_palette_cases.json",
       "renamed_from": "FUN_00004738",
       "blocked_by": []
     },
@@ -9145,7 +9145,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_palette_cases.json",
       "renamed_from": "FUN_000048ae",
       "blocked_by": []
     },
@@ -9162,7 +9162,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_palette.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_palette_cases.json",
       "renamed_from": "FUN_00002192",
       "blocked_by": []
     },
@@ -9179,7 +9179,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_draw_cases.json",
       "renamed_from": "FUN_00000fd2",
       "blocked_by": []
     },
@@ -9196,7 +9196,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_draw_cases.json",
       "renamed_from": "FUN_000011ec",
       "blocked_by": []
     },
@@ -9213,7 +9213,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_draw_cases.json",
       "renamed_from": "FUN_00001876",
       "blocked_by": []
     },
@@ -9230,7 +9230,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_draw_cases.json",
       "renamed_from": "FUN_0000195c",
       "blocked_by": []
     },
@@ -9247,7 +9247,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_draw_cases.json",
       "renamed_from": "FUN_00004c18",
       "blocked_by": []
     },
@@ -9264,7 +9264,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_memory.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_memory_cases.json",
       "renamed_from": "FUN_000019e2",
       "blocked_by": []
     },
@@ -9281,7 +9281,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_memory.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_memory_cases.json",
       "renamed_from": "FUN_000019a2",
       "blocked_by": []
     },
@@ -9298,7 +9298,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_memory.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_memory_cases.json",
       "renamed_from": "FUN_00001a28",
       "blocked_by": []
     },
@@ -9315,7 +9315,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_memory.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_memory_cases.json",
       "renamed_from": "FUN_00001f8e",
       "blocked_by": []
     },
@@ -9332,7 +9332,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_memory.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_memory_cases.json",
       "renamed_from": "FUN_00000ad0",
       "blocked_by": []
     },
@@ -9349,7 +9349,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_menu.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_menu_cases.json",
       "renamed_from": "FUN_00001308",
       "blocked_by": []
     },
@@ -9366,7 +9366,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_menu.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_menu_cases.json",
       "renamed_from": "FUN_00003174",
       "blocked_by": []
     },
@@ -9383,7 +9383,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000728",
       "blocked_by": []
     },
@@ -9400,7 +9400,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000746",
       "blocked_by": []
     },
@@ -9417,7 +9417,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000754",
       "blocked_by": []
     },
@@ -9434,7 +9434,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_000007a8",
       "blocked_by": []
     },
@@ -9451,7 +9451,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_000007f6",
       "blocked_by": []
     },
@@ -9468,7 +9468,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_0000085e",
       "blocked_by": []
     },
@@ -9485,7 +9485,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_000008b8",
       "blocked_by": []
     },
@@ -9502,7 +9502,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_000008d6",
       "blocked_by": []
     },
@@ -9519,7 +9519,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000934",
       "blocked_by": []
     },
@@ -9536,7 +9536,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000964",
       "blocked_by": []
     },
@@ -9553,7 +9553,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000a62",
       "blocked_by": []
     },
@@ -9570,7 +9570,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000a90",
       "blocked_by": []
     },
@@ -9587,7 +9587,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000b10",
       "blocked_by": []
     },
@@ -9604,7 +9604,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000b84",
       "blocked_by": []
     },
@@ -9621,7 +9621,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000ba8",
       "blocked_by": []
     },
@@ -9638,7 +9638,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000bc2",
       "blocked_by": []
     },
@@ -9655,7 +9655,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_protection.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_protection_cases.json",
       "renamed_from": "FUN_00000bde",
       "blocked_by": []
     },
@@ -9672,7 +9672,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000004",
       "blocked_by": []
     },
@@ -9689,7 +9689,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_000000b0",
       "blocked_by": []
     },
@@ -9706,7 +9706,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_000000f4",
       "blocked_by": []
     },
@@ -9723,7 +9723,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000116",
       "blocked_by": []
     },
@@ -9740,7 +9740,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_0000017c",
       "blocked_by": []
     },
@@ -9757,7 +9757,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_000001a2",
       "blocked_by": []
     },
@@ -9774,7 +9774,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_000001dc",
       "blocked_by": []
     },
@@ -9791,7 +9791,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_0000024c",
       "blocked_by": []
     },
@@ -9808,7 +9808,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_0000026c",
       "blocked_by": []
     },
@@ -9825,7 +9825,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000512",
       "blocked_by": []
     },
@@ -9842,7 +9842,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000598",
       "blocked_by": []
     },
@@ -9859,7 +9859,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000666",
       "blocked_by": []
     },
@@ -9876,7 +9876,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_000007b0",
       "blocked_by": []
     },
@@ -9893,7 +9893,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_0000087a",
       "blocked_by": []
     },
@@ -9910,7 +9910,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_000008a2",
       "blocked_by": []
     },
@@ -9927,7 +9927,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000916",
       "blocked_by": []
     },
@@ -9944,7 +9944,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000942",
       "blocked_by": []
     },
@@ -9961,7 +9961,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_0000096e",
       "blocked_by": []
     },
@@ -9978,7 +9978,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_000009d8",
       "blocked_by": []
     },
@@ -9995,7 +9995,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000d02",
       "blocked_by": []
     },
@@ -10012,7 +10012,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000d84",
       "blocked_by": []
     },
@@ -10029,7 +10029,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_raster.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_raster_cases.json",
       "renamed_from": "FUN_00000dca",
       "blocked_by": []
     },
@@ -10148,7 +10148,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
     },
@@ -10165,7 +10165,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_0000002e",
       "blocked_by": []
     },
@@ -10182,7 +10182,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000054",
       "blocked_by": []
     },
@@ -10199,7 +10199,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000078",
       "blocked_by": []
     },
@@ -10216,7 +10216,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_0000009c",
       "blocked_by": []
     },
@@ -10233,7 +10233,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_000000c4",
       "blocked_by": []
     },
@@ -10250,7 +10250,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_000000ec",
       "blocked_by": []
     },
@@ -10267,7 +10267,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000120",
       "blocked_by": []
     },
@@ -10284,7 +10284,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_0000016e",
       "blocked_by": []
     },
@@ -10301,7 +10301,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_000001f2",
       "blocked_by": []
     },
@@ -10318,7 +10318,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000220",
       "blocked_by": []
     },
@@ -10335,7 +10335,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_000002c0",
       "blocked_by": []
     },
@@ -10352,7 +10352,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000362",
       "blocked_by": []
     },
@@ -10369,7 +10369,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_000003c2",
       "blocked_by": []
     },
@@ -10386,7 +10386,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_0000044e",
       "blocked_by": []
     },
@@ -10403,7 +10403,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_000004f0",
       "blocked_by": []
     },
@@ -10420,7 +10420,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000516",
       "blocked_by": []
     },
@@ -10437,7 +10437,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000560",
       "blocked_by": []
     },
@@ -10454,7 +10454,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_00000588",
       "blocked_by": []
     },
@@ -10471,7 +10471,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_dialog_cases.json",
       "renamed_from": "FUN_000018e0",
       "blocked_by": []
     },
@@ -10488,7 +10488,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_000009ee",
       "blocked_by": []
     },
@@ -10505,7 +10505,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00000f4e",
       "blocked_by": []
     },
@@ -10522,7 +10522,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00001106",
       "blocked_by": []
     },
@@ -10539,7 +10539,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_0000116a",
       "blocked_by": []
     },
@@ -10556,7 +10556,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_000014a0",
       "blocked_by": []
     },
@@ -10573,7 +10573,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_000014f2",
       "blocked_by": []
     },
@@ -10590,7 +10590,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_0000150e",
       "blocked_by": []
     },
@@ -10607,7 +10607,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00001562",
       "blocked_by": []
     },
@@ -10624,7 +10624,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_0000158c",
       "blocked_by": []
     },
@@ -10641,7 +10641,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00001638",
       "blocked_by": []
     },
@@ -10658,7 +10658,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_000016c4",
       "blocked_by": []
     },
@@ -10675,7 +10675,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_000017e6",
       "blocked_by": []
     },
@@ -10692,7 +10692,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_0000189c",
       "blocked_by": []
     },
@@ -10709,7 +10709,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_000018b0",
       "blocked_by": []
     },
@@ -10726,7 +10726,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00003124",
       "blocked_by": []
     },
@@ -10743,7 +10743,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00003178",
       "blocked_by": []
     },
@@ -10760,7 +10760,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00003a56",
       "blocked_by": []
     },
@@ -10777,7 +10777,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_scroll.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_scroll_cases.json",
       "renamed_from": "FUN_00003d42",
       "blocked_by": []
     },
@@ -10794,7 +10794,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_000005e4",
       "blocked_by": []
     },
@@ -10811,7 +10811,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00000a8e",
       "blocked_by": []
     },
@@ -10828,7 +10828,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00000bda",
       "blocked_by": []
     },
@@ -10845,7 +10845,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00000e48",
       "blocked_by": []
     },
@@ -10862,7 +10862,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_0000192e",
       "blocked_by": []
     },
@@ -10879,7 +10879,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00001a0e",
       "blocked_by": []
     },
@@ -10896,7 +10896,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00002d86",
       "blocked_by": []
     },
@@ -10913,7 +10913,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_000031aa",
       "blocked_by": []
     },
@@ -10930,7 +10930,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00003260",
       "blocked_by": []
     },
@@ -10947,7 +10947,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00003352",
       "blocked_by": []
     },
@@ -10964,7 +10964,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_filter.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_filter_cases.json",
       "renamed_from": "FUN_00003902",
       "blocked_by": []
     },
@@ -10981,7 +10981,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_draw_cases.json",
       "renamed_from": "FUN_00001200",
       "blocked_by": []
     },
@@ -10998,7 +10998,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_draw_cases.json",
       "renamed_from": "FUN_00001bc8",
       "blocked_by": []
     },
@@ -11015,7 +11015,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_draw_cases.json",
       "renamed_from": "FUN_00001d9e",
       "blocked_by": []
     },
@@ -11032,7 +11032,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_draw_cases.json",
       "renamed_from": "FUN_00001f5e",
       "blocked_by": []
     },
@@ -11049,7 +11049,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_draw_cases.json",
       "renamed_from": "FUN_000020e8",
       "blocked_by": []
     },
@@ -11066,7 +11066,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_draw_cases.json",
       "renamed_from": "FUN_000033d6",
       "blocked_by": []
     },
@@ -11083,7 +11083,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_draw.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_draw_cases.json",
       "renamed_from": "FUN_000035f8",
       "blocked_by": []
     },
@@ -11100,7 +11100,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_about.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_about_cases.json",
       "renamed_from": "FUN_00000478",
       "blocked_by": []
     },
@@ -11117,7 +11117,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_about.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_about_cases.json",
       "renamed_from": "FUN_00003a8c",
       "blocked_by": []
     },
@@ -11134,7 +11134,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id04_summary.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id04_summary_cases.json",
       "renamed_from": "FUN_00002de6",
       "blocked_by": []
     },
@@ -11151,7 +11151,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
     },
@@ -11168,7 +11168,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_000000c8",
       "blocked_by": []
     },
@@ -11185,7 +11185,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_00000160",
       "blocked_by": []
     },
@@ -11202,7 +11202,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_000001bc",
       "blocked_by": []
     },
@@ -11219,7 +11219,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_00000214",
       "blocked_by": []
     },
@@ -11236,7 +11236,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_00000270",
       "blocked_by": []
     },
@@ -11253,7 +11253,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_000002c8",
       "blocked_by": []
     },
@@ -11270,7 +11270,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_000004e4",
       "blocked_by": []
     },
@@ -11287,7 +11287,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id05_dialog.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id05_dialog_cases.json",
       "renamed_from": "FUN_00000560",
       "blocked_by": []
     },
@@ -11355,7 +11355,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id08_loader.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id08_loader_cases.json",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
     },
@@ -11372,7 +11372,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_render.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_render_cases.json",
       "renamed_from": "FUN_00000318",
       "blocked_by": []
     },
@@ -11389,7 +11389,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id06_render.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id06_render_cases.json",
       "renamed_from": "FUN_00000e10",
       "blocked_by": []
     },
@@ -11406,7 +11406,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_00000006",
       "blocked_by": []
     },
@@ -11423,7 +11423,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_00000056",
       "blocked_by": []
     },
@@ -11440,7 +11440,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_0000008a",
       "blocked_by": []
     },
@@ -11457,7 +11457,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_000000a6",
       "blocked_by": []
     },
@@ -11474,7 +11474,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_000000c8",
       "blocked_by": []
     },
@@ -11491,7 +11491,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_000000f4",
       "blocked_by": []
     },
@@ -11508,7 +11508,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_000002a8",
       "blocked_by": []
     },
@@ -11525,7 +11525,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_0000033c",
       "blocked_by": []
     },
@@ -11542,7 +11542,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_00005718",
       "blocked_by": []
     },
@@ -11559,7 +11559,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_00005c36",
       "blocked_by": []
     },
@@ -11576,7 +11576,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_00005cb6",
       "blocked_by": []
     },
@@ -11593,7 +11593,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_helpers.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_helpers_cases.json",
       "renamed_from": "FUN_000071a2",
       "blocked_by": []
     },
@@ -11610,7 +11610,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_glyph_cases.json",
       "renamed_from": "FUN_00003832",
       "blocked_by": []
     },
@@ -11627,7 +11627,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_glyph_cases.json",
       "renamed_from": "FUN_0000146a",
       "blocked_by": []
     },
@@ -11644,7 +11644,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_glyph_cases.json",
       "renamed_from": "FUN_00001844",
       "blocked_by": []
     },
@@ -11661,7 +11661,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_glyph_cases.json",
       "renamed_from": "FUN_0000077e",
       "blocked_by": []
     },
@@ -11678,7 +11678,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_glyph.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_glyph_cases.json",
       "renamed_from": "FUN_00000912",
       "blocked_by": []
     },
@@ -11695,7 +11695,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_panel_cases.json",
       "renamed_from": "FUN_00003f24",
       "blocked_by": []
     },
@@ -11712,7 +11712,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_panel_cases.json",
       "renamed_from": "FUN_00004b32",
       "blocked_by": []
     },
@@ -11729,7 +11729,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_panel.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_panel_cases.json",
       "renamed_from": "FUN_00005158",
       "blocked_by": []
     },
@@ -11746,7 +11746,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_boxes_cases.json",
       "renamed_from": "FUN_00004110",
       "blocked_by": []
     },
@@ -11763,7 +11763,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_boxes_cases.json",
       "renamed_from": "FUN_00005860",
       "blocked_by": []
     },
@@ -11780,7 +11780,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_boxes.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_boxes_cases.json",
       "renamed_from": "FUN_00005ab6",
       "blocked_by": []
     },
@@ -11797,7 +11797,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_supersample_cases.json",
       "renamed_from": "FUN_00001538",
       "blocked_by": []
     },
@@ -11814,7 +11814,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_supersample_cases.json",
       "renamed_from": "FUN_0000035e",
       "blocked_by": []
     },
@@ -11831,7 +11831,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_supersample.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_supersample_cases.json",
       "renamed_from": "FUN_00000514",
       "blocked_by": []
     },
@@ -11848,7 +11848,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_0000532e",
       "blocked_by": []
     },
@@ -11865,7 +11865,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_000054fe",
       "blocked_by": []
     },
@@ -11882,7 +11882,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00004c42",
       "blocked_by": []
     },
@@ -11899,7 +11899,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00004ecc",
       "blocked_by": []
     },
@@ -11916,7 +11916,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00001fee",
       "blocked_by": []
     },
@@ -11933,7 +11933,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_000022fe",
       "blocked_by": []
     },
@@ -11950,7 +11950,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00002600",
       "blocked_by": []
     },
@@ -11967,7 +11967,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00001876",
       "blocked_by": []
     },
@@ -11984,7 +11984,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00001b48",
       "blocked_by": []
     },
@@ -12001,7 +12001,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00002950",
       "blocked_by": []
     },
@@ -12018,7 +12018,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00004790",
       "blocked_by": []
     },
@@ -12035,7 +12035,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00004304",
       "blocked_by": []
     },
@@ -12052,7 +12052,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00003c02",
       "blocked_by": []
     },
@@ -12069,7 +12069,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_000038fc",
       "blocked_by": []
     },
@@ -12086,7 +12086,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_000032b8",
       "blocked_by": []
     },
@@ -12103,7 +12103,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_gauges.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_gauges_cases.json",
       "renamed_from": "FUN_00002d1c",
       "blocked_by": []
     },
@@ -12120,7 +12120,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_remap.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_remap_cases.json",
       "renamed_from": "FUN_00006c1c",
       "blocked_by": []
     },
@@ -12137,7 +12137,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_downsample.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_downsample_cases.json",
       "renamed_from": "FUN_00000a3c",
       "blocked_by": []
     },
@@ -12154,7 +12154,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id03_prepare.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id03_prepare_cases.json",
       "renamed_from": "FUN_00005cc4",
       "blocked_by": []
     },
@@ -12171,7 +12171,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_session_cases.json",
       "renamed_from": "FUN_0000045a",
       "blocked_by": []
     },
@@ -12188,7 +12188,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_session_cases.json",
       "renamed_from": "FUN_000004c6",
       "blocked_by": []
     },
@@ -12205,7 +12205,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_session_cases.json",
       "renamed_from": "FUN_00000930",
       "blocked_by": []
     },
@@ -12222,7 +12222,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_session_cases.json",
       "renamed_from": "FUN_00004d34",
       "blocked_by": []
     },
@@ -12239,7 +12239,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_session_cases.json",
       "renamed_from": "FUN_00004d6a",
       "blocked_by": []
     },
@@ -12256,7 +12256,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_session.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_session_cases.json",
       "renamed_from": "FUN_00004db0",
       "blocked_by": []
     },
@@ -12273,7 +12273,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_display_cases.json",
       "renamed_from": "FUN_00002334",
       "blocked_by": []
     },
@@ -12290,7 +12290,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_display_cases.json",
       "renamed_from": "FUN_000027e4",
       "blocked_by": []
     },
@@ -12307,7 +12307,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_display.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_display_cases.json",
       "renamed_from": "FUN_00002a44",
       "blocked_by": []
     },
@@ -12324,7 +12324,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_events_cases.json",
       "renamed_from": "FUN_000029f2",
       "blocked_by": []
     },
@@ -12341,7 +12341,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_events_cases.json",
       "renamed_from": "FUN_0000212a",
       "blocked_by": []
     },
@@ -12358,7 +12358,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_events_cases.json",
       "renamed_from": "FUN_000035bc",
       "blocked_by": []
     },
@@ -12375,7 +12375,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_events_cases.json",
       "renamed_from": "FUN_00002db8",
       "blocked_by": []
     },
@@ -12392,7 +12392,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": false,
-      "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_events_cases.json",
       "renamed_from": "FUN_00002e36",
       "blocked_by": []
     },
@@ -12409,7 +12409,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_events_cases.json",
       "renamed_from": "FUN_00002f1e",
       "blocked_by": []
     },
@@ -12426,7 +12426,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_events.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_events_cases.json",
       "renamed_from": "FUN_00002fd4",
       "blocked_by": []
     },
@@ -12443,7 +12443,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_commands.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_commands_cases.json",
       "renamed_from": "FUN_000035e4",
       "blocked_by": []
     },
@@ -12460,7 +12460,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_commands.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_commands_cases.json",
       "renamed_from": "FUN_000036a2",
       "blocked_by": []
     },
@@ -12477,7 +12477,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_sound_cases.json",
       "renamed_from": "FUN_000039a8",
       "blocked_by": []
     },
@@ -12494,7 +12494,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_sound_cases.json",
       "renamed_from": "FUN_00003aae",
       "blocked_by": []
     },
@@ -12511,7 +12511,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_sound_cases.json",
       "renamed_from": "FUN_00003bc4",
       "blocked_by": []
     },
@@ -12528,7 +12528,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_sound.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_sound_cases.json",
       "renamed_from": "FUN_00003dd0",
       "blocked_by": []
     },
@@ -12545,7 +12545,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_startup.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_startup_cases.json",
       "renamed_from": "FUN_00002bbc",
       "blocked_by": []
     },
@@ -12562,7 +12562,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_startup.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_startup_cases.json",
       "renamed_from": "FUN_0000309a",
       "blocked_by": []
     },
@@ -12579,7 +12579,7 @@
       "behaviorally_verified": true,
       "integrated": true,
       "runtime_verified": true,
-      "deterministic_test": "godot/tests/strict_port/test_id02_flight.gd",
+      "deterministic_test": "godot/tests/strict_port/fixtures/id02_flight_cases.json",
       "renamed_from": "FUN_000004fc",
       "blocked_by": []
     }
