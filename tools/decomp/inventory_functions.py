@@ -23,7 +23,7 @@ FUN_RE = re.compile(
 )
 ORIGINAL_RE = re.compile(r"\bFUN_[0-9A-Fa-f]+\b")
 ORIGINAL_LABEL_RE = re.compile(r"Original:\s*(FUN_[0-9A-Fa-f]+)\b")
-DOC_ORIGINAL_RE = re.compile(r"^\s*\*\s*Original:\s*(FUN_[0-9A-Fa-f]+)\b", re.MULTILINE)
+DOC_ORIGINAL_RE = re.compile(r"^\s*/?\*\s*Original:\s*(FUN_[0-9A-Fa-f]+)\b", re.MULTILINE)
 FAILED_DECOMPILE_RE = re.compile(r"Unable to decompile '(FUN_[0-9A-Fa-f]+)'")
 STATUS_VALUES = {"NOT_STARTED", "INVESTIGATING", "ANNOTATED", "RENAMED", "VERIFIED", "BLOCKED"}
 

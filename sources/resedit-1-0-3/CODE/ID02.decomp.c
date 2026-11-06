@@ -1251,9 +1251,7 @@ void draw_thick_xor_line_a5safe /* Original: FUN_00000a86 */ (int h0 /* param_1 
  * each MoveTo / LineTo pushes h then v; polygons as in the header with colours $26 / $2a, KillPoly after
  * each PaintPoly; lower rect {v0 + y2, h0, D5, D4} in colour $1a; PenPat(A5-0x161c), SetClip(saved),
  * DisposeRgn; MOVEM restore - identical to the C. */
-/*
- * Original: FUN_00000ad0; source: ID02.c:663.
- * Recovered name: paint_view_horizon_bands_a5safe [STRONG INFERENCE structure /
+/* Original: FUN_00000ad0; source: ID02.c:663. Recovered name: paint_view_horizon_bands_a5safe [STRONG INFERENCE structure /
  * PROVEN caller].
  * Purpose evidence (was HYPOTHESIS): its only caller is the overlay's draw_sky_and_ground, through host +0x27e
  * (globals pointer A5-0x1388 + 0x27e = this service slot A5-0x110a) [PROVEN chain]: the view's sky and ground
@@ -1768,9 +1766,7 @@ int build_notched_frame_poly /* Original: FUN_000010ce */ (short top,short left,
  * 2), FramePoly(outer); colour A5-0x118a, PenSize(1, 1), FramePoly(inner); dx = A5-0x1192 - A5-0x119a,
  * OffsetPoly(inner, dx, 0), OffsetPoly(outer, dx, 0); MOVE.L $10 to $c; KillPoly x2; PenPat(A5-0x161c) -
  * identical to the C. */
-/*
- * Original: FUN_000011ec; source: ID02.c:830.
- * Recovered name: draw_notched_frame_pair_a5safe [STRONG INFERENCE mechanics; purpose PROVEN
+/* Original: FUN_000011ec; source: ID02.c:830. Recovered name: draw_notched_frame_pair_a5safe [STRONG INFERENCE mechanics; purpose PROVEN
  * below: the bomb indicator's two lamps].
  *: both polygons come from the same Rect at A5-0x119c (8 bytes
  * ending at A5-0x1194), built by build_notched_frame_poly with PenSize 2 and
@@ -1847,9 +1843,7 @@ void draw_notched_frame_pair_a5safe /* Original: FUN_000011ec */ (int solid /* p
  * BNE skips the fourth (A5-0xdd6 -> A5-0x14d4 / -0x14cc, no Move). Value: index long $c ADD.L doubled into
  * both arrays, white FillRect, TextFace(1), MoveTo(x, A5-0x1370 - 5), DrawText(8, word $12, word $16) -
  * identical to the C. */
-/*
- * Original: FUN_00001308; source: ID02.c:841.
- * Recovered name: draw_text_in_columns_a5safe [STRONG INFERENCE mechanics /
+/* Original: FUN_00001308; source: ID02.c:841. Recovered name: draw_text_in_columns_a5safe [STRONG INFERENCE mechanics /
  * PROVEN caller]. Overlay service slot A5-0x110e (JT $362).
  * Purpose evidence (was HYPOTHESIS): its only caller is the overlay's update_view_readouts_and_overlays,
  * through host +0x27a (A5-0x1388 + 0x27a = A5-0x110e), for the numeric readouts it draws while the cockpit
@@ -4848,9 +4842,7 @@ play_sample_on_channel /* Original: FUN_00003f54 */ (int channel /* param_1: 0 o
 /* VERIFIED (ID02::FUN_00004050): ID02.bin 0x4050..0x412c checked against an independent capstone disassembly.
  * Same body as 0x3f54 without keeping the first node or storing the channel head; D0 = 0 / 1 - identical to
  * the C. */
-/*
- * Original: FUN_00004050; source: ID02.c:2266-2296.
- * Recovered name: enqueue_sample_on_channel [STRONG INFERENCE mechanics /
+/* Original: FUN_00004050; source: ID02.c:2266-2296. Recovered name: enqueue_sample_on_channel [STRONG INFERENCE mechanics /
  * HYPOTHESIS purpose].
  * Only reference: install_overlay_service_table stores it (LEA $42a(A5) at 0x1bc2) into service slot
  * A5-0x10da, and no overlay code calls that slot (host +0x2ae) [PROVEN, tools/decomp/xrefs.py and the
@@ -5549,9 +5541,7 @@ void init_standard_colour_indices /* Original: FUN_00004b62 */ (void)
  * -$a = -8 = 1 and break; TST.W -8: slot 1 -> JT $182(A5-0x1354, -$20a) (ID03 0x6c1c remap_cached_panel_colours), BSR
  * 0x48ae(slot, -4, record +4, -$40a); after the loop TST.W -$a && TST.L A5-0x1006 -> JSR (A5-0x1096) - identical to
  * the C. */
-/*
- * Original: FUN_00004c18; source: ID02.c:2643-2688.
- * Recovered name: check_device_color_state_changed [STRONG INFERENCE on
+/* Original: FUN_00004c18; source: ID02.c:2643-2688. Recovered name: check_device_color_state_changed [STRONG INFERENCE on
  * structure / STRONG INFERENCE on purpose].
  * Purpose evidence (was HYPOTHESIS): its only caller is redraw_main_window (BSR at 0x4df0) [PROVEN, tools/decomp/xrefs.py]: on a
  * redraw of the main window, the colour index maps are rebuilt when the device's colour state changed.
@@ -5715,10 +5705,8 @@ void handle_update_event /* Original: FUN_00004d6a */ (int evt /* param_1: Event
  * -4 = A5-0x12d4 && A5-0x1032 (dead); TST A5-0x14c6, A5-0x1006, A5-0x12f8; A5-0x12ea == 0 -> A5-0x103c = it,
  * A5-0x12ea = 1; HideCursor $A852; BSR 0x4c18; UnloadSeg($18a(A5)); JSR (A5-0x109e); BSR 0x4d96; push 1 then 0, BSR
  * 0x930; BSR 0xa26; ShowCursor $A853 - identical to the C. */
-/*
- * Original: FUN_00004db0; source: ID02.c:2721-2736 (last function of ID02;
- * segment ends at file 0x4e1a).
- * Recovered name: redraw_main_window [STRONG INFERENCE].
+/* Original: FUN_00004db0; source: ID02.c:2721-2736. Recovered name: redraw_main_window [STRONG INFERENCE].
+ * The last function of ID02: the segment ends at file 0x4e1a.
  * Ghidra truncated after the -0x12ea fix-up at A-line $A852; body rebuilt as C below. Bytes file 0x4db0..0x4e18 [PROVEN]:
  *   tmp = (word A5-0x12d4 && word A5-0x1032) -> -4(A6)  [stored, never read;
  *         Ghidra correctly dropped it as dead]

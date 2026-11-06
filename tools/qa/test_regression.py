@@ -580,6 +580,89 @@ def check_runtime_coverage_doc() -> str:
     return "up to date"
 
 
+def check_validation_commands() -> str:
+    """The other validation commands, so this one command runs every Python check."""
+    import subprocess
+    commands = [
+        ["tools/qa/test_re.py"], ["tools/decomp/inventory_functions.py", "--check"],
+        ["tools/progress_stats.py", "--check"], ["tools/resedit.py", "verify"],
+        ["tools/strict_port/check_sync.py"], ["tools/runtime/gen_runtime_cases.py", "--check"],
+        ["tools/decomp/definition_table.py", "--check"],
+    ]
+    for command in commands:
+        r = subprocess.run([sys.executable, str(REPO_ROOT / command[0]), *command[1:]], capture_output=True, text=True)
+        if r.returncode != 0:
+            fail(f"{' '.join(command)}: " + (r.stdout.strip() or r.stderr.strip())[-600:])
+    return f"{len(commands)} commands pass"
+
+
+CONFIDENCE = ("PROVEN", "RECONSTRUCTED", "STRONG INFERENCE", "HYPOTHESIS", "UNKNOWN", "BLOCKED", "WITHDRAWN",
+              "RESTORED", "ANNOTATED")
+
+
+def _current_texts():
+    """The semantic C and the current documentation (docs/history/ is superseded)."""
+    for path in sorted((REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE").glob("*.decomp.c")):
+        yield path
+    for path in sorted((REPO_ROOT / "docs").rglob("*.md")):
+        if "history" not in path.relative_to(REPO_ROOT / "docs").parts:
+            yield path
+
+
+def check_confidence_tags() -> None:
+    """Every bracketed confidence tag uses the vocabulary of docs/port/DECOMPILATION_PROGRESS.md
+    (its synonyms, such as [INFERRED], are not used)."""
+    tag = re.compile(r"\[(INFERRED|INFERENCE|CONFIRMED|LIKELY|GUESS|SPECULATIVE|UNVERIFIED|DEFERRED|"
+                     r"MVP APPROXIMATION)\b")
+    bad = []
+    for path in _current_texts():
+        for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            if tag.search(line):
+                bad.append(f"{path.relative_to(REPO_ROOT)}:{number}")
+    if bad:
+        fail(f"confidence tags outside the vocabulary {CONFIDENCE}: {bad[:5]}")
+
+
+## Entries whose header describes something that is not a function (a false entry, an epilogue a
+## call site aliases): they keep their own header.
+NON_FUNCTION_HEADERS = {"FUN_00001d56", "FUN_00001db8", "FUN_00002aba", "FUN_00002de8", "FUN_00003be0",
+                        "FUN_00003c48"}
+
+
+def check_function_headers() -> None:
+    """Every semantic C function header opens with the one line of DECOMPILATION_PROGRESS.md's
+    "Function headers": no Proposed-name block and no split first line remain."""
+    old = re.compile(r"^/\*\n \* Original: (FUN_[0-9a-f]{8})[^\n]*\n(?: \*[^\n]*\n){0,3}? \* (?:Proposed|Recovered) name:", re.M)
+    bad = []
+    for path in sorted((REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE").glob("*.decomp.c")):
+        for m in old.finditer(path.read_text(encoding="utf-8", errors="replace")):
+            if m.group(1) not in NON_FUNCTION_HEADERS:
+                bad.append(f"{path.name} {m.group(1)}")
+    if bad:
+        fail(f"function headers not in the one-line format: {bad[:5]}")
+
+
+def check_stale_wording() -> None:
+    """Every function is ported and the MVP prototype is gone: no "not ported yet" in the code
+    and tools, and no copied progress counts ("657 of 740") in the docs, which generated/ holds."""
+    stale = re.compile(r"not ported yet|not yet ported|\bunported\b(?! (?:overlay|function))", re.I)
+    bad = []
+    for folder in ("godot/strict_port", "godot/runtime", "godot/tests", "tools"):
+        for path in sorted((REPO_ROOT / folder).rglob("*")):
+            if path.suffix in (".gd", ".py") and path.name != "test_regression.py" and ".coverage" not in path.parts:
+                for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                    if stale.search(line):
+                        bad.append(f"{path.relative_to(REPO_ROOT)}:{number}")
+    counts = re.compile(r"\b\d{2,3} of (?:the )?740\b")
+    for path in _current_texts():
+        if path.suffix == ".md" and "generated" not in path.parts:
+            for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                if counts.search(line):
+                    bad.append(f"{path.relative_to(REPO_ROOT)}:{number} (a progress count)")
+    if bad:
+        fail(f"stale wording: {bad[:6]}")
+
+
 def check_doc_links() -> str:
     """Markdown links and plain docs/ path mentions all resolve."""
     import subprocess
@@ -632,6 +715,10 @@ def main() -> int:
         ("optional-ghidra", check_optional_ghidra),
         ("optional-unused-traps", check_unused_traps),
         ("doc-links", check_doc_links),
+        ("confidence-tags", check_confidence_tags),
+        ("function-headers", check_function_headers),
+        ("stale-wording", check_stale_wording),
+        ("validation-commands", check_validation_commands),
         ("strict-port-callees", check_callees),
         ("coverage-copies", check_coverage_copies),
         ("optional-runtime-coverage-doc", check_runtime_coverage_doc),

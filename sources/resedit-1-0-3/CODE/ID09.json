@@ -34,7 +34,7 @@
         "source_path": "sources/resedit-1-0-3/CODE/ID09.decomp.c"
       },
       {
-        "annotation_line": 290,
+        "annotation_line": 289,
         "kind": "known_function",
         "original_symbol": "FUN_00000432",
         "source_path": "sources/resedit-1-0-3/CODE/ID09.decomp.c"
@@ -85,8 +85,8 @@
       {
         "kind": "C/decompilation export",
         "path": "sources/resedit-1-0-3/CODE/ID09.decomp.c",
-        "sha256": "8682e24cc6ed436f495609b1b86da340d5c22a9929b1ecb25042a0b487f177a8",
-        "size": 20833
+        "sha256": "ae9d13be555ea8a536d63359faffb92b550b35dcfeb569d7b55df7c4965c1e62",
+        "size": 20827
       }
     ],
     "resource_attributes": "0x38",

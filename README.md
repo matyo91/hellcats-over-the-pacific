@@ -186,18 +186,11 @@ or the runtime), so each stage stays the source for the next.
 
 ## Validation
 
-From the repository root:
+From the repository root. QA runs every Python check (retrieval, inventory, progress, resource
+metadata, sync, callees, generated cases, documentation links, comment and header rules):
 
 ```sh
-python3 tools/qa/test_re.py
-python3 tools/decomp/inventory_functions.py --check
-python3 tools/progress_stats.py --check
-python3 tools/resedit.py verify
-python3 tools/strict_port/check_sync.py --json
-python3 tools/strict_port/check_callees.py
 python3 tools/qa/test_regression.py
-python3 tools/runtime/gen_runtime_cases.py --check
-python3 tools/decomp/definition_table.py --check
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot \
   --log-file /tmp/hellcats-godot.log --script res://tests/run_all.gd
 git diff --check

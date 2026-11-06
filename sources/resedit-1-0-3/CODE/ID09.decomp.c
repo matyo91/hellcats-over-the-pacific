@@ -286,9 +286,7 @@ void swapmmumode_glue /* Original: FUN_000003c2 */ (char *mode)
  * overlapping copy, a zero count copies nothing), CLR.B (A0), D0 = the original pointer, RTS (C
  * convention, caller pops) - identical to the C (the ushort pre-decrement with the 0xffff sentinel is the
  * DBRA). */
-/*
- * Original: FUN_00000432; source: ID09.c:129-143.
- * Recovered name: length_prefixed_bytes_to_c_string_in_place
+/* Original: FUN_00000432; source: ID09.c:129-143. Recovered name: length_prefixed_bytes_to_c_string_in_place
  * Confidence: [STRONG INFERENCE] string convention; [PROVEN] C byte transform.
  * Input: writable buffer of at least buffer[0] + 1 bytes; first byte is count.
  * Output: original buffer pointer; count payload bytes shifted left one byte,
