@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from m68k_emu import Emulator  # noqa: E402
-from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact  # noqa: E402
+from cases import MEMORY_SIZE, OVERLAY_RNG_INIT, STACK_GUARD, STACK_TOP, compact, hoist_common_writes  # noqa: E402
 
 FIXTURE = Path("godot/tests/strict_port/fixtures/line4_cases.json")
 ROUTINES = {0xD590: "draw_line_depth4", 0xDB40: "restore_line_depth4"}
@@ -65,6 +65,7 @@ def main() -> None:
         zero, writes = compact(c["writes"])
         out["cases"].append({"name": c["name"], "routine": c["routine"], "method": ROUTINES[c["routine"]], "args": c["args"],
                              "zero": zero, "writes": writes, "changes": changes})
+    hoist_common_writes(out)
     FIXTURE.write_text(json.dumps(out, separators=(",", ":")) + "\n")
     print(len(out["cases"]), "cases;", sum(1 for c in out["cases"] if not c["changes"]), "with no change")
 

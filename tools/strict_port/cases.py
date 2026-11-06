@@ -58,3 +58,20 @@ def log_call(emu: Emulator, base: int, nargs: int, deref_index: int = -1, deref_
         emu.write(base + 4 + (count * len(values) + i) * 4, 4, value)
     emu.write(base, 4, count + 1)
     return emu.read(base - 4, 4)
+
+
+def hoist_common_writes(out: dict) -> dict:
+    """The writes every case of the fixture `out` starts with, stored once as its common_writes
+    (helpers/original_cases.gd applies them after a case's zero ranges and before its own writes,
+    where the prefix was): the replay is unchanged, the fixture is not repeated per case."""
+    cases = out["cases"]
+    if not cases:
+        return out
+    prefix = 0
+    while all(len(c["writes"]) > prefix and c["writes"][prefix] == cases[0]["writes"][prefix] for c in cases):
+        prefix += 1
+    if prefix:
+        out["common_writes"] = cases[0]["writes"][:prefix]
+        for c in cases:
+            c["writes"] = c["writes"][prefix:]
+    return out

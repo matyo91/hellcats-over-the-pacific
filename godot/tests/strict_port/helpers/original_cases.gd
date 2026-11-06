@@ -37,7 +37,9 @@ static func replay(fixture_path: String) -> bool:
 		for r in c["zero"]:
 			for addr in range(int(r[0]), int(r[1])):
 				mem._bytes[addr] = 0
-		for w in c["writes"]:
+		## The fixture's common writes are the prefix every case's writes share (cases.py
+		## hoist_common_writes), applied where that prefix was.
+		for w in fixture.get("common_writes", []) + c["writes"]:
 			match int(w[1]):
 				1:
 					mem.write_u8(int(w[0]), int(w[2]))
