@@ -15,14 +15,14 @@
     {
       "evidence": "* C arg +8: Pascal string (file name). ParamText(name, NULL, NULL, NULL) ($A98B); JT $47a(0x100) (ID02 0x442e, also called before ALRT 259 by confirm_end_mission); returns StopAlert(256, NULL) ($A986). ALRT 256 is \"Unable to Open Scenery\": DITL 256 text \"Unable to open Hellcats scenery file '^0'.\" with an OK button. Reached through JT $fa (CODE 0 entry -> ID04 0x44e). Body rebuilt as C below.",
       "function_or_context": "show_scenery_open_error_alert",
-      "line": 394,
+      "line": 392,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "return StopAlert(0x100,0);                    /* $A986 */",
       "function_or_context": "show_scenery_open_error_alert",
-      "line": 403,
+      "line": 401,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

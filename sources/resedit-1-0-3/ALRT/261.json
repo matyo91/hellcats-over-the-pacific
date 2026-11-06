@@ -21,8 +21,8 @@
     },
     {
       "evidence": "StopAlert(0x105,0);                         /* $A986, result discarded */",
-      "function_or_context": "decompilation annotation",
-      "line": 153,
+      "function_or_context": "load_overlay_from_resource",
+      "line": 151,
       "source_path": "sources/resedit-1-0-3/CODE/ID08.decomp.c",
       "status": "VERIFIED"
     }

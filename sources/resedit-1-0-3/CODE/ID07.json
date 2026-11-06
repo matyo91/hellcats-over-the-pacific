@@ -16,13 +16,13 @@
     "consumed_bytes": 618,
     "elements": [
       {
-        "annotation_line": 23,
+        "annotation_line": 22,
         "kind": "known_function",
         "original_symbol": "FUN_00000006",
         "source_path": "sources/resedit-1-0-3/CODE/ID07.decomp.c"
       },
       {
-        "annotation_line": 133,
+        "annotation_line": 130,
         "kind": "known_function",
         "original_symbol": "FUN_00000190",
         "source_path": "sources/resedit-1-0-3/CODE/ID07.decomp.c"
@@ -73,8 +73,8 @@
       {
         "kind": "C/decompilation export",
         "path": "sources/resedit-1-0-3/CODE/ID07.decomp.c",
-        "sha256": "a6695e29430ccdbf16e60a1c8c819c4e8c8bbf59c3fcaf8705a409a00a80c168",
-        "size": 9095
+        "sha256": "ac6daae14f3d0193917f8b9f207fa6559f01aaeb32c7c8f22396bd02b19375f4",
+        "size": 9083
       }
     ],
     "resource_attributes": "0x38",

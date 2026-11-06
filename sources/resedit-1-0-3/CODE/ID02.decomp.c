@@ -31,9 +31,7 @@ undefined2 DAT_00000baa;
 
 /* VERIFIED (ID02::FUN_0000001e): ID02.bin 0x1e..0x36 checked against an independent capstone disassembly.
  * TST.L 8(A6) / BGE, NEG.L - identical to the C. */
-/*
- * Original: FUN_0000001e; source: ID02.c:26.
- * Recovered name: abs_long [STRONG INFERENCE].
+/* Original: FUN_0000001e; source: ID02.c:26. Recovered name: abs_long [STRONG INFERENCE].
  * Exported C complete: signed absolute value (INT_MIN unchanged by wraparound).
  * JT $4da; used by ID03 nearest_palette_index_rgb.
  */
@@ -1189,9 +1187,7 @@ void call_overlay_session_hooks /* Original: FUN_00000930 */ (undefined4 step_ar
 /* VERIFIED (ID02::FUN_00000a42): ID02.bin 0xa42..0xa84 checked against an independent capstone disassembly.
  * LINK -8, A5 / D2 saved at -4 / -8, MOVEA.L $904.w,A5; MOVE.L 8(A6) to (A5-0x160c)+$50; PenSize(2, 2);
  * MoveTo(word $e, word $12); LineTo(word $16, word $1a); D2 / A5 restored - identical to the C. */
-/*
- * Original: FUN_00000a42; source: ID02.c:640.
- * Recovered name: draw_thick_line_pixel_index_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000a42; source: ID02.c:640. Recovered name: draw_thick_line_pixel_index_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x1116 (JT $3fa).
  * Ghidra truncated at $A89B (only the fgColor store was exported); body
  * rebuilt as C. Bytes file 0xa42..0xa84 [PROVEN]: CurrentA5 thunk; args are five
@@ -1223,9 +1219,7 @@ void draw_thick_line_pixel_index_a5safe /* Original: FUN_00000a42 */
 /* VERIFIED (ID02::FUN_00000a86): ID02.bin 0xa86..0xace checked against an independent capstone disassembly.
  * Same A5 thunk; PEA $21.w ForeColor $A862; PenMode(2) $A89C; PenSize(2, 2); MoveTo(word $a, word $e);
  * LineTo(word $12, word $16); CLR.W PenMode(0) - identical to the C. */
-/*
- * Original: FUN_00000a86; source: ID02.c:652.
- * Recovered name: draw_thick_xor_line_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000a86; source: ID02.c:652. Recovered name: draw_thick_xor_line_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x1112 (JT $32a).
  * Ghidra truncated at $A862; body rebuilt as C. Bytes 0xa86..0xace [PROVEN]:
  * CurrentA5 thunk; args four longs (x1, y1, x2, y2):
@@ -1354,9 +1348,7 @@ void paint_view_horizon_bands_a5safe /* Original: FUN_00000ad0 */
 /* VERIFIED (ID02::FUN_00000c68): ID02.bin 0xc68..0xca4 checked against an independent capstone disassembly.
  * A5 thunk; SetEntries $AA3F with MOVE.W #-1, (ct+6) SUBQ.W #1, PEA ct+8; CLR.W ct+6 - identical to the
  * C. */
-/*
- * Original: FUN_00000c68; source: ID02.c:674.
- * Recovered name: apply_pending_color_entries_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000c68; source: ID02.c:674. Recovered name: apply_pending_color_entries_a5safe [STRONG INFERENCE].
  * Ghidra truncated at $AA3F; body rebuilt as C. Bytes file 0xc68..0xca4 [PROVEN]:
  * CurrentA5 thunk; ct = long A5-0x14b2 (colour table allocated by
  * initialize_application); SetEntries(-1, ct->ctSize (+6) - 1, &ct->ctTable
@@ -1387,9 +1379,7 @@ void apply_pending_color_entries_a5safe /* Original: FUN_00000c68 */ (void)
  * thePort (A5-0x160c); OpenCPort $AA00; SetPort(saved); through **(port+2): word 8(A6) to +4, long $a to
  * +0, Rect $e..$15 to +6 (two MOVE.L); Rect to port+$10; RectRgn(port+$18 long, PEA $e(A6)) $A8DF; D0 =
  * port - identical to the C. */
-/*
- * Original: FUN_00000ca6; source: ID02.c:685.
- * Recovered name: new_offscreen_cport [STRONG INFERENCE].
+/* Original: FUN_00000ca6; source: ID02.c:685. Recovered name: new_offscreen_cport [STRONG INFERENCE].
  * Bytes 0xca6..0xd22 [PROVEN]; Ghidra truncated after the allocation (body
  * rebuilt as C). Args:
  * word rowBytes [8(A6)], Ptr base [$a], Rect bounds by value [$e..$15].
@@ -1426,9 +1416,7 @@ int new_offscreen_cport /* Original: FUN_00000ca6 */ (short rowBytes /* param_1 
 
 /* VERIFIED (ID02::FUN_00000d24): ID02.bin 0xd24..0xd38 checked against an independent capstone disassembly.
  * ClosePort(8(A6)) $A87D; JT $23a(8(A6)) (ID09 0x218 DisposPtr glue, callee pops) - identical to the C. */
-/*
- * Original: FUN_00000d24; source: ID02.c:697-704.
- * Recovered name: close_and_dispose_port [STRONG INFERENCE].
+/* Original: FUN_00000d24; source: ID02.c:697-704. Recovered name: close_and_dispose_port [STRONG INFERENCE].
  * Ghidra truncated at A-line $A87D; body rebuilt as C. Bytes file 0xd24..0xd38
  * [PROVEN]: arg GrafPtr port [8(A6)]; ClosePort(port) $A87D;
  * JT $23a(port) = ID09 file 0x218 DisposPtr glue ($A01F). Ghidra lost the arg.
@@ -1456,9 +1444,7 @@ void close_and_dispose_port /* Original: FUN_00000d24 */ (int port /* param_1: G
  * per call baseAddr = 8(A6), src.bottom = word $12, dst.top = word $e, dst.bottom = low word of $c + $10
  * (ADD.L); mode CMPI.L #2 / #3 on $14; ForeColor($21), BackColor($1e), CopyBits(off+2, thePort+2,
  * A5-0x14f2, A5-0x14ea, 0, nil) $A8EC - identical to the C (widths corrected from Ghidra's short args). */
-/*
- * Original: FUN_00000d3a; source: ID02.c:708-741.
- * Recovered name: blit_offscreen_frame_to_window [STRONG INFERENCE].
+/* Original: FUN_00000d3a; source: ID02.c:708-741. Recovered name: blit_offscreen_frame_to_window [STRONG INFERENCE].
  * Ghidra truncated the tail at $A862 and lost the new_offscreen_cport arguments / rowBytes;
  * body completed from the bytes (arguments are four longs: only the low words of top / rows are used).
  * Args: param_1 = pixel base address, param_2 = destination top, param_3 =
@@ -1526,9 +1512,7 @@ void blit_offscreen_frame_to_window /* Original: FUN_00000d3a */ (undefined4 pix
 /* VERIFIED (ID02::FUN_00000e3e): ID02.bin 0xe3e..0xe9c checked against an independent capstone disassembly.
  * A5 thunk; baseAddr = $c; ForeColor($21); BackColor($1e); TST.L $14 / BNE, else $14 = thePort;
  * CopyBits(src+2, dst+2, long $10, long $18, 0, nil) - identical to the C. */
-/*
- * Original: FUN_00000e3e; source: ID02.c:749.
- * Recovered name: blit_pixels_via_port_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000e3e; source: ID02.c:749. Recovered name: blit_pixels_via_port_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x10ee (JT $34a).
  * Bytes 0xe3e..0xe9c [PROVEN]; Ghidra truncated after the first store (body rebuilt as C).
  * Args: GrafPtr src_port [8], Ptr base [$c], Rect *src [$10], GrafPtr dst
@@ -1563,9 +1547,7 @@ void blit_pixels_via_port_a5safe /* Original: FUN_00000e3e */
  * A5 thunk; saved = thePort; OpenCPort(8); SetPort(saved); pm.rowBytes = low word of (#$8000 OR.L $c);
  * baseAddr = $10; bounds = *$14 (two MOVE.L); rect -$1e = {0, 0, b[2] - b[0], b[3] - b[1]} to port+$10;
  * RectRgn(port+$18, -$1e) - identical to the C. */
-/*
- * Original: FUN_00000e9e; source: ID02.c:761.
- * Recovered name: open_offscreen_cport_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000e9e; source: ID02.c:761. Recovered name: open_offscreen_cport_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x1106 (JT $3d2).
  * Bytes 0xe9e..0xf50 [PROVEN]; Ghidra exported no body (rebuilt as C). Args: CGrafPtr port
  * [8], long rowBytes [$c], Ptr base [$10], Rect *bounds [$14].
@@ -1606,9 +1588,7 @@ void open_offscreen_cport_a5safe /* Original: FUN_00000e9e */ (int port /* param
 
 /* VERIFIED (ID02::FUN_00000f52): ID02.bin 0xf52..0xf72 checked against an independent capstone disassembly.
  * A5 thunk; ClosePort(8(A6)) $A87D - identical to the C. */
-/*
- * Original: FUN_00000f52; source: ID02.c:772.
- * Recovered name: close_port_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000f52; source: ID02.c:772. Recovered name: close_port_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x10fe (JT $312).
  * Bytes 0xf52..0xf72 [PROVEN]: CurrentA5 thunk; ClosePort(port long arg) $A87D.
  * Ghidra lost the argument.
@@ -1627,9 +1607,7 @@ void close_port_a5safe /* Original: FUN_00000f52 */ (int port /* param_1 */)
 /* VERIFIED (ID02::FUN_00000f74): ID02.bin 0xf74..0xf9e checked against an independent capstone disassembly.
  * LINK -$c, A5 / D2 saved, A5 = $904; -4 = thePort; SetPort(8(A6)); D2 / A5 restored; D0 = -4 - identical to
  * the C. */
-/*
- * Original: FUN_00000f74; source: ID02.c:783.
- * Recovered name: swap_port_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000f74; source: ID02.c:783. Recovered name: swap_port_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x1102 (JT $352).
  * Bytes 0xf74..0xf9e [PROVEN]: CurrentA5 thunk; old = thePort (long A5-0x160c);
  * SetPort(port arg) $A873; returns old in D0. Ghidra lost argument and result
@@ -1654,9 +1632,7 @@ int swap_port_a5safe /* Original: FUN_00000f74 */ (int port /* param_1: the new 
 /* VERIFIED (ID02::FUN_00000fa0): ID02.bin 0xfa0..0xfd0 checked against an independent capstone disassembly.
  * A5 thunk; word $e(A6) to BSR 0x15cc set_draw_color_index; PaintRect(long 8(A6)); PenPat(A5-0x161c) -
  * identical to the C. */
-/*
- * Original: FUN_00000fa0; source: ID02.c:794.
- * Recovered name: paint_rect_color_index_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000fa0; source: ID02.c:794. Recovered name: paint_rect_color_index_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x10fa (JT $39a).
  * Bytes 0xfa0..0xfd0 [PROVEN]: CurrentA5 thunk; set_draw_color_index(word
  * colour at $e(A6) = low word of 2nd long); PaintRect(Rect *param_1) $A8A2;
@@ -1685,9 +1661,7 @@ void paint_rect_color_index_a5safe /* Original: FUN_00000fa0 */ (Rect *rect /* p
  * likewise); ClosePoly; CMPI.W #1 A5-0x137a: push the 6-byte RGBColor (MOVE.L / MOVE.W -(A0)) to JT $1ca
  * (CODE 0 entry seg 6 -> ID06 0x116 rgb_to_bw_pattern), FillPoly(poly, D0); else RGBForeColor(-8),
  * PaintPoly; KillPoly - identical to the C. */
-/*
- * Original: FUN_00000fd2; source: ID02.c:808.
- * Recovered name: paint_polygon_rgb_a5safe [STRONG INFERENCE].
+/* Original: FUN_00000fd2; source: ID02.c:808. Recovered name: paint_polygon_rgb_a5safe [STRONG INFERENCE].
  * Overlay service slot A5-0x10f6 (JT $3f2).
  * Bytes 0xfd2..0x10cc [PROVEN]: CurrentA5 thunk. Args: long *pts [8] (count
  * pairs {x long, y long}), long count [$c], long rgb [$10] = 0xRRGGBBxx.
@@ -1738,9 +1712,7 @@ void paint_polygon_rgb_a5safe /* Original: FUN_00000fd2 */ (int *points /* param
  * left)) DIVS.W #16; d = (c DIVS.W #2) + c - (pnSize.v DIVS.W #2); MoveTo / LineTo / Line pushes h then v in the
  * order of the C (including the tail Line(c, -c), Line(-c, -c), Line(0, -d)); ClosePoly; D0 = poly -
  * identical to the C. */
-/*
- * Original: FUN_000010ce; source: ID02.c:819.
- * Recovered name: build_notched_frame_poly [STRONG INFERENCE mechanics]
+/* Original: FUN_000010ce; source: ID02.c:819. Recovered name: build_notched_frame_poly [STRONG INFERENCE mechanics].
  *. Ghidra exported no body (rebuilt as C below). Bytes 0x10ce..0x11ea [PROVEN].
  * Arg: Rect r by value (top 8, left $a, bottom $c, right $e). Returns PolyHandle.
  *   poly = OpenPoly; r.right -= thePort->pnSize.h (+0x36);
@@ -1964,9 +1936,7 @@ void draw_text_in_columns_a5safe /* Original: FUN_00001308 */
 /* VERIFIED (ID02::FUN_000014e6): ID02.bin 0x14e6..0x1508 checked against an independent capstone disassembly.
  * A5 thunk; PEA -$1000(A5), JSR $2e2(A5) (CODE 0 entry seg 9 -> ID09 0x3c2 swapmmumode_glue) - identical
  * to the C. */
-/*
- * Original: FUN_000014e6; source: ID02.c:856.
- * Recovered name: swap_mmu_mode_a5safe [STRONG INFERENCE].
+/* Original: FUN_000014e6; source: ID02.c:856. Recovered name: swap_mmu_mode_a5safe [STRONG INFERENCE].
  * Bytes 0x14e6..0x1508 match the C [PROVEN]: CurrentA5 thunk; JT $2e2 =
  * ID09 file 0x3c2 swapmmumode_glue (SwapMMUMode, $A05D) with &byte A5-0x1000
  * (VAR mode: the caller-visible 24/32-bit addressing mode byte).
@@ -2031,9 +2001,7 @@ int get_blended_fill_pattern /* Original: FUN_0000150a */ (void)
  * 1-bit: MOVE.W 8(A6) to A5-0x13ba, entry as in get_blended_fill_pattern, push the 6-byte entry by value
  * to JT $1ca, PenPat(D0) $A89D; else thePort+$50 = MOVEA.W 8(A6) (sign-extended) - identical to the C (the
  * truncated branch completed, the zero-extension through undefined2 corrected). */
-/*
- * Original: FUN_000015cc; source: ID02.c:884.
- * Recovered name: set_draw_color_index [STRONG INFERENCE].
+/* Original: FUN_000015cc; source: ID02.c:884. Recovered name: set_draw_color_index [STRONG INFERENCE].
  * Ghidra truncated the 1-bit branch; body completed from the bytes. Arg: word colour index.
  *   if (mode word A5-0x137a == 1) { A5-0x13ba = colour; entry = colour <= 8 ? A5-0x350 + 6c :
  *     *A5-0x14a6 + 6(c - 8); PenPat(rgb_to_bw_pattern(*entry)) (JT $1ca -> ID06 0x116) }
@@ -2067,9 +2035,7 @@ void set_draw_color_index /* Original: FUN_000015cc */ (short index /* param_1: 
 /* VERIFIED (ID02::FUN_00001632): ID02.bin 0x1632..0x1654 checked against an independent capstone disassembly.
  * 1-bit: MOVE.W 8(A6) to A5-0x13b8; else thePort+$54 = MOVEA.W 8(A6) (sign-extended) - identical to the C
  * after the sign-extension correction. */
-/*
- * Original: FUN_00001632; source: ID02.c:901.
- * Recovered name: set_back_color_index [STRONG INFERENCE].
+/* Original: FUN_00001632; source: ID02.c:901. Recovered name: set_back_color_index [STRONG INFERENCE].
  * Bytes 0x1632..0x1654; the stored index is sign-extended (MOVEA.W). Background twin of
  * set_draw_color_index: 1-bit mode (A5-0x137a == 1) -> word A5-0x13b8 =
  * colour; else thePort->bkColor (+0x54) = (long)colour.
@@ -2094,9 +2060,7 @@ void set_back_color_index /* Original: FUN_00001632 */ (short index /* param_1: 
  * D0 = MOVEA.W A5-0x1372 DIVS.W #2; D1 = MOVEA.W 8(A6) (sign-extended) MULU.L A5-0x149e (low 32 bits = the
  * signed product), DIVS.L #$12c0 (extension 0x1801, quotient only); EXT.L D0, ADD.L - identical to the C
  * after the sign-extension correction. */
-/*
- * Original: FUN_00001656; source: ID02.c:917.
- * Recovered name: design_x_to_screen [STRONG INFERENCE].
+/* Original: FUN_00001656; source: ID02.c:917. Recovered name: design_x_to_screen [STRONG INFERENCE].
  * JT $3ca; the word argument is sign-extended (C corrected from undefined2). (long A5-0x149e * v) / 4800 + view width
  * (A5-0x1372) / 2 -> screen x of a design x [STRONG INFERENCE]. Bytes use
  * MULU.L on the sign-extended word (low 32 bits equal the signed product) and
@@ -2115,9 +2079,7 @@ int design_x_to_screen /* Original: FUN_00001656 */ (short design_x /* param_1 *
 
 /* VERIFIED (ID02::FUN_00001680): ID02.bin 0x1680..0x16a8 checked against an independent capstone disassembly.
  * Same body with A5-0x1370 - identical to the C after the sign-extension correction. */
-/*
- * Original: FUN_00001680; source: ID02.c:928.
- * Recovered name: design_y_to_screen [STRONG INFERENCE].
+/* Original: FUN_00001680; source: ID02.c:928. Recovered name: design_y_to_screen [STRONG INFERENCE].
  * JT $382; sign-extended word argument (C corrected). Same as design_x_to_screen with view height
  * (A5-0x1370) / 2 -> screen y.
  */
@@ -2191,9 +2153,7 @@ void draw_view_frame_outline /* Original: FUN_000016aa */ (void)
  * -$12 = 1 and JT $272 HLock; ForeColor($21), BackColor($1e); baseAddr = *(A5-0x12b0), rowBytes = word +$a
  * of record (MULS.W #$160 A5-0x13ae) + *(A5-0x13b2); CopyBits(port+2, thePort+2, port+$10, port+$10, 0,
  * nil); TST.W -$12 -> JT $27a HUnlock; SetClip(-4); DisposeRgn(-8); DisposeRgn(-4) - identical to the C. */
-/*
- * Original: FUN_00001876; source: ID02.c:964.
- * Recovered name: blit_image_clipped_to_region [STRONG INFERENCE].
+/* Original: FUN_00001876; source: ID02.c:964. Recovered name: blit_image_clipped_to_region [STRONG INFERENCE].
  * Ghidra truncated at $A89B; body rebuilt as C. Bytes 0x1876..0x195a [PROVEN]:
  *   PenSize(1,1); r = NewRgn; OpenRgn; FUN_000016aa (draws the clip
  *   shape); CloseRgn(r); saved = NewRgn; GetClip(saved); SetClip(r);
@@ -2252,9 +2212,7 @@ void blit_image_clipped_to_region /* Original: FUN_00001876 */ (void)
 
 /* VERIFIED (ID02::FUN_0000195c): ID02.bin 0x195c..0x197a checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, BSR 0x1876, restored - identical to the C. */
-/*
- * Original: FUN_0000195c; source: ID02.c:973.
- * Recovered name: blit_image_clipped_to_region_a5safe [STRONG INFERENCE].
+/* Original: FUN_0000195c; source: ID02.c:973. Recovered name: blit_image_clipped_to_region_a5safe [STRONG INFERENCE].
  * CurrentA5 thunk (bytes 0x195c..0x197a) calling blit_image_clipped_to_region.
  * Overlay service slot A5-0x111a (JT $3aa).
  */
@@ -2272,9 +2230,7 @@ void blit_image_clipped_to_region_a5safe /* Original: FUN_0000195c */ (void)
 /* VERIFIED (ID02::FUN_0000197c): ID02.bin 0x197c..0x19a0 checked against an independent capstone disassembly.
  * A5 thunk; JSR $17a(A5) (CODE 0 entry seg 3 -> ID03 0x5cc4 prepare_instrument_panel); PEA $18a(A5),
  * UnloadSeg $A9F1 - identical to the C. */
-/*
- * Original: FUN_0000197c; source: ID02.c:984.
- * Recovered name: run_segment3_entry_and_unload_a5safe [STRONG INFERENCE].
+/* Original: FUN_0000197c; source: ID02.c:984. Recovered name: run_segment3_entry_and_unload_a5safe [STRONG INFERENCE].
  * Bytes 0x197c..0x19a0 [PROVEN]: CurrentA5 thunk; JSR $17a(A5) (segment 3 file
  * 0x5cc4, prepare_instrument_panel); UnloadSeg(JT $18a = segment 3 entry) $A9F1.
  * Overlay service slot A5-0x111e (JT $372).
@@ -2293,9 +2249,7 @@ void run_segment3_entry_and_unload_a5safe /* Original: FUN_0000197c */ (void)
  * A5 / D2 saved, A5 = $904, CLR.L result / push 8(A6) / JT $252 (CODE 0 entry seg 9 -> ID09 0x242), result to -4;
  * CLR.W / JT $29a (ID09 0x29e MemError), TST.W / BEQ else BSR 0x19e2; D2 / A5 restored; D0 = -4 - identical to
  * the C. */
-/*
- * Original: FUN_000019a2; source: ID02.c:994-1008.
- * Recovered name: new_handle_clear_or_die_a5safe [STRONG INFERENCE].
+/* Original: FUN_000019a2; source: ID02.c:994-1008. Recovered name: new_handle_clear_or_die_a5safe [STRONG INFERENCE].
  * Bytes file 0x19a2..0x19e0 [PROVEN]: CurrentA5 thunk; h = NewHandleClear(size
  * long [8(A6)]) via JT $252 (ID09 0x242, $A322); if (MemError (JT $29a,
  * word $0220) != 0) fatal_memory_error_exit; returns h (long in D0).
@@ -2321,9 +2275,7 @@ int new_handle_clear_or_die_a5safe /* Original: FUN_000019a2 */ (int size /* par
 /* VERIFIED (ID02::FUN_000019e2): ID02.bin 0x19e2..0x1a02 checked against an independent capstone disassembly.
  * No LINK; TST.L A5-0x1006 / BEQ, else JT $23a (ID09 0x218 DisposPtr); BSR 0x4318 shutdown_sound; CLR.W,
  * push long A5-0xdd2, BSR 0x1d48, ADDQ.L #6; ExitToShell $A9F4 - identical to the C. */
-/*
- * Original: FUN_000019e2; source: ID02.c:1014-1031.
- * Recovered name: fatal_memory_error_exit [STRONG INFERENCE].
+/* Original: FUN_000019e2; source: ID02.c:1014-1031. Recovered name: fatal_memory_error_exit [STRONG INFERENCE].
  * Bytes file 0x19e2..0x1a02 [PROVEN] (no LINK; uses the caller's A5, which
  * every caller has already set from CurrentA5):
  *   if (A5-0x1006 overlay image) DisposPtr(A5-0x1006) (JT $23a, ID09 0x218);
@@ -2352,9 +2304,7 @@ void fatal_memory_error_exit /* Original: FUN_000019e2 */ (void)
 
 /* VERIFIED (ID02::FUN_00001a04): ID02.bin 0x1a04..0x1a26 checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, push 8(A6), JT $25a (ID09 0x24e DisposHandle glue), restored - identical to the C. */
-/*
- * Original: FUN_00001a04; source: ID02.c:1038-1043.
- * Recovered name: dispose_handle_a5safe [STRONG INFERENCE].
+/* Original: FUN_00001a04; source: ID02.c:1038-1043. Recovered name: dispose_handle_a5safe [STRONG INFERENCE].
  * CurrentA5 thunk: saves A5/D2, A5 = ($0904), JSR $25a(A5) = ID09 file 0x24e
  * ($A023 DisposHandle glue) with the handle argument, restores A5/D2. Ghidra shows the
  * call through DAT_00000904 + JT offset. Overlay service slot A5-0x10be.
@@ -2372,9 +2322,7 @@ void dispose_handle_a5safe /* Original: FUN_00001a04 */ (undefined4 h /* param_1
  * A5 / D2 saved, A5 = $904, push h then size to JT $26a (ID09 0x264 ReallocHandle); MemError (JT $29a) TST.W
  * / BEQ else BSR 0x19e2; JT $272 HLock(h); push long size, CLR.W, long *h, BSR 0x2b0, LEA $a(A7); JT $27a
  * HUnlock(h) - identical to the C. */
-/*
- * Original: FUN_00001a28; source: ID02.c:1047-1066.
- * Recovered name: realloc_and_clear_handle_a5safe [STRONG INFERENCE].
+/* Original: FUN_00001a28; source: ID02.c:1047-1066. Recovered name: realloc_and_clear_handle_a5safe [STRONG INFERENCE].
  * Bytes file 0x1a28..0x1a82 [PROVEN]; CurrentA5 thunk. Args: Handle h [8],
  * long size [$c].
  *   ReallocHandle(h, size) (JT $26a = ID09 0x264, $A027);
@@ -2403,9 +2351,7 @@ void realloc_and_clear_handle_a5safe /* Original: FUN_00001a28 */ (undefined4 *h
 
 /* VERIFIED (ID02::FUN_00001a84): ID02.bin 0x1a84..0x1aa6 checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, push 8(A6), JT $272 (ID09 0x270 HLock glue) - identical to the C. */
-/*
- * Original: FUN_00001a84; source: ID02.c:1070-1075.
- * Recovered name: hlock_a5safe [STRONG INFERENCE].
+/* Original: FUN_00001a84; source: ID02.c:1070-1075. Recovered name: hlock_a5safe [STRONG INFERENCE].
  * CurrentA5 thunk: saves A5/D2, A5 = ($0904), JSR $272(A5) = ID09 file 0x270
  * ($A029 HLock glue) with the handle argument, restores A5/D2. Ghidra shows the
  * call through DAT_00000904 + JT offset. Overlay service slot A5-0x10b6.
@@ -2421,9 +2367,7 @@ void hlock_a5safe /* Original: FUN_00001a84 */ (undefined4 h /* param_1: Handle 
 
 /* VERIFIED (ID02::FUN_00001aa8): ID02.bin 0x1aa8..0x1aca checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, push 8(A6), JT $27a (ID09 0x27a HUnlock glue) - identical to the C. */
-/*
- * Original: FUN_00001aa8; source: ID02.c:1079-1084.
- * Recovered name: hunlock_a5safe [STRONG INFERENCE].
+/* Original: FUN_00001aa8; source: ID02.c:1079-1084. Recovered name: hunlock_a5safe [STRONG INFERENCE].
  * CurrentA5 thunk: saves A5/D2, A5 = ($0904), JSR $27a(A5) = ID09 file 0x27a
  * ($A02A HUnlock glue) with the handle argument, restores A5/D2. Ghidra shows the
  * call through DAT_00000904 + JT offset. Overlay service slot A5-0x10b2.
@@ -2439,9 +2383,7 @@ void hunlock_a5safe /* Original: FUN_00001aa8 */ (undefined4 h /* param_1: Handl
 
 /* VERIFIED (ID02::FUN_00001acc): ID02.bin 0x1acc..0x1aee checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, push 8(A6), JT $282 (ID09 0x284 HPurge glue) - identical to the C. */
-/*
- * Original: FUN_00001acc; source: ID02.c:1088-1093.
- * Recovered name: hpurge_a5safe [STRONG INFERENCE].
+/* Original: FUN_00001acc; source: ID02.c:1088-1093. Recovered name: hpurge_a5safe [STRONG INFERENCE].
  * CurrentA5 thunk: saves A5/D2, A5 = ($0904), JSR $282(A5) = ID09 file 0x284
  * ($A049 HPurge glue) with the handle argument, restores A5/D2. Ghidra shows the
  * call through DAT_00000904 + JT offset. Overlay service slot A5-0x10ae.
@@ -2457,9 +2399,7 @@ void hpurge_a5safe /* Original: FUN_00001acc */ (undefined4 h /* param_1: Handle
 
 /* VERIFIED (ID02::FUN_00001af0): ID02.bin 0x1af0..0x1b12 checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, push 8(A6), JT $28a (ID09 0x28e HNoPurge glue) - identical to the C. */
-/*
- * Original: FUN_00001af0; source: ID02.c:1097-1102.
- * Recovered name: hnopurge_a5safe [STRONG INFERENCE].
+/* Original: FUN_00001af0; source: ID02.c:1097-1102. Recovered name: hnopurge_a5safe [STRONG INFERENCE].
  * CurrentA5 thunk: saves A5/D2, A5 = ($0904), JSR $28a(A5) = ID09 file 0x28e
  * ($A04A HNoPurge glue) with the handle argument, restores A5/D2. Ghidra shows the
  * call through DAT_00000904 + JT offset. Overlay service slot A5-0x10aa.
@@ -2476,9 +2416,7 @@ void hnopurge_a5safe /* Original: FUN_00001af0 */ (undefined4 h /* param_1: Hand
 /* VERIFIED (ID02::FUN_00001b14): ID02.bin 0x1b14..0x1b3e checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904; CLR.L / JT $212 (CODE 0 entry seg 9 -> ID09 0x1b2 FreeMem), result popped to -4;
  * restored; D0 = -4 - identical to the C (Ghidra's return 0 corrected). */
-/*
- * Original: FUN_00001b14; source: ID02.c:1106-1111.
- * Recovered name: freemem_a5safe [STRONG INFERENCE].
+/* Original: FUN_00001b14; source: ID02.c:1106-1111. Recovered name: freemem_a5safe [STRONG INFERENCE].
  * Bytes file 0x1b14..0x1b3e [PROVEN]: saves A5/D2, A5 = CurrentA5 ($0904),
  * result = JT $212 = ID09 file 0x1b2 FreeMem glue ($A01C), restores, returns
  * the FreeMem long in D0. Ghidra's "return 0" was a decompiler error (it lost
@@ -2511,9 +2449,7 @@ int freemem_a5safe /* Original: FUN_00001b14 */ (void)
  * neg word -2; TST.L / BGE, NEG.L; p = buf + 10; DIVSL.L #10,D1:D0 (extension 0x0801) remainder + '0',
  * DIVS.L #10 (0x0800) quotient, loop while n != 0; '-' on neg; len = buf - p + 10, length byte at --p;
  * copy len + 1 bytes forwards to buf (post-decrement test); D0 = buf - identical to the C. */
-/*
- * Original: FUN_00001c8a; source: ID02.c:1115-1150.
- * Recovered name: format_int_decimal_pstring [STRONG INFERENCE].
+/* Original: FUN_00001c8a; source: ID02.c:1115-1150. Recovered name: format_int_decimal_pstring [STRONG INFERENCE].
  * Exported C [complete]: writes |n| in decimal backwards from buf+10, prefixes
  * '-' for negative n, stores the length byte, returns the Pascal string start.
  * INT_MIN negation overflow preserved as exported. Caller:
@@ -2566,9 +2502,7 @@ char * format_int_decimal_pstring /* Original: FUN_00001c8a */ (int v /* param_1
  * (Pascal order: -$d0e, -$d0c, -$d0a / s, -$d08, -$d06 / s, -$d04, -$d02); s = BSR 0x1c8a(MOVEA.W $c, -$a);
  * TST.L 8 chooses the last pair; BSR 0x442e(0x102); CautionAlert(0x102, nil) $A988; JT $2fa (ID09 0x432)
  * on 8(A6) - identical to the C. */
-/*
- * Original: FUN_00001d48; source: ID02.c:1157-1174.
- * Recovered name: show_caution_alert_with_number [STRONG INFERENCE].
+/* Original: FUN_00001d48; source: ID02.c:1157-1174. Recovered name: show_caution_alert_with_number [STRONG INFERENCE].
  * Bytes file 0x1d48..0x1dd2 [PROVEN]; JT $4ba (used by ID08 error paths).
  * Args: char *msg [8(A6)] (C string, may be 0), word num [$c(A6)].
  *   c2pstr(msg) (JT $302, ID09 0x416);
@@ -3217,9 +3151,7 @@ void refresh_display_if_changed /* Original: FUN_000029f2 */ (void)
  * saved to -2 / -4 / -6 / -8, new values copied, any CMP.W BNE -> TST.L A5-0x1006 -> JSR (A5-0x1092), flag = 1;
  * A5-0x12da old / new (S+$16) -> JSR (A5-0x104e); CMPI.W #8 A5-0x137a: S+$12 with JSR (A5-0x1096) and S+$1a,
  * else CLR.W both; S+$22, $24, 6, $1c, $a copied in that order; flag -> BSR 0x4db0 - identical to the C. */
-/*
- * Original: FUN_00002a44; source: ID02.c:1487-1546.
- * Recovered name: apply_settings_to_live_options [STRONG INFERENCE].
+/* Original: FUN_00002a44; source: ID02.c:1487-1546. Recovered name: apply_settings_to_live_options [STRONG INFERENCE].
  * Exported C is complete (no truncation) and matches the bytes.
  * Input: none; reads S = *(HEL1 127 handle A5-0x13ac). Output: void.
  * Effect: copies settings words from S into a live options block in the A5
@@ -3333,9 +3265,7 @@ void apply_settings_to_live_options /* Original: FUN_00002a44 */ (void)
  * 'HEL1' $7f / $80: NIL -> NewHandleClear($12a / $500) via JT $252, AddResource(h, 'HEL1', id, A5-0xc90 / -0xc66),
  * (127 only: +$10 = 2, +$e = 1, +$24 = 2, +$26 = 1, BSR 0x2ee4(A5-0xc78 -> +$2a)), ChangedResource, WriteResource;
  * else LoadResource $A9A2; BSR 0x27e4; SetPort(A5-0x14ca) - identical to the C. */
-/*
- * Original: FUN_00002bbc; source: ID02.c:1552-1564.
- * Recovered name: initialize_application [STRONG INFERENCE].
+/* Original: FUN_00002bbc; source: ID02.c:1552-1564. Recovered name: initialize_application [STRONG INFERENCE].
  * Ghidra decoded only the first two calls and stopped at the A-line word $A994
  * (file 0x2bdc); the body is rebuilt as C below from ID02.bin file 0x2bbc..0x2d9e
  * (seg4 0x3d42 is check_system_requirements; $AA28 is GetCTSeed).
@@ -3476,9 +3406,7 @@ void initialize_application /* Original: FUN_00002bbc */ (void)
  * table 0x2de4 (1, 3, 5 -> 0x2e32 return; 6 -> 0x2dfa; 8 -> 0x2e1c; 2, 4, 7, default -> loop); update: TST.W
  * A5-0x14c6, CMP.L message with A5-0x14ca, BeginUpdate $A922, BSR 0x4db0, EndUpdate $A923; activate: four MOVE.L
  * -(A0) from -2 (the 16-byte record), BSR 0x2fa0 - identical to the C. */
-/*
- * Original: FUN_00002db8; source: ID02.c:1570.
- * Recovered name: wait_for_click_or_key [STRONG INFERENCE].
+/* Original: FUN_00002db8; source: ID02.c:1570. Recovered name: wait_for_click_or_key [STRONG INFERENCE].
  * Ghidra truncated at $A9B4 (body rebuilt as C below). Bytes 0x2db8..0x2e34 [PROVEN]: loop {
  *   SystemTask $A9B4; got = GetNextEvent(-1 everyEvent, &evt) $A970 (EXTB.L);
  *   BSR 0x29f2 (FUN_000029f2); if (!got) continue;
@@ -3531,9 +3459,7 @@ void wait_for_click_or_key /* Original: FUN_00002db8 */ (void)
  * SetRect(-8, $98, $3c, $164, $84) $A8A7; NewWindow pushes nil, -8, A5-0xc50, byte 1, word 1, -1, word 0, long
  * 0 ($A913) to -$c; SetPort; TextFont(0); MoveTo(4, $14); DrawString(long A5-0xd72); MoveTo(4, $28); DrawString(long
  * A5-0xd6e); Button loop - identical to the C. */
-/*
- * Original: FUN_00002e36; source: ID02.c:1581.
- * Recovered name: show_resource_file_error_box [STRONG INFERENCE].
+/* Original: FUN_00002e36; source: ID02.c:1581. Recovered name: show_resource_file_error_box [STRONG INFERENCE].
  * Ghidra truncated (body rebuilt as C below). Bytes 0x2e36..0x2ea8 [PROVEN]:
  *   SetRect(&r, 152, 60, 356, 132) $A8A7  (left, top, right, bottom);
  *   w = NewWindow(nil, &r, title A5-0xc50, visible, 1 dBoxProc, (WindowPtr)-1,
@@ -3610,9 +3536,7 @@ void copy_pascal_string /* Original: FUN_00002ee4 */ (char *src /* param_1: Pasc
  * FindWindow(long evt+$a, -4) $A92C to -6; JSR $3a(A5) table 0x2f40 (1 -> 0x2f5e, 2 -> 0x2f52, 6 -> 0x2f76, 3..5
  * and default -> 0x2f9c); MenuSelect(evt+$a) $A93D result to BSR 0x36a2; SystemClick(evt, win) $A9B3; go-away: CMP.L
  * A5-0x14ca, TrackGoAway $A91E TST.B, HideWindow $A916 - identical to the C. */
-/*
- * Original: FUN_00002f1e; source: ID02.c:1613-1618.
- * Recovered name: handle_mouse_down [STRONG INFERENCE].
+/* Original: FUN_00002f1e; source: ID02.c:1613-1618. Recovered name: handle_mouse_down [STRONG INFERENCE].
  * Ghidra truncated at $A92C; body rebuilt as C. Bytes file 0x2f1e..0x2f9e [PROVEN].
  * Arg: EventRecord *evt [8(A6)]. Caller: poll_and_dispatch_event (mouseDown).
  *   part = FindWindow(evt->where (+0xa), &win) $A92C;
@@ -3657,9 +3581,7 @@ void handle_mouse_down /* Original: FUN_00002f1e */ (short *evt /* param_1: Even
 /* VERIFIED (ID02::FUN_00002fa0): ID02.bin 0x2fa0..0x2fd2 checked against an independent capstone disassembly.
  * TST.W A5-0x14c6; MOVEQ #3 AND.W $16(A6) CMPI.W #3; CMP.L $a(A6) (message) with A5-0x14ca; TST.L A5-0x14ca;
  * PEA $10(window), InvalRect $A928 - identical to the C. */
-/*
- * Original: FUN_00002fa0; source: ID02.c:1624-1634.
- * Recovered name: handle_activate_event [STRONG INFERENCE].
+/* Original: FUN_00002fa0; source: ID02.c:1624-1634. Recovered name: handle_activate_event [STRONG INFERENCE].
  * Ghidra truncated the inner body at $A928; completed as C (InvalRect of the portRect).
  * Arg: EventRecord passed by value at 8(A6)..$17(A6). Ghidra's split:
  * param_1 (8 bytes) = what, message, high word of when (param_1._2_4_ =
@@ -3694,9 +3616,7 @@ void handle_activate_event /* Original: FUN_00002fa0 */ (undefined8 evt_what_mes
  * default -> 0x3096); key: AND.W #$100 modifiers, MenuKey(EXTB.L (message & $ff)) $A93E to BSR 0x36a2; update:
  * BSR 0x29f2 again, BeginUpdate / BSR 0x4db0 / EndUpdate; activate: 16-byte record by value to BSR 0x2fa0 -
  * identical to the C. */
-/*
- * Original: FUN_00002fd4; source: ID02.c:1641-1646.
- * Recovered name: poll_and_dispatch_event [STRONG INFERENCE].
+/* Original: FUN_00002fd4; source: ID02.c:1641-1646. Recovered name: poll_and_dispatch_event [STRONG INFERENCE].
  * Ghidra truncated at the first A-line word ($A938, file 0x2fda); the body is
  * rebuilt as C below from ID02.bin file 0x2fd4..0x3098 [PROVEN, bytes].
  * Caller: main (FUN_0000309a) in an infinite loop (BSR at file 0x30f0).
@@ -3773,9 +3693,7 @@ void poll_and_dispatch_event /* Original: FUN_00002fd4 */ (void)
  * CLR.L -6; A5-0x13ae = -1; BSR 0x2bbc; UnloadSeg($a2(A5)); MaxMem(-6) via JT $21a, popped; BSR 0x1b42;
  * A5-0x14c4 = 1; JT $1e2 to -2; UnloadSeg($1ea(A5)), UnloadSeg($56a(A5)); BSR 0x30fa; TST.W -2 && A5-0x102e ->
  * BSR 0x35e4; BSR 0x2fd4 / BRA loop - identical to the C. */
-/*
- * Original: FUN_0000309a; source: ID02.c:1650-1660.
- * Recovered name: main [STRONG INFERENCE].
+/* Original: FUN_0000309a; source: ID02.c:1650-1660. Recovered name: main [STRONG INFERENCE].
  * Ghidra stopped at UnloadSeg ($A9F1, file 0x30b0); the body is rebuilt as C
  * below from ID02.bin file 0x309a..0x30f8 [PROVEN, bytes] (0x30fa is install_menus,
  * 0x35e4 start_new_mission).
@@ -4055,9 +3973,7 @@ void start_new_mission /* Original: FUN_000035e4 */ (void)
  * menus 4 / 5: BCHG #0 on settings bytes 3 / 5 / 7 / 9 / $13 / $17 / $15 / $19 / $1b, BCHG A5-0x102f (no dirty),
  * BSR 0x35bc(1 / 3 / 2), MOVE.W 1..5 to settings+$10, each other case MOVE.W #1 to A5-0x138a; all paths end at
  * 0x39a0 BSR 0x2a44 - identical to the C. */
-/*
- * Original: FUN_000036a2; source: ID02.c:1759-1764.
- * Recovered name: do_menu_command [STRONG INFERENCE].
+/* Original: FUN_000036a2; source: ID02.c:1759-1764. Recovered name: do_menu_command [STRONG INFERENCE].
  * All five menus described; body rebuilt as C below from ID02.bin file 0x36a2..0x39a6 [PROVEN, bytes]
  * (menu 1 item 1 is show_about_dialog; menu 2 item 1 is ID08 bootstrap_window_and_load_overlay).
  * Input: long menuResult at 8(A6) (from MenuKey in poll_and_dispatch_event;
@@ -4273,9 +4189,7 @@ void do_menu_command /* Original: FUN_000036a2 */ (int menu_result /* param_1: M
  * MOVE.B (A0,D0.L),(A6) / ADDQ #2 / ADD.L D3,D1 / ADDX.L D2,D0 per DBRA, then A6 = $266.w and two more. Slow: D7 =
  * $16f then 1 (A6 = $266.w), each sample first CMP.L D0,D4 BGT else A4 = +$18, A0 = +8, D0 = +$c, D1 = 0, D4 = +$10,
  * head = A4; node +0 / +4 = D0 / D1; MOVEM back, RTS into the chained handler - identical to the C. */
-/*
- * Original: FUN_000039a8; source: ID02.c:1768.
- * Recovered name: vbl_sound_handler_ch0_unrolled [STRONG INFERENCE].
+/* Original: FUN_000039a8; source: ID02.c:1768. Recovered name: vbl_sound_handler_ch0_unrolled [STRONG INFERENCE].
  * Exported C kept, with the SoundBase pointers (Ghidra's DAT_66fa4e75/77/79 constants) and the
  * register-chaining tail made explicit.
  * Interrupt-hook pattern [PROVEN, bytes]: CLR.L -(A7) reserves a return slot;
@@ -4403,9 +4317,7 @@ undefined8 vbl_sound_handler_ch0_unrolled /* Original: FUN_000039a8 */ (void)
  * ADDI.L #$172,D0, BTST #0 of A0: even -> 92 x MOVE.L (A0)+,D1 / MOVEP.L D1,0(A6) / ADDQ #8, then A6 = $266.w and two
  * MOVE.B; odd -> one MOVE.B, SUBQ.L #1 D7 (91 longs), three MOVE.B, A6 = $266.w, two MOVE.B; slow path as 0x39a8; node
  * +0 / +4 = D0 / D1 - identical to the C. */
-/*
- * Original: FUN_00003aae; source: ID02.c:1868.
- * Recovered name: vbl_sound_handler_ch0_variant [STRONG INFERENCE].
+/* Original: FUN_00003aae; source: ID02.c:1868. Recovered name: vbl_sound_handler_ch0_variant [STRONG INFERENCE].
  * Exported C kept, with the SoundBase pointers (Ghidra's DAT_66fa4e75/77/79/7b constants) and the
  * register-chaining tail made explicit.
  * Interrupt-hook pattern [PROVEN, bytes]: CLR.L -(A7) reserves a return slot;
@@ -4555,9 +4467,7 @@ undefined8 vbl_sound_handler_ch0_variant /* Original: FUN_00003aae */ (void)
  * ADDX.L D2,D0, MOVE.B (A1)+,D6, ADD.W D6,D5, SUBI.W #$80, MOVE.B D5,(A6), ADDQ #2; fast path D7 = $b7 x 2 then two at
  * $266.w; slow path $16f then 1 with ch0 node switching; ch0 +0 / +4 saved; CMPA.L ch1 +$10,A3 / BLT: A2 = +$18, A3 = +$c,
  * head = A2, LEA A5-0xc26 CMPA.L +8 / BNE else $196.w = A5-0x360; (A2) = A3 - identical to the C. */
-/*
- * Original: FUN_00003bc4; source: ID02.c:1990.
- * Recovered name: vbl_sound_handler_two_channel [STRONG INFERENCE].
+/* Original: FUN_00003bc4; source: ID02.c:1990. Recovered name: vbl_sound_handler_two_channel [STRONG INFERENCE].
  * Exported C kept, with the SoundBase pointers (Ghidra's DAT_66fa4e75/77/79 constants), the $0196
  * store and the register-chaining tail made explicit.
  * Interrupt-hook pattern [PROVEN, bytes]: CLR.L -(A7) reserves a return slot;
@@ -4702,9 +4612,7 @@ undefined8 vbl_sound_handler_two_channel /* Original: FUN_00003bc4 */ (void)
 /* VERIFIED (ID02::FUN_00003d36): ID02.bin 0x3d36..0x3d4e checked against an independent capstone disassembly.
  * No LINK; MOVEA.L $0266.w,A0; D1 = $80; D0 = $171; MOVE.B D1,(A0) / ADDQ.L #2 / DBRA (370 bytes) - identical to
  * the C after the SoundBase correction. */
-/*
- * Original: FUN_00003d36; source: ID02.c:2108.
- * Recovered name: clear_sound_buffer_to_silence [STRONG INFERENCE].
+/* Original: FUN_00003d36; source: ID02.c:2108. Recovered name: clear_sound_buffer_to_silence [STRONG INFERENCE].
  * Bytes file 0x3d36..0x3d4e [PROVEN]: MOVEA.L $0266.w,A0 (low-memory SoundBase,
  * Inside Macintosh); 370 DBRA passes (0x171 down through 0) of MOVE.B #$80,(A0);
  * ADDQ.L #2,A0 - writes the unsigned-8-bit midpoint into the high byte of
@@ -4735,9 +4643,7 @@ void clear_sound_buffer_to_silence /* Original: FUN_00003d36 */ (void)
 /* VERIFIED (ID02::FUN_00003d50): ID02.bin 0x3d50..0x3db6 checked against an independent capstone disassembly.
  * A4 = record (MULU.L #$238 ch + A5-0x7d0)+4; free head = A4+$14; (A4) = $10, +4 = 0, +8 = $c, +$c = $10, +$10 =
  * $14; TST.W $18 ? +$14 : A4 to +$18; D0 = A4 - identical to the C. */
-/*
- * Original: FUN_00003d50; source: ID02.c:2124-2148.
- * Recovered name: alloc_sound_buffer_node [STRONG INFERENCE].
+/* Original: FUN_00003d50; source: ID02.c:2124-2148. Recovered name: alloc_sound_buffer_node [STRONG INFERENCE].
  * Exported C complete; bytes 0x3d50..0x3db6 agree [PROVEN].
  * Args: ch, buffer ptr, start, end (longs), word repeat/link flag.
  * Pops a node from channel ch's free list (record A5-0x7d0 + ch*0x238, +4 =
@@ -4778,9 +4684,7 @@ alloc_sound_buffer_node /* Original: FUN_00003d50 */ (int channel /* param_1 */,
 
 /* VERIFIED (ID02::FUN_00003db8): ID02.bin 0x3db8..0x3dce checked against an independent capstone disassembly.
  * CMPI.L #1 8(A6) / BNE; MOVE.L A5-0x35c to $0196.w - identical to the C. */
-/*
- * Original: FUN_00003db8; source: ID02.c:2154-2163.
- * Recovered name: select_two_channel_sound_handler [STRONG INFERENCE].
+/* Original: FUN_00003db8; source: ID02.c:2154-2163. Recovered name: select_two_channel_sound_handler [STRONG INFERENCE].
  * If param == 1: low-memory $0196 (Lvl1DT[1] VBL vector) = A5-0x35c
  * (vbl_sound_handler_two_channel). Otherwise no change. Bytes 0x3db8..0x3dce
  * match the C.
@@ -4808,9 +4712,7 @@ void select_two_channel_sound_handler /* Original: FUN_00003db8 */ (int channel 
  * 0, $172, word 0); A5-0x360 = TST.L 8 ? $412(A5) : $41a(A5); A5-0x35c = $422(A5); first time BSR 0x3aae, 0x39a8,
  * 0x3bc4; A5-0xc36 = $196.w, $196.w = A5-0x360; CLR.L A5-0x356; SndNewChannel $A807 (CLR.W result, PEA A5-0x356,
  * word 5, long 0, long 0); TST.W / BEQ: D0 = 1 and A5-0xc38 = 1, else D0 = 0 - identical to the C. */
-/*
- * Original: FUN_00003dd0; source: ID02.c:2170-2230.
- * Recovered name: init_sound_system [STRONG INFERENCE].
+/* Original: FUN_00003dd0; source: ID02.c:2170-2230. Recovered name: init_sound_system [STRONG INFERENCE].
  * Ghidra truncated the end; body completed as C (the node flag is 0, the tail calls
  * SndNewChannel and returns 1 / 0); bytes 0x3dd0..0x3f52 [PROVEN].
  *   if (sound active A5-0xc38) shutdown_sound;
@@ -4896,9 +4798,7 @@ short init_sound_system /* Original: FUN_00003dd0 */ (int use_variant /* param_1
  * (unsigned) -> three BSR 0x3d50 (start..loop_start flag 1, loop_start..loop_end flag 0, loop_end..end flag 1),
  * else (start..end flag 1, A5-0xc26 0..$172 flag 0); first result kept at -4; BSR 0x3db8(ch); record (MULU.L
  * #$238 + A5-0x7d0) head = -4; D0 = 1 - identical to the C. */
-/*
- * Original: FUN_00003f54; source: ID02.c:2231-2260.
- * Recovered name: play_sample_on_channel [STRONG INFERENCE].
+/* Original: FUN_00003f54; source: ID02.c:2231-2260. Recovered name: play_sample_on_channel [STRONG INFERENCE].
  * Exported C complete. Args: ch, sample buffer, start, end, loop_start,
  * loop_end (longs). CurrentA5 routine (DAT_00000904). Overlay service slot
  * A5-0x10de (JT $442).
@@ -4998,9 +4898,7 @@ enqueue_sample_on_channel /* Original: FUN_00004050 */ (int channel /* param_1: 
  * A5 / D2 saved, A5 = $904, restored on every exit; D7 = rate; TST.W A5-0xc38 / BNE else out; CMPI.L #$8000 BCC (unsigned)
  * else $8000; CMPI.L #$30000 BLS else $30000; A5-0xc2a = MULU.L #$172 LSR.L #16, A5-0xc2e = LSL.L #16, A5-0xc32 = LSR.L
  * #16 - identical to the C. */
-/*
- * Original: FUN_0000412e; source: ID02.c:2299-2317.
- * Recovered name: set_sound_playback_rate [STRONG INFERENCE].
+/* Original: FUN_0000412e; source: ID02.c:2299-2317. Recovered name: set_sound_playback_rate [STRONG INFERENCE].
  * Overlay service slot A5-0x10d6 (JT $452).
  * Exported C complete. CurrentA5 routine; no effect while sound inactive.
  * param_1 = rate, 16.16 fixed point, clamped to [0x8000, 0x30000] (0.5x..3.0x).
@@ -5035,9 +4933,7 @@ void set_sound_playback_rate /* Original: FUN_0000412e */ (uint rate /* param_1:
 /* VERIFIED (ID02::FUN_000041a6): ID02.bin 0x41a6..0x4240 checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, restored on every exit; guards as 0x3f54; BSR 0x3d50(ch, A5-0xc26, 0, $172, word 0) to A4;
  * record +4 = A4+$14; A3 = record head, loop while A3 != A4: +$18 = +$14, A3 = +$14 - identical to the C. */
-/*
- * Original: FUN_000041a6; source: ID02.c:2321-2340.
- * Recovered name: release_channel_loop [STRONG INFERENCE].
+/* Original: FUN_000041a6; source: ID02.c:2321-2340. Recovered name: release_channel_loop [STRONG INFERENCE].
  * Overlay service slot A5-0x10ce (JT $44a).
  * Exported C complete. For ch 0..1 while sound active:
  *   n = alloc_sound_buffer_node(ch, silence A5-0xc26, 0, 0x172, 0) (self-looping
@@ -5072,9 +4968,7 @@ void release_channel_loop /* Original: FUN_000041a6 */ (int channel /* param_1 *
 /* VERIFIED (ID02::FUN_00004242): ID02.bin 0x4242..0x42ae checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, restored on every exit; guards; BSR 0x3d50(ch, A5-0xc26, 0, $172, word 0); record head = result -
  * identical to the C. */
-/*
- * Original: FUN_00004242; source: ID02.c:2343.
- * Recovered name: silence_sound_channel [STRONG INFERENCE].
+/* Original: FUN_00004242; source: ID02.c:2343. Recovered name: silence_sound_channel [STRONG INFERENCE].
  * Bytes file 0x4242..0x42ae match the C [PROVEN]: CurrentA5 thunk; if (sound
  * active word A5-0xc38 && 0 <= ch < 2) channel_record[ch] (0x238 bytes each at
  * A5-0x7d0) +0 = FUN_00003d50(ch, A5-0xc26, 0, 0x172, 0) - queues a 370-sample
@@ -5101,9 +4995,7 @@ void silence_sound_channel /* Original: FUN_00004242 */ (int channel /* param_1 
 /* VERIFIED (ID02::FUN_000042b0): ID02.bin 0x42b0..0x4316 checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904, restored on every exit; guards -> MOVEQ #0; LEA A5-0xc26 CMPA.L (head)+8, SNE / NEG.B / EXT.W to -2,
  * D0.W = -2 - identical to the C. */
-/*
- * Original: FUN_000042b0; source: ID02.c:2360-2374.
- * Recovered name: is_channel_playing [STRONG INFERENCE].
+/* Original: FUN_000042b0; source: ID02.c:2360-2374. Recovered name: is_channel_playing [STRONG INFERENCE].
  * Overlay service slot A5-0x10d2 (JT $43a).
  * Exported C complete. Returns 0 if sound inactive or ch outside 0..1;
  * else (word) current node's buffer (+8) != silence buffer A5-0xc26. The upper
@@ -5127,9 +5019,7 @@ short is_channel_playing /* Original: FUN_000042b0 */ (int channel /* param_1 */
 /* VERIFIED (ID02::FUN_00004318): ID02.bin 0x4318..0x435c checked against an independent capstone disassembly.
  * TST.W A5-0xc38 / BEQ; BSR 0x4242 with 0, 1, 2; $196.w = A5-0xc36; BSR 0x3d36; SndDisposeChannel(A5-0x356, byte
  * 1) $A801 result popped; CLR.W A5-0xc38 - identical to the C. */
-/*
- * Original: FUN_00004318; source: ID02.c:2381-2394.
- * Recovered name: shutdown_sound [STRONG INFERENCE].
+/* Original: FUN_00004318; source: ID02.c:2381-2394. Recovered name: shutdown_sound [STRONG INFERENCE].
  * Bytes file 0x4318..0x435c [PROVEN]: if (word A5-0xc38 sound active) {
  *   silence_sound_channel(0/1/2) (FUN_00004242) [service slot -0x10ca;
  *   per-channel stop, HYPOTHESIS]; long low-memory $0196 = A5-0xc36 (restore
@@ -5323,9 +5213,7 @@ void select_palette_for_depth /* Original: FUN_0000462c */ (void)
  * CLR.W A5-0x102a; depth 1 -> BSR 0x4b62; else TST.W A5-0x2cc; TST.L A5-0x103a -> BSR 0xd24 + CLR.L; word slot 1..3
  * (MULS.W #$16 + A5-0x136e) TST.L -> push PEA -$204, record +4, PEA -4, word slot, BSR 0x48ae, LEA $e - identical to
  * the C. */
-/*
- * Original: FUN_000046b4; source: ID02.c:2484-2506.
- * Recovered name: rebuild_all_palette_index_maps [STRONG INFERENCE].
+/* Original: FUN_000046b4; source: ID02.c:2484-2506. Recovered name: rebuild_all_palette_index_maps [STRONG INFERENCE].
  * Bytes file 0x46b4..0x4736 match the C [PROVEN]: clears collision flag
  * A5-0x102a; B&W (A5-0x137a == 1) -> FUN_00004b62; else if depth word
  * A5-0x2cc != 0: if long A5-0x103a, close_and_dispose_port(A5-0x103a) and clear it;
@@ -5375,9 +5263,7 @@ void rebuild_all_palette_index_maps /* Original: FUN_000046b4 */ (void)
  * CMPI.W #4 / #8 on word 8(A6); loops on word -2: SetEntryUsage(pal, e (+8 / +$d0 / +$c8 / +0), usage, tolerance)
  * $AA9E and SetEntryColor(pal, e, PEA table + MULS.W #6) $AA9C with tables A5-0x320 / -0x350 / -0x302 / -0x350,
  * counts 5 / 8 / 9 / 8 / $c8 - identical to the C. */
-/*
- * Original: FUN_00004738; source: ID02.c:2520-2532.
- * Recovered name: configure_palette_entries [STRONG INFERENCE].
+/* Original: FUN_00004738; source: ID02.c:2520-2532. Recovered name: configure_palette_entries [STRONG INFERENCE].
  * Bytes file 0x4738..0x4888 [PROVEN; Palette Manager traps per Inside Macintosh]:
  *   depth (word param) == 4, palette A5-0x14ae:
  *     entries 8..12: SetEntryUsage(pal, e, 2 pmTolerant, 0) $AA9E;
@@ -5426,9 +5312,7 @@ void configure_palette_entries /* Original: FUN_00004738 */ (short depth /* para
 
 /* VERIFIED (ID02::FUN_0000488a): ID02.bin 0x488a..0x48ac checked against an independent capstone disassembly.
  * A5 / D2 saved, A5 = $904; CLR.W +6 of long A5-0x14b2; restored - identical to the C. */
-/*
- * Original: FUN_0000488a; source: ID02.c:2536-2545.
- * Recovered name: clear_ctab_size_callback [STRONG INFERENCE].
+/* Original: FUN_0000488a; source: ID02.c:2536-2545. Recovered name: clear_ctab_size_callback [STRONG INFERENCE].
  * Bytes file 0x488a..0x48ac [PROVEN]: saves A5/D2, loads A5 from low-memory
  * CurrentA5 ($0904) - i.e. callable from a context where A5 is not the
  * application's -, clears word +6 of the record at long A5-0x14b2 (the
@@ -5454,9 +5338,7 @@ void clear_ctab_size_callback /* Original: FUN_0000488a */ (void)
  * word i 0..$ff clearing -$208[i] then $12[i]; depth $d / $d9 with i = 0; MOVE.W i to *$a; loop i < limit (BLT):
  * PmForeColor(i) $AA97, idx = thePort+$52, $e[i] = idx, $12[idx] = i, TST.W count[idx] && depth == 8 && i < $c8 ->
  * A5-0x102a = 1, ADDQ count[idx]; SetGDevice(saved); A5-0x1122 = $46a / $33a(A5); D0 = limit - identical to the C. */
-/*
- * Original: FUN_000048ae; source: ID02.c:2547.
- * Recovered name: build_palette_index_map [STRONG INFERENCE].
+/* Original: FUN_000048ae; source: ID02.c:2547. Recovered name: build_palette_index_map [STRONG INFERENCE].
  * Ghidra truncated after the empty-slot test; body rebuilt as C below. Bytes file
  * 0x48ae..0x49fc [PROVEN]. Args: word slot [8], short *start [$a],
  * short *map [$e], short *inverse [$12]; returns word limit.
@@ -5540,9 +5422,7 @@ short build_palette_index_map /* Original: FUN_000048ae */ (short slot /* param_
  * A5-0x14a2, match -> -4 = i + 8; result: depth 4 or 1 -> D0.W = -4, depth 8 -> -4 + $c8, else D0 left as is (the
  * last component compared, i + 8, or the final i - Ghidra's CONCAT22 chain tracks exactly that low word; the high
  * words are register residue) - identical to the C. */
-/*
- * Original: FUN_000049fe; source: ID02.c:2561-2632.
- * Recovered name: lookup_palette_index_for_rgb_level [STRONG INFERENCE].
+/* Original: FUN_000049fe; source: ID02.c:2561-2632. Recovered name: lookup_palette_index_for_rgb_level [STRONG INFERENCE].
  * Exported C kept verbatim; the whole body (0x49fe..0x4b60) agrees with the bytes. Args: three words r, g, b at 8/$a/$c(A6) (Ghidra packs
  * them as param_1 hi/lo and param_2 hi).
  * Each level is scaled: v = level << 6, 0x100 clamped to 0xff, then << 8
@@ -5629,9 +5509,7 @@ undefined4 lookup_palette_index_for_rgb_level /* Original: FUN_000049fe */ (unde
 }
 
 
-/*
- * Original: FUN_00004b62; source: ID02.c.
- * Recovered name: init_standard_colour_indices [STRONG INFERENCE].
+/* Original: FUN_00004b62; source: ID02.c. Recovered name: init_standard_colour_indices [STRONG INFERENCE].
  * Ghidra did not decompile this entry. Bytes file 0x4b62..0x4c16 [PROVEN]: nine calls
  * lookup_palette_index_for_rgb_level(l, l, l) storing the word result:
  *   (3,3,3) -> A5-0x11ae   (0,0,0) -> A5-0x11ac   (0,0,0) -> A5-0x118c
@@ -5767,9 +5645,7 @@ void check_device_color_state_changed /* Original: FUN_00004c18 */ (void)
 /* VERIFIED (ID02::FUN_00004d34): ID02.bin 0x4d34..0x4d68 checked against an independent capstone disassembly.
  * BRA to GetNextEvent($40, -$10) $A970 TST.B / BNE; CMP.L -$e with A5-0x14ca / BNE exit; BeginUpdate, BSR 0x4db0,
  * EndUpdate, loop - identical to the C. */
-/*
- * Original: FUN_00004d34; source: ID02.c:2693.
- * Recovered name: process_pending_update_events [STRONG INFERENCE].
+/* Original: FUN_00004d34; source: ID02.c:2693. Recovered name: process_pending_update_events [STRONG INFERENCE].
  * Ghidra truncated (body rebuilt as C below). Bytes 0x4d34..0x4d68 [PROVEN]:
  *   while (GetNextEvent(0x40 updateMask, &evt) $A970 &&
  *          evt.message == main_window (A5-0x14ca)) {

@@ -18,9 +18,7 @@ typedef unsigned char    byte;
  * 0x0198 seg 9 -> ID09 0x19c MOVE.W $0baa.w into the Pascal result), called three times: newTop =
  * EXT.L((bottomEdge - mbar) - (bottom - top)) DIVS.W #3; d = newTop - top kept at -$c; bottom +=
  * mbar + d; top = mbar + newTop - identical to the C. */
-/*
- * Original: FUN_00000006; source: ID05.c:12-19.
- * Recovered name: center_template_rect_on_screen [STRONG INFERENCE].
+/* Original: FUN_00000006; source: ID05.c:12-19. Recovered name: center_template_rect_on_screen [STRONG INFERENCE].
  * Ghidra truncated at $A9A0 (file 0x14); body rebuilt as C from ID05.bin
  * file 0x06..0xc6 [PROVEN, bytes]. Args: long type [8(A6)],
  * word id [$c(A6)]; no JT entry, callers not yet found.
@@ -69,9 +67,7 @@ void center_template_rect_on_screen /* Original: FUN_00000006 */ (undefined4 res
  * -$14, each store re-derefs **(*gd + $16): words +$c, +$a, +$20 to *$c / *$10 / *$14(A6), BRA to
  * the tail. Mono: (A5-0x167a - A5-0x167e), (A5-0x167c - A5-0x1680), 1. Tail: CLR.W *$18(A6) -
  * identical to the C. */
-/*
- * Original: FUN_000000c8; source: ID05.c:23-45.
- * Recovered name: get_machine_screen_fingerprint [STRONG INFERENCE].
+/* Original: FUN_000000c8; source: ID05.c:23-45. Recovered name: get_machine_screen_fingerprint [STRONG INFERENCE].
  * Ghidra truncated the colour branch (halt_baddata); body rebuilt as C from the bytes.
  * Bytes file 0xc8..0x15e [PROVEN]:
  *   SysEnvirons(1, &env) via JT $1f2 (ID09 dispatcher, sysenvirons_glue_fallback);
@@ -124,9 +120,7 @@ void get_machine_screen_fingerprint /* Original: FUN_000000c8 */ (undefined2 *ma
 /* VERIFIED (ID05::FUN_00000160): ID05.bin 0x160..0x1ba checked against an independent capstone disassembly.
  * Ghidra truncated the body at the $A9A0 trap; reconstructed from the bytes: LINK -4, CLR.L *8(A6) / *$c(A6) first, GetResource('DATA', $80) result
  * kept at -4(A6), BEQ out on NIL; HNoPurge glue (JT $28a, callee pops), MOVE.L (*h) to *8(A6) and 4(*h) to *$c(A6); HPurge glue (JT $282), ReleaseResource $A9A3; JT slots resolved via CODE 0 entries 0x028a / 0x0280 in segment 9 - identical to the C. */
-/*
- * Original: FUN_00000160; source: ID05.c:51-58.
- * Recovered name: read_DATA128_pair [STRONG INFERENCE].
+/* Original: FUN_00000160; source: ID05.c:51-58. Recovered name: read_DATA128_pair [STRONG INFERENCE].
  * Reads/writes two longs at the start of resource 'DATA' 128 (0x80).
  * Bytes [PROVEN]: h = GetResource('DATA', 0x80) ($A9A0); if (h) { JT $28a(h)
  * (ID09 file 0x28e, $A04A HNoPurge); *a = 0; *b = 0; then *a = (*h)[0], *b = (*h)[1]; JT $282(h) (ID09 0x284, $A049
@@ -162,9 +156,7 @@ void read_DATA128_pair /* Original: FUN_00000160 */ (undefined4 *first /* param_
  * Ghidra truncated the body at the $A9A0 trap; reconstructed from the bytes: LINK -4, GetResource('DATA', $80) result
  * kept at -4(A6), BEQ out on NIL; HNoPurge glue (JT $28a, callee pops), MOVE.L 8(A6) to (*h) and $c(A6) to 4(*h);
  * ChangedResource $A9AA, WriteResource $A9B0; HPurge glue (JT $282), ReleaseResource $A9A3 - the long arguments Ghidra lost are 8(A6) / $c(A6); JT slots resolved via CODE 0 entries 0x028a / 0x0280 in segment 9 - identical to the C. */
-/*
- * Original: FUN_000001bc; source: ID05.c:64-69.
- * Recovered name: write_DATA128_pair [STRONG INFERENCE].
+/* Original: FUN_000001bc; source: ID05.c:64-69. Recovered name: write_DATA128_pair [STRONG INFERENCE].
  * Reads/writes two longs at the start of resource 'DATA' 128 (0x80).
  * Bytes [PROVEN]: h = GetResource('DATA', 0x80) ($A9A0); if (h) { JT $28a(h)
  * (ID09 file 0x28e, $A04A HNoPurge); (*h)[0] = arg1 [8(A6)], (*h)[1] = arg2 [$c(A6)]; ChangedResource ($A9AA);
@@ -199,9 +191,7 @@ void write_DATA128_pair /* Original: FUN_000001bc */ (undefined4 first /* param_
 /* VERIFIED (ID05::FUN_00000214): ID05.bin 0x214..0x26e checked against an independent capstone disassembly.
  * Ghidra truncated the body at the $A9A0 trap; reconstructed from the bytes: LINK -4, CLR.L *8(A6) / *$c(A6) first, GetResource('TEXT', $80) result
  * kept at -4(A6), BEQ out on NIL; HNoPurge glue (JT $28a, callee pops), MOVE.L (*h) to *8(A6) and 4(*h) to *$c(A6); HPurge glue (JT $282), ReleaseResource $A9A3; JT slots resolved via CODE 0 entries 0x028a / 0x0280 in segment 9 - identical to the C. */
-/*
- * Original: FUN_00000214; source: ID05.c:75-82.
- * Recovered name: read_TEXT128_pair [STRONG INFERENCE].
+/* Original: FUN_00000214; source: ID05.c:75-82. Recovered name: read_TEXT128_pair [STRONG INFERENCE].
  * Reads/writes two longs at the start of resource 'TEXT' 128 (0x80).
  * Bytes [PROVEN]: h = GetResource('TEXT', 0x80) ($A9A0); if (h) { JT $28a(h)
  * (ID09 file 0x28e, $A04A HNoPurge); *a = 0; *b = 0; then *a = (*h)[0], *b = (*h)[1]; JT $282(h) (ID09 0x284, $A049
@@ -237,9 +227,7 @@ void read_TEXT128_pair /* Original: FUN_00000214 */ (undefined4 *first /* param_
  * Ghidra truncated the body at the $A9A0 trap; reconstructed from the bytes: LINK -4, GetResource('TEXT', $80) result
  * kept at -4(A6), BEQ out on NIL; HNoPurge glue (JT $28a, callee pops), MOVE.L 8(A6) to (*h) and $c(A6) to 4(*h);
  * ChangedResource $A9AA, WriteResource $A9B0; HPurge glue (JT $282), ReleaseResource $A9A3 - the long arguments Ghidra lost are 8(A6) / $c(A6); JT slots resolved via CODE 0 entries 0x028a / 0x0280 in segment 9 - identical to the C. */
-/*
- * Original: FUN_00000270; source: ID05.c:88-93.
- * Recovered name: write_TEXT128_pair [STRONG INFERENCE].
+/* Original: FUN_00000270; source: ID05.c:88-93. Recovered name: write_TEXT128_pair [STRONG INFERENCE].
  * Reads/writes two longs at the start of resource 'TEXT' 128 (0x80).
  * Bytes [PROVEN]: h = GetResource('TEXT', 0x80) ($A9A0); if (h) { JT $28a(h)
  * (ID09 file 0x28e, $A04A HNoPurge); (*h)[0] = arg1 [8(A6)], (*h)[1] = arg2 [$c(A6)]; ChangedResource ($A9AA);
@@ -272,9 +260,7 @@ void write_TEXT128_pair /* Original: FUN_00000270 */ (undefined4 first /* param_
 
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_000002c8; source: ID05.c:99-104.
- * Recovered name: code_dialog_filter [STRONG INFERENCE].
+/* Original: FUN_000002c8; source: ID05.c:99-104. Recovered name: code_dialog_filter [STRONG INFERENCE].
  * Ghidra truncated at A-line $A873 (file 0x2d0); routine A rebuilt as C
  * below; descriptions from ID05.bin [PROVEN, bytes].
  *
@@ -380,9 +366,7 @@ char code_dialog_filter /* Original: FUN_000002c8 */ (int dlg,short *evt,short *
  * table byte A5-0x1608[zero-extended c] (ADDA.W of 0..255), BTST #7; if set EXTB.L c pushed as a word
  * to JT $4e2 (entry 0x01ca seg 2 -> ID02 0x1ce ansi_toupper), ADDQ.L #2, MOVE.B D0 back; ADDQ.L #1
  * cursor; returns LEA A5-0x1c9 in D0 - identical to the C. */
-/*
- * Original: FUN_000004e4; source: ID05.c:110-115.
- * Recovered name: get_dialog_item_text_upper [STRONG INFERENCE].
+/* Original: FUN_000004e4; source: ID05.c:110-115. Recovered name: get_dialog_item_text_upper [STRONG INFERENCE].
  * Ghidra truncated at $A98D; body rebuilt as C. Bytes file 0x4e4..0x55e [PROVEN]:
  *   GetDItem(dlg [8(A6)], item [$c(A6)], &t, &h, &r) $A98D; GetIText(h, A5-0x1c9) $A990;
  *   JT $2fa(A5-0x1c9) (ID09 0x432, Pascal->C in place);
@@ -429,9 +413,7 @@ char * get_dialog_item_text_upper /* Original: FUN_000004e4 */ (int dlg /* param
  * BSR 0x964(w1, w2, w3, BSR 0x4e4(dlg, 3)) (w1 pushed last); on 0: ParamText(JT $302(text 3), nil, nil,
  * nil), center('ALRT', $3e9), Alert($3e9, nil) $A985 result popped. Then DisposDialog $A983;
  * record_code_index_equals(*a, -$1fa) ? write_TEXT128_pair(*a, *b); SetPort(save) - identical to the C. */
-/*
- * Original: FUN_00000560; source: ID05.c:121-126.
- * Recovered name: run_protection_dialog [STRONG INFERENCE].
+/* Original: FUN_00000560; source: ID05.c:121-126. Recovered name: run_protection_dialog [STRONG INFERENCE].
  * Ghidra truncated at $A874; body rebuilt as C. Bytes file 0x560..0x726 [PROVEN].
  * Args: long *a [8(A6)], long *b [$c(A6)]. Caller [PROVEN]: ID08 file 0x298 via
  * JT $572 (overlay load sequence; a/b were read by read_DATA128_pair, but the code-string
@@ -531,9 +513,7 @@ void run_protection_dialog /* Original: FUN_00000560 */ (int *code_a /* param_1:
 /* VERIFIED (ID05::FUN_00000728): ID05.bin 0x728..0x744 checked against an independent capstone disassembly
  * (Ghidra address = file offset): MULU.L #$41c64e6d (same low 32 bits as the C's signed multiply), ADDI.L
  * #$3039, store A5-0x6c, BFEXTU -$6c(A5){1:15} = bits 30..16 = (seed << 1) >> 17 - identical to the C. */
-/*
- * Original: FUN_00000728; source: ID05.c:130-137.
- * Recovered name: ansi_rand [PROVEN].
+/* Original: FUN_00000728; source: ID05.c:130-137. Recovered name: ansi_rand [PROVEN].
  * seed (long A5-0x6c) = seed * 0x41c64e6d + 0x3039 (ANSI C reference LCG,
  * 1103515245 / 12345); returns bits 30..16 (0..32767). Binary file 0x728:
  * MULU.L #$41c64e6d (68020) / ADDI.L #$3039. 32-bit wraparound preserved.
@@ -552,9 +532,7 @@ uint ansi_rand /* Original: FUN_00000728 */ (void)
 
 /* VERIFIED (ID05::FUN_00000746): ID05.bin 0x746..0x752 checked against an independent capstone disassembly:
  * MOVE.L 8(A6),-$6c(A5) - identical to the C. */
-/*
- * Original: FUN_00000746; source: ID05.c:141-148.
- * Recovered name: ansi_srand [STRONG INFERENCE].
+/* Original: FUN_00000746; source: ID05.c:141-148. Recovered name: ansi_srand [STRONG INFERENCE].
  * Stores param_1 into the ansi_rand seed (long A5-0x6c). Caller: init_protection_table (0x8b8),
  * JSR $746(PC) at 0x8c0 [PROVEN, tools/decomp/xrefs.py].
  */
@@ -575,9 +553,7 @@ void ansi_srand /* Original: FUN_00000746 */ (undefined4 seed /* param_1 */)
  * *dst, then DIVS.L #$1a,D0 (extension 0x0800: quotient only) stored back to the value argument; after
  * the loop CLR.B 6(dst). D0 keeps the last quotient as the return value (MOVEQ #0 before an empty
  * loop is unreachable since the count is fixed at 6) - identical to the C. */
-/*
- * Original: FUN_00000754; source: ID05.c:152-168.
- * Recovered name: encode_base26_6chars [PROVEN].
+/* Original: FUN_00000754; source: ID05.c:152-168. Recovered name: encode_base26_6chars [PROVEN].
  * Writes 6 letters 'A'+(v % 26) right-to-left into param_1[0..5], v /= 26
  * each step, then NUL at param_1[6]. Signed arithmetic: binary file 0x76c /
  * 0x784 use 68020 DIVS.L #$1a (remainder in D1, quotient in D0), matching
@@ -612,9 +588,7 @@ int encode_base26_6chars /* Original: FUN_00000754 */ (char *dst /* param_1: out
  * 0x0000, low 32 bits), byte at src + (short)index (MOVEA.W sign-extends), EXTB.L, ADDI.W #$ffbf,
  * EXT.L, ADD.L into acc; six passes (BLT); *out = acc; D0 is left holding the last (short)(c - 'A')
  * term, which is the C's return value - identical to the C. */
-/*
- * Original: FUN_000007a8; source: ID05.c:172-187.
- * Recovered name: decode_base26_6chars [PROVEN].
+/* Original: FUN_000007a8; source: ID05.c:172-187. Recovered name: decode_base26_6chars [PROVEN].
  * *param_2 = sum over 6 chars of acc*26 + (short)((s8)c - 'A'); inverse of
  * encode_base26_6chars for 'A'..'Z' input. Binary: MULU.L #$1a (low 32 bits
  * equal the signed product), EXTB.L, ADDI.W #$ffbf, EXT.L (file 0x7bc..0x7d8).
@@ -644,9 +618,7 @@ int decode_base26_6chars /* Original: FUN_000007a8 */ (int src /* param_1: 6-let
  * zero-extended (SWAP/CLR.W/SWAP), DIVUL.L $c(A6),D1:D0 (extension 0x0001, unsigned remainder in D1),
  * ptr = base + rem; entry = A5-0xb4 + (MULS.W #6 counter): long ptr at +0, MOVE.B (ptr) to +4, then
  * MOVEQ #-1 / MOVE.B to *ptr - identical to the C. */
-/*
- * Original: FUN_000007f6; source: ID05.c:191-207.
- * Recovered name: poison_overlay_bytes [STRONG INFERENCE].
+/* Original: FUN_000007f6; source: ID05.c:191-207. Recovered name: poison_overlay_bytes [STRONG INFERENCE].
  * Inputs: param_1 = base, param_2 = byte count. Output: void.
  * For up to 12 loop passes (stops early if base == 0): offset = ansi_rand
  * (16-bit, zero-extended) % param_2 (68020 DIVUL.L $c(A6),D1:D0 at file 0x80a,
@@ -684,9 +656,7 @@ void poison_overlay_bytes /* Original: FUN_000007f6 */ (int base /* param_1: ove
  * the old counter, SUBQ.W #1, BGT on the old value, body uses the decremented counter: *(entry.ptr) =
  * entry.byte at A5-0xb4 + 6 * i for i = 11..0 - identical to the C (only the dead local's final value
  * differs: -1 in the binary, 0 in the C). */
-/*
- * Original: FUN_0000085e; source: ID05.c:211-232.
- * Recovered name: restore_poisoned_overlay_bytes [STRONG INFERENCE].
+/* Original: FUN_0000085e; source: ID05.c:211-232. Recovered name: restore_poisoned_overlay_bytes [STRONG INFERENCE].
  * If word A5-0xbc != 0 or long A5-0xc0 != 0, writes back the 12 saved bytes
  * of table A5-0xb4 in reverse order (11..0). Otherwise does nothing.
  * Caller [PROVEN, bytes]: ID08 file 0x29e JSR $55a(A5) (JT seg5 -> file 0x85e),
@@ -721,9 +691,7 @@ void restore_poisoned_overlay_bytes /* Original: FUN_0000085e */ (void)
 }
 
 
-/*
- * Original: FUN_000008b8; source: ID05.c.
- * Recovered name: init_protection_table [STRONG INFERENCE]. Ghidra did not
+/* Original: FUN_000008b8; source: ID05.c. Recovered name: init_protection_table [STRONG INFERENCE]. Ghidra did not
  * decompile this entry. Bytes file 0x8b8..0x8d4 [PROVEN]:
  *   LINK; ansi_srand(long $e(A6)) (BSR 0x746); long A5-0xba = $8(A6);
  *   word A5-0xb6 = $c(A6); UNLK; RTS.
@@ -750,9 +718,7 @@ void init_protection_table /* Original: FUN_000008b8 */ (undefined1 *table,undef
  * ansi_rand zero-extended, DIVU.W A5-0xb6 then SWAP (16-bit unsigned remainder) to word i; three times
  * entry = (MULS.W #$c i) + long A5-0xba, word +6 / +8 / +$a stored to *8 / *$c / *$10(A6) - identical
  * to the C. */
-/*
- * Original: FUN_000008d6; source: ID05.c:244-257.
- * Recovered name: pick_random_protection_challenge [STRONG INFERENCE].
+/* Original: FUN_000008d6; source: ID05.c:244-257. Recovered name: pick_random_protection_challenge [STRONG INFERENCE].
  * i = (ansi_rand & 0xffff) % (unsigned word A5-0xb6); copies words +6/+8/+0xa
  * of 12-byte entry i of table *(A5-0xba) to *param_1..*param_3.
  * Caller [PROVEN]: run_protection_dialog file 0x5a6. The same entry words are
@@ -778,9 +744,7 @@ void pick_random_protection_challenge /* Original: FUN_000008d6 */ (undefined2 *
 /* VERIFIED (ID05::FUN_00000934): ID05.bin 0x934..0x962 checked against an independent capstone disassembly:
  * EXTB.L rec[4] * 20 (MULU.L) + EXTB.L rec[5], CMP.L with param_1, SEQ / NEG.B / EXT.W set only the low word
  * (1 / 0) so D0's high word keeps the sum's high half - Ghidra's CONCAT22 - identical to the C. */
-/*
- * Original: FUN_00000934; source: ID05.c:261-268.
- * Recovered name: record_code_index_equals [STRONG INFERENCE].
+/* Original: FUN_00000934; source: ID05.c:261-268. Recovered name: record_code_index_equals [STRONG INFERENCE].
  * Returns (word) 1 if (signed byte rec[4]) * 20 + (signed byte rec[5]) == n,
  * else 0; upper word of D0 carries the computed sum's high half (Ghidra
  * CONCAT22 matches bytes: EXTB.L / MULU.L #$14 / SEQ / NEG.B / EXT.W).
@@ -862,9 +826,7 @@ short validate_protection_response /* Original: FUN_00000964 */ (short word6,sho
  * BSR ansi_rand; SWAP/CLR.W/SWAP (zero-extend the word); LSL.L #16 saved at -4; second ansi_rand
  * zero-extended, OR.L the saved value, ANDI.L #$0fffffff. ((r1 & 0xffff) << 16 | r2 & 0xffff) &
  * 0x0fffffff equals the C's (r1 & 0xfff) << 16 | (r2 & 0xffff) - identical to the C. */
-/*
- * Original: FUN_00000a62; source: ID05.c:278-287.
- * Recovered name: random_28bit_value [STRONG INFERENCE].
+/* Original: FUN_00000a62; source: ID05.c:278-287. Recovered name: random_28bit_value [STRONG INFERENCE].
  * Returns ((ansi_rand & 0xfff) << 16) | (ansi_rand & 0xffff); since ansi_rand
  * yields 15 bits, the result has 27 significant bits (bit 15 always 0).
  * Caller [PROVEN, bytes]: ID05 file 0x442 (BSR).
@@ -888,9 +850,7 @@ uint random_28bit_value /* Original: FUN_00000a62 */ (void)
  * word expression ($a DIVS.W #$80 LSL.W #12) | ($c DIVS.W #$80 LSL.W #8) | ($e DIVS.W #4 LSL.W #5),
  * EXT.L; OR ($8 << 16); OR the clamped word (sign-extended); ANDI.L #$0fffffff; encode_base26_6chars
  * (A5-0x68, v); returns A5-0x68 - identical to the C. */
-/*
- * Original: FUN_00000a90; source: ID05.c:291-306.
- * Recovered name: pack_fields_to_code_buf68 [STRONG INFERENCE].
+/* Original: FUN_00000a90; source: ID05.c:291-306. Recovered name: pack_fields_to_code_buf68 [STRONG INFERENCE].
  * Packs five scaled word fields into a 28-bit value and encodes it as 6
  * letters into A5-0x68 (returned): bits 16..27 = param_1 high word; 12..15 =
  * param_1 low / 0x80; 8..11 = param_2 high / 0x80; 5..7 = param_2 low / 4;
@@ -928,9 +888,7 @@ int pack_fields_to_code_buf68 /* Original: FUN_00000a90 */ (undefined4 slot1 /* 
  * decode_base26_6chars(param_1, &local); word stores: (local ASR.L #16) & $ffff to *$c(A6); (ASR #12 &
  * $f) ASL #7 to *$10; (ASR #8 & $f) ASL #7 to *$14; (ASR #5 & 7) ASL #2 to *$18; local & $1f to *$1c -
  * identical to the C. */
-/*
- * Original: FUN_00000b10; source: ID05.c:310-323.
- * Recovered name: unpack_fields_from_code [STRONG INFERENCE].
+/* Original: FUN_00000b10; source: ID05.c:310-323. Recovered name: unpack_fields_from_code [STRONG INFERENCE].
  * Decodes a 6-letter code and splits it: *p2 = bits 16..31, *p3 = bits 12..15 << 7,
  * *p4 = bits 8..11 << 7, *p5 = bits 5..7 << 2, *p6 = bits 0..4. Mirrors
  * pack_fields_to_code_buf68 (last field not rescaled by 0x200). Unreferenced: no branch to it in
@@ -956,9 +914,7 @@ void unpack_fields_from_code /* Original: FUN_00000b10 */ (int code /* param_1: 
 /* VERIFIED (ID05::FUN_00000b84): ID05.bin 0xb84..0xba6 checked against an independent capstone disassembly.
  * MOVE.L #$0fffffff / AND.L 8(A6); push value, PEA -$54(A5); JSR 0x754; returns LEA -$54(A5) in D0 -
  * identical to the C. */
-/*
- * Original: FUN_00000b84; source: ID05.c:327-334.
- * Recovered name: encode_code28_to_buf54 [STRONG INFERENCE].
+/* Original: FUN_00000b84; source: ID05.c:327-334. Recovered name: encode_code28_to_buf54 [STRONG INFERENCE].
  * encode_base26_6chars(A5-0x54, param_1 & 0x0fffffff); returns A5-0x54.
  * Callers [PROVEN, bytes]: ID05 file 0x4b2; ID08 file 0x276 and 0x2a6 via JT
  * $552. At ID08 0x276 the returned string is passed as `rec` to
@@ -977,9 +933,7 @@ int encode_code28_to_buf54 /* Original: FUN_00000b84 */ (uint value /* param_1: 
 
 /* VERIFIED (ID05::FUN_00000ba8): ID05.bin 0xba8..0xbc0 checked against an independent capstone disassembly.
  * PEA -4(A6); push 8(A6); JSR 0x7a8; D0 = -4(A6) - identical to the C. */
-/*
- * Original: FUN_00000ba8; source: ID05.c:338-345.
- * Recovered name: decode_code_to_long_a [STRONG INFERENCE].
+/* Original: FUN_00000ba8; source: ID05.c:338-345. Recovered name: decode_code_to_long_a [STRONG INFERENCE].
  * Returns decode_base26_6chars(param_1). Unreferenced: no branch to it in ID05, no jump-table
  * slot, no slot use in any segment [PROVEN, tools/decomp/xrefs.py].
  */
@@ -996,9 +950,7 @@ int decode_code_to_long_a /* Original: FUN_00000ba8 */ (int code /* param_1: 6-l
 
 /* VERIFIED (ID05::FUN_00000bc2): ID05.bin 0xbc2..0xbdc checked against an independent capstone disassembly.
  * Push 8(A6) unmasked, PEA -$40(A5); JSR 0x754; returns LEA -$40(A5) - identical to the C. */
-/*
- * Original: FUN_00000bc2; source: ID05.c:349-356.
- * Recovered name: encode_long_to_buf40 [STRONG INFERENCE].
+/* Original: FUN_00000bc2; source: ID05.c:349-356. Recovered name: encode_long_to_buf40 [STRONG INFERENCE].
  * encode_base26_6chars(A5-0x40, param_1) without masking; returns A5-0x40.
  * Caller [PROVEN, bytes]: ID05 file 0x4ce.
  */
@@ -1015,9 +967,7 @@ int encode_long_to_buf40 /* Original: FUN_00000bc2 */ (int value /* param_1: val
 
 /* VERIFIED (ID05::FUN_00000bde): ID05.bin 0xbde..0xbf6 checked against an independent capstone disassembly.
  * Byte-for-byte the same body as 0xba8 except the JSR displacement - identical to the C. */
-/*
- * Original: FUN_00000bde; source: ID05.c:360-367.
- * Recovered name: decode_code_to_long_b [STRONG INFERENCE].
+/* Original: FUN_00000bde; source: ID05.c:360-367. Recovered name: decode_code_to_long_b [STRONG INFERENCE].
  * Returns decode_base26_6chars(param_1); byte-identical role to
  * decode_code_to_long_a (separate function kept). Caller [PROVEN, bytes]: ID05
  * file 0x674 (result stored through the caller's param at 8(A6)).

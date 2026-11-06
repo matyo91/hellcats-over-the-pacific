@@ -19,9 +19,7 @@ typedef unsigned char    byte;
  * 0x24a, n pushed first), len -= 2, isC = 0, else isC = 1; j = k = 1, loop while j <= len (signed BLE);
  * p[k++] = c (EXT.L k); len = k - 1; isC ? (memmove(p, p + 1, len), p[len] = 0) : p[0] = low byte of len;
  * long A5-0xf46[i] = p; p = next - identical to the C. */
-/*
- * Original: FUN_00000006; source: ID07.c:9-16.
- * Recovered name: load_str129_string_table [STRONG INFERENCE].
+/* Original: FUN_00000006; source: ID07.c:9-16. Recovered name: load_str129_string_table [STRONG INFERENCE].
  * Ghidra stopped at the inline switch table after the JSR at file 0xd6
  * (bytes 0xda..0xe5 are data, not code); the body below is rebuilt as C from the bytes.
  * Coordinates: ID07.bin file offsets; CODE header is 4 bytes, so jump-table
@@ -129,9 +127,7 @@ void load_str129_string_table /* Original: FUN_00000006 */ (void)
  * 6 from 0x5e into A5-0xffe, 6 from 100 into A5-0xfae, 10 from 0x6a into A5-0xf86; ext.l word index, the
  * first loop's cmpi.w #$14 / ble = the C's < 0x15, the undefined2 index only takes 0..20) - identical to
  * the C. */
-/*
- * Original: FUN_00000190; source: ID07.c:20-44.
- * Recovered name: init_string_pointer_groups [STRONG INFERENCE].
+/* Original: FUN_00000190; source: ID07.c:20-44. Recovered name: init_string_pointer_groups [STRONG INFERENCE].
  * Status: RENAMED. Exported C matches binary file 0x190..0x268 [PROVEN, bytes]:
  * JSR $6(PC) then four LEA d16(A5) copy loops of longwords.
  * Input: none (A5 world). Output: void.

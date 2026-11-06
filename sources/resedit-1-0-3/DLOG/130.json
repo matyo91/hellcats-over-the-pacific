@@ -15,7 +15,7 @@
     {
       "evidence": "* The following bytes 0x644..0x9ec (not exported by Ghidra) are run_duty_roster_dialog [STRONG INFERENCE name], JT $132 (-> ID04 0x644) [PROVEN, bytes]: GetNewDialog(0x82 = DLOG 130 \"Duty Roster\"); JT $472; rank_pilots_by_score(scores, order); prune_inactive_pilots_beyond_ten(order); for up to ten pilots in score order whose status +0x20 == 0 (Active), row r: SetIText item 5 + r = rank name (A5-0xffe[record +0x22]), item 15 + r = pilot name (editable), item 25 + r = decimal compute_pilot_score; ",
       "function_or_context": "duty_roster_filter_proc",
-      "line": 564,
+      "line": 554,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

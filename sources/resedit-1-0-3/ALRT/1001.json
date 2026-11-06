@@ -15,14 +15,14 @@
     {
       "evidence": "*                center_template_rect_on_screen('ALRT', 1001); Alert(1001, nil) $A985; }",
       "function_or_context": "run_protection_dialog",
-      "line": 458,
+      "line": 440,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "Alert(0x3e9,0);                           /* $A985, result discarded */",
       "function_or_context": "run_protection_dialog",
-      "line": 518,
+      "line": 500,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     }

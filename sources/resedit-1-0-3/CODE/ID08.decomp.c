@@ -20,10 +20,8 @@ typedef unsigned char    byte;
  * base added at base + off (i < nA, signed BGE) or base + A5-0x1022 + off. Volume test: 0x102-byte copy of
  * A5-0x1a24, GetVol, strcmp == 0 -> position_alert_template(0x105), StopAlert(0x105, nil) $A986,
  * ExitToShell. TickCount ($A975) is the third argument to 0x8b8 - identical to the C. */
-/*
- * Original: FUN_00000006
- * Proposed name: load_overlay_from_resource
- * Confidence: [STRONG INFERENCE] role; [PROVEN] A5 trap sequence
+/* Original: FUN_00000006; source: ID08.c. Recovered name: load_overlay_from_resource [STRONG INFERENCE].
+ * role; [PROVEN] A5 trap sequence
  *
  * CODE resource 8 entry (ID08.bin @0x0006 after 6-byte stub @0x0–0x5).
  * Best-documented candidate for loading the Pacific Conflict overlay blob
@@ -159,10 +157,7 @@ close:
 
 
 
-/*
- * Original: FUN_00000338
- * Proposed name: sysbeep_and_exit_to_shell
- * Confidence: [PROVEN]
+/* Original: FUN_00000338; source: ID08.c. Recovered name: sysbeep_and_exit_to_shell [PROVEN].
  *
  * Capstone @0x0338–0x0346 (Ghidra emitted halt_baddata for the traps):
  *   LINK A6,#$FFF2
@@ -188,10 +183,8 @@ void sysbeep_and_exit_to_shell(void) /* Original: FUN_00000338 */
 
 
 
-/*
- * Original: FUN_00000348
- * Proposed name: alloc_and_read_resource_payload
- * Confidence: [PROVEN] sequence; [STRONG INFERENCE] trap roles
+/* Original: FUN_00000348; source: ID08.c. Recovered name: alloc_and_read_resource_payload [PROVEN].
+ * sequence; [STRONG INFERENCE] trap roles
  *
  * Capstone @0x0348–0x039A (arg = resource ref word at $8(A6)):
  *   1. JSR A5+$2ca → store start offset at local
@@ -229,10 +222,8 @@ short alloc_and_read_resource_payload(short refNum) /* Original: FUN_00000348 */
 
 
 
-/*
- * Original: FUN_0000039c
- * Proposed name: bootstrap_window_and_load_overlay
- * Confidence: [PROVEN] call to loader; [STRONG INFERENCE] window/port traps
+/* Original: FUN_0000039c; source: ID08.c. Recovered name: bootstrap_window_and_load_overlay [PROVEN].
+ * call to loader; [STRONG INFERENCE] window/port traps
  *
  * Capstone @0x039C–0x0446 (Ghidra halt_baddata — A-line traps):
  *   1. A-line $A97C (window create; args include #$F060 / $FFFF) → window ptr

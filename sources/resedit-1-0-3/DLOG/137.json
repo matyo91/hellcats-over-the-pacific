@@ -15,7 +15,7 @@
     {
       "evidence": "* The following bytes 0x3976..0x3a54 (not exported by Ghidra) are run_map_dialog [STRONG INFERENCE name], JT $10a (-> ID04 0x3976) [PROVEN, bytes]: does nothing in mission 2 (Flight School, A5-0x12f8 == 2); GetNewDialog(0x89 = DLOG 137 \"Map\"); JT $472; item 8 user item JT $b2 (map view); 0x1b8(dialog, 2, 1) default ring; ShowWindow; loop ModalDialog(JT $d2): item 3 \"Zoom In\" -> settings +0x26 /= 2 while > 1, redraw the map; item 4 \"Zoom Out\" -> settings +0x26 *= 2 while < 256, redraw; until item",
       "function_or_context": "map_dialog_filter_proc",
-      "line": 2218,
+      "line": 2194,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

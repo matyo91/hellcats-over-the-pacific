@@ -15,7 +15,7 @@
     {
       "evidence": "* The following bytes 0x137a..0x149e (not exported by Ghidra) are run_high_scores_dialog [STRONG INFERENCE name], JT $102 (-> ID04 0x137a) [PROVEN, bytes]: GetNewDialog(0x86 = DLOG 134); JT $472; 0x1b8(dialog, 2, 1) default ring; grey user item 8 (JT $142); item 10 = this table (JT $e2); ShowWindow; loop ModalDialog(NULL): item 3 \"Erase Nonactive...\" -> if confirm_erase_high_scores == 2: reset_pilot_record for every record whose status +0x20 != 0 (roster locked meanwhile); if any was cleared, Ch",
       "function_or_context": "draw_high_scores_table",
-      "line": 914,
+      "line": 900,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

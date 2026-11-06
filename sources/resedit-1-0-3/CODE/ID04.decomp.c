@@ -344,9 +344,7 @@ short get_radio_group_selection /* Original: FUN_00000362 */ (int dlg /* param_1
  * TST.L A5-0x225a / BNE; copy A5-0x1680 Rect to A5-0x14be and -8; InsetRect(-8, 100, 100); NewWindow pushes nil, -8,
  * long A5-0xe4e, byte 1, word 3, -1, byte 1, long 0 ($A913) to A5-0x225a; SetPort, ShowWindow, JT $4aa, HideWindow -
  * identical to the C. */
-/*
- * Original: FUN_000003c2; source: ID04.c:164.
- * Recovered name: run_with_temporary_window [STRONG INFERENCE mechanics]
+/* Original: FUN_000003c2; source: ID04.c:164. Recovered name: run_with_temporary_window [STRONG INFERENCE mechanics].
  *. Ghidra truncated at $A8A9. Bytes 0x3c2..0x430 [PROVEN]:
  *   if (long A5-0x225a == 0) {
  *     A5-0x14be = screenBits.bounds (A5-0x1680, 8 bytes); r = that;
@@ -442,9 +440,7 @@ void show_paused_dialog /* Original: FUN_00000478 */ (void)
 
 /* VERIFIED (ID04::FUN_000004f0): ID04.bin 0x4f0..0x514 checked against an independent capstone disassembly.
  * JT $47a(word $101); CautionAlert($101, nil) $A988 to -2, D0 = -2 - identical to the C. */
-/*
- * Original: FUN_000004f0; source: ID04.c:205.
- * Recovered name: ask_save_changes [STRONG INFERENCE].
+/* Original: FUN_000004f0; source: ID04.c:205. Recovered name: ask_save_changes [STRONG INFERENCE].
  * JT $ba. Bytes 0x4f0..0x514 [PROVEN]: JT $47a(0x101) (ID02 0x442e, alert
  * centring as in show_caution_alert_with_number); return CautionAlert(257, nil)
  * $A988. ALRT 257 "Save Changes" / DITL 257 [PROVEN, resource dump in
@@ -465,9 +461,7 @@ short ask_save_changes /* Original: FUN_000004f0 */ (void)
 /* VERIFIED (ID04::FUN_00000516): ID04.bin 0x516..0x55e checked against an independent capstone disassembly.
  * CMPI.W #3 A5-0x12f8 BLT / TST.W A5-0x14c4 -> MOVEQ #2; BSR 0x18e0 TST.W BNE else 2; JT $47a($103); CautionAlert($103,
  * nil) via -4 - identical to the C. */
-/*
- * Original: FUN_00000516; source: ID04.c:219.
- * Recovered name: confirm_end_mission [STRONG INFERENCE].
+/* Original: FUN_00000516; source: ID04.c:219. Recovered name: confirm_end_mission [STRONG INFERENCE].
  * JT $13a. Bytes 0x516..0x55e [PROVEN]:
  *   if (word A5-0x12f8 < 3 || word A5-0x14c4 != 0) return 2;   [no mission]
  *   if (FUN_000018e0 == 0) return 2;
@@ -498,9 +492,7 @@ short confirm_end_mission /* Original: FUN_00000516 */ (void)
 
 /* VERIFIED (ID04::FUN_00000560): ID04.bin 0x560..0x584 checked against an independent capstone disassembly.
  * JT $47a(word $104); CautionAlert($104, nil) $A988 via -4 to D0 - identical to the C. */
-/*
- * Original: FUN_00000560; source: ID04.c:247.
- * Recovered name: confirm_erase_high_scores [STRONG INFERENCE].
+/* Original: FUN_00000560; source: ID04.c:247. Recovered name: confirm_erase_high_scores [STRONG INFERENCE].
  * Bytes 0x560..0x584 [PROVEN]: JT $47a(0x104); return CautionAlert(260, nil).
  * ALRT 260 "Erase Hi Score" / DITL 260 [PROVEN, dump]: item 1 "Cancel",
  * 2 "Erase"; text "Are you sure you want to erase all non-active duty high
@@ -518,9 +510,7 @@ short confirm_erase_high_scores /* Original: FUN_00000560 */ (void)
 /* VERIFIED (ID04::FUN_00000588): ID04.bin 0x588..0x5e2 checked against an independent capstone disassembly.
  * CLR.L -6; word k 0..11: record = (EXT.L i ASL.L #6) + *(A5-0x13a8), MOVEA.W +$28 + 2k, MOVEA.W A5-0xf5e[k], MULU.L,
  * ADD.L to -6; D0 = -6 - identical to the C. */
-/*
- * Original: FUN_00000588; source: ID04.c:259.
- * Recovered name: compute_pilot_score [STRONG INFERENCE].
+/* Original: FUN_00000588; source: ID04.c:259. Recovered name: compute_pilot_score [STRONG INFERENCE].
  * Arg: word record index i (sign-extended; the C parameter is now short, Ghidra's undefined2 was unsigned).
  *   score = sum over k < 12 of (short) record[i].tally[k] * (short) weight[k]
  *   record = *(HEL1 128 handle A5-0x13a8) + i * 0x40, tallies at +0x28
@@ -783,9 +773,7 @@ char refuel_dialog_filter_proc /* Original: FUN_00000e48 */ (int dlg,short *evt,
  * EXT.L ASL.L #6 + roster; CMP.L scores[j] with scores[i] BGT -> swap, BNE -> next; TST.B (pi) BEQ -> swap; TST.B (pi) /
  * (pj) BEQ -> next; JT $2ea(pi, pj) TST.W BLT -> next; swap via -8 (long, then word read back from -6) - identical to
  * the C. */
-/*
- * Original: FUN_00000f4e; source: ID04.c:355.
- * Recovered name: rank_pilots_by_score [STRONG INFERENCE].
+/* Original: FUN_00000f4e; source: ID04.c:355. Recovered name: rank_pilots_by_score [STRONG INFERENCE].
  * Args: long scores[20] (param_1), short order[20] (param_2). For i < 20: scores[i] =
  * compute_pilot_score(i), order[i] = i; then an exchange sort (i < 19, j = i + 1..19) by
  * descending score; equal scores: an empty name at i always yields, an empty name at j
@@ -834,9 +822,7 @@ void rank_pilots_by_score /* Original: FUN_00000f4e */ (int *scores /* param_1: 
 /* VERIFIED (ID04::FUN_00001106): ID04.bin 0x1106..0x1168 checked against an independent capstone disassembly.
  * -6 = (EXT.L i ASL.L #6) + *(A5-0x13a8); CLR.W +$22, +$20, +$24, +$26; word k 0..11 CLR.W +$28 + 2k; CLR.B (record) - identical
  * to the C. */
-/*
- * Original: FUN_00001106; source: ID04.c:427.
- * Recovered name: reset_pilot_record [STRONG INFERENCE].
+/* Original: FUN_00001106; source: ID04.c:427. Recovered name: reset_pilot_record [STRONG INFERENCE].
  * Arg: word i (sign-extended; parameter now short). record = *(HEL1 128) + i * 0x40:
  * clears words +0x22 (rank), +0x20, +0x24, +0x26 and the 12 tallies at +0x28, then the
  * name's length byte at +0x00 (corrected: the name is emptied).
@@ -1345,9 +1331,7 @@ void update_summary_dialog_buttons /* Original: FUN_0000192e */ (int dlg /* para
  * A5-0x2138); JT $512(-$82, JT $2fa(record)); JT $302 on record, rank, -$82; GetDItem($a, 8, -4, -8, -$18); widths; StringWidth
  * $A88C to -$1a; GetFontInfo(-$10); EraseRect(-$18); MoveTo with DIVS.W #2 halves; DrawString(-$82); Pascal return popping 6
  * - identical to the C. draw_rank_insignia (0x1b3e) has no inventory entry. */
-/*
- * Original: FUN_00001a0e; source: ID04.c:699.
- * Recovered name: build_rank_and_name_string [STRONG INFERENCE].
+/* Original: FUN_00001a0e; source: ID04.c:699. Recovered name: build_rank_and_name_string [STRONG INFERENCE].
  * Body rebuilt as C below. For the current pilot (word A5-0x13a4):
  * rank = rank-group string A5-0xffe[record +0x22] (Ensign... Captain);
  * p2cstr(rank) (JT $2fa); buf = copy of rank (JT $52a); append A5-0x2138
@@ -1786,9 +1770,7 @@ void set_score_item_text /* Original: FUN_00002d86 */ (int dlg,short item)
  * A5-0x12ce[0..11]; three BSR 0x1b8 variants; BSR 0x2d86; ShowWindow; TickCount; BSR 0x21d6 -> 0x192e; ModalDialog(JT $ca)
  * loop with exits on 3, 1 (+ confirm_end_mission == 2); BSR 0x189c; DisposDialog; award flag; HideWindow (main window, $A916); restores;
  * D0 = itemHit; RTS - identical to the C. */
-/*
- * Original: FUN_00002de6; source: ID04.c:809.
- * Recovered name: show_mission_summary_dialog [STRONG INFERENCE].
+/* Original: FUN_00002de6; source: ID04.c:809. Recovered name: show_mission_summary_dialog [STRONG INFERENCE].
  * C args +8 short pilot (-1 = the current mission), +0xa short mode, +0xc
  * title of item 3; returns the last itemHit. Body rebuilt as C below.
  * Bytes 0x2de6..0x3122 [PROVEN]: A5-0x2226 = local tallies (12 words); if
@@ -1908,9 +1890,7 @@ restore_pilot:
  * TST chan; SndPlay(chan, h, 1); RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_00003124; source: ID04.c:828.
- * Recovered name: play_named_sound_async [STRONG INFERENCE].
+/* Original: FUN_00003124; source: ID04.c:828. Recovered name: play_named_sound_async [STRONG INFERENCE].
  * Ghidra truncated after clearing the globals; body rebuilt as C below. Bytes 0x3124..0x3176 [PROVEN]:
  *   A5-0x2156 = A5-0x2152 = 0;
  *   h = GetNamedResource('snd ' (0x736e6420), name = Pascal string at
@@ -1946,9 +1926,7 @@ void play_named_sound_async /* Original: FUN_00003124 */ (void)
  * chan: SndDisposeChannel(chan, 1), CLR.L; h: JT $27a, ReleaseResource, CLR.L; RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_00003178; source: ID04.c:843.
- * Recovered name: stop_named_sound [STRONG INFERENCE].
+/* Original: FUN_00003178; source: ID04.c:843. Recovered name: stop_named_sound [STRONG INFERENCE].
  * Bytes 0x3178..0x31a8 [PROVEN]: if (chan A5-0x2152) {
  *   SndDisposeChannel(chan, true) $A801; chan = 0 }; if (h A5-0x2156) {
  *   HUnlock(h) (JT $27a); ReleaseResource(h) $A9A3; h = 0 }.
@@ -1979,9 +1957,7 @@ void stop_named_sound /* Original: FUN_00003178 */ (void)
  * D0 = result; RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_000031aa; source: ID04.c:864.
- * Recovered name: conclude_mission [STRONG INFERENCE].
+/* Original: FUN_000031aa; source: ID04.c:864. Recovered name: conclude_mission [STRONG INFERENCE].
  * Body rebuilt as C below (Ghidra truncated after the status write). JT $da; callers
  * [PROVEN, bytes]: ID02 file 0x8cc and 0x3752 (do_menu_command menu 2 item 5,
  * which passes code 3 and long A5-0xd6a).
@@ -2382,9 +2358,7 @@ void show_about_dialog /* Original: FUN_00003a8c */ (void)
 /* VERIFIED (ID04::FUN_00003d42): ID04.bin 0x3d42..0x3d78 checked against an independent capstone disassembly.
  * LINK -$10; CLR.W result, push 1, pea -$10, JT $1f2, result popped; TST.B -7 BEQ / CMPI.W #3,-$a BGE; JT $4ba(long A5-0xe52,
  * word 0), MOVEQ #0; else MOVEQ #1; RTS - identical to the C. */
-/*
- * Original: FUN_00003d42; source: ID04.c:993.
- * Recovered name: check_system_requirements [STRONG INFERENCE].
+/* Original: FUN_00003d42; source: ID04.c:993. Recovered name: check_system_requirements [STRONG INFERENCE].
  * Bytes 0x3d42..0x3d78 (last function of ID04); body rewritten as typed C below.
  * JT $f2, called by ID02 initialize_application (returns 0 -> ExitToShell).
  *   SysEnvirons(1, &env) (JT $1f2 = ID09 sysenvirons dispatcher);

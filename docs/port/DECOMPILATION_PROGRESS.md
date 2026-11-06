@@ -47,6 +47,13 @@ record edits rather than confidence: `[RESTORED]` (a dropped call argument writt
 `[ANNOTATED]` (a block described in a function's header). Status words in registries and tables
 (`VERIFIED`, `BLOCKED`, `NOT_PORTED`) are separate.
 
+## Function headers
+
+A function's header comment opens with one line:
+`/* Original: FUN_00001234; source: ID02.c:120. Recovered name: name [CONFIDENCE].`, then what the
+function does and its evidence; a `VERIFIED:` block may follow. Entries that are not functions (a
+false entry inside another routine, an epilogue a call site aliases) keep their own description.
+
 ## Naming conventions
 
 - Ghidra-style names (`iVarN`, `local_xx`, `param_N`, `auStack`, `DAT_`, `PTR_`) are replaced by

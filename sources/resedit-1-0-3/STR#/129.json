@@ -15,7 +15,7 @@
     {
       "evidence": "*   h = GetResource('STR#', 0x81)      CLR.L -(A7); PEA #'STR#'; MOVE.W #$81; $A9A0",
       "function_or_context": "load_str129_string_table",
-      "line": 31,
+      "line": 29,
       "source_path": "sources/resedit-1-0-3/CODE/ID07.decomp.c",
       "status": "VERIFIED"
     }

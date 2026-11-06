@@ -12,9 +12,7 @@ typedef unsigned char    byte;
  * BSR 0x8a, TextSize; RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_00000006; source: ID03.c:12.
- * Recovered name: set_scaled_text_style [STRONG INFERENCE].
+/* Original: FUN_00000006; source: ID03.c:12. Recovered name: set_scaled_text_style [STRONG INFERENCE].
  * Ghidra truncated at $A888. Bytes 0x06..0x54 [PROVEN]: word size at 8(A6).
  *   if (mode A5-0x137a == 1) { TextFace(0) $A888;
  *       TextSize(scale_design_4800((short)(size * 10) / 3)) $A88A }
@@ -43,9 +41,7 @@ void set_scaled_text_style /* Original: FUN_00000006 */ (short size)
 
 /* VERIFIED (ID03::FUN_00000056): ID03.bin 0x56..0x88 checked against an independent capstone disassembly.
  * MOVEA.W, MULU.L A5-0x149e, ADDQ #5, DIVS.L #$1e0, word local, CMPI #10 BGE / MOVEQ #10; MOVE.W result; RTS - identical to the C. */
-/*
- * Original: FUN_00000056; source: ID03.c:27.
- * Recovered name: scale_design_480_min10 [STRONG INFERENCE].
+/* Original: FUN_00000056; source: ID03.c:27. Recovered name: scale_design_480_min10 [STRONG INFERENCE].
  * Exported C complete: v = (long A5-0x149e * (short)param + 5) / 480, then at
  * least 10; returns a word (D0 = MOVE.W of the local; Ghidra's high-word note is moot). A5-0x149e is a
  * scale factor (screen-size dependent) [STRONG INFERENCE; identity UNKNOWN].
@@ -67,9 +63,7 @@ short scale_design_480_min10 /* Original: FUN_00000056 */ (short v)
 
 /* VERIFIED (ID03::FUN_0000008a): ID03.bin 0x8a..0xa4 checked against an independent capstone disassembly.
  * MOVEA.W, MULU.L A5-0x149e, DIVS.L #$12c0, long result; RTS - identical to the C. */
-/*
- * Original: FUN_0000008a; source: ID03.c:45.
- * Recovered name: scale_design_4800 [STRONG INFERENCE].
+/* Original: FUN_0000008a; source: ID03.c:45. Recovered name: scale_design_4800 [STRONG INFERENCE].
  * Exported C complete: (long A5-0x149e * (short)param) / 4800 (signed, truncating).
  * Converts design units to screen units [STRONG INFERENCE].
  */
@@ -85,9 +79,7 @@ int scale_design_4800 /* Original: FUN_0000008a */ (short v)
 
 /* VERIFIED (ID03::FUN_000000a6): ID03.bin 0xa6..0xc6 checked against an independent capstone disassembly.
  * BSR 0x8a; thePort +$36 MOVEA.W, DIVS.W #2, SUB.W; RTS - identical to the C. */
-/*
- * Original: FUN_000000a6; source: ID03.c:55.
- * Recovered name: scale_design_4800_pen_centred [STRONG INFERENCE].
+/* Original: FUN_000000a6; source: ID03.c:55. Recovered name: scale_design_4800_pen_centred [STRONG INFERENCE].
  * Exported C complete: scale_design_4800(v) - thePort->pnSize.h (+0x36) / 2
  * (pen-centred coordinate). Ghidra's unaff_A6 half is register residue.
  */
@@ -104,9 +96,7 @@ short scale_design_4800_pen_centred /* Original: FUN_000000a6 */ (short v)
 
 /* VERIFIED (ID03::FUN_000000c8): ID03.bin 0xc8..0xf2 checked against an independent capstone disassembly.
  * CMP.L $c BGE / store; CMP.L $10 BGE -> D0 = a else D0 = c; RTS - identical to the C. */
-/*
- * Original: FUN_000000c8; source: ID03.c:68.
- * Recovered name: max3_int [STRONG INFERENCE].
+/* Original: FUN_000000c8; source: ID03.c:68. Recovered name: max3_int [STRONG INFERENCE].
  * Exported C complete: signed maximum of three longs.
  */
 int max3_int /* Original: FUN_000000c8 */ (int a,int b,int c)
@@ -127,9 +117,7 @@ int max3_int /* Original: FUN_000000c8 */ (int a,int b,int c)
  * LINK -$20; zero-extended r/g/b longs; best = -1, dist = $7fffffff; i 0..7 over A5-0x350 (MULS #6): three JT $4da, BSR 0xc8,
  * CMP.L BGE; extended scan to A5-0x14a2 over *(A5-0x14a6): first d < dist -> best = i + 8 (D0), exit; mode 4 / 1 -> best,
  * 8 -> best + $c8, else D0; RTS - identical to the C. */
-/*
- * Original: FUN_000000f4; source: ID03.c:82.
- * Recovered name: nearest_palette_index_rgb [STRONG INFERENCE].
+/* Original: FUN_000000f4; source: ID03.c:82. Recovered name: nearest_palette_index_rgb [STRONG INFERENCE].
  * Exported C complete. param_1 -> RGB (3 words). JT $4da = ID02 FUN_0000001e
  * (abs). Distance = max3_int(|dr|, |dg|, |db|) (Chebyshev).
  *   best over the 8 base colours at A5-0x350 (6 bytes each);
@@ -206,9 +194,7 @@ short nearest_palette_index_rgb /* Original: FUN_000000f4 */ (unsigned short *rg
  * SetPortBits(-$e); portRect copy to +$10; PortSize(8, $a); RectRgn(+$18, bounds); D0 = port; RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_000002a8; source: ID03.c:148.
- * Recovered name: new_offscreen_bw_port [STRONG INFERENCE].
+/* Original: FUN_000002a8; source: ID03.c:148. Recovered name: new_offscreen_bw_port [STRONG INFERENCE].
  * Ghidra truncated after the allocations; body rebuilt as C below. Bytes 0x2a8..0x33a [PROVEN].
  * Args: words width [8(A6)], height [$a(A6)]. Returns GrafPtr (D0).
  *   rowBytes = (width / 16) * 2 + 2; bits = NewPtrClear(height * rowBytes)
@@ -247,9 +233,7 @@ int new_offscreen_bw_port /* Original: FUN_000002a8 */ (short width,short height
 
 /* VERIFIED (ID03::FUN_0000033c): ID03.bin 0x33c..0x35c checked against an independent capstone disassembly.
  * ClosePort; JT $23a(+2); JT $23a(port); RTS - identical to the C. */
-/*
- * Original: FUN_0000033c; source: ID03.c:164.
- * Recovered name: dispose_offscreen_bw_port [STRONG INFERENCE].
+/* Original: FUN_0000033c; source: ID03.c:164. Recovered name: dispose_offscreen_bw_port [STRONG INFERENCE].
  * Ghidra truncated; body rebuilt as C below. Bytes 0x33c..0x35c [PROVEN]: arg GrafPtr port;
  *   ClosePort(port) $A87D; DisposPtr(port->portBits.baseAddr (+2)) (JT $23a);
  *   DisposPtr(port). Inverse of new_offscreen_bw_port. Caller: FUN_000032b8
@@ -272,9 +256,7 @@ void dispose_offscreen_bw_port /* Original: FUN_0000033c */ (int port)
  * ring for 1 and 2); phase = (phase + 5) & 3; SetClip(saved); DisposeRgn x2; RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_0000035e; source: ID03.c:175.
- * Recovered name: draw_spinning_disc_indicator [STRONG INFERENCE mechanics]
+/* Original: FUN_0000035e; source: ID03.c:175. Recovered name: draw_spinning_disc_indicator [STRONG INFERENCE mechanics].
  * Ghidra exported no body; body rebuilt as C below.
  * Bytes 0x35e..0x512 [PROVEN]. Args: words cx [8(A6)], cy [$a(A6)] (design units).
  *   d = word A5-0x2114 (size); r.left = design_x_to_screen(cx - d/2);
@@ -490,9 +472,7 @@ void draw_vector_glyph_string_centred /* Original: FUN_0000077e */ (char *text,s
  * RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_00000912; source: ID03.c:253.
- * Recovered name: draw_vector_number [STRONG INFERENCE].
+/* Original: FUN_00000912; source: ID03.c:253. Recovered name: draw_vector_number [STRONG INFERENCE].
  * Body rebuilt as C below (Ghidra truncated after the first stroke). Words:
  * value [8], scale [$a], cx [$c], y [$e].
  * Splits value into decimal digits, most significant first, into digits[i..4]
@@ -554,9 +534,7 @@ void draw_vector_number /* Original: FUN_00000912 */ (short value,short scale,sh
  * MOVEM restore; RTS - identical to the C (the C loops over the weights the binary unrolls). */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_00000a3c; source: ID03.c:294.
- * Recovered name: antialias_downsample_bw_3x [STRONG INFERENCE]
+/* Original: FUN_00000a3c; source: ID03.c:294. Recovered name: antialias_downsample_bw_3x [STRONG INFERENCE].
  * Ghidra exported no body; body rebuilt as C below.
  * Bytes 0xa3c..0x1468 [PROVEN]. Args: GrafPtr src [8] (1-bit port: base +2,
  * rowBytes +6), word x0 [$c], word y0 [$e], word rows [$10], word cols [$12],
@@ -703,9 +681,7 @@ void composite_instrument_bitmap /* Original: FUN_0000146a */ (int src,short siz
  * save A5-0x149c, scale = $1e0; rect again; *$1c = (r - l) * 10 / 2, *$24 = *$20 = (r + l) * 10 / 2; *$10 >= 15; restore;
  * *$28 = 1. Else *$c, *$10 x3; BSR 0x2a8(3s+6, 3s+6); SetOrigin(-2,-2); same with x3 and inset +3; *$28 = 3; RTS -
  * identical to the C. */
-/*
- * Original: FUN_00001538; source: ID03.c:327.
- * Recovered name: begin_instrument_supersample [STRONG INFERENCE].
+/* Original: FUN_00001538; source: ID03.c:327. Recovered name: begin_instrument_supersample [STRONG INFERENCE].
  * Body rebuilt as C below (Ghidra truncated both branches). Ten arguments,
  * 0x24 bytes [PROVEN, caller 0x187a]: short *size, short *pa, short *pb, two
  * unused words, GrafPtr *outPort, short *radius, short *centreX, short *centreY,
@@ -833,9 +809,7 @@ void finish_instrument_supersample /* Original: FUN_00001844 */ (int port,short 
  * length; four JSR (A5-0x2118 / -0x211c) MULU.L ASR #12 end points; four BSR 0xa6, MoveTo, LineTo; major: numeral radius
  * (MULS #$34 / 10, -$2d), BSR 0x912(n++); TextFont 1; BSR 0x6(20); GetFontInfo; StringWidth / 2; MoveTo; DrawString;
  * BSR 0x1844; RTS - identical to the C. */
-/*
- * Original: FUN_00001876; source: ID03.c:379.
- * Recovered name: draw_altimeter [STRONG INFERENCE].
+/* Original: FUN_00001876; source: ID03.c:379. Recovered name: draw_altimeter [STRONG INFERENCE].
  * Instrument type 0 of draw_instrument. Body rebuilt as C below (Ghidra
  * truncated). Words: size [8], scale [$a], pen [$c], y [$e], x [$10].
  * Bytes 0x1876..0x1b46 [PROVEN]: begin_instrument_supersample(&size, &scale,
@@ -931,9 +905,7 @@ void draw_altimeter /* Original: FUN_00001876 */ (short size,short scale,short p
  * with TextFont 1, BSR 0x6(18), GetFontInfo, StringWidth; BSR 0x1844; RTS - identical to the C. */
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_00001b48; source: ID03.c:394.
- * Recovered name: draw_airspeed_indicator [STRONG INFERENCE].
+/* Original: FUN_00001b48; source: ID03.c:394. Recovered name: draw_airspeed_indicator [STRONG INFERENCE].
  * Instrument type 1 of draw_instrument. Label strings loaded from the
  * STR# 129 pointer table (A5-0xf46 + 4*slot): slot 66 "AIR" + 67 "SPEED" [PROVEN from
  * the resource dump, 0-based files, slot n = file n-1]. Gauge identity from
@@ -1050,9 +1022,7 @@ void draw_airspeed_indicator /* Original: FUN_00001b48 */ (short size,short scal
  * Same frame and calls as 0x1876 with: i 0..38, angle ASL #14 / 39; DIVS #3 remainder selects major (ASL.W #2 length) or
  * minor (skipped for 18..21 by CMPI #$12 / #$15); x via SUBA.L (cx - r cos), y via ADD.L; numeral i/3 or 13 - i/3 when
  * i/3 > 6; label A5-0xe36; RTS - identical to the C. */
-/*
- * Original: FUN_00001fee; source: ID03.c:427.
- * Recovered name: draw_climb_indicator [STRONG INFERENCE].
+/* Original: FUN_00001fee; source: ID03.c:427. Recovered name: draw_climb_indicator [STRONG INFERENCE].
  * Instrument type 3 of draw_instrument. Label strings loaded from the
  * STR# 129 pointer table (A5-0xf46 + 4*slot): slot 68 "CLIMB" [PROVEN from
  * the resource dump, 0-based files, slot n = file n-1]. Gauge identity from
@@ -1142,9 +1112,7 @@ void draw_climb_indicator /* Original: FUN_00001fee */ (short size,short scale,s
  * Same frame and calls as 0x1876 shifted by two bytes (LINK -$44) with: i 0..27, k = 2i - 40 (+60), angle ASL #14 / 60;
  * DIVS #3 remainder major (ASL.W #2) / minor; numeral scale MULS #3 DIVS #3, value MULS #10 DIVS #6; label A5-0xe32 at
  * cy - factor * $53; RTS - identical to the C. */
-/*
- * Original: FUN_000022fe; source: ID03.c:458.
- * Recovered name: draw_tachometer [STRONG INFERENCE].
+/* Original: FUN_000022fe; source: ID03.c:458. Recovered name: draw_tachometer [STRONG INFERENCE].
  * Instrument type 5 of draw_instrument. Label strings loaded from the
  * STR# 129 pointer table (A5-0xf46 + 4*slot): slot 69 "RPM" [PROVEN from
  * the resource dump, 0-based files, slot n = file n-1]. Gauge identity from
@@ -1230,9 +1198,7 @@ void draw_tachometer /* Original: FUN_000022fe */ (short size,short scale,short 
  * Same frame and calls as 0x22fe with: i 0..68, k = i - 40 (+69), angle ASL #14 / 69; (i - 3) DIVS #5 remainder major,
  * CMPI #3 BLT skip, else minor; (i - 3) DIVS #10 remainder -> numeral scale = scale, value i + 7; BSR 0x6(16); labels
  * A5-0xe2e / -0xe2a (second + ascent + descent); RTS - identical to the C. */
-/*
- * Original: FUN_00002600; source: ID03.c:473.
- * Recovered name: draw_manifold_pressure_gauge [STRONG INFERENCE].
+/* Original: FUN_00002600; source: ID03.c:473. Recovered name: draw_manifold_pressure_gauge [STRONG INFERENCE].
  * Instrument type 4 of draw_instrument. Label strings loaded from the
  * STR# 129 pointer table (A5-0xf46 + 4*slot): slot 70 "Manifold" + 71 "Pressure" [PROVEN from
  * the resource dump, 0-based files, slot n = file n-1]. Gauge identity from
@@ -1327,9 +1293,7 @@ void draw_manifold_pressure_gauge /* Original: FUN_00002600 */ (short size,short
  * DIVS #9 remainder 0 -> string A5-0x1ee6 / -4 / -2 / -0 by CMPI #0 / #9 / #$12 / #$1b, numeral position, BSR 0x77e (LEA $a);
  * else DIVS #3 remainder 0 -> 2 * scale / 3, value i, position, no call; BSR 0x6(18); label A5-0xe26; RTS - identical to
  * the C. */
-/*
- * Original: FUN_00002950; source: ID03.c:504.
- * Recovered name: draw_direction_indicator [STRONG INFERENCE].
+/* Original: FUN_00002950; source: ID03.c:504. Recovered name: draw_direction_indicator [STRONG INFERENCE].
  * Instrument type 6 of draw_instrument. Label strings loaded from the
  * STR# 129 pointer table (A5-0xf46 + 4*slot): slot 72 "DIRECTION" [PROVEN from
  * the resource dump, 0-based files, slot n = file n-1]. Gauge identity from
@@ -1439,9 +1403,7 @@ void draw_direction_indicator /* Original: FUN_00002950 */ (short size,short sca
  * (A5-0x105e)(0, 0, $555 / $3aaa, 3 / 10, pts, pts) LEA $18, draw loops (LEA -$96 / +$96, SUBA + $6e, BSR 0xa6, MoveTo for
  * i = 0 else LineTo); four BSR 0x8a, PaintRect; length scale * 3; marks at $2d55 / $32aa via A5-0x2118 / -0x211c; labels
  * A5-0xe22 (cy - factor * $85) / -0xe1e (factor * $11 + cy); BSR 0x1844; RTS - identical to the C. */
-/*
- * Original: FUN_00002d1c; source: ID03.c:519.
- * Recovered name: draw_turn_and_bank_indicator [STRONG INFERENCE].
+/* Original: FUN_00002d1c; source: ID03.c:519. Recovered name: draw_turn_and_bank_indicator [STRONG INFERENCE].
  * Instrument type 2 of draw_instrument. Label strings loaded from the
  * STR# 129 pointer table (A5-0xf46 + 4*slot): slot 73 "TURN" + 74 "BANK" [PROVEN from
  * the resource dump, 0-based files, slot n = file n-1]. Gauge identity from
@@ -1821,9 +1783,7 @@ void draw_artificial_horizon /* Original: FUN_000038fc */
  * LINK -$a; CMPI #6 -> BSR 0x514 with $1b else $f (LEA $a); (4,4,4) JT $45a/$36a; JT $3a table 0..9 -> 0x1876, 0x1b48,
  * 0x2d1c, 0x1fee, 0x2600, 0x22fe, 0x2950, -, 0x32b8(.., 1), 0x38fc(.., 1); record ASL.L #4 + A5-0x12a2: +$e, +$c, +$a, +8,
  * +2, +0, +4, +6 in that order; RTS - identical to the C. */
-/*
- * Original: FUN_00003c02; source: ID03.c:567.
- * Recovered name: draw_instrument [STRONG INFERENCE].
+/* Original: FUN_00003c02; source: ID03.c:567. Recovered name: draw_instrument [STRONG INFERENCE].
  * Ghidra mis-decoded the inline switch table after JSR $3a(A5) as code (the
  * pbVar1 |= 0x50 and |= 0x8a00c6 statements are table bytes, not behaviour).
  * Body rebuilt as C below [PROVEN, bytes 0x3c02..0x3f22].
@@ -2288,9 +2248,7 @@ void draw_split_display_box /* Original: FUN_00004b32 */
  * LINK -$42; BSR 0x514(size, pen, y, x, 0); BSR 0x1538; i 0..8: angle ASL #12 / 8 + $80; DIVS #4 remainder major (ASL.W #2) /
  * minor; SUBA x / ADD y end points, four BSR 0xa6, MoveTo / LineTo; TextFont 1, BSR 0x6(20), GetFontInfo, label A5-0xe1a;
  * A5-0x1178 / -0x117a / -0x1176; BSR 0x1844; RTS - identical to the C. */
-/*
- * Original: FUN_00004c42; source: ID03.c:673.
- * Recovered name: draw_flaps_indicator [STRONG INFERENCE].
+/* Original: FUN_00004c42; source: ID03.c:673. Recovered name: draw_flaps_indicator [STRONG INFERENCE].
  * Not part of the draw_instrument type switch. Loads label slot 75 "FLAPS"
  * from the STR# 129 pointer table [PROVEN, bytes + resource dump] and draws
  * a bezel via draw_ring_with_status_indicators (BSR at file 0x4c58).
@@ -2371,9 +2329,7 @@ void draw_flaps_indicator /* Original: FUN_00004c42 */ (short size,short scale,s
 /* VERIFIED (ID03::FUN_00004ecc): ID03.bin 0x4ecc..0x5156 checked against an independent capstone disassembly.
  * Same frame and calls as 0x4c42 with: i 0..12, angle MULU.L #$1555 / 12 + $555; DIVS #3 major; SUBA for x and y; label A5-0xe16
  * at factor * 100 + cy without ascent; record A5-0x1154 / -0x1156 / -0x1152; RTS - identical to the C. */
-/*
- * Original: FUN_00004ecc; source: ID03.c:691.
- * Recovered name: draw_ammo_counter [STRONG INFERENCE].
+/* Original: FUN_00004ecc; source: ID03.c:691. Recovered name: draw_ammo_counter [STRONG INFERENCE].
  * Not part of the draw_instrument type switch. Loads label slot 76 "AMMO"
  * from the STR# 129 pointer table [PROVEN, bytes + resource dump] and draws
  * a bezel via draw_ring_with_status_indicators (BSR at file 0x4ee2).
@@ -2509,9 +2465,7 @@ void draw_arc_scale_ticks /* Original: FUN_00005158 */
  * LINK -$42; BSR 0x514(.., $f); BSR 0x1538; BSR 0x5158(2r/3, scale, pen, cy, cx - r + 40f, 1) and (.., cx + r - 40f, 0);
  * TextFont 1, BSR 0x6(24), GetFontInfo, label A5-0xe12 at cy - factor * $e9 + ascent; JT $382 -> -0x115a / -0x1160; JT $3ca
  * -> -0x1162 / -0x115c; radius -> -0x1158 / -0x115e; BSR 0x1844; RTS - identical to the C. */
-/*
- * Original: FUN_0000532e; source: ID03.c:720.
- * Recovered name: draw_fuel_gauge [STRONG INFERENCE].
+/* Original: FUN_0000532e; source: ID03.c:720. Recovered name: draw_fuel_gauge [STRONG INFERENCE].
  * Not part of the draw_instrument type switch. Loads label slot 77 "Fuel"
  * from the STR# 129 pointer table [PROVEN, bytes + resource dump] and draws
  * a bezel via draw_ring_with_status_indicators (BSR at file 0x5346).

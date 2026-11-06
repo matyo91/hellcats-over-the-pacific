@@ -15,14 +15,14 @@
     {
       "evidence": "* Pascal ModalDialog filter, as scenario_selection_filter_proc but with slider item 3: fuel_slider_dialog_filter(dialog, event, itemHit, 3). Body rebuilt as C below. Reached through JT $14a (-> ID04 0xe48), passed at 0xee8 by the code that runs GetNewDialog(0x84 = DLOG 132 \"Refuel\", 0xe88..0xe92); item 3 (dump item 2) is the fuel bar, radio buttons \"0\" \"1\" \"2\" next to \"Bombs:\" [PROVEN placement].",
       "function_or_context": "refuel_dialog_filter_proc",
-      "line": 747,
+      "line": 737,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "*   dialog = GetNewDialog(0x84, NULL, (WindowPtr)-1) ($A97C);",
       "function_or_context": "refuel_dialog_filter_proc",
-      "line": 753,
+      "line": 743,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

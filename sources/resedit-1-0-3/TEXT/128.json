@@ -15,28 +15,28 @@
     {
       "evidence": "* Bytes [PROVEN]: h = GetResource('TEXT', 0x80) ($A9A0); if (h) { JT $28a(h)",
       "function_or_context": "read_TEXT128_pair",
-      "line": 206,
+      "line": 196,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "h = GetResource('TEXT',0x80);             /* PEA $54455854.L, MOVE.W #$80, _GetResource $A9A0 */",
       "function_or_context": "read_TEXT128_pair",
-      "line": 221,
+      "line": 211,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "* Bytes [PROVEN]: h = GetResource('TEXT', 0x80) ($A9A0); if (h) { JT $28a(h)",
       "function_or_context": "write_TEXT128_pair",
-      "line": 244,
+      "line": 232,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "h = GetResource('TEXT',0x80);             /* PEA $54455854.L, MOVE.W #$80, _GetResource $A9A0 */",
       "function_or_context": "write_TEXT128_pair",
-      "line": 258,
+      "line": 246,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     }

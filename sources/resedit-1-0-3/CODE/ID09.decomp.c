@@ -26,9 +26,7 @@ undefined DAT_00000059;
 // WARNING: Removing unreachable block (ram,0x000000cc)
 // WARNING: Globals starting with '_' overlap smaller symbols at the same address
 
-/*
- * Original: FUN_00000048; source: ID09.c:26-103.
- * Recovered name: sysenvirons_glue_fallback [STRONG INFERENCE].
+/* Original: FUN_00000048; source: ID09.c:26-103. Recovered name: sysenvirons_glue_fallback [STRONG INFERENCE].
  * Exported body annotated originally; discrepancies resolved by the rebuilt body below.
  * Confidence: [PROVEN] exported-C control flow; [UNKNOWN] selector meanings.
  * Input: param_1 points to writable storage for at least eight undefined2 words
@@ -174,9 +172,7 @@ short sysenvirons_glue_fallback /* Original: FUN_00000048 */ (short versionReque
 
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_000002a6; source: ID09.c:107-114.
- * Recovered name: fsopen_glue [STRONG INFERENCE].
+/* Original: FUN_000002a6; source: ID09.c:107-114. Recovered name: fsopen_glue [STRONG INFERENCE].
  * Status: RENAMED. The exported body is only Ghidra's truncation artifact:
  * A-line word $A000 at file 0x2c6 was treated as bad instruction data.
  * halt_baddata is retained unchanged; the real body is described below
@@ -231,9 +227,7 @@ short fsopen_glue /* Original: FUN_000002a6 */ (Str255 *fileName,short vRefNum,s
 
 // WARNING: Control flow encountered bad instruction data
 
-/*
- * Original: FUN_000003c2; source: ID09.c:118-125.
- * Recovered name: swapmmumode_glue [STRONG INFERENCE].
+/* Original: FUN_000003c2; source: ID09.c:118-125. Recovered name: swapmmumode_glue [STRONG INFERENCE].
  * Status: RENAMED. Exported body is Ghidra's truncation at A-line $A05D;
  * halt_baddata is retained, the real body is described here only.
  *

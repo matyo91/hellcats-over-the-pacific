@@ -15,14 +15,14 @@
     {
       "evidence": "* Pascal ModalDialog filter (DialogPtr +0x10, EventRecord * +0xc, itemHit * +8; pops 0xc bytes and returns a Boolean byte, which Ghidra read as an unrecoverable jump table): fuel_slider_dialog_filter(dialog, event, itemHit, 5). Body rebuilt as C below. Reached through JT $112 (CODE 0 entry -> ID04 0xbda), passed at 0xcea by the code that runs GetNewDialog(0x81 = DLOG 129 \"Scenario Selection\", call at 0xc38), whose item 5 (dump item 4) is the percent bar (JT $8a installed at 0xc8e).",
       "function_or_context": "scenario_selection_filter_proc",
-      "line": 699,
+      "line": 689,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "*   dialog = GetNewDialog(0x81 = DLOG 129, NULL, (WindowPtr)-1); JT $472;",
       "function_or_context": "scenario_selection_filter_proc",
-      "line": 706,
+      "line": 696,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }

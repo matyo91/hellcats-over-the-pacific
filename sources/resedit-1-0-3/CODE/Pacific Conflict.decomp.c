@@ -1311,11 +1311,7 @@ int DAT_000267a4;
 int DAT_000267a8;
 int *DAT_00020b40;
 
-/*
- * Original: FUN_00000020
- * Source: Pacific Conflict.c:739
- * Proposed name: overlay_patch_template_u16_pair
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00000020; source: Pacific Conflict.c:739. Recovered name: overlay_patch_template_u16_pair [STRONG INFERENCE].
  *
  * Inputs:
  *   config_u16 — 16-bit value written into two static template fields.
@@ -1358,11 +1354,7 @@ void overlay_patch_template_u16_pair(undefined2 config_u16) /* Original: FUN_000
 
 
 
-/*
- * Original: FUN_00000032
- * Source: Pacific Conflict.c:749
- * Proposed name: copy_block_return_dst
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00000032; source: Pacific Conflict.c:749. Recovered name: copy_block_return_dst [STRONG INFERENCE].
  *
  * Inputs (wrapper convention):
  *   dst  — destination buffer (param_1); also the return value
@@ -1403,11 +1395,8 @@ undefined4 * copy_block_return_dst(undefined4 *dst, undefined4 *src, undefined4 
 
 
 
-/*
- * Original: FUN_00000054
- * Source: Pacific Conflict.c:758
- * Proposed name: overlay_init_template_pointer_tables
- * Confidence: [STRONG INFERENCE] for overall role; body annotated incrementally
+/* Original: FUN_00000054; source: Pacific Conflict.c:758. Recovered name: overlay_init_template_pointer_tables [STRONG INFERENCE].
+ * for overall role; body annotated incrementally
  *
  * Role:
  *   Runtime-clone static overlay template records into freshly obtained buffers,
@@ -1680,10 +1669,8 @@ undefined4 any_mission_kills_recorded /* Original: FUN_00000334 */ (void)
 
 
 
-/*
- * Original: FUN_00000354
- * Proposed name: probe_nearest_facility_kind
- * Confidence: [PROVEN] 0x12/0x13→0x100/0x200; [STRONG INFERENCE] “facility”
+/* Original: FUN_00000354; source: Pacific Conflict.c. Recovered name: probe_nearest_facility_kind [PROVEN].
+ * 0x12/0x13→0x100/0x200; [STRONG INFERENCE] “facility”
  *
  * Scan DAT_0001b5a4 pool for entities whose *(+8)+4 short is 0x12 or 0x13,
  * within range *(entity+0xc), pick nearest by approx_dist3_xyz to the query
@@ -3050,11 +3037,7 @@ undefined4 assign_face_colour /* Original: FUN_0000159e */ (int face /* param_1:
 
 
 
-/*
- * Original: FUN_000016e2
- * Source: Pacific Conflict.c:1917 / binary @0x16E2–0x18D4
- * Proposed name: init_mission_object_tables
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000016e2; source: Pacific Conflict.c:1917 / binary @0x16E2–0x18D4. Recovered name: init_mission_object_tables [STRONG INFERENCE].
  *
  * Role:
  *   After template pointer tables exist, instantiate the mission's root object
@@ -3316,11 +3299,7 @@ undefined4 heap_add_large_block_tail /* Original: FUN_000019b0 */ (void)
 
 
 
-/*
- * Original: FUN_000019d0
- * Source: Pacific Conflict.c:2086 / binary @0x19D0
- * Proposed name: heap_free_coalesce
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000019d0; source: Pacific Conflict.c:2086 / binary @0x19D0. Recovered name: heap_free_coalesce [STRONG INFERENCE].
  *
  * Inputs: user pointer (payload); header bytes sit at ptr-4 / ptr-8.
  * Side effects: returns block to size-class freelist (DAT_00020c64) or coalesces
@@ -3387,11 +3366,8 @@ void heap_free_coalesce(int payload /* param_1: payload pointer; header at paylo
 
 
 
-/*
- * Original: FUN_00001a48
- * Source: Pacific Conflict.c:2128 / binary @0x1A48
- * Proposed name: heap_roving_cursor_store
- * Confidence: [PROVEN] for the three-instruction body; call-site ABI RESOLVED [PROVEN] (resolution
+/* Original: FUN_00001a48; source: Pacific Conflict.c:2128 / binary @0x1A48. Recovered name: heap_roving_cursor_store [PROVEN].
+ * for the three-instruction body; call-site ABI RESOLVED [PROVEN] (resolution
  * below; whole-binary scan: every reference is an absolute lea.l, none a bsr/jsr to the file offset: the 4 lea.l $1a48.l are heap_alloc at file 0x1a68)
  *
  *  resolution [PROVEN]: the "call-site ABI" problem was an address-space
@@ -3435,11 +3411,7 @@ void heap_roving_cursor_store(void) /* Original: FUN_00001a48 */
 
 
 
-/*
- * Original: FUN_00001a68
- * Source: Pacific Conflict.c:2139 / binary @0x1A68
- * Proposed name: heap_alloc
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00001a68; source: Pacific Conflict.c:2139 / binary @0x1A68. Recovered name: heap_alloc [STRONG INFERENCE].
  *
  * Inputs: nbytes (stack).
  * Outputs: payload pointer in D0 / return, or NULL/sentinel on failure.
@@ -3520,11 +3492,8 @@ uint * heap_alloc(int nbytes /* param_1: requested size in bytes */) /* Original
 
 
 
-/*
- * Original: FUN_00001b38
- * Source: Pacific Conflict.c:2197 / binary @0x1B38
- * Proposed name: heap_zero_payload
- * Confidence: [PROVEN] size derivation from heap headers; clear via memzero
+/* Original: FUN_00001b38; source: Pacific Conflict.c:2197 / binary @0x1B38. Recovered name: heap_zero_payload [PROVEN].
+ * size derivation from heap headers; clear via memzero
  *
  * Inputs: payload pointer returned by heap_alloc (header at ptr-4 / ptr-8).
  * Side effects: zeros the allocatable payload bytes via memzero (FUN_0001a716).
@@ -3576,11 +3545,7 @@ void heap_zero_payload_tail /* Original: FUN_00001b4c */ (void)
 
 
 
-/*
- * Original: FUN_00001b6c
- * Source: Pacific Conflict.c / binary @0x1B6C
- * Proposed name: heap_alloc_cleared
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00001b6c; source: Pacific Conflict.c / binary @0x1B6C. Recovered name: heap_alloc_cleared [STRONG INFERENCE].
  *
  * Allocates nbytes via heap_alloc (FUN_00001a68), then heap_zero_payload
  * (FUN_00001b38) [PROVEN clear].
@@ -3599,10 +3564,7 @@ uint * heap_alloc_cleared(int nbytes) /* Original: FUN_00001b6c */
 
 
 
-/*
- * Original: FUN_00001b84
- * Proposed name: heap_calloc
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00001b84; source: Pacific Conflict.c. Recovered name: heap_calloc [STRONG INFERENCE].
  *
  * heap_alloc(param_1 * param_2) then heap_zero_payload if non-null.
  * Used by heap_realloc_grow_only as (nbytes, 1).
@@ -3624,10 +3586,8 @@ uint * heap_calloc(int count /* param_1: element count */,int elem_size /* param
 
 
 
-/*
- * Original: FUN_00001ba8
- * Proposed name: heap_realloc_grow_only
- * Confidence: [PROVEN] grow-only realloc semantics
+/* Original: FUN_00001ba8; source: Pacific Conflict.c. Recovered name: heap_realloc_grow_only [PROVEN].
+ * grow-only realloc semantics
  *
  * Inputs: param_1 = existing heap payload; param_2 = requested byte capacity
  * (often cast from int). Reads current capacity from heap header just before
@@ -3722,10 +3682,7 @@ void copy_object_vertex_buffer /* Original: FUN_00001c04 */ (int object /* param
 
 
 
-/*
- * Original: FUN_00001c5c
- * Proposed name: translate_int3_vecs
- * Confidence: [PROVEN]
+/* Original: FUN_00001c5c; source: Pacific Conflict.c. Recovered name: translate_int3_vecs [PROVEN].
  *
  * For count=param_1 (low word; high word extends large counts via DBRA wrap):
  * each int[3] at param_2 → param_3 as (x+dx, y+dy, z+dz) with
@@ -3764,10 +3721,8 @@ void translate_int3_vecs(uint count /* param_1: vector count; low word is the db
 
 
 
-/*
- * Original: FUN_00001cac
- * Proposed name: scale_int3_vecs
- * Confidence: [PROVEN] body; no caller in the bytes (no BSR to file 0x1cac, no long 0x1c8c)
+/* Original: FUN_00001cac; source: Pacific Conflict.c. Recovered name: scale_int3_vecs [PROVEN].
+ * body; no caller in the bytes (no BSR to file 0x1cac, no long 0x1c8c)
  * [PROVEN, tools/decomp/xrefs.py]; a computed call remains possible
  *
  * Sibling of translate_int3_vecs: same DBRA count / int[3] stride, but
@@ -3800,10 +3755,7 @@ void scale_int3_vecs(uint count /* param_1: vector count; low word is the dbra c
 
 
 
-/*
- * Original: FUN_00001d02
- * Proposed name: matmul3x3_s16
- * Confidence: [PROVEN]
+/* Original: FUN_00001d02; source: Pacific Conflict.c. Recovered name: matmul3x3_s16 [PROVEN].
  *
  * 3×3 fixed-point matrix product: out = left × right, all s16 row-major
  * (9 shorts, row stride 6 bytes). Each element is a 3-term MULS.W dot >> 12
@@ -3916,10 +3868,7 @@ short * FUN_00001d56(void) /* Original: FUN_00001d56 — false entry; see header
 
 
 
-/*
- * Original: FUN_00001d76
- * Proposed name: sin_fixed14
- * Confidence: [PROVEN]
+/* Original: FUN_00001d76; source: Pacific Conflict.c. Recovered name: sin_fixed14 [PROVEN].
  *
  * Piecewise-linear sin from 256-entry s16 table at DAT_0001ab6c (Ghidra label;
  * usable sample base file offset 0x1ab8c is +0x20 — see NOTES trig dump).
@@ -3991,10 +3940,7 @@ int FUN_00001db8(void) /* Original: FUN_00001db8 — false entry; see header */
 
 
 
-/*
- * Original: FUN_00001dd8
- * Proposed name: cos_fixed14
- * Confidence: [PROVEN]
+/* Original: FUN_00001dd8; source: Pacific Conflict.c. Recovered name: cos_fixed14 [PROVEN].
  *
  * Cosine twin of sin_fixed14 using table DAT_0001ad6c (usable base +0x20 at
  * file 0x1ad8c). Same >>6 index / 0x3F-frac lerp. Paired with sin in
@@ -4033,10 +3979,8 @@ int cos_fixed14(uint angle /* param_1: angle 0..0x3fff (0x4000 = full turn) */) 
 
 
 
-/*
- * Original: FUN_00001e3a
- * Proposed name: acos_fixed14
- * Confidence: [PROVEN] table+search; [STRONG INFERENCE] “acos” label
+/* Original: FUN_00001e3a; source: Pacific Conflict.c. Recovered name: acos_fixed14 [PROVEN].
+ * table+search; [STRONG INFERENCE] “acos” label
  *
  * Inverse of cos_fixed14: clamp input to ±0x1000, binary-search cos table
  * DAT_0001ad6c (indices 0..0x80), then lerp to a 14-bit-style angle
@@ -4088,10 +4032,8 @@ int acos_fixed14(int x /* param_1: cosine value in 4.12, clamped to +-0x1000 */)
 
 
 
-/*
- * Original: FUN_00001ebc
- * Proposed name: atan_fixed14
- * Confidence: [PROVEN] table+search; [STRONG INFERENCE] “atan” label
+/* Original: FUN_00001ebc; source: Pacific Conflict.c. Recovered name: atan_fixed14 [PROVEN].
+ * table+search; [STRONG INFERENCE] “atan” label
  *
  * Inverse lookup on 32-bit table DAT_0001af6c (indices 0..0x7f): binary
  * search then lerp. Output is ((index − 0x3f) << 6) + fraction, masked
@@ -4143,10 +4085,8 @@ ushort atan_fixed14(int ratio /* param_1: tangent value in 4.12 */) /* Original:
 
 
 
-/*
- * Original: FUN_00001f22
- * Proposed name: attitude_from_velocity
- * Confidence: [STRONG INFERENCE] role; [PROVEN] outputs
+/* Original: FUN_00001f22; source: Pacific Conflict.c. Recovered name: attitude_from_velocity [STRONG INFERENCE].
+ * role; [PROVEN] outputs
  *
  * From velocity components (p1,p2,p3), speed p4, speed² p5: write attitude
  * angles to *param_7 and *param_6 (14-bit). Calls FUN_00002de8 via LEA+JSR
@@ -4215,10 +4155,7 @@ LAB_00001fb0:
 
 
 
-/*
- * Original: FUN_0000202a
- * Proposed name: load_attitude_angle_sincos
- * Confidence: [PROVEN]
+/* Original: FUN_0000202a; source: Pacific Conflict.c. Recovered name: load_attitude_angle_sincos [PROVEN].
  *
  * For each of four angles (param_1..4), store cos then sin into adjacent
  * scratch words used by later 020e6 / 01d02 attitude composition:
@@ -4268,10 +4205,7 @@ void load_attitude_angle_sincos(uint angle1 /* param_1: first angle */,uint angl
 
 
 
-/*
- * Original: FUN_000020a0
- * Proposed name: load_attitude_angle_sincos_5_6
- * Confidence: [PROVEN]
+/* Original: FUN_000020a0; source: Pacific Conflict.c. Recovered name: load_attitude_angle_sincos_5_6 [PROVEN].
  *
  * Companion to load_attitude_angle_sincos for the 6-angle attitude path.
  * Stores cos/sin of two extra angles into scratch used by
@@ -4304,10 +4238,8 @@ void load_attitude_angle_sincos_5_6(uint angle5 /* param_1: fifth angle */,uint 
 
 
 
-/*
- * Original: FUN_000020e6
- * Proposed name: fill_attitude_rotation_bases
- * Confidence: [PROVEN] layout; [STRONG INFERENCE] axis labels (X/Y/Z)
+/* Original: FUN_000020e6; source: Pacific Conflict.c. Recovered name: fill_attitude_rotation_bases [PROVEN].
+ * layout; [STRONG INFERENCE] axis labels (X/Y/Z)
  *
  * After load_attitude_angle_sincos, expand the first three (cos,sin) pairs
  * into three 3×3 s16 bases (0x1000 = 1.0). Capstone @0x20E6–0x219E:
@@ -4365,10 +4297,8 @@ void fill_attitude_rotation_bases(void) /* Original: FUN_000020e6 */
 
 
 
-/*
- * Original: FUN_000021a0
- * Proposed name: fill_attitude_rotation_basis_4
- * Confidence: [PROVEN] layout; [STRONG INFERENCE] ~Ry form
+/* Original: FUN_000021a0; source: Pacific Conflict.c. Recovered name: fill_attitude_rotation_basis_4 [PROVEN].
+ * layout; [STRONG INFERENCE] ~Ry form
  *
  * Expand angle4 sincos (DAT_0001d7ee/f0 from load_attitude_angle_sincos) into
  * the 3×3 basis at DAT_0001d78c:
@@ -4402,10 +4332,8 @@ void fill_attitude_rotation_basis_4(void) /* Original: FUN_000021a0 */
 
 
 
-/*
- * Original: FUN_000021e0
- * Proposed name: fill_attitude_rotation_basis_4_rx
- * Confidence: [PROVEN] layout; [STRONG INFERENCE] ~Rx form
+/* Original: FUN_000021e0; source: Pacific Conflict.c. Recovered name: fill_attitude_rotation_basis_4_rx [PROVEN].
+ * layout; [STRONG INFERENCE] ~Rx form
  *
  * Expand angle4 sincos (DAT_0001d7ee/f0) into DAT_0001d78c as ≈Rx:
  *   [[1,0,0],[0,c,-s],[0,s,c]]
@@ -4434,10 +4362,8 @@ void fill_attitude_rotation_basis_4_rx(void) /* Original: FUN_000021e0 */
 
 
 
-/*
- * Original: FUN_00002220
- * Proposed name: fill_attitude_rotation_bases_5_6
- * Confidence: [PROVEN] layout; [STRONG INFERENCE] ~Rx/~Ry axis forms
+/* Original: FUN_00002220; source: Pacific Conflict.c. Recovered name: fill_attitude_rotation_bases_5_6 [PROVEN].
+ * layout; [STRONG INFERENCE] ~Rx/~Ry axis forms
  *
  * After load_attitude_angle_sincos_5_6 has stored two extra (cos,sin) pairs at
  * DAT_0001d7ea/ec and DAT_0001d7e6/e8, expand them into two 3×3 bases:
@@ -4479,10 +4405,8 @@ void fill_attitude_rotation_bases_5_6(void) /* Original: FUN_00002220 */
 
 
 
-/*
- * Original: FUN_0000229e
- * Proposed name: build_attitude_matrix_from_dir_roll
- * Confidence: [PROVEN] math; [STRONG INFERENCE] “look/dir+roll” role
+/* Original: FUN_0000229e; source: Pacific Conflict.c. Recovered name: build_attitude_matrix_from_dir_roll [PROVEN].
+ * math; [STRONG INFERENCE] “look/dir+roll” role
  *
  * Build a 3×3 attitude into param_5 from direction (param_1,2,3)= (x,y,z) and
  * roll angle param_4. Writes the usual sincos scratch (same slots as
@@ -4589,10 +4513,8 @@ void build_attitude_matrix_from_dir_roll(int x /* param_1: direction x */,int y 
 
 
 
-/*
- * Original: FUN_00002428
- * Proposed name: finalize_attitude_matrix_3ang_alt
- * Confidence: [PROVEN] composition; [STRONG INFERENCE] “alt” vs tagged 3ang
+/* Original: FUN_00002428; source: Pacific Conflict.c. Recovered name: finalize_attitude_matrix_3ang_alt [PROVEN].
+ * composition; [STRONG INFERENCE] “alt” vs tagged 3ang
  *
  * Twin of finalize_attitude_matrix_3ang without the DAT_00020ce4=$2408 tag,
  * and with swapped middle/last bases in the two matmuls:
@@ -4621,10 +4543,8 @@ void finalize_attitude_matrix_3ang_alt(int out /* param_1: output 3x3 s16 matrix
 
 
 
-/*
- * Original: FUN_00002464
- * Proposed name: build_attitude_matrix_3ang_alt
- * Confidence: [PROVEN] chain
+/* Original: FUN_00002464; source: Pacific Conflict.c. Recovered name: build_attitude_matrix_3ang_alt [PROVEN].
+ * chain
  *
  * Same entry as build_attitude_matrix_3ang: load_attitude_angle_sincos(a,b,c,0)
  * then finalize — but finishes via finalize_attitude_matrix_3ang_alt (untagged,
@@ -4649,10 +4569,8 @@ void build_attitude_matrix_3ang_alt(uint angle1 /* param_1: angle 1 of load_atti
 
 
 
-/*
- * Original: FUN_00002488
- * Proposed name: compose_attitude_matrix_x_alt
- * Confidence: [PROVEN] composition; [STRONG INFERENCE] “alt” vs tagged X path
+/* Original: FUN_00002488; source: Pacific Conflict.c. Recovered name: compose_attitude_matrix_x_alt [PROVEN].
+ * composition; [STRONG INFERENCE] “alt” vs tagged X path
  *
  * Twin of compose_attitude_matrix_x without DAT_00020ce4=$2468, and with an
  * alternate three-matmul association after filling bases + Rx (021e0):
@@ -4683,10 +4601,8 @@ void compose_attitude_matrix_x_alt(int out /* param_1: output 3x3 s16 matrix */)
 
 
 
-/*
- * Original: FUN_000024d6
- * Proposed name: build_attitude_matrix_x_alt
- * Confidence: [PROVEN] chain
+/* Original: FUN_000024d6; source: Pacific Conflict.c. Recovered name: build_attitude_matrix_x_alt [PROVEN].
+ * chain
  *
  * Four-angle attitude build via load_attitude_angle_sincos then
  * compose_attitude_matrix_x_alt. Sibling of build_attitude_matrix_x, which
@@ -4712,10 +4628,8 @@ void build_attitude_matrix_x_alt(uint angle1 /* param_1: angle 1 of load_attitud
 
 
 
-/*
- * Original: FUN_000024f8
- * Proposed name: finalize_attitude_matrix_3ang
- * Confidence: [PROVEN] composition; [STRONG INFERENCE] role label
+/* Original: FUN_000024f8; source: Pacific Conflict.c. Recovered name: finalize_attitude_matrix_3ang [PROVEN].
+ * composition; [STRONG INFERENCE] role label
  *
  * Finish a 3-angle attitude matrix into param_1 after FUN_0000202a has loaded
  * angle bases. Sets scratch tag DAT_00020ce4 = 0x2408, runs FUN_000020e6
@@ -4745,10 +4659,8 @@ void finalize_attitude_matrix_3ang(int out /* param_1: output 3x3 s16 matrix */)
 
 
 
-/*
- * Original: FUN_0000253e
- * Proposed name: build_attitude_matrix_3ang
- * Confidence: [PROVEN] composition chain
+/* Original: FUN_0000253e; source: Pacific Conflict.c. Recovered name: build_attitude_matrix_3ang [PROVEN].
+ * composition chain
  *
  * Build a 3×3 attitude/rotation matrix into param_4 from three 14-bit-style
  * angles. Calls load_attitude_angle_sincos( /* Original: FUN_0000202a */a,b,c,0) — fourth angle forced to 0 — then
@@ -4780,10 +4692,8 @@ void build_attitude_matrix_3ang(uint angle1 /* param_1: angle 1 of load_attitude
 
 
 
-/*
- * Original: FUN_00002562
- * Proposed name: finalize_attitude_matrix_4ang
- * Confidence: [PROVEN] composition
+/* Original: FUN_00002562; source: Pacific Conflict.c. Recovered name: finalize_attitude_matrix_4ang [PROVEN].
+ * composition
  *
  * Compose the final 3×3 attitude into param_1 from the four bases filled by
  * fill_attitude_rotation_bases + fill_attitude_rotation_basis_4:
@@ -4816,10 +4726,8 @@ void finalize_attitude_matrix_4ang(int out /* param_1: output 3x3 s16 matrix */)
 
 
 
-/*
- * Original: FUN_000025a8
- * Proposed name: build_attitude_matrix
- * Confidence: [PROVEN] composition chain; [STRONG INFERENCE] axis order
+/* Original: FUN_000025a8; source: Pacific Conflict.c. Recovered name: build_attitude_matrix [PROVEN].
+ * composition chain; [STRONG INFERENCE] axis order
  *
  * Builds a 3×3 attitude matrix into param_5 via FUN_0000202a (angle setup) →
  * fill_attitude_rotation_bases → fill_attitude_rotation_basis_4 → finalize_attitude_matrix_4ang. Args are 14-bit angles
@@ -4845,10 +4753,7 @@ void build_attitude_matrix(uint angle4 /* param_1: angle 4 of load_attitude_angl
 
 
 
-/*
- * Original: FUN_000025d6
- * Proposed name: compose_attitude_matrix_x
- * Confidence: [PROVEN]
+/* Original: FUN_000025d6; source: Pacific Conflict.c. Recovered name: compose_attitude_matrix_x [PROVEN].
  *
  * X-axis attitude compose after load_attitude_angle_sincos:
  *   DAT_00020ce4 = 0x2468;
@@ -4884,10 +4789,8 @@ void compose_attitude_matrix_x(int out /* param_1: output 3x3 s16 matrix */) /* 
 
 
 
-/*
- * Original: FUN_0000262e
- * Proposed name: build_attitude_matrix_x
- * Confidence: [PROVEN] composition; sibling of build_attitude_matrix
+/* Original: FUN_0000262e; source: Pacific Conflict.c. Recovered name: build_attitude_matrix_x [PROVEN].
+ * composition; sibling of build_attitude_matrix
  *
  * Same angle setup as build_attitude_matrix but finishes via
  * compose_attitude_matrix_x (fill bases + Rx basis_4 + three matmuls, tag
@@ -4907,10 +4810,8 @@ void build_attitude_matrix_x(uint angle4 /* param_1: angle 4 of load_attitude_an
 
 
 
-/*
- * Original: FUN_00002654
- * Proposed name: compose_attitude_matrix_6ang
- * Confidence: [PROVEN] composition; [STRONG INFERENCE] “6ang” (4+2 loads)
+/* Original: FUN_00002654; source: Pacific Conflict.c. Recovered name: compose_attitude_matrix_6ang [PROVEN].
+ * composition; [STRONG INFERENCE] “6ang” (4+2 loads)
  *
  * Extended attitude compose: sets DAT_00020ce4=$26e0, fills the usual three
  * bases + Rx (021e0), then fill_attitude_rotation_bases_5_6 which builds two extra bases at
@@ -4946,10 +4847,8 @@ void compose_attitude_matrix_6ang(int out /* param_1: output 3x3 s16 matrix */) 
 
 
 
-/*
- * Original: FUN_000026cc
- * Proposed name: build_attitude_matrix_6ang
- * Confidence: [PROVEN] chain
+/* Original: FUN_000026cc; source: Pacific Conflict.c. Recovered name: build_attitude_matrix_6ang [PROVEN].
+ * chain
  *
  * Six-angle attitude build:
  *   load_attitude_angle_sincos(a,b,c,d)
@@ -4975,10 +4874,8 @@ void build_attitude_matrix_6ang(uint angle1 /* param_1: angle 1 */,uint angle2 /
 
 
 
-/*
- * Original: FUN_00002700
- * Proposed name: compose_attitude_matrix_6ang_alt
- * Confidence: [PROVEN] composition; [STRONG INFERENCE] “alt” vs tagged 6ang
+/* Original: FUN_00002700; source: Pacific Conflict.c. Recovered name: compose_attitude_matrix_6ang_alt [PROVEN].
+ * composition; [STRONG INFERENCE] “alt” vs tagged 6ang
  *
  * Twin of compose_attitude_matrix_6ang without DAT_00020ce4=$26e0, and with
  * reversed matmul association after the same three fill helpers:
@@ -5010,10 +4907,8 @@ void compose_attitude_matrix_6ang_alt(int out /* param_1: output 3x3 s16 matrix 
 
 
 
-/*
- * Original: FUN_0000276e
- * Proposed name: build_attitude_matrix_6ang_alt
- * Confidence: [PROVEN] chain
+/* Original: FUN_0000276e; source: Pacific Conflict.c. Recovered name: build_attitude_matrix_6ang_alt [PROVEN].
+ * chain
  *
  * Six-angle attitude build via the untagged alt compose:
  *   load_attitude_angle_sincos(a,b,c,d)
@@ -5039,10 +4934,8 @@ void build_attitude_matrix_6ang_alt(uint angle1 /* param_1: angle 1 */,uint angl
 
 
 
-/*
- * Original: FUN_000027a2
- * Proposed name: invoke_tagged_attitude_compose_neg_sins4
- * Confidence: [PROVEN] negates+JSR; [STRONG INFERENCE] role vs mirror/reflect
+/* Original: FUN_000027a2; source: Pacific Conflict.c. Recovered name: invoke_tagged_attitude_compose_neg_sins4 [PROVEN].
+ * negates+JSR; [STRONG INFERENCE] role vs mirror/reflect
  *
  * Negate the four sin scratch words from load_attitude_angle_sincos
  * (DAT_0001d7fc/f8/f4/f0 = sins of angles 1–4), then JSR through
@@ -5089,10 +4982,8 @@ void invoke_tagged_attitude_compose_neg_sins4(undefined4 out /* param_1: output 
 
 
 
-/*
- * Original: FUN_000027cc
- * Proposed name: invoke_tagged_attitude_compose_neg_sins6
- * Confidence: [PROVEN] negates+JSR; [STRONG INFERENCE] 6-angle counterpart
+/* Original: FUN_000027cc; source: Pacific Conflict.c. Recovered name: invoke_tagged_attitude_compose_neg_sins6 [PROVEN].
+ * negates+JSR; [STRONG INFERENCE] 6-angle counterpart
  *
  * Same as invoke_tagged_attitude_compose_neg_sins4, plus negate the two extra
  * sin words from load_attitude_angle_sincos_5_6 (DAT_0001d7ec / 1d7e8), then
@@ -5118,10 +5009,7 @@ void invoke_tagged_attitude_compose_neg_sins6(undefined4 out /* param_1: output 
 
 
 
-/*
- * Original: FUN_00002802
- * Proposed name: transform_int3_vecs_asr_by_1d744
- * Confidence: [PROVEN]
+/* Original: FUN_00002802; source: Pacific Conflict.c. Recovered name: transform_int3_vecs_asr_by_1d744 [PROVEN].
  *
  * For count=param_1 (DBRA + high-word extend, same pattern as
  * transform_vecs12_by_matrix3): each int32×3 at param_2 is arithmetic-shifted
@@ -5170,10 +5058,8 @@ void transform_int3_vecs_asr_by_1d744(uint count /* param_1: vector count; low w
 
 
 
-/*
- * Original: FUN_000028a6
- * Proposed name: rotate_int3_vecs_by_3ang
- * Confidence: [PROVEN] chain
+/* Original: FUN_000028a6; source: Pacific Conflict.c. Recovered name: rotate_int3_vecs_by_3ang [PROVEN].
+ * chain
  *
  * Thin wrapper: build_attitude_matrix_3ang(a,b,c → stack matrix) then
  * transform_int3_vecs_by_matrix3(count, src, dst, matrix).
@@ -5198,10 +5084,7 @@ void rotate_int3_vecs_by_3ang(uint angle1 /* param_1: angle 1 */,uint angle2 /* 
 
 
 
-/*
- * Original: FUN_000028dc
- * Proposed name: transform_vecs12_by_matrix3
- * Confidence: [PROVEN]
+/* Original: FUN_000028dc; source: Pacific Conflict.c. Recovered name: transform_vecs12_by_matrix3 [PROVEN].
  *
  * For count=param_1 (low word; high word extends large counts): each 0xC-byte
  * record at param_2 has shorts at +2/+6/+10 transformed by 3×3 matrix param_4
@@ -5251,10 +5134,7 @@ void transform_vecs12_by_matrix3(uint count /* param_1: vector count; low word i
 
 
 
-/*
- * Original: FUN_00002976
- * Proposed name: transform_vecs12_to_int3_by_matrix3
- * Confidence: [PROVEN]
+/* Original: FUN_00002976; source: Pacific Conflict.c. Recovered name: transform_vecs12_to_int3_by_matrix3 [PROVEN].
  *
  * Same input layout as transform_vecs12_by_matrix3 (0xC-byte records, s16 at
  * +2/+6/+10 × explicit 3×3, +0x800>>12) but writes int32×3 to param_3
@@ -5297,10 +5177,8 @@ void transform_vecs12_to_int3_by_matrix3(uint count /* param_1: vector count; lo
 
 
 
-/*
- * Original: FUN_00002a0e
- * Proposed name: transform_listed_object_vecs12_by_1d744
- * Confidence: [PROVEN] loop+math; [STRONG INFERENCE] object-list role
+/* Original: FUN_00002a0e; source: Pacific Conflict.c. Recovered name: transform_listed_object_vecs12_by_1d744 [PROVEN].
+ * loop+math; [STRONG INFERENCE] object-list role
  *
  * For each object pointer in the slice
  *   DAT_0001c9dc[DAT_0001bdb8.. DAT_0001c1d6)
@@ -5428,10 +5306,7 @@ void FUN_00002aba(void) /* false mid-label; do not rename call sites */
 
 
 
-/*
- * Original: FUN_00002ada
- * Proposed name: transform_int3_vecs_by_matrix3
- * Confidence: [PROVEN]
+/* Original: FUN_00002ada; source: Pacific Conflict.c. Recovered name: transform_int3_vecs_by_matrix3 [PROVEN].
  *
  * Transform count (param_1) int[3] vectors at param_2 into param_3 (may alias)
  * by 3×3 matrix of shorts at param_4 (row-major, 9×s16 → sign-extended locals).
@@ -5512,10 +5387,7 @@ short * transform_int3_vecs_by_matrix3(int count /* param_1: vector count */,int
 
 
 
-/*
- * Original: FUN_00002bd8
- * Proposed name: apply_template_chain_xform
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00002bd8; source: Pacific Conflict.c. Recovered name: apply_template_chain_xform [STRONG INFERENCE].
  *
  * Walk template linked list from obj+0x24. For each node, select the 0x18 slot
  * at *(node+0x30) + obj[+2]*0x18. If slot angles (+2/+4/+6) non-zero, build a
@@ -5615,10 +5487,7 @@ void apply_template_chain_xform(int obj /* param_1: object (+2 slot index, +0x18
 
 
 
-/*
- * Original: FUN_00002d10
- * Proposed name: apply_template_chain_xform_always
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00002d10; source: Pacific Conflict.c. Recovered name: apply_template_chain_xform_always [STRONG INFERENCE].
  *
  * Sibling of apply_template_chain_xform. Same +0x24 chain walk and null-aux
  * xyz commit, but ALWAYS builds rotation via FUN_0000253e (no zero-angle skip)
@@ -5752,10 +5621,7 @@ void FUN_00002de8(void) /* Original: FUN_00002de8 — false entry; see header */
 
 
 
-/*
- * Original: FUN_00002e08
- * Proposed name: abs_int
- * Confidence: [PROVEN]
+/* Original: FUN_00002e08; source: Pacific Conflict.c. Recovered name: abs_int [PROVEN].
  *
  * Signed 32-bit absolute value: if param_1 < 0 return -param_1, else param_1.
  * Ubiquitous magnitude helper (flight clamps, attitude deltas, distance gates).
@@ -7045,10 +6911,8 @@ void start_mission_scene /* Original: FUN_00003ac4 */ (int mission /* param_1: m
 
 
 
-/*
- * Original: FUN_00003b98
- * Proposed name: update_object_camera_metric
- * Confidence: [PROVEN] axes+combine; Ghidra void omits D0 return
+/* Original: FUN_00003b98; source: Pacific Conflict.c. Recovered name: update_object_camera_metric [PROVEN].
+ * axes+combine; Ghidra void omits D0 return
  *
  * Camera-relative distance metric for a world object:
  *   a = abs_int(*(obj+0x18) − DAT_0001d838)
@@ -7132,10 +6996,7 @@ void FUN_00003be0(void) /* false mid-label; do not rename call sites yet */
 
 
 
-/*
- * Original: FUN_00003c00
- * Proposed name: compute_camera_abs_metric
- * Confidence: [PROVEN]
+/* Original: FUN_00003c00; source: Pacific Conflict.c. Recovered name: compute_camera_abs_metric [PROVEN].
  *
  * Same metric as update_object_camera_metric, but on three stack args
  * (world X/Y/Z) instead of an object record:
@@ -7217,10 +7078,7 @@ int FUN_00003c48(void) /* Original: FUN_00003c48 */
 
 
 
-/*
- * Original: FUN_00003c68
- * Proposed name: approx_dist3_xyz
- * Confidence: [PROVEN]
+/* Original: FUN_00003c68; source: Pacific Conflict.c. Recovered name: approx_dist3_xyz [PROVEN].
  *
  * Stack: (x1,y1,z1, x2,y2,z2). Abs each Δ via LEA+$2DE8→abs_int, then
  * max(|Δ|) + ((sum of other two)>>2). Fast 3D distance approx (not Euclidean).
@@ -7759,11 +7617,7 @@ LAB_00004340:
 
 
 
-/*
- * Original: FUN_0000435a
- * Source: Pacific Conflict.c:5008 / binary @0x435A
- * Proposed name: apply_entity_mission_rates
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_0000435a; source: Pacific Conflict.c:5008 / binary @0x435A. Recovered name: apply_entity_mission_rates [STRONG INFERENCE].
  *
  * Inputs:
  *   entity — live object (kind at [0], index at [1], flags at [5]/[7], …)
@@ -7865,11 +7719,7 @@ void apply_entity_mission_rates(char *entity, int path) /* Original: FUN_0000435
 
 
 
-/*
- * Original: FUN_000044a4
- * Source: Pacific Conflict.c:5079 / binary @0x44A4
- * Proposed name: dispatch_entity_tick
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000044a4; source: Pacific Conflict.c:5079 / binary @0x44A4. Recovered name: dispatch_entity_tick [STRONG INFERENCE].
  *
  * Per-entity entry from run_simulation_tick:
  *   1) apply_entity_mission_rates(entity, path)
@@ -7899,11 +7749,8 @@ void dispatch_entity_tick(char *entity, int path) /* Original: FUN_000044a4 */
 
 
 
-/*
- * Original: FUN_000044e8
- * Source: Pacific Conflict.c:5096 / binary @0x44E8–0x45B8
- * Proposed name: run_simulation_tick
- * Confidence: [PROVEN] control flow / pass order; [STRONG INFERENCE] role name
+/* Original: FUN_000044e8; source: Pacific Conflict.c:5096 / binary @0x44E8–0x45B8. Recovered name: run_simulation_tick [PROVEN].
+ * control flow / pass order; [STRONG INFERENCE] role name
  *
  * Main simulation tick dispatcher. See docs/history/contracts/tick_FUN_000044e8_contract.md.
  *
@@ -7991,11 +7838,7 @@ void run_simulation_tick(void) /* Original: FUN_000044e8 */
 
 
 
-/*
- * Original: FUN_000045ba
- * Source: Pacific Conflict.c:5149 / binary @0x45BA
- * Proposed name: alloc_object_from_desc
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000045ba; source: Pacific Conflict.c:5149 / binary @0x45BA. Recovered name: alloc_object_from_desc [STRONG INFERENCE].
  *
  * Inputs: desc — packed descriptor; byte0 = kind tag.
  * Outputs: newly allocated object pointer (or garbage if tag not 2/3 — [UNKNOWN]).
@@ -8067,11 +7910,7 @@ uint * alloc_object_from_desc(char *desc) /* Original: FUN_000045ba */
 
 
 
-/*
- * Original: FUN_00004690
- * Source: Pacific Conflict.c:5195 / binary @0x4690
- * Proposed name: instantiate_object_from_desc
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00004690; source: Pacific Conflict.c:5195 / binary @0x4690. Recovered name: instantiate_object_from_desc [STRONG INFERENCE].
  *
  * Inputs: desc — descriptor; desc[1] = template type id (0 = skip template bind).
  * Outputs: object from alloc_object_from_desc; optional subtype payload at obj+8.
@@ -8114,10 +7953,7 @@ uint * instantiate_object_from_desc(char *desc) /* Original: FUN_00004690 */
 
 
 
-/*
- * Original: FUN_000046da
- * Proposed name: instantiate_mission_pool_slot
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000046da; source: Pacific Conflict.c. Recovered name: instantiate_mission_pool_slot [STRONG INFERENCE].
  *
  * Called after spawn_mission_pool_object fills slot xyz/att. Args:
  *   param_1 = mission root (DAT_0001d6fc); param_2 = template/type index;
@@ -8200,10 +8036,8 @@ void instantiate_mission_pool_slot(uint root /* param_1: root object (+0x28 temp
 
 // WARNING: Globals starting with '_' overlap smaller symbols at the same address
 
-/*
- * Original: FUN_00004808
- * Proposed name: build_object_poly_buffers
- * Confidence: [PROVEN] sizing/record/index layout; [STRONG INFERENCE] “poly” label
+/* Original: FUN_00004808; source: Pacific Conflict.c. Recovered name: build_object_poly_buffers [PROVEN].
+ * sizing/record/index layout; [STRONG INFERENCE] “poly” label
  *
  * Build per-object polygon table at obj+0x48 from a packed descriptor stream
  * (param_2). Called from activate_near_range_object kind-2 after +0x44/+0x4c alloc.
@@ -8653,10 +8487,7 @@ void reset_object_to_template_pose_tail /* Original: FUN_00004e4e */ (void)
 
 
 
-/*
- * Original: FUN_00004e6e
- * Proposed name: activate_near_range_object
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00004e6e; source: Pacific Conflict.c. Recovered name: activate_near_range_object [STRONG INFERENCE].
  *
  * Bring a world object into the near/active set after the 046da distance gate
  * ((metric − obj+0xC) < 0x19C80). Kind byte *obj selects the path.
@@ -8825,10 +8656,7 @@ LAB_00005108:
 
 
 
-/*
- * Original: FUN_00005116
- * Proposed name: spawn_mission_pool_object
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00005116; source: Pacific Conflict.c. Recovered name: spawn_mission_pool_object [STRONG INFERENCE].
  *
  * Scan mission child table *(DAT_0001d6fc+0x30) for free 0x18 slot (+0x14==0);
  * grow by 10 via heap_realloc_grow_only if full. Fill xyz
@@ -8892,10 +8720,7 @@ int spawn_mission_pool_object(int tmpl_obj /* param_1: object whose byte +1 give
 
 
 
-/*
- * Original: FUN_000051ec
- * Proposed name: retire_entity
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000051ec; source: Pacific Conflict.c. Recovered name: retire_entity [STRONG INFERENCE].
  *
  * Full entity retirement: clear DAT_0001b880 if entity+8 matches; if
  * field_01!=field_02 null mission-table slot at
@@ -8947,10 +8772,7 @@ void retire_entity(int obj /* param_1: entity to retire */) /* Original: FUN_000
 
 
 
-/*
- * Original: FUN_0000528a
- * Proposed name: dispatch_entity_cleanup
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_0000528a; source: Pacific Conflict.c. Recovered name: dispatch_entity_cleanup [STRONG INFERENCE].
  *
  * Pending-slot / entity cleanup gate used by clear_pending_entity_slots and
  * many free paths. Early-out if flags_07 bit1 set. Else: if
@@ -9779,12 +9601,8 @@ LAB_00005d94:
 
 
 
-/*
- * Original: FUN_00005df8
+/* Original: FUN_00005df8; source: Pacific Conflict.c:6434 / binary @0x5DF8. Recovered name: clear_pending_entity_slots [STRONG INFERENCE].
  * VERIFIED: checked against an independent capstone disassembly of the overlay bytes at 0x5df8: d2 = 0..6 (ble); non-zero slot $1bc64[d2] -> bsr $528a (dispatch_entity_cleanup), clr.l slot - identical.
- * Source: Pacific Conflict.c:6434 / binary @0x5DF8
- * Proposed name: clear_pending_entity_slots
- * Confidence: [STRONG INFERENCE]
  *
  * Called from run_simulation_tick when mission flag DAT_0001b5a0+0xAC == 0.
  * Walks seven pointer slots at DAT_0001bc64[0..6]: for each non-null entry,
@@ -10744,11 +10562,7 @@ void update_view_clip_bounds /* Original: FUN_00006ed6 */ (void)
 
 
 
-/*
- * Original: FUN_00006fb8
- * Source: Pacific Conflict.c:7180 / binary @0x6FB8
- * Proposed name: reset_distance_base_globals
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00006fb8; source: Pacific Conflict.c:7180 / binary @0x6FB8. Recovered name: reset_distance_base_globals [STRONG INFERENCE].
  *
  * Post-pass hook at end of run_simulation_tick (when phase gate passes).
  * Writes 100000000 (0x05F5E100) into six globals [PROVEN]:
@@ -18443,10 +18257,7 @@ uint * create_enemy_bomber /* Original: FUN_0000e340 */ (uint obj /* param_1: ai
 
 
 
-/*
- * Original: FUN_0000e372
- * Proposed name: isqrt_floor
- * Confidence: [PROVEN]
+/* Original: FUN_0000e372; source: Pacific Conflict.c. Recovered name: isqrt_floor [PROVEN].
  *
  * Integer floor sqrt via binary search on [0,0x7FFF]; returns largest s with
  * s*s <= param_1 (capped at 0x7ffe; 0 for negative input, see below). Used in e792 airborne (e²+a²+6²) and grounded (e²+6²).
@@ -18499,10 +18310,8 @@ int isqrt_floor(int n /* param_1: value whose integer square root is wanted */) 
 
 
 
-/*
- * Original: FUN_0000e3b2
- * Proposed name: acos_scaled_dot3
- * Confidence: [PROVEN] formula; [STRONG INFERENCE] acos via FUN_00001e3a
+/* Original: FUN_0000e3b2; source: Pacific Conflict.c. Recovered name: acos_scaled_dot3 [PROVEN].
+ * formula; [STRONG INFERENCE] acos via FUN_00001e3a
  *
  * Capstone @0xE3B2–0xE40A:
  *   denom = (param_4 * param_8) >> 16
@@ -18539,10 +18348,7 @@ int acos_scaled_dot3(int ax /* param_1: vector a x */,int ay /* param_2: vector 
 
 
 
-/*
- * Original: FUN_0000e40c
- * Proposed name: fold_angle_pm_0x2000
- * Confidence: [PROVEN]
+/* Original: FUN_0000e40c; source: Pacific Conflict.c. Recovered name: fold_angle_pm_0x2000 [PROVEN].
  *
  * Fold a signed angle into [-0x2000, +0x2000]: if >0x2000 subtract 0x4000;
  * if < -0x2000 add 0x4000. Used widely for attitude deltas (e792 landing
@@ -18568,10 +18374,8 @@ int fold_angle_pm_0x2000(short angle /* param_1: 14-bit angle folded into -0x200
 
 
 
-/*
- * Original: FUN_0000e42a
- * Proposed name: table_lerp_1b2c0
- * Confidence: [PROVEN] algorithm; [HYPOTHESIS] physical quantity of input
+/* Original: FUN_0000e42a; source: Pacific Conflict.c. Recovered name: table_lerp_1b2c0 [PROVEN].
+ * algorithm; [HYPOTHESIS] physical quantity of input
  *
  * Banded lerp over overlapping DAT_0001b2c0: high word selects band
  * (clamped 0..7); low word weights (hi−lo)<<16 fraction.
@@ -18611,10 +18415,7 @@ int table_lerp_1b2c0(uint altitude /* param_1: altitude, 16.16 (high word = band
 
 
 
-/*
- * Original: FUN_0000e468
- * Proposed name: damp_short_if_below_0x200
- * Confidence: [PROVEN]
+/* Original: FUN_0000e468; source: Pacific Conflict.c. Recovered name: damp_short_if_below_0x200 [PROVEN].
  *
  * If param_1 < 0x200, reduce param_2 by ((0x200−param_1)*param_2)>>12
  * (toward-zero style for negative products via +0xfff). Else return param_2.
@@ -18643,10 +18444,8 @@ int damp_short_if_below_0x200(int height /* param_1: height above the ground (wo
 
 
 
-/*
- * Original: FUN_0000e4a4
- * Proposed name: compute_template_force_from_626
- * Confidence: [PROVEN] algorithm; [STRONG INFERENCE] “force” as 0x63a feed
+/* Original: FUN_0000e4a4; source: Pacific Conflict.c. Recovered name: compute_template_force_from_626 [PROVEN].
+ * algorithm; [STRONG INFERENCE] “force” as 0x63a feed
  *
  * Inputs: param_1=movement_626, param_2=signed char 0x67b (0→base coeffs),
  * param_3→entity+0x19e (set to 0xC when 626 > template+0x34).
@@ -18758,10 +18557,7 @@ int compute_template_force_from_626_tail /* Original: FUN_0000e512 */ (void)
 
 
 
-/*
- * Original: FUN_0000e570
- * Proposed name: scale_template_field_38
- * Confidence: [PROVEN]
+/* Original: FUN_0000e570; source: Pacific Conflict.c. Recovered name: scale_template_field_38 [PROVEN].
  *
  * *param_2 = template(+0x38) * (0x551a / ((param_1+0x105)>>3)) >> 8.
  * In e792, param_1 is raw table_lerp_1b2c0 (sVar15), not the e468-damped value.
@@ -18890,11 +18686,8 @@ void aircraft_tick /* Original: FUN_0000e5aa */ (int *ctl /* param_1: aircraft c
 
 // WARNING: Globals starting with '_' overlap smaller symbols at the same address
 
-/*
- * Original: FUN_0000e792
- * Source: Pacific Conflict.c:14018–14748 / binary @0xE792
- * Proposed name: update_aircraft_entity
- * Confidence: [STRONG INFERENCE] overall role; blocks annotated incrementally
+/* Original: FUN_0000e792; source: Pacific Conflict.c:14018–14748 / binary @0xE792. Recovered name: update_aircraft_entity [STRONG INFERENCE].
+ * overall role; blocks annotated incrementally
  *
  * Large per-entity flight/combat update. NOT called from run_simulation_tick /
  * dispatch_entity_tick — callers include tick_ai_climb_then_waypoint,
@@ -20802,10 +20595,7 @@ LAB_000102a8:
 
 
 
-/*
- * Original: FUN_000102d6
- * Proposed name: atan2_fixed14
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000102d6; source: Pacific Conflict.c. Recovered name: atan2_fixed14 [STRONG INFERENCE].
  *
  * 14-bit heading from two signed components (dx, dy/dz): abs each via
  * LEA+$2DE8→abs_int, then atan_fixed14 on the dominant-axis ratio with
@@ -20849,10 +20639,7 @@ ushort atan2_fixed14(short dx /* param_1: first component (dx per the header) */
 
 
 
-/*
- * Original: FUN_00010360
- * Proposed name: build_relative_steer_sample
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010360; source: Pacific Conflict.c. Recovered name: build_relative_steer_sample [STRONG INFERENCE].
  *
  * From entity + target world (x,y,z):
  *   *param_5 ← altitude/range metric (obj+0x1c + p1[3]*0x2d − entity+0x2e);
@@ -20977,10 +20764,8 @@ LAB_00010464:
 
 
 
-/*
- * Original: FUN_00010558
- * Proposed name: enqueue_control_inputs_avg4
- * Confidence: [PROVEN] ring+average; [STRONG INFERENCE] “control inputs”
+/* Original: FUN_00010558; source: Pacific Conflict.c. Recovered name: enqueue_control_inputs_avg4 [PROVEN].
+ * ring+average; [STRONG INFERENCE] “control inputs”
  *
  * When entity +0x685 bit0 clear: clamp (p4±0x140, p2±0x40, p3±0x200), push
  * into 4-slot rings at +0x644 / +0x64c / +0x654 (index +0x642), maintain
@@ -21296,10 +21081,7 @@ LAB_00010700:
 
 
 
-/*
- * Original: FUN_000109ba
- * Proposed name: apply_relative_heading_steer
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_000109ba; source: Pacific Conflict.c. Recovered name: apply_relative_heading_steer [STRONG INFERENCE].
  *
  * Entity steering update from a relative sample:
  *   param_1 — entity base
@@ -21400,10 +21182,7 @@ LAB_00010b0a:
 
 
 
-/*
- * Original: FUN_00010b2e
- * Proposed name: steer_entity_toward_point
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010b2e; source: Pacific Conflict.c. Recovered name: steer_entity_toward_point [STRONG INFERENCE].
  *
  * Thin wrapper: build_relative_steer_sample( /* Original: FUN_00010360 */entity, x,y,z, …) builds range + relative
  * sample buffer, then apply_relative_heading_steer. Call sites pass world
@@ -21429,10 +21208,7 @@ void steer_entity_toward_point(int *ctl /* param_1: aircraft controller */,int x
 
 
 
-/*
- * Original: FUN_00010b84
- * Proposed name: ai_bootstrap_climb_phase
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010b84; source: Pacific Conflict.c. Recovered name: ai_bootstrap_climb_phase [STRONG INFERENCE].
  *
  * AI script phase-0 helper: ensure +0x67b≠0; if altΔ>200 and +0x679>0 flip
  * 679; set throttle +0x668=9; steer pitch toward fold(0x2c0 − att@+0x20)
@@ -21493,10 +21269,7 @@ bool ai_bootstrap_climb_phase(int *ctl /* param_1: aircraft controller */) /* Or
 
 
 
-/*
- * Original: FUN_00010c2c
- * Proposed name: adjust_ai_throttle_vs_speed
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010c2c; source: Pacific Conflict.c. Recovered name: adjust_ai_throttle_vs_speed [STRONG INFERENCE].
  *
  * error = param_2 − (entity+0x62a >> 2); store at +0x620. First-order
  * blend with prior into +0x63c fractional accumulator; add high byte into
@@ -21553,10 +21326,8 @@ void adjust_ai_throttle_vs_speed(int *ctl /* param_1: aircraft controller */,sho
 
 
 
-/*
- * Original: FUN_00010cb2
- * Proposed name: max_ai_throttle_maybe_invert_679
- * Confidence: [PROVEN] +0x668=9; [STRONG INFERENCE] throttle / +0x679 bias
+/* Original: FUN_00010cb2; source: Pacific Conflict.c. Recovered name: max_ai_throttle_maybe_invert_679 [PROVEN].
+ * +0x668=9; [STRONG INFERENCE] throttle / +0x679 bias
  *
  * Writes 9 to entity +0x668 (Ghidra param_1+0x19a; clamped 0..9 elsewhere
  * in adjust_ai_throttle_vs_speed). If +0x679 > 0 and (obj+0x1c − entity+0x2e) > 100,
@@ -21591,10 +21362,8 @@ void max_ai_throttle_maybe_invert_679(int *ctl /* param_1: aircraft controller *
 
 
 
-/*
- * Original: FUN_00010cd8
- * Proposed name: invert_ai_bias_67b_if_positive
- * Confidence: [PROVEN] op; [STRONG INFERENCE] “AI bias” label
+/* Original: FUN_00010cd8; source: Pacific Conflict.c. Recovered name: invert_ai_bias_67b_if_positive [PROVEN].
+ * op; [STRONG INFERENCE] “AI bias” label
  *
  * If entity +0x67b > 0, negate it (same pattern as +0x679 flips elsewhere).
  * Capstone @0x10CD8–0x10CE6. Callers @0x1008E/@0x100B0/@0x1029E.
@@ -21619,10 +21388,7 @@ void invert_ai_bias_67b_if_positive(int ctl /* param_1: aircraft controller (+0x
 
 
 
-/*
- * Original: FUN_00010ce8
- * Proposed name: tick_ai_climb_then_waypoint
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010ce8; source: Pacific Conflict.c. Recovered name: tick_ai_climb_then_waypoint [STRONG INFERENCE].
  *
  * Per-frame AI tick using script block at entity +0x616:
  *   *script==0 → ai_bootstrap_climb_phase; on true, advance *script.
@@ -21676,10 +21442,7 @@ void tick_ai_climb_then_waypoint(int *ctl /* param_1: aircraft controller */) /*
 
 
 
-/*
- * Original: FUN_00010d68
- * Proposed name: ensure_ai_script_1b2e0_tick
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010d68; source: Pacific Conflict.c. Recovered name: ensure_ai_script_1b2e0_tick [STRONG INFERENCE].
  *
  * If +0x616 unset: FUN_000168d2(..., &DAT_0001b2e0) → script; word[1]=0x9d8
  * (throttle target). Then tick_ai_climb_then_waypoint.
@@ -21708,10 +21471,7 @@ void ensure_ai_script_1b2e0_tick(int *ctl /* param_1: aircraft controller */) /*
 
 
 
-/*
- * Original: FUN_00010da8
- * Proposed name: ensure_ai_script_1b310_tick
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010da8; source: Pacific Conflict.c. Recovered name: ensure_ai_script_1b310_tick [STRONG INFERENCE].
  *
  * Same as 10d68 with DAT_0001b310 and throttle word 0xd5c.
  * Caller: FUN_00010ecc @0x10ED8.
@@ -21737,10 +21497,7 @@ void ensure_ai_script_1b310_tick(int *ctl /* param_1: aircraft controller */) /*
 
 
 
-/*
- * Original: FUN_00010de8
- * Proposed name: ensure_ai_script_1b340_tick
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010de8; source: Pacific Conflict.c. Recovered name: ensure_ai_script_1b340_tick [STRONG INFERENCE].
  *
  * Same pattern: DAT_0001b340, throttle word 0x9d8, then tick.
  * Route data [PROVEN, file 0x1b360]: DAT_0001b340 = 4 vertices (3 longs each)
@@ -21765,10 +21522,7 @@ void ensure_ai_script_1b340_tick(int *ctl /* param_1: aircraft controller */) /*
 
 
 
-/*
- * Original: FUN_00010e28
- * Proposed name: ai_script_try_fire_burst
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010e28; source: Pacific Conflict.c. Recovered name: ai_script_try_fire_burst [STRONG INFERENCE].
  *
  * After timegate param_1[0x1ab] ≤ DAT_0001b838: if ammo byte +0x67c
  * (Ghidra +0x19f) is 0 → return 1 (burst done). Else when cooldown +0x674
@@ -21821,10 +21575,7 @@ undefined4 ai_script_try_fire_burst(int *ctl /* param_1: aircraft controller (+0
 
 
 
-/*
- * Original: FUN_00010ecc
- * Proposed name: tick_ai_1b310_approach_fire
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010ecc; source: Pacific Conflict.c. Recovered name: tick_ai_1b310_approach_fire [STRONG INFERENCE].
  *
  * Runs ensure_ai_script_1b310_tick, then advances +0x616 script:
  *   state 1 → 2 when FUN_00003c68 metric <50000, alt>20000, +0x684 bit0
@@ -21874,10 +21625,7 @@ void tick_ai_1b310_approach_fire(int *ctl /* param_1: aircraft controller */) /*
 
 
 
-/*
- * Original: FUN_00010f68
- * Proposed name: tick_ai_1b370_mission
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00010f68; source: Pacific Conflict.c. Recovered name: tick_ai_1b370_mission [STRONG INFERENCE].
  *
  * Multi-phase AI mission using script from DAT_0001b370 (FUN_0001691c →
  * +0x616; word at +4 init 3). Switch on *script:
@@ -22309,10 +22057,7 @@ void spin_object_heading /* Original: FUN_000114b4 */ (int ctl /* param_1: spinn
 
 
 
-/*
- * Original: FUN_000114ca
- * Proposed name: overlay_rng_mul_mix
- * Confidence: [PROVEN]
+/* Original: FUN_000114ca; source: Pacific Conflict.c. Recovered name: overlay_rng_mul_mix [PROVEN].
  *
  * 32×32→64-ish mix used to fill the overlay RNG table:
  * ((lo2*hi1 + lo1*hi2)<<16) + lo1*lo2. Constant seed factor 0x1DF5E0D. * Correction [PROVEN]: the high cross terms are discarded by the <<16, so this is the
@@ -22330,10 +22075,8 @@ int overlay_rng_mul_mix(uint a /* param_1: first factor */,uint b /* param_2: se
 
 
 
-/*
- * Original: FUN_0001150a
- * Proposed name: overlay_rng_init
- * Confidence: [PROVEN] fill+warmup; pre-init DAT_00026008[0] never read (resolved below)
+/* Original: FUN_0001150a; source: Pacific Conflict.c. Recovered name: overlay_rng_init [PROVEN].
+ * fill+warmup; pre-init DAT_00026008[0] never read (resolved below)
  *
  * Stores seed at DAT_0002600c; fills DAT_00026010… for i=1..0x36 via
  * overlay_rng_mul_mix(0x1DF5E0D, table[i])+1; sets cursor DAT_00026008=0x260E4;
@@ -22373,10 +22116,8 @@ void overlay_rng_init(undefined4 seed /* param_1: seed stored as the first state
 
 
 
-/*
- * Original: FUN_00011544
- * Proposed name: overlay_rng_warmup_epilogue
- * Confidence: [PROVEN] as binary bytes at $11544; [NOT] as Ghidra call-site target
+/* Original: FUN_00011544; source: Pacific Conflict.c. Recovered name: overlay_rng_warmup_epilogue [PROVEN].
+ * as binary bytes at $11544; [NOT] as Ghidra call-site target
  *
  * Ghidra split the tail of overlay_rng_init here: cursor += 0xD8, then
  * 10000× next. Binary callers that Ghidra labels FUN_00011544 actually
@@ -22409,10 +22150,7 @@ void overlay_rng_warmup_epilogue(void) /* Original: FUN_00011544 */
 
 
 
-/*
- * Original: FUN_00011564
- * Proposed name: overlay_rng_next
- * Confidence: [PROVEN]
+/* Original: FUN_00011564; source: Pacific Conflict.c. Recovered name: overlay_rng_next [PROVEN].
  *
  * Additive table RNG: cursor DAT_00026008 advances +4 (wrap −0xD8 past
  * 0x260E7); taps +0x17 words (wrap −0x20) and +0x36 words (wrap −1);
@@ -23860,10 +23598,7 @@ undefined4 register_ordnance_template /* Original: FUN_0001281e */ (undefined4 t
 
 
 
-/*
- * Original: FUN_00012840
- * Proposed name: spawn_weapon_entity
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00012840; source: Pacific Conflict.c. Recovered name: spawn_weapon_entity [STRONG INFERENCE].
  *
  * Weapon/projectile spawn used by update_aircraft_entity field_19d path.
  * Calls spawn_mission_pool_object(DAT_00026280, xyz, att, 0); on success
@@ -27049,10 +26784,7 @@ undefined4 register_bullet_template /* Original: FUN_00015bd4 */ (undefined4 tmp
 
 
 
-/*
- * Original: FUN_00015bf6
- * Proposed name: spawn_ordnance_scattered
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00015bf6; source: Pacific Conflict.c. Recovered name: spawn_ordnance_scattered [STRONG INFERENCE].
  *
  * Ordnance spawn (template DAT_0002664a): seed local_6=(speed>>4)+0x2015;
  * transform_vecs12_by_matrix3 on velocity locals; three RNG ±0x20 taps;
@@ -27114,10 +26846,7 @@ int spawn_ordnance_scattered(int speed /* seeds vel_z = (speed >> 4) + 0x2015 */
 
 
 
-/*
- * Original: FUN_00015d20
- * Proposed name: spawn_ordnance_oriented
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00015d20; source: Pacific Conflict.c. Recovered name: spawn_ordnance_oriented [STRONG INFERENCE].
  *
  * Wrapper for e792 field_676: build_attitude_matrix_x(yaw_arg, pos_20, att22,
  * field_24) then spawn_ordnance_scattered. Player latch short*[0x1b]=1 is in
@@ -30916,10 +30645,8 @@ undefined4 register_parachute_template /* Original: FUN_0001940e */ (undefined4 
 
 
 
-/*
- * Original: FUN_00019430
- * Recovered name: spawn_bailout_parachute (; was spawn_special_weapon_entity)
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00019430; source: Pacific Conflict.c. Recovered name: spawn_bailout_parachute [STRONG INFERENCE].
+ * (; was spawn_special_weapon_entity)
  * RENAME: the only call (bsr $19430 at 0xf716, update_aircraft_entity
  * bail-out path, +0x677 == 1) stores the result in DAT_0001b87c, the parachute that
  * resolve_bailout_outcome tests; the template DAT_00026780 is set by
@@ -31409,10 +31136,7 @@ void tick_view_attached_object /* Original: FUN_00019bbc */ (int *ctl /* view-at
 
 
 
-/*
- * Original: FUN_00019c26
- * Proposed name: store_xyz_asr
- * Confidence: [PROVEN]
+/* Original: FUN_00019c26; source: Pacific Conflict.c. Recovered name: store_xyz_asr [PROVEN].
  *
  * Dest in A1 (register ABI): write (x>>s, y>>s, z>>s) where s=param_4.
  * Capstone @0x19C26–0x19C5C also ASR’s the stack copies then MOVEM to A1.
@@ -31434,10 +31158,7 @@ void store_xyz_asr(int x,int y,int z,uint shift) /* Original: FUN_00019c26 */
 
 
 
-/*
- * Original: FUN_00019c5e
- * Proposed name: find_nearest_runway_approach_ends
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00019c5e; source: Pacific Conflict.c. Recovered name: find_nearest_runway_approach_ends [STRONG INFERENCE].
  *
  * Scan entity pools (DAT_0001b5a4 then DAT_0001d4a4): type==2 and
  * probe_nearest_facility_kind==0x200 → candidate field/carrier. Among pads with
@@ -31627,10 +31348,7 @@ undefined4 find_nearest_runway_approach_ends(undefined4 own /* own aircraft (onl
 
 
 
-/*
- * Original: FUN_00019fba
- * Proposed name: try_begin_landing_approach
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_00019fba; source: Pacific Conflict.c. Recovered name: try_begin_landing_approach [STRONG INFERENCE].
  *
  * If find_nearest_runway_approach_ends fills approach endpoints and range metric ∈ (9999,0x26ac1):
  * write glide path into DAT_000267xx (pos + unit dir with Y=0xFDC0), nudge
@@ -31734,10 +31452,7 @@ undefined4 try_begin_landing_approach(int *ctl /* aircraft controller */) /* Ori
 
 // WARNING: Globals starting with '_' overlap smaller symbols at the same address
 
-/*
- * Original: FUN_0001a1a6
- * Proposed name: tick_landing_approach_glide
- * Confidence: [STRONG INFERENCE]
+/* Original: FUN_0001a1a6; source: Pacific Conflict.c. Recovered name: tick_landing_approach_glide [STRONG INFERENCE].
  *
  * Per-frame landing glide (phases below). Installed via +0x32←0x1A186
  * (= this−0x20) [runtime address; RESOLVED, see the note in the body].
@@ -31984,10 +31699,8 @@ LAB_0001a2da:
 
 
 
-/*
- * Original: FUN_0001a63e
- * Proposed name: memmove_block
- * Confidence: [PROVEN] role as overlap-aware block copy
+/* Original: FUN_0001a63e; source: Pacific Conflict.c. Recovered name: memmove_block [PROVEN].
+ * role as overlap-aware block copy
  *
  * Args: (src, dst, nbytes) — nbytes often passed as pointer-cast immediate
  * (e.g. &DAT_00000012 ≡ 0x12 = 18 bytes = 9×s16 matrix). Returns a scratch
@@ -32130,11 +31843,7 @@ undefined4 * memmove_block(undefined4 *src,undefined4 *dst,undefined4 *nbytes) /
 
 
 
-/*
- * Original: FUN_0001a716
- * Source: Pacific Conflict.c / binary @0x1A716
- * Proposed name: memzero
- * Confidence: [PROVEN]
+/* Original: FUN_0001a716; source: Pacific Conflict.c / binary @0x1A716. Recovered name: memzero [PROVEN].
  *
  * Inputs: dst pointer, nbytes (must be >= 0; negative skipped).
  * Side effects: writes zeros to [dst, dst+nbytes).

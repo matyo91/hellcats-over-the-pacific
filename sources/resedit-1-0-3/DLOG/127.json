@@ -15,14 +15,14 @@
     {
       "evidence": "* GetNewDialog(0x8a = DLOG 138 \"About Hellcats 1-Bit\") when A5-0x137a == 1, else GetNewDialog(0x7f = DLOG 127 \"About Hellcats\"); returns at once when it fails. JT $472; ShowWindow; DrawDialog; SetPort; GetDItem(item 3), MoveTo its box, TextFont(1), TextSize(8); GetResource(vers, 1) ($A9A0) and draws a 5-character version \"M.m.r\" from its first word: M = (word >> 8) + '0', m = ((word & 0xf0) >> 8) + '0' - always '0', an original bug (>> 4 was surely meant) [PROVEN, bytes] - r = (word & 0xf) + '0'",
       "function_or_context": "show_about_dialog",
-      "line": 2279,
+      "line": 2255,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "dlg = GetNewDialog(0x7f,0,-1);              /* DLOG 127 \"About Hellcats\" */",
       "function_or_context": "show_about_dialog",
-      "line": 2307,
+      "line": 2283,
       "source_path": "sources/resedit-1-0-3/CODE/ID04.decomp.c",
       "status": "VERIFIED"
     }
