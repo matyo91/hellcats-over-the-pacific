@@ -3,7 +3,7 @@
 
 For every mapping, the mapped functions the semantic .decomp.c body calls (by name) must be
 reached by the ported body: called by name, through a jump-table constant (_jt, by
-hellcats/data/jump_table.json), a segment offset (_local, segment_methods.json) or an overlay
+runtime/data/jump_table.json), a segment offset (_local, segment_methods.json) or an overlay
 code address (_jsr / _bsr_unported, overlay_methods.json), directly or through the port file's
 own private helpers (names starting with '_', followed transitively). A callee the port never
 reaches is a shortcut the original does not take: an inlined copy, another routine (as ID05's
@@ -27,7 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "godot" / "strict_port" / "mappings" / "functions.json"
-DATA = ROOT / "godot" / "hellcats" / "data"
+DATA = ROOT / "godot" / "runtime" / "data"
 ## Ports that reach their callees through a computed address: "file:function" -> why.
 ALLOWED = {
     "pacific_conflict.gd:collect_far_objects": "_far_collision computes the address of one of the four collision "

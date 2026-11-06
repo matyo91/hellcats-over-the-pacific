@@ -785,7 +785,7 @@ undefined4 init_raster_target /* Original: FUN_000007b0 */ (undefined4 pixel_bas
  *
  * The inverse of the renderer's set-up (alloc_pattern_tables, init_edge_pool, alloc_row_table,
  * init_raster_target). Callers: ID02, through JT $1b2, when the display depth is not 1. The game
- * runtime runs it as godot/hellcats/runtime/unexported.gd id06_0858.
+ * runtime runs it as godot/runtime/machine/unexported.gd id06_0858.
  */
 
 /* VERIFIED (ID06::FUN_0000087a): ID06.bin 0x87a..0x88e checked against an independent capstone disassembly:

@@ -1,10 +1,10 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const Templates := preload("res://strict_port/ui/dialog_templates.gd")
-const Files := preload("res://strict_port/ui/resource_files.gd")
-const Images := preload("res://strict_port/ui/resource_images.gd")
-const Finder := preload("res://strict_port/ui/finder_view.gd")
+const Templates := preload("res://resources/ui/dialog_templates.gd")
+const Files := preload("res://resources/ui/resource_files.gd")
+const Images := preload("res://resources/ui/resource_images.gd")
+const Finder := preload("res://resources/ui/finder_view.gd")
 
 ## The imported interface resources beyond the dialogs (godot/strict_port/cntl, bndl, fref and the
 ## icon families, cicn, clut): CNTL / BNDL / FREF decode as the resource evidence says

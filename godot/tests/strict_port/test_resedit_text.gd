@@ -1,8 +1,8 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const Files := preload("res://strict_port/ui/resource_files.gd")
-const Text := preload("res://strict_port/ui/resource_text.gd")
+const Files := preload("res://resources/ui/resource_files.gd")
+const Text := preload("res://resources/ui/resource_text.gd")
 
 ## The imported menu, string and information resources (godot/strict_port/menu, str#, text, styl,
 ## vers, size): each decodes from its bytes as the resource evidence says

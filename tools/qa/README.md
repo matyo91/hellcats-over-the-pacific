@@ -5,7 +5,7 @@ Godot-native runtime tests in `godot/tests`.
 
 ## Game smoke (manual, ~10 min)
 
-Run after changes to the game runtime (`godot/hellcats/`, `godot/scenes/`).
+Run after changes to the game runtime (`godot/runtime/`, `godot/scenes/`).
 
 - Open the `godot/` project directory and run `res://scenes/main/Main.tscn`.
 - The menu bar appears; Return passes the copy protection; the Active Duty Roster
@@ -23,8 +23,8 @@ HOME=/tmp/hellcats-godot-home /Applications/Godot.app/Contents/MacOS/Godot --hea
 
 # Static checks (no engine)
 python3 tools/qa/test_regression.py
-python3 tools/hellcats/build_runtime_data.py --check
-python3 tools/hellcats/gen_runtime_cases.py --check
+python3 tools/runtime/build_runtime_data.py --check
+python3 tools/runtime/gen_runtime_cases.py --check
 ```
 
 Keep `EXPECTED_RUNNER_PATHS` in `test_regression.py` aligned with

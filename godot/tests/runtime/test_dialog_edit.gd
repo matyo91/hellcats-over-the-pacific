@@ -1,7 +1,7 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const MacMachine := preload("res://hellcats/runtime/mac_machine.gd")
+const MacMachine := preload("res://runtime/machine/mac_machine.gd")
 
 ## Typing in the Duty Roster (DLOG 130, run_duty_roster_dialog ID04 0x644): the current pilot's
 ## name field (item 15 + row) is selected with SelIText(d, item, 0, 1000), so a key replaces the

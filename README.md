@@ -54,8 +54,8 @@ sources/resedit-1-0-3/<TYPE>/<ID>.*       resource payload, JSON, local identity
 sources/screenshots/, sources/videos/     reference captures of the original
 godot/strict_port/code/                   faithful C-to-GDScript translations
 godot/strict_port/compat/                 68k arithmetic and memory helpers
-godot/strict_port/<type>/                 the resource fork, mirrored
-godot/hellcats/runtime/, toolbox/         the emulated Macintosh around the port
+godot/resources/<type>/                   the resource fork, mirrored
+godot/runtime/machine/, toolbox/         the emulated Macintosh around the port
 godot/scenes/main/, scenes/game/          the main scene, screen and speaker
 godot/tests/                              deterministic tests
 docs/                                     live references and contracts
@@ -128,7 +128,7 @@ is reproduced by `compat/c68k.gd` (16- and 32-bit wraps, `DIVS` / `MULS`,
 shifts, rotates) and its flat memory by `compat/memory_68k.gd`, so the
 translated code reads and writes the original data structures at their
 original offsets. The resource fork is mirrored byte for byte into
-`godot/strict_port/<type>/`, with Godot scenes to view it.
+`godot/resources/<type>/`, with Godot scenes to view it.
 
 Every function's chain (`.c` -> `.decomp.c` -> `.gd`) is recorded in
 `godot/strict_port/mappings/functions.json`. Its behaviour is checked against
@@ -140,7 +140,7 @@ results, the calls they make out of their segment), and
 ### 4. The runtime, mapped around the port
 
 The strict port is not touched to make it run. Instead it is *mapped around*:
-`godot/hellcats/` builds the Macintosh the program expects, so the original
+`godot/runtime/` builds the Macintosh the program expects, so the original
 `main()` runs as it did in 1991.
 
 - **`runtime/`:** one 24-bit address space laid out as the original expects
@@ -196,12 +196,16 @@ python3 tools/resedit.py verify
 python3 tools/strict_port/check_sync.py --json
 python3 tools/strict_port/check_callees.py
 python3 tools/qa/test_regression.py
-python3 tools/hellcats/gen_runtime_cases.py --check
+python3 tools/runtime/gen_runtime_cases.py --check
 python3 tools/decomp/definition_table.py --check
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot \
   --log-file /tmp/hellcats-godot.log --script res://tests/run_all.gd
 git diff --check
 ```
+
+After scripts move (a pull that renames folders under `godot/`), rebuild Godot's class cache
+once, or the tests stop on "hides a global script class":
+`/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --import`.
 
 An end-to-end headless session of the game (about seven minutes; it never touches
 the player's saved pilots) is run separately; its header lists its options and the

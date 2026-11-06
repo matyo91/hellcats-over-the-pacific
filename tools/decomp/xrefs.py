@@ -5,7 +5,7 @@ unexported callers).
 
 For a CODE segment (ID01..ID09) and a file offset:
   - in the same segment: BSR.S / BSR.W / BSR.L and JSR / PEA / LEA d16(PC) to it;
-  - through the CODE 0 jump table (godot/hellcats/data/jump_table.json): the A5 slots naming it, and
+  - through the CODE 0 jump table (godot/runtime/data/jump_table.json): the A5 slots naming it, and
     in every segment the JSR / PEA / LEA slot(A5) that use them.
 For the overlay and a file offset (Ghidra's addresses; runtime = file - 0x20):
   - BSR.S / .W / .L to it, and every relocated long equal to its runtime address (JSR / LEA / PEA
@@ -25,8 +25,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CODE = ROOT / "sources" / "resedit-1-0-3" / "CODE"
-OVERLAY = ROOT / "godot" / "hellcats" / "data" / "scenery" / "Pacific Conflict"
-JUMP_TABLE = ROOT / "godot" / "hellcats" / "data" / "jump_table.json"
+OVERLAY = ROOT / "godot" / "runtime" / "data" / "scenery" / "Pacific Conflict"
+JUMP_TABLE = ROOT / "godot" / "runtime" / "data" / "jump_table.json"
 OVERLAY_DELTA = 0x20
 
 

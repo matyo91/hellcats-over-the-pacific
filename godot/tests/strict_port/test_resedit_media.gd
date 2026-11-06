@@ -1,8 +1,8 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const Files := preload("res://strict_port/ui/resource_files.gd")
-const Sound := preload("res://strict_port/ui/resource_sound.gd")
+const Files := preload("res://resources/ui/resource_files.gd")
+const Sound := preload("res://resources/ui/resource_sound.gd")
 
 ## The derived PICT PNGs that are not their picture frame's size (frames 137 x 751 and 438 x 93).
 const DERIVED_PNG_SIZES := {131: Vector2i(135, 749), 1000: Vector2i(425, 88)}

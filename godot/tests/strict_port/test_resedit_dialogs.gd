@@ -1,8 +1,8 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const Templates := preload("res://strict_port/ui/dialog_templates.gd")
-const Files := preload("res://strict_port/ui/resource_files.gd")
+const Templates := preload("res://resources/ui/dialog_templates.gd")
+const Files := preload("res://resources/ui/resource_files.gd")
 
 ## The imported dialog resources (godot/strict_port/alrt, dlog, ditl): the GDScript
 ## decoder reads every original payload the way tools/resedit.py decodes it

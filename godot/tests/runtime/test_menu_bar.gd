@@ -1,7 +1,7 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const MacMachine := preload("res://hellcats/runtime/mac_machine.gd")
+const MacMachine := preload("res://runtime/machine/mac_machine.gd")
 
 ## When the menu bar is repainted, as the Toolbox's: the game's event loop (ID02 0x2fd4) calls
 ## HiliteMenu(0) and update_menu_items (0x3174) on every pass, so neither may redraw the bar when

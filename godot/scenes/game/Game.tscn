@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=3]
 
-[ext_resource type="Script" path="res://hellcats/runtime/game.gd" id="1"]
-[ext_resource type="Script" path="res://hellcats/runtime/mac_screen.gd" id="2"]
-[ext_resource type="Shader" path="res://hellcats/runtime/mac_screen.gdshader" id="3"]
-[ext_resource type="Script" path="res://hellcats/runtime/mac_speaker.gd" id="4"]
+[ext_resource type="Script" path="res://runtime/machine/game.gd" id="1"]
+[ext_resource type="Script" path="res://runtime/machine/mac_screen.gd" id="2"]
+[ext_resource type="Shader" path="res://runtime/machine/mac_screen.gdshader" id="3"]
+[ext_resource type="Script" path="res://runtime/machine/mac_speaker.gd" id="4"]
 
 [sub_resource type="ShaderMaterial" id="1"]
 shader = ExtResource("3")

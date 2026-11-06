@@ -757,7 +757,7 @@ LAB_000003b6:
  *   size_t ansi_strlen(const char *s) { long n = -1; do n++; while (*s++); return n; }
  *
  * Callers: ID04 append_line_to_scrolling_text (JT $522, the summary's lines). The game
- * runtime runs it as godot/hellcats/runtime/unexported.gd id02_03e8.
+ * runtime runs it as godot/runtime/machine/unexported.gd id02_03e8.
  */
 
 /* VERIFIED (ID02::FUN_000003f6): ID02.bin 0x3f6..0x410 checked against an independent capstone disassembly.
@@ -838,7 +838,7 @@ char * ansi_strncat /* Original: FUN_00000412 */ (char *dst /* param_1 */,char *
  *                 if (!c) break; n--; } return 0; }
  *
  * Callers: ID04's Active Duty Roster (0x644, JT $502: a name edited in a field). The game
- * runtime runs it as godot/hellcats/runtime/unexported.gd id02_0434.
+ * runtime runs it as godot/runtime/machine/unexported.gd id02_0434.
  */
 
 /* VERIFIED (ID02::FUN_0000045a): ID02.bin 0x45a..0x4a2 checked against an independent capstone disassembly.
@@ -1168,7 +1168,7 @@ void call_overlay_session_hooks /* Original: FUN_00000930 */ (undefined4 step_ar
  *   void unlock_session_handles(void) { if (--A5w[-0x14f4] == 0) HUnlock x 4; }
  *
  * Callers: begin_overlay_session (JSR 0x95a) and end_overlay_session (0x4a4, JSR 0x9fa). The
- * game runtime runs them as godot/hellcats/runtime/unexported.gd id02_095a / id02_09fa.
+ * game runtime runs them as godot/runtime/machine/unexported.gd id02_095a / id02_09fa.
  */
 
 /* Unexported function at ID02 offset 0xa26 (not in Ghidra's export; no LINK, C convention).
@@ -1183,7 +1183,7 @@ void call_overlay_session_hooks /* Original: FUN_00000930 */ (undefined4 step_ar
  *                                       unlock_session_handles(); } }
  *
  * Callers: redraw_main_window (0x4db0, after call_overlay_session_hooks). The game runtime
- * runs it as godot/hellcats/runtime/unexported.gd id02_0a26.
+ * runs it as godot/runtime/machine/unexported.gd id02_0a26.
  */
 
 /* VERIFIED (ID02::FUN_00000a42): ID02.bin 0xa42..0xa84 checked against an independent capstone disassembly.
@@ -3468,7 +3468,7 @@ void initialize_application /* Original: FUN_00002bbc */ (void)
  *                        A5w[-0x138a] = 0; } }
  *
  * Callers: the File menu's Save Settings (menu 2 item 2) and quit_application (0x2eaa). The
- * game runtime runs it as godot/hellcats/runtime/unexported.gd id02_2da0.
+ * game runtime runs it as godot/runtime/machine/unexported.gd id02_2da0.
  */
 
 /* VERIFIED (ID02::FUN_00002db8): ID02.bin 0x2db8..0x2e34 checked against an independent capstone disassembly.
@@ -5761,7 +5761,7 @@ void check_device_color_state_changed /* Original: FUN_00004c18 */ (void)
  *
  * Callers: reset_overlay_state (0x212a), configure_display_from_main_device (0x27e4) and
  * refresh_display_if_changed (0x29f2), each after apply_settings_to_live_options. The game
- * runtime runs it as godot/hellcats/runtime/unexported.gd id02_4d24.
+ * runtime runs it as godot/runtime/machine/unexported.gd id02_4d24.
  */
 
 /* VERIFIED (ID02::FUN_00004d34): ID02.bin 0x4d34..0x4d68 checked against an independent capstone disassembly.
@@ -5832,7 +5832,7 @@ void handle_update_event /* Original: FUN_00004d6a */ (int evt /* param_1: Event
  *     A5w[-0x1312] = A5w[-0x1348]; }
  *
  * Callers: run_flight_session's exit (0x84c, after end_overlay_session) and redraw_main_window
- * (0x4db0). The game runtime runs it as godot/hellcats/runtime/unexported.gd id02_4d96.
+ * (0x4db0). The game runtime runs it as godot/runtime/machine/unexported.gd id02_4d96.
  */
 
 /* VERIFIED (ID02::FUN_00004db0): ID02.bin 0x4db0..0x4e18 checked against an independent capstone disassembly.

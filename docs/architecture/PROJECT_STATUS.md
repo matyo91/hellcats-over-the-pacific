@@ -9,7 +9,7 @@ on an emulated Macintosh:
 - `godot/strict_port/` is the source-faithful track: each function translated
   one to one from its semantic `.decomp.c`, checked against the original machine
   code on a 68000 emulator, with the resource fork mirrored beside it.
-- `godot/hellcats/` maps around it without changing it: the 24-bit memory, the
+- `godot/runtime/` maps around it without changing it: the 24-bit memory, the
   segment and overlay loaders, and the Toolbox the program calls (QuickDraw,
   the Window, Dialog, Menu, Event, Resource, File and Sound Managers, TextEdit,
   Standard File). [`GAME_RUNTIME.md`](GAME_RUNTIME.md) describes it, with the

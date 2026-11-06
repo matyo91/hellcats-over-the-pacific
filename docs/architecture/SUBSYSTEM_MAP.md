@@ -75,7 +75,7 @@ flowchart TD
   H740 --> ENT["Entity / throttle / UI effects"]
 ```
 
-**Godot:** `pacific_conflict.gd` **`process_flight_input_and_outcome`** (FUN_0000740a), fed Mac key and mouse events by `godot/hellcats/toolbox/event_manager.gd` from Godot input — **`docs/history/briefs/input_FUN_0000740a_brief.md`**.
+**Godot:** `pacific_conflict.gd` **`process_flight_input_and_outcome`** (FUN_0000740a), fed Mac key and mouse events by `godot/runtime/toolbox/event_manager.gd` from Godot input — **`docs/history/briefs/input_FUN_0000740a_brief.md`**.
 
 ## 4) Mission state
 

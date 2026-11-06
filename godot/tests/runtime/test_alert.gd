@@ -1,8 +1,8 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const MacMachine := preload("res://hellcats/runtime/mac_machine.gd")
-const Files := preload("res://strict_port/ui/resource_files.gd")
+const MacMachine := preload("res://runtime/machine/mac_machine.gd")
+const Files := preload("res://resources/ui/resource_files.gd")
 
 ## CautionAlert ($A988) on the End Mission confirmation (ALRT 259, confirm_end_mission, ID04 0x516),
 ## from the original resources: the ALRT's bounds (94, 150, 202, 472) and DITL 259 (1 Cancel,

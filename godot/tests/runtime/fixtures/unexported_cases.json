@@ -1,5 +1,5 @@
 {
- "source": "tools/hellcats/gen_runtime_cases.py",
+ "source": "tools/runtime/gen_runtime_cases.py",
  "cases": [
   {
    "name": "strlen 0",

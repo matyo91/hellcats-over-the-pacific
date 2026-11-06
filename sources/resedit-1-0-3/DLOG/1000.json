@@ -15,14 +15,14 @@
     {
       "evidence": "*   dlg = GetNewDialog(1000, nil, (WindowPtr)-1) $A97C; if (!dlg) ExitToShell;",
       "function_or_context": "run_protection_dialog",
-      "line": 445,
+      "line": 447,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "dlg = GetNewDialog(1000,0,-1);                /* $A97C */",
       "function_or_context": "run_protection_dialog",
-      "line": 495,
+      "line": 497,
       "source_path": "sources/resedit-1-0-3/CODE/ID05.decomp.c",
       "status": "VERIFIED"
     }

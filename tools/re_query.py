@@ -338,16 +338,27 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 
 def cmd_symbol(args: argparse.Namespace) -> int:
-    lines = SYMBOLS.read_text(encoding="utf-8", errors="replace").splitlines()
-    hits = [index for index, line in enumerate(lines) if args.query.casefold() in line.casefold()]
-    if not hits:
+    # A global's name and evidence live in its #define alias in the semantic C; the symbols
+    # document holds the functions, corrections and Ghidra artefacts.
+    aliases = 0
+    for path in sorted(CODE_DIR.glob("*.decomp.c")):
+        for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            if line.startswith("#define ") and args.query.casefold() in line.casefold():
+                print(f"{relative(path)}:{number}:{line}")
+                aliases += 1
+    found = aliases
+    for document in (SYMBOLS, SYMBOLS.parent / "STRUCTS.md"):     # names and corrections, then layouts
+        lines = document.read_text(encoding="utf-8", errors="replace").splitlines()
+        hits = [index for index, line in enumerate(lines) if args.query.casefold() in line.casefold()]
+        found += len(hits)
+        shown: set[int] = set()
+        for hit in hits[:args.limit]:
+            for index in range(max(0, hit - args.context), min(len(lines), hit + args.context + 1)):
+                if index not in shown:
+                    print(f"{relative(document)}:{index + 1}:{lines[index]}")
+                    shown.add(index)
+    if not found:
         raise LookupError(f"no symbol record found: {args.query}")
-    shown: set[int] = set()
-    for hit in hits[:args.limit]:
-        for index in range(max(0, hit - args.context), min(len(lines), hit + args.context + 1)):
-            if index not in shown:
-                print(f"{relative(SYMBOLS)}:{index + 1}:{lines[index]}")
-                shown.add(index)
     return 0
 
 

@@ -73,10 +73,10 @@ def source_hash(path: Path, function_name: str) -> str:
 
 
 def runtime_dispatch(source_root: Path):
-    """Whether the game runtime dispatches a mapping: its method maps (godot/hellcats/data/
+    """Whether the game runtime dispatches a mapping: its method maps (godot/runtime/data/
     segment_methods.json by segment and file offset, overlay_methods.json by runtime address, file
     offset - 0x20) route the original address to the target function. None when they are absent."""
-    data = source_root / "godot/hellcats/data"
+    data = source_root / "godot/runtime/data"
     if not (data / "segment_methods.json").is_file() or not (data / "overlay_methods.json").is_file():
         return None
     segments = json.loads((data / "segment_methods.json").read_text(encoding="utf-8"))

@@ -15,28 +15,28 @@
     {
       "evidence": "* MOVE.W #$8000 to +4, copy to A5-0x1316; GetResource('MENU', 2) NIL -> SysBeep(20), BSR 0x2e36, BSR 0x2eaa;",
       "function_or_context": "apply_settings_to_live_options",
-      "line": 3328,
+      "line": 3332,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "*   GetResource('MENU', 2) == nil -> SysBeep(20); BSR 0x2e36; BSR 0x2eaa",
       "function_or_context": "initialize_application",
-      "line": 3362,
+      "line": 3366,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "* Called by initialize_application when GetResource('MENU', 2) fails, after",
       "function_or_context": "show_resource_file_error_box",
-      "line": 3540,
+      "line": 3544,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     },
     {
       "evidence": "*(int *)(unaff_A5 + -0xc4a) = GetMenu(2);        /* $A9BF */",
       "function_or_context": "install_menus",
-      "line": 3845,
+      "line": 3849,
       "source_path": "sources/resedit-1-0-3/CODE/ID02.decomp.c",
       "status": "VERIFIED"
     }

@@ -268,7 +268,7 @@ short fsopen_glue /* Original: FUN_000002a6 */ (Str255 *fileName,short vRefNum,s
  *     = IUMagIDString(@aStr[1], @bStr[1], Length(aStr), Length(bStr))  (selector 12)
  *
  * Callers: ID04 rank_pilots_by_score (JT $2ea: pilots of equal score ordered by name). The game
- * runtime answers IUCompString in godot/hellcats/toolbox/toolbox.gd iu_comp_string.
+ * runtime answers IUCompString in godot/runtime/toolbox/toolbox.gd iu_comp_string.
  */
 /* VERIFIED (ID09::FUN_000003c2): ID09.bin 0x3c2..0x3d4 checked against an independent capstone disassembly:
  * Pascal glue SwapMMUMode(VAR mode: SignedByte) - D0.B = *mode, _SwapMMUMode ($A05D), *mode = D0.B,
@@ -331,7 +331,7 @@ byte * length_prefixed_bytes_to_c_string_in_place(byte *buffer)
 /* ID09 Toolbox glue reached through the jump table, decoded from ID09.bin [PROVEN, bytes; trap words
  * and low-memory addresses as Inside Macintosh names them]. Each is Pascal: it pops the return address
  * and its arguments (listed) and leaves any result in the slot the caller reserved; the game runtime
- * answers them in godot/hellcats/toolbox (stand_ins by slot). The other ID09 entries are the exported
+ * answers them in godot/runtime/toolbox (stand_ins by slot). The other ID09 entries are the exported
  * functions above and the unexported IUCompString / NumToString / string glue (0x3d6 .. 0x416).
  *
  *   slot  offset  routine                                                        arguments

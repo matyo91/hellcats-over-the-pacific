@@ -1,7 +1,7 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const MacMachine := preload("res://hellcats/runtime/mac_machine.gd")
+const MacMachine := preload("res://runtime/machine/mac_machine.gd")
 
 ## The Sound Manager's channels: SndPlay ($A805) plays a 'snd ' on its channel, SndDisposeChannel
 ## ($A801) with quietNow cuts that channel's sounds short (the summary's named sound when the

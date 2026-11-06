@@ -243,13 +243,13 @@ func _initialize() -> void:
 	if lost_pilot:
 		steps = LOST_PILOT_STEPS
 		end = LOST_PILOT_END
-	MacMachine = load("res://hellcats/runtime/mac_machine.gd")
+	MacMachine = load("res://runtime/machine/mac_machine.gd")
 	at = args.find("--depth")
 	if at >= 0 and at + 1 < args.size():
 		MacMachine.screen_depth = int(args[at + 1])
 	MacMachine.addressing_24 = args.has("--24bit")
-	GameThread = load("res://hellcats/runtime/game_thread.gd")
-	ResourceManager = load("res://hellcats/toolbox/resource_manager.gd")
+	GameThread = load("res://runtime/machine/game_thread.gd")
+	ResourceManager = load("res://runtime/toolbox/resource_manager.gd")
 	_clear(SAVES)
 	var haze: bool = args.has("--haze")
 	var one_line: bool = args.has("--one-line")
@@ -272,7 +272,7 @@ func _initialize() -> void:
 ## Options > One line Instruments (+9): numeric readouts instead of the panel, printed through the
 ## host's draw_text_in_columns_a5safe (+0x27a).
 func _write_settings(scenery: String, haze: bool, one_line: bool) -> void:
-	var data: PackedByteArray = load("res://strict_port/ui/resource_files.gd").load_bytes("HEL1", 127)
+	var data: PackedByteArray = load("res://resources/ui/resource_files.gd").load_bytes("HEL1", 127)
 	if scenery != "":
 		var bytes: PackedByteArray = scenery.to_ascii_buffer()
 		data[0x2a] = bytes.size()
@@ -288,7 +288,7 @@ func _write_settings(scenery: String, haze: bool, one_line: bool) -> void:
 ## A saved roster (HEL1 128, the original's otherwise) whose record 0 is a lost pilot: name "Lost"
 ## (+0, a Pascal string), status +0x20 = 1.
 func _write_lost_pilot() -> void:
-	var data: PackedByteArray = load("res://strict_port/ui/resource_files.gd").load_bytes("HEL1", 128)
+	var data: PackedByteArray = load("res://resources/ui/resource_files.gd").load_bytes("HEL1", 128)
 	var name: PackedByteArray = "Lost".to_ascii_buffer()
 	data[0] = name.size()
 	for k in name.size():

@@ -49,12 +49,12 @@ func _initialize() -> void:
 		Engine.set_meta("strict_coverage", {})
 		for name in PORT_ORDER:
 			(load("res://.coverage/%s.gd" % name) as Script).take_over_path("res://strict_port/code/%s.gd" % name)
-	MacMachine = load("res://hellcats/runtime/mac_machine.gd")
+	MacMachine = load("res://runtime/machine/mac_machine.gd")
 	master_disk = args.has("--master-disk")
 	if master_disk:
 		MacMachine.volume_name = "Hellcats"
-	var ResourceManager = load("res://hellcats/toolbox/resource_manager.gd")
-	var Files = load("res://strict_port/ui/resource_files.gd")
+	var ResourceManager = load("res://runtime/toolbox/resource_manager.gd")
+	var Files = load("res://resources/ui/resource_files.gd")
 	_clear(SAVES)
 	DirAccess.make_dir_recursive_absolute(SAVES + "/text")
 	var data: PackedByteArray = Files.load_bytes("TEXT", 128)
@@ -68,7 +68,7 @@ func _initialize() -> void:
 	if coverage_path != "":
 		machine.coverage = Engine.get_meta("strict_coverage")
 	machine.toolbox.quickdraw.glyphs.prepare()
-	runner = load("res://hellcats/runtime/game_thread.gd").new(machine)
+	runner = load("res://runtime/machine/game_thread.gd").new(machine)
 	runner.start()
 
 func _process(delta: float) -> bool:

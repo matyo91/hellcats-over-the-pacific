@@ -17,7 +17,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GODOT_ROOT = REPO_ROOT / "godot"
 GODOT_TESTS = GODOT_ROOT / "tests"
-JUMP_TABLE = GODOT_ROOT / "hellcats" / "data" / "jump_table.json"
+JUMP_TABLE = GODOT_ROOT / "runtime" / "data" / "jump_table.json"
 RUNNER_PATH = GODOT_TESTS / "run_all.gd"
 
 EXPECTED_RUNNER_PATHS = [
@@ -283,10 +283,9 @@ def check_game_scenes() -> None:
     project = (GODOT_ROOT / "project.godot").read_text(encoding="utf-8")
     if 'run/main_scene="res://scenes/main/Main.tscn"' not in project:
         fail("project.godot main scene must be res://scenes/main/Main.tscn")
-    for gone in ("hellcats/core", "hellcats/flight", "hellcats/mission", "hellcats/player", "hellcats/ui",
-                 "hellcats/world", "data/mission_01", "tests/unit", "tests/integration"):
+    for gone in ("hellcats", "docs", "data/mission_01", "tests/unit", "tests/integration"):
         if (GODOT_ROOT / gone).exists():
-            fail(f"godot/{gone} belongs to the removed MVP prototype")
+            fail(f"godot/{gone} belongs to the removed MVP prototype or the old layout")
 
 
 def check_01a48_kind2_jsr_bytes() -> None:
@@ -396,11 +395,11 @@ def check_runtime_coverage() -> None:
     jump-table slots and segment-local offsets the ports call, the slots the CODE segments hand out
     as procedure pointers (PEA / LEA d16(A5), UnloadSeg's segment names aside), the code pointers in
     the overlay's relocation table, and the trap words the ports use."""
-    hellcats = GODOT_ROOT / "hellcats"
-    runtime_src = "\n".join(p.read_text(encoding="utf-8") for p in sorted(hellcats.glob("**/*.gd")))
+    runtime = GODOT_ROOT / "runtime"
+    runtime_src = "\n".join(p.read_text(encoding="utf-8") for p in sorted(runtime.glob("**/*.gd")))
     entries = {e["a5_offset"]: e for e in _load_json(JUMP_TABLE)["entries"]}
-    segment_methods = _load_json(hellcats / "data" / "segment_methods.json")
-    overlay_methods = {int(k, 16) for k in _load_json(hellcats / "data" / "overlay_methods.json")}
+    segment_methods = _load_json(runtime / "data" / "segment_methods.json")
+    overlay_methods = {int(k, 16) for k in _load_json(runtime / "data" / "overlay_methods.json")}
     stand_ins = {int(m, 16) for m in re.findall(r"stand_ins\[(0x[0-9a-f]+)\] =", runtime_src)}
     provided = {off for off, e in entries.items() if e["method"]} | stand_ins
     locals_ = {}
@@ -440,7 +439,7 @@ def check_runtime_coverage() -> None:
                 unload = int.from_bytes(b[o + 4:o + 6], "big") == 0xA9F1
                 if disp > 0 and disp in entries and disp not in provided and not unload:
                     problems.append(f"ID0{n} 0x{o:x}: slot ${disp:x} passed as a procedure has no routine")
-    scenery = (hellcats / "data" / "scenery" / "Pacific Conflict").read_bytes()
+    scenery = (runtime / "data" / "scenery" / "Pacific Conflict").read_bytes()
     u32 = lambda o: int.from_bytes(scenery[o:o + 4], "big")
     port_src = (GODOT_ROOT / "strict_port" / "code" / "pacific_conflict.gd").read_text(encoding="utf-8")
     rts_only = re.search(r"^const RTS_ONLY := \[([^\]]*)\]", port_src, re.M).group(1)
@@ -480,7 +479,7 @@ def check_resedit_mirror() -> None:
     result = subprocess.run([sys.executable, str(REPO_ROOT / "tools" / "strict_port" / "import_resedit.py"), "--check"],
                             capture_output=True, text=True)
     if result.returncode != 0:
-        fail("the resource folders in godot/strict_port drifted from sources/resedit-1-0-3:\n" + result.stdout)
+        fail("the resource folders in godot/resources drifted from sources/resedit-1-0-3:\n" + result.stdout)
 
 
 def check_source_extraction() -> None:
@@ -541,7 +540,7 @@ def check_entry_points() -> None:
     indexed = {(m.group(1), int(m.group(2), 16)) for m in re.finditer(r"\| (ID0\d) \| (0x[0-9a-f]+) \|", index)}
     code_dir = REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE"
     problems = []
-    for e in json.loads((REPO_ROOT / "godot" / "hellcats" / "data" / "jump_table.json").read_text(encoding="utf-8"))["entries"]:
+    for e in json.loads((REPO_ROOT / "godot" / "runtime" / "data" / "jump_table.json").read_text(encoding="utf-8"))["entries"]:
         segment, target = f"ID0{e['segment']}", int(e["target"])
         if (segment, target) in starts or (segment, target) in indexed:
             continue
@@ -553,7 +552,7 @@ def check_entry_points() -> None:
         decomp = (code_dir / f"{segment}.decomp.c").read_text(encoding="utf-8", errors="replace").lower()
         if not re.search(rf"\b0x0*{target:x}\b", decomp):
             problems.append(f"jump-table slot ${int(e['a5_offset']):x} -> {segment} 0x{target:x} is not accounted for")
-    image = (REPO_ROOT / "godot" / "hellcats" / "data" / "scenery" / "Pacific Conflict").read_bytes()
+    image = (REPO_ROOT / "godot" / "runtime" / "data" / "scenery" / "Pacific Conflict").read_bytes()
     code = struct.unpack(">I", image[4:8])[0]
     overlay_starts = {a - 0x20 for s, a in starts if s == "Pacific Conflict"}
     known = {0x4B0, 0xD23A, 0x15134, 0x16208,        # runtime-written routines (docs/architecture/GAME_RUNTIME.md)
@@ -586,7 +585,7 @@ def check_trap_annotations() -> None:
         v.sort()
     code_dir = REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE"
     glue = (code_dir / "ID09.bin").read_bytes()
-    entries = json.loads((REPO_ROOT / "godot" / "hellcats" / "data" / "jump_table.json").read_text(encoding="utf-8"))["entries"]
+    entries = json.loads((REPO_ROOT / "godot" / "runtime" / "data" / "jump_table.json").read_text(encoding="utf-8"))["entries"]
     targets = sorted({int(e["target"]) for e in entries if e["segment"] == 9} | set(starts["ID09"]))
     issued_by_slot: dict[int, set[int]] = {}
     for e in entries:
@@ -601,7 +600,7 @@ def check_trap_annotations() -> None:
         segment = path.name.replace(".decomp.c", "")
         if segment in ("ID00", "ID09"):
             continue
-        image = (REPO_ROOT / "godot" / "hellcats" / "data" / "scenery" / "Pacific Conflict") if segment == "Pacific Conflict" else code_dir / f"{segment}.bin"
+        image = (REPO_ROOT / "godot" / "runtime" / "data" / "scenery" / "Pacific Conflict") if segment == "Pacific Conflict" else code_dir / f"{segment}.bin"
         data = image.read_bytes()
         text = path.read_text(encoding="utf-8", errors="replace")
         for d in inventory_functions.definitions(path):
@@ -673,7 +672,7 @@ def check_runtime_headers() -> None:
     rest = index.find("\n## ", 5)
     index = index if rest < 0 else index[:rest]
     sources = [(REPO_ROOT / p).read_text(encoding="utf-8").split("\n") for p in (
-        "godot/hellcats/runtime/unexported.gd", "godot/hellcats/runtime/overlay_loader.gd", "godot/hellcats/toolbox/toolbox.gd")]
+        "godot/runtime/machine/unexported.gd", "godot/runtime/machine/overlay_loader.gd", "godot/runtime/toolbox/toolbox.gd")]
     problems, count = [], 0
     for line in index.split("\n"):
         cells = [c.strip() for c in line.split("|")[1:-1]]
@@ -709,7 +708,7 @@ def check_unused_traps() -> str:
         import capstone  # type: ignore
     except Exception:
         return "skipped (capstone not installed)"
-    runtime_src = "\n".join(p.read_text(encoding="utf-8") for p in sorted((GODOT_ROOT / "hellcats").glob("**/*.gd")))
+    runtime_src = "\n".join(p.read_text(encoding="utf-8") for p in sorted((GODOT_ROOT / "runtime").glob("**/*.gd")))
     installed = {int(w, 16) for w in re.findall(r"install\((0xa[0-9a-f]{3})", runtime_src)}
     for group in re.findall(r"for word in \[([^\]]*)\]", runtime_src):
         installed |= {int(w, 16) for w in re.findall(r"0xa[0-9a-f]{3}", group)}
@@ -726,7 +725,7 @@ def check_unused_traps() -> str:
     for n in range(1, 9):
         b = (REPO_ROOT / "sources" / "resedit-1-0-3" / "CODE" / f"ID0{n}.bin").read_bytes()
         scan(b, 0, len(b))
-    s = (GODOT_ROOT / "hellcats" / "data" / "scenery" / "Pacific Conflict").read_bytes()
+    s = (GODOT_ROOT / "runtime" / "data" / "scenery" / "Pacific Conflict").read_bytes()
     scan(s, 0x20, 0x20 + int.from_bytes(s[4:8], "big"))
     others = {w for w in installed if fold(w) not in issued}
     text = (REPO_ROOT / "docs" / "architecture" / "GAME_RUNTIME.md").read_text(encoding="utf-8")

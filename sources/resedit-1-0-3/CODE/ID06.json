@@ -205,8 +205,8 @@
       {
         "kind": "C/decompilation export",
         "path": "sources/resedit-1-0-3/CODE/ID06.decomp.c",
-        "sha256": "2ba3e9ba5c3e8c551cf76471fe8c31422822dd637640d29cc1a874859fe208ad",
-        "size": 59769
+        "sha256": "a658842b10130aedac82bd7a2b80fad5a393dd23eae9d8616c26d1708ec61e85",
+        "size": 61232
       }
     ],
     "resource_attributes": "0x38",

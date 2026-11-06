@@ -141,12 +141,12 @@ Segment 7 has two ID00 entries: stored offset 0 targets the RTS at file 0x0004, 
 
 ## 8) Implementation handoff artifact
 
-- **[PROVEN]** The proven loader targets below are checked against the jump table the game runtime links ([`godot/hellcats/data/jump_table.json`](../../godot/hellcats/data/jump_table.json), generated from `ID00.bin` by `tools/hellcats/build_runtime_data.py`) by `check_loader_targets` in [`tools/qa/test_regression.py`](../../tools/qa/test_regression.py): each one's A5 offset is `jump_table_offset + id00_entry_offset - 16 + 2`, its segment and entry point as tabled here.
+- **[PROVEN]** The proven loader targets below are checked against the jump table the game runtime links ([`godot/runtime/data/jump_table.json`](../../godot/runtime/data/jump_table.json), generated from `ID00.bin` by `tools/runtime/build_runtime_data.py`) by `check_loader_targets` in [`tools/qa/test_regression.py`](../../tools/qa/test_regression.py): each one's A5 offset is `jump_table_offset + id00_entry_offset - 16 + 2`, its segment and entry point as tabled here.
 - **[UNKNOWN]** Additional targets may be added to that check only when the maintainer re-runs the proof.
 
 ## 9) Godot integration boundary
 
-- **[RECONSTRUCTED]** The game runtime ([`docs/architecture/GAME_RUNTIME.md`](GAME_RUNTIME.md)) links every jump-table entry to its strict-port routine (`godot/hellcats/runtime/segment_loader.gd`) and loads the Pacific Conflict overlay with its relocations; the earlier clean-room loader metadata boundary of the MVP prototype is gone with it.
+- **[RECONSTRUCTED]** The game runtime ([`docs/architecture/GAME_RUNTIME.md`](GAME_RUNTIME.md)) links every jump-table entry to its strict-port routine (`godot/runtime/machine/segment_loader.gd`) and loads the Pacific Conflict overlay with its relocations; the earlier clean-room loader metadata boundary of the MVP prototype is gone with it.
 
 ## 10) Safe targets for Godot consumption now
 

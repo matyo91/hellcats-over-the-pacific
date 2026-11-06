@@ -1837,7 +1837,7 @@ void tally_destroyed_entity /* Original: FUN_00000488 */ (int entity /* param_1:
  *   { if (DAT_0001b738 == 0) return 1;
  *     return (DAT_0001b738->object->y - DAT_0001b738->ground_2e > 4999) ? 1 : 0; }
  *
- * The game runtime runs it as godot/hellcats/runtime/overlay_loader.gd _04b0.
+ * The game runtime runs it as godot/runtime/machine/overlay_loader.gd _04b0.
  */
 
 /* Original: FUN_000004f8; source: Pacific Conflict.c. Recovered name: transform_through_node_chain [STRONG INFERENCE].
@@ -16650,7 +16650,7 @@ LAB_0000d11c:
  *     if (panels_drawn) { update_throttle_gauge(); update_radar_range_buttons();
  *                         update_bomb_indicator(); mark_view_overlays_drawn(); } }
  *
- * The game runtime runs it as godot/hellcats/runtime/overlay_loader.gd _d23a.
+ * The game runtime runs it as godot/runtime/machine/overlay_loader.gd _d23a.
  */
 
 // WARNING: Globals starting with '_' overlap smaller symbols at the same address

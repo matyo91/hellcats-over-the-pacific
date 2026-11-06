@@ -1,7 +1,7 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const MacMachine := preload("res://hellcats/runtime/mac_machine.gd")
+const MacMachine := preload("res://runtime/machine/mac_machine.gd")
 
 ## The system event mask (SysEvtMask, low memory $144): the jump-table glue $1fa is SetEventMask (ID09
 ## 0x18a), and as PostEvent does, an event type the mask disables is not queued. The Mac's default

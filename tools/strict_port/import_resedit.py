@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Mirror sources/resedit-1-0-3 into godot/strict_port, type by type (each type folder, lower-cased, beside code/).
+"""Mirror sources/resedit-1-0-3 into godot/resources, type by type (each type folder, lower-cased).
 
 Every imported type keeps its folder name (lower-cased: ALRT -> alrt, ICN# -> icn#, icI4 -> ici4) and each
 resource its file names: the original payload
 (<id>.bin, byte-identical) plus the media already derived next to it (PNG pictures and icons, MP3
 sounds), and, for the types the Dialog Manager draws, one scene per resource (<id>.tscn) that shows
-it as ResEdit does (godot/strict_port/ui/dialog_view.gd decodes the .bin itself). The ResEdit
+it as ResEdit does (godot/resources/ui/dialog_view.gd decodes the .bin itself). The ResEdit
 annotations (.md) and evidence (.json) stay in sources/. CODE is not mirrored: its port is
 godot/strict_port/code/.
 
-The import grows by iterations: IMPORTED lists the types done so far. mappings/resources.json
+The import grows by iterations: IMPORTED lists the types done so far. godot/resources/resources.json
 records each file with its source and SHA-256; --check verifies the mirror matches (no missing,
 changed or extra files) and prints the progress. The dialog fixture for
 godot/tests/strict_port/test_resedit_dialogs.gd is written from the resource evidence JSON.
@@ -26,8 +26,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "sources" / "resedit-1-0-3"
-MIRROR = ROOT / "godot" / "strict_port"
-MANIFEST = MIRROR / "mappings" / "resources.json"
+MIRROR = ROOT / "godot" / "resources"
+MANIFEST = MIRROR / "resources.json"
 FIXTURE = ROOT / "godot" / "tests" / "strict_port" / "fixtures" / "resedit_dialogs.json"
 INTERFACE_FIXTURE = ROOT / "godot" / "tests" / "strict_port" / "fixtures" / "resedit_interface.json"
 TEXT_FIXTURE = ROOT / "godot" / "tests" / "strict_port" / "fixtures" / "resedit_text.json"
@@ -42,9 +42,9 @@ MEDIA = {"PICT": ["png"], "ICON": ["png"], "ICN#": ["png"], "ics#": ["png"], "ic
          "ics4": ["png"], "ics8": ["png"], "cicn": ["png"], "snds": ["mp3"]}
 # Types shown by a scene per resource, and the view that draws them.
 DIALOG, ICONS, CONTROL, FINDER, MENU, TEXT, SOUND = (
-    "res://strict_port/ui/dialog_view.gd", "res://strict_port/ui/icon_view.gd", "res://strict_port/ui/control_view.gd",
-    "res://strict_port/ui/finder_view.gd", "res://strict_port/ui/menu_view.gd", "res://strict_port/ui/text_view.gd",
-    "res://strict_port/ui/sound_view.gd")
+    "res://resources/ui/dialog_view.gd", "res://resources/ui/icon_view.gd", "res://resources/ui/control_view.gd",
+    "res://resources/ui/finder_view.gd", "res://resources/ui/menu_view.gd", "res://resources/ui/text_view.gd",
+    "res://resources/ui/sound_view.gd")
 SCENES = {"ALRT": DIALOG, "DLOG": DIALOG, "DITL": DIALOG, "CNTL": CONTROL, "BNDL": FINDER, "FREF": FINDER,
           **{t: ICONS for t in ("ICON", "ICN#", "ics#", "icI4", "icI8", "ics4", "ics8", "cicn", "clut", "PICT")},
           "MENU": MENU, **{t: TEXT for t in ("STR#", "TEXT", "styl", "vers", "SIZE", "DATA", "DREL", "HEL1", "HELL", "MDPL", "ZERO")},

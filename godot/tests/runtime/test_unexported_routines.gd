@@ -1,16 +1,16 @@
 extends RefCounted
 
 const Assertions := preload("res://tests/helpers/assertions.gd")
-const MacMachine := preload("res://hellcats/runtime/mac_machine.gd")
+const MacMachine := preload("res://runtime/machine/mac_machine.gd")
 
-## Routines the game runtime writes outside the 740 (hellcats/runtime/unexported.gd and
-## overlay_loader.gd), checked against their ORIGINAL bytes: tools/hellcats/gen_runtime_cases.py
+## Routines the game runtime writes outside the 740 (runtime/machine/unexported.gd and
+## overlay_loader.gd), checked against their ORIGINAL bytes: tools/runtime/gen_runtime_cases.py
 ## runs each on the m68k_emu interpreter and records the D0 it returns and the memory it leaves,
 ## from the memory it starts with (fixtures/unexported_cases.json); here the same memory is written
 ## into a MacMachine and the runtime's routine must return and leave the same, and where the case
 ## records them, make the same Toolbox and jump-table calls with the same first arguments.
 const FIXTURE := "res://tests/runtime/fixtures/unexported_cases.json"
-const SCENERY := "res://hellcats/data/scenery/Pacific Conflict"
+const SCENERY := "res://runtime/data/scenery/Pacific Conflict"
 
 func run() -> bool:
 	var fixture: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FIXTURE))

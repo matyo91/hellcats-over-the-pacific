@@ -109,7 +109,7 @@ source folder in lower case: `ALRT` -> `alrt`, `ICN#` -> `icn#`), because Godot 
 inside its project. Each resource keeps its original payload (`<id>.bin`, byte-identical), the
 media already derived next to it (PICT and ICON PNGs, `snds` MP3s), and one scene that draws it.
 CODE is not mirrored; its port is `code/`. `tools/strict_port/import_resedit.py` writes the mirror
-and `mappings/resources.json` (every file with its source and SHA-256); its `--check`, run by QA,
+and `resources/resources.json` (every file with its source and SHA-256); its `--check`, run by QA,
 fails on any missing, changed or extra file.
 
 The scenes hold no decoded data: the views in `ui/` decode the `.bin` at run time, as ResEdit's
